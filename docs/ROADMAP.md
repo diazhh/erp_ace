@@ -1,0 +1,749 @@
+# 🗺️ ROADMAP - ERP Sistema de Gestión Empresarial
+
+**Última actualización:** 2025-12-04  
+**Versión actual:** 0.6.0 (Módulo de Proyectos)
+
+---
+
+## 📊 Resumen de Progreso General
+
+| Sprint | Módulo | Estado | Progreso |
+|--------|--------|--------|----------|
+| Sprint 0 | Setup & Fundamentos | ✅ Completado | 100% |
+| Sprint 1 | Empleados | ✅ Completado | 100% |
+| Sprint 1.5 | Organización | ✅ Completado | 100% |
+| Sprint 2 | Nómina | ✅ Completado | 100% |
+| Sprint 3 | Finanzas | ✅ Completado | 100% |
+| Sprint 4 | Caja Chica | ✅ Completado | 100% |
+| Sprint 5 | Proyectos | ✅ Completado | 100% |
+| Sprint 6 | Inventario | 🔲 Pendiente | 0% |
+| Sprint 7 | Flota | 🔲 Pendiente | 0% |
+| Sprint 8 | Procura | 🔲 Pendiente | 0% |
+| Sprint 9 | HSE | 🔲 Pendiente | 0% |
+| Sprint 10 | Documentos | 🔲 Pendiente | 0% |
+| Sprint 11 | Reportes & Dashboard | 🔲 Pendiente | 0% |
+
+**Progreso Total del Proyecto: ~54%**
+
+```
+[████████████████░░░░░░░░░░░░░░] 54%
+```
+
+---
+
+## 🔗 PRINCIPIO FUNDAMENTAL: TRAZABILIDAD TOTAL
+
+### Concepto
+
+El ERP debe funcionar como un **sistema interconectado** donde cada entidad tiene visibilidad completa de sus relaciones. Esto permite:
+
+1. **Auditoría completa**: Saber quién hizo qué, cuándo y por qué
+2. **Navegación intuitiva**: Desde cualquier entidad, acceder a sus relaciones
+3. **Reportes cruzados**: Generar informes que crucen múltiples módulos
+4. **Toma de decisiones**: Ver el impacto de cada acción en el sistema
+
+### Implementación por Entidad
+
+#### 👤 Empleado (Vista Detalle)
+Desde el detalle de un empleado se debe poder ver:
+- **Datos Personales**: Información básica, contacto, documentos
+- **Datos Laborales**: Cargo, departamento, fecha ingreso, contrato
+- **Nómina**: Historial de pagos, salario actual, deducciones
+- **Préstamos**: Préstamos activos, historial de pagos, saldo pendiente
+- **Proyectos**: Proyectos asignados (actuales e históricos)
+- **Vehículos**: Vehículo asignado (si aplica)
+- **Caja Chica**: Gastos realizados, reembolsos pendientes
+- **Documentos**: Documentos del empleado con fechas de vencimiento
+- **Auditoría**: Historial de cambios en su registro
+
+#### 💰 Cuenta Bancaria (Vista Detalle)
+- **Información de la Cuenta**: Banco, número, titular, tipo
+- **Saldo Actual**: Con gráfico de evolución
+- **Transacciones**: Historial completo con filtros
+- **Transferencias**: Entradas y salidas
+- **Conciliación**: Estado de conciliación
+- **Pagos de Nómina**: Pagos realizados desde esta cuenta
+- **Proyectos**: Gastos de proyectos pagados desde esta cuenta
+
+#### 📋 Proyecto (Vista Detalle)
+- **Información General**: Cliente, fechas, presupuesto, estado
+- **Equipo**: Empleados asignados con roles
+- **Finanzas**: Ingresos, gastos, rentabilidad
+- **Vehículos**: Vehículos asignados al proyecto
+- **Inventario**: Materiales utilizados
+- **Caja Chica**: Gastos menores del proyecto
+- **Documentos**: Contratos, informes, entregables
+- **Timeline**: Hitos y avances
+
+#### 🚗 Vehículo (Vista Detalle)
+- **Información**: Marca, modelo, placa, año
+- **Asignación**: Empleado/Proyecto asignado
+- **Mantenimientos**: Historial y próximos programados
+- **Combustible**: Consumo y costos
+- **Documentos**: Seguro, revisión técnica, permisos
+- **Costos**: Total de gastos del vehículo
+
+#### 📄 Período de Nómina (Vista Detalle)
+- **Resumen**: Totales, empleados, estado
+- **Entradas**: Detalle por empleado
+- **Deducciones**: Préstamos descontados
+- **Pagos**: Transacciones generadas
+- **Aprobaciones**: Quién aprobó y cuándo
+
+### Diagrama de Relaciones
+
+```
+                    ┌─────────────┐
+                    │   EMPLEADO  │
+                    └──────┬──────┘
+           ┌───────────────┼───────────────┐
+           │               │               │
+           ▼               ▼               ▼
+    ┌──────────┐    ┌──────────┐    ┌──────────┐
+    │  NÓMINA  │    │ PROYECTO │    │ VEHÍCULO │
+    └────┬─────┘    └────┬─────┘    └────┬─────┘
+         │               │               │
+         ▼               ▼               ▼
+    ┌──────────┐    ┌──────────┐    ┌──────────┐
+    │PRÉSTAMOS │    │INVENTARIO│    │MANTENIM. │
+    └────┬─────┘    └────┬─────┘    └────┬─────┘
+         │               │               │
+         └───────────────┼───────────────┘
+                         ▼
+                  ┌──────────────┐
+                  │   FINANZAS   │
+                  │  (Cuentas,   │
+                  │Transacciones)│
+                  └──────────────┘
+```
+
+---
+
+## ✅ SPRINT 0 - Setup y Fundamentos (100%)
+
+### Infraestructura
+- [x] Docker Compose con PostgreSQL 16 (puerto 5433)
+- [x] Estructura de proyecto backend (Node.js + Express)
+- [x] Estructura de proyecto frontend (React + Vite + MUI)
+- [x] Configuración de variables de entorno
+
+### Backend Base
+- [x] Conexión a base de datos con Sequelize
+- [x] Sistema de logging (Winston)
+- [x] Manejo de errores centralizado
+- [x] Middleware de autenticación JWT
+- [x] Middleware de autorización RBAC
+
+### Frontend Base
+- [x] Configuración de Redux Toolkit
+- [x] Configuración de React Router
+- [x] Tema Material UI personalizado
+- [x] Layout principal con sidebar
+- [x] Página de Login
+- [x] Dashboard inicial
+
+### Autenticación y Seguridad
+- [x] Modelo de Usuario
+- [x] Modelo de Rol
+- [x] Modelo de Permiso
+- [x] Relaciones many-to-many (User-Role, Role-Permission)
+- [x] Login con JWT
+- [x] Endpoint /me para obtener usuario actual
+- [x] Logout
+- [x] Cambio de contraseña
+- [x] Seeders con roles y permisos iniciales
+
+### Internacionalización
+- [x] Configuración i18next
+- [x] Traducciones en Español
+- [x] Traducciones en Inglés
+- [x] Traducciones en Portugués
+- [x] Selector de idioma en UI
+- [x] Persistencia de preferencia en localStorage
+
+---
+
+## ✅ SPRINT 1 - Módulo de Empleados (100%)
+
+### Backend
+- [x] Modelo Employee (datos personales, laborales, bancarios)
+- [x] Modelo EmployeeDocument (documentos con vencimiento)
+- [x] Controlador CRUD completo
+- [x] Rutas protegidas con permisos
+- [x] Endpoint de estadísticas
+- [x] Paginación y búsqueda
+- [x] Endpoint `/employees/:id/full` con trazabilidad completa
+
+### Frontend
+- [x] Página de listado de empleados
+- [x] Tabla con paginación
+- [x] Búsqueda por nombre/cédula
+- [x] Formulario de creación/edición (PÁGINA COMPLETA - sin modal)
+- [x] Diálogo de confirmación de eliminación
+
+### ✅ Vista Detalle Empleado
+- [x] Página de detalle `/employees/:id`
+- [x] Tabs: Información, Laboral, Cuentas, Jerarquía, Nómina, Préstamos, Documentos, Auditoría
+- [x] Stats cards con métricas clave
+- [x] Enlaces a entidades relacionadas (EntityLink)
+
+---
+
+## ✅ SPRINT 1.5 - Estructura Organizacional (100%)
+
+### Backend
+- [x] Modelo Department (Direcciones, Gerencias, Departamentos, Áreas, Unidades)
+- [x] Modelo Position (Cargos con nivel jerárquico y rango salarial)
+- [x] Modelo EmployeeBankAccount (Múltiples cuentas por empleado)
+- [x] Jerarquía de empleados (supervisorId, subordinados)
+- [x] Controlador de organización (CRUD departamentos y posiciones)
+- [x] Endpoint `/organization/org-chart` para organigrama
+- [x] Endpoint `/organization/directory` para directorio
+- [x] Endpoint `/organization/stats` para estadísticas
+
+### Frontend
+- [x] Página de Departamentos (`/organization/departments`)
+- [x] Página de Posiciones/Cargos (`/organization/positions`)
+- [x] Organigrama interactivo (`/organization/chart`)
+- [x] Directorio de empleados (`/organization/directory`)
+- [x] Formulario de empleado mejorado (fecha nacimiento, supervisor, departamento)
+- [x] Tab de Cuentas Bancarias en detalle de empleado
+- [x] Tab de Jerarquía (supervisor y subordinados)
+
+### Características
+- [x] Estructura jerárquica de departamentos (padre/hijo)
+- [x] Múltiples cuentas bancarias por empleado (Corriente, Ahorro, Pago Móvil, Zelle, Crypto)
+- [x] Cuenta primaria para pagos de nómina
+- [x] Porcentaje de pago por cuenta
+- [x] Organigrama visual con navegación (toggle entre vista por departamentos y por jerarquía)
+- [x] Directorio con filtro alfabético y por departamento
+- [x] Vista responsive (cards en móvil, árbol en desktop)
+- [x] Gestión de cuentas bancarias en detalle de empleado (agregar, editar, eliminar, establecer primaria)
+
+---
+
+## ✅ SPRINT 2 - Módulo de Nómina (100%)
+
+### Backend
+- [x] Modelo PayrollPeriod
+- [x] Modelo PayrollEntry
+- [x] Modelo EmployeeLoan
+- [x] Modelo LoanPayment
+- [x] Servicio de cálculo de nómina
+- [x] Deducciones legales venezolanas (SSO, RPE, FAOV, ISLR)
+- [x] Gestión de préstamos con cuotas
+
+### Frontend
+- [x] Página de períodos de nómina
+- [x] Página de detalle de período
+- [x] Página de préstamos
+- [x] Formularios de creación/edición
+
+### ✅ Mejoras de Trazabilidad
+- [x] Endpoint `/payroll/periods/:id/full` con trazabilidad completa
+- [x] Enlace desde entrada de nómina al empleado (EntityLink)
+- [x] Historial de nóminas en detalle de empleado
+- [x] Vista detalle de préstamo con historial de pagos (`/payroll/loans/:id`)
+- [x] Formulario de préstamo como página completa (`/payroll/loans/new`)
+- [x] Aprobación de préstamos en página de detalle (no en lista)
+
+---
+
+## ✅ SPRINT 3 - Módulo de Finanzas (100%)
+
+### Backend
+- [x] Modelo BankAccount (múltiples tipos: banco, crypto, efectivo, pago móvil)
+- [x] Modelo Transaction (ingresos, gastos, transferencias)
+- [x] Modelo ExchangeRate (tasas de cambio)
+- [x] Modelo TransactionCategory
+- [x] Servicio de finanzas
+- [x] Multi-moneda (USD, VES, USDT)
+
+### Frontend
+- [x] Página de cuentas bancarias
+- [x] Página de transacciones
+- [x] Formularios de creación
+- [x] Diálogo de detalle de transacción
+
+### ✅ Mejoras de Trazabilidad
+- [x] Endpoint `/finance/accounts/:id/full` con trazabilidad completa
+- [x] Vista detalle de cuenta con historial de transacciones
+- [x] Estadísticas por tipo de transacción
+- [x] Transferencias entrantes
+- [x] Formulario de cuenta bancaria como página completa (`/finance/accounts/new`, `/finance/accounts/:id/edit`)
+- [ ] Gráfico de evolución de saldo (pendiente)
+- [ ] Dashboard financiero con KPIs (pendiente)
+
+---
+
+## 📊 DASHBOARDS Y KPIs
+
+### Principio
+Cada módulo debe tener visualizaciones que permitan toma de decisiones rápida.
+
+### Dashboard Principal (Home)
+- **KPIs Generales**:
+  - Empleados activos
+  - Proyectos en curso
+  - Balance financiero del mes
+  - Alertas pendientes
+- **Gráficos**:
+  - Flujo de caja últimos 6 meses (línea)
+  - Distribución de gastos por categoría (pie)
+  - Proyectos por estado (barras)
+- **Widgets**:
+  - Próximos vencimientos (documentos, seguros)
+  - Tareas pendientes
+  - Actividad reciente
+
+### Dashboard Financiero
+- **KPIs**:
+  - Ingresos del mes
+  - Gastos del mes
+  - Balance neto
+  - Cuentas por cobrar/pagar
+- **Gráficos**:
+  - Flujo de caja mensual (barras comparativas ingreso vs gasto)
+  - Evolución de saldos por cuenta (línea)
+  - Top 10 categorías de gasto (horizontal bar)
+  - Distribución por moneda (donut)
+
+### Dashboard de Nómina
+- **KPIs**:
+  - Total nómina del mes
+  - Empleados pagados
+  - Préstamos activos
+  - Próximo pago
+- **Gráficos**:
+  - Evolución de nómina últimos 12 meses
+  - Distribución por departamento
+  - Deducciones por tipo
+
+### Dashboard de Proyectos
+- **KPIs**:
+  - Proyectos activos
+  - Rentabilidad promedio
+  - Horas trabajadas
+  - Proyectos atrasados
+- **Gráficos**:
+  - Gantt de proyectos
+  - Presupuesto vs Real por proyecto
+  - Distribución de equipo
+
+### Dashboard de Flota
+- **KPIs**:
+  - Vehículos activos
+  - Costo promedio por vehículo
+  - Mantenimientos pendientes
+  - Consumo de combustible
+- **Gráficos**:
+  - Costos por vehículo (barras)
+  - Consumo de combustible (línea)
+  - Distribución de costos (pie)
+
+### Librerías Recomendadas
+- **Recharts**: Gráficos React
+- **MUI X Charts**: Integrado con Material UI
+- **ApexCharts**: Alternativa con más opciones
+
+---
+
+## ⚙️ CONFIGURACIÓN DE USUARIO
+
+### Funcionalidades
+Cada usuario debe poder personalizar su experiencia:
+
+#### Página de Configuración (`/settings`)
+- **Perfil**:
+  - Cambiar nombre
+  - Cambiar foto de perfil
+  - Cambiar email
+- **Seguridad**:
+  - Cambiar contraseña
+  - Ver sesiones activas
+  - Cerrar otras sesiones
+- **Preferencias**:
+  - **Idioma**: Selector ES/EN/PT (guarda en BD y localStorage)
+  - **Tema**: Claro/Oscuro/Sistema
+  - **Zona horaria**
+  - **Formato de fecha**
+  - **Formato de moneda**
+- **Notificaciones**:
+  - Alertas de vencimientos
+  - Notificaciones de aprobación
+  - Resumen diario/semanal
+
+#### Backend
+- Modelo `UserPreferences` o campo JSONB en `User`
+- Endpoint `PUT /api/auth/preferences`
+- Endpoint `GET /api/auth/preferences`
+
+#### Frontend
+- Página `/settings` con tabs
+- Persistencia de idioma en BD (no solo localStorage)
+- Hook `useUserPreferences()`
+
+### Idioma por Defecto
+- **Sistema**: Español (es)
+- **Usuario nuevo**: Hereda del sistema
+- **Usuario existente**: Usa su preferencia guardada
+
+---
+
+## ✅ SPRINT 4 - Módulo de Caja Chica (100%)
+
+### Backend
+- [x] Modelo PettyCash (caja chica)
+- [x] Modelo PettyCashEntry (movimientos)
+- [x] Servicio de caja chica (validaciones, estadísticas)
+- [x] Controlador con CRUD completo
+- [x] Endpoint `/petty-cash/:id/full` con trazabilidad
+- [x] Límites y alertas de reposición
+- [x] Aprobación de gastos
+
+### Frontend
+- [x] Página de listado de cajas chicas
+- [x] Página de detalle con tabs
+- [x] Formulario de creación/edición como página completa (`/petty-cash/new`, `/petty-cash/:id/edit`)
+- [x] Diálogo de registro de gastos
+- [x] Diálogo de reposición
+- [x] Aprobación/rechazo de movimientos
+- [x] Estadísticas y KPIs
+- [ ] Vista detalle con trazabilidad a empleado y proyecto
+
+---
+
+## ✅ SPRINT 5 - Módulo de Proyectos (100%)
+
+### Backend
+- [x] Modelo Project (información general, cliente, presupuesto, estado)
+- [x] Modelo ProjectMember (asignación de empleados con rol y dedicación)
+- [x] Modelo ProjectMilestone (hitos con peso para progreso)
+- [x] Modelo ProjectExpense (gastos del proyecto con aprobación)
+- [x] Servicio de proyectos (generación de códigos, cálculo de progreso, estadísticas)
+- [x] Controlador con CRUD completo
+- [x] Rutas protegidas con permisos
+- [x] Endpoint `/projects/:id/full` con trazabilidad completa
+
+### Frontend
+- [x] Página de listado de proyectos (tabla/cards responsive)
+- [x] Formulario de creación/edición como página completa
+- [x] Vista detalle con tabs: Info, Equipo, Hitos, Gastos, Auditoría
+- [x] Gestión de miembros del equipo
+- [x] Gestión de hitos con completación
+- [x] Gestión de gastos con aprobación/rechazo
+- [x] Stats cards con KPIs del proyecto
+- [x] Barra de progreso visual
+
+### Trazabilidad
+- [x] Empleados asignados con enlace a su detalle
+- [x] Gastos con estado y aprobación
+- [x] Historial de auditoría
+- [ ] Vehículos asignados (pendiente módulo Flota)
+- [ ] Materiales utilizados (pendiente módulo Inventario)
+
+---
+
+## 🔲 SPRINT 6 - Módulo de Inventario (0%)
+
+### Backend
+- [ ] Modelo Warehouse (almacenes)
+- [ ] Modelo InventoryItem (items)
+- [ ] Modelo InventoryMovement (movimientos)
+- [ ] Modelo InventoryCategory
+- [ ] Servicio de inventario
+
+### Frontend
+- [ ] Página de almacenes
+- [ ] Página de items con stock
+- [ ] Movimientos de entrada/salida
+- [ ] Vista detalle de item con historial
+
+### Trazabilidad
+- [ ] Movimientos enlazados a proyectos
+- [ ] Movimientos enlazados a empleados
+- [ ] Costos reflejados en finanzas
+
+---
+
+## 🔲 SPRINT 7 - Módulo de Flota (0%)
+
+### Backend
+- [ ] Modelo Vehicle
+- [ ] Modelo VehicleAssignment (asignaciones)
+- [ ] Modelo VehicleMaintenance (mantenimientos)
+- [ ] Modelo FuelLog (combustible)
+- [ ] Servicio de flota
+
+### Frontend
+- [ ] Página de vehículos
+- [ ] Vista detalle: Info, Asignación, Mantenimientos, Combustible, Costos
+- [ ] Calendario de mantenimientos
+- [ ] Alertas de vencimientos
+
+### Trazabilidad
+- [ ] Asignación actual (empleado/proyecto)
+- [ ] Historial de asignaciones
+- [ ] Costos totales del vehículo
+- [ ] Documentos del vehículo
+
+---
+
+## 🔲 SPRINT 8-11 - Módulos Adicionales
+
+- **Procura**: Proveedores, órdenes de compra, cotizaciones
+- **HSE**: Incidentes, inspecciones, capacitaciones
+- **Documentos**: Gestión documental centralizada
+- **Reportes**: Dashboard ejecutivo, reportes personalizados
+
+---
+
+## 🧪 PLAN DE PRUEBAS
+
+### Política de Pruebas
+
+**REGLA**: Cada endpoint debe ser probado antes de considerar una funcionalidad completa.
+
+### Checklist de Pruebas por Endpoint
+
+#### Autenticación ✅
+```bash
+# Login
+curl -X POST http://localhost:5000/api/auth/login \
+  -H "Content-Type: application/json" \
+  -d '{"username":"admin","password":"Admin123!"}'
+
+# Get Me
+curl http://localhost:5000/api/auth/me \
+  -H "Authorization: Bearer $TOKEN"
+```
+
+#### Empleados ✅
+```bash
+# Listar
+curl http://localhost:5000/api/employees -H "Authorization: Bearer $TOKEN"
+
+# Crear
+curl -X POST http://localhost:5000/api/employees \
+  -H "Authorization: Bearer $TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{"firstName":"Test","lastName":"User","idNumber":"V12345678",...}'
+
+# Obtener por ID
+curl http://localhost:5000/api/employees/{id} -H "Authorization: Bearer $TOKEN"
+
+# Actualizar
+curl -X PUT http://localhost:5000/api/employees/{id} \
+  -H "Authorization: Bearer $TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{"firstName":"Updated"}'
+
+# Eliminar
+curl -X DELETE http://localhost:5000/api/employees/{id} \
+  -H "Authorization: Bearer $TOKEN"
+```
+
+#### Nómina ✅
+```bash
+# Períodos - CRUD
+curl http://localhost:5000/api/payroll/periods -H "Authorization: Bearer $TOKEN"
+curl http://localhost:5000/api/payroll/periods/{id} -H "Authorization: Bearer $TOKEN"
+
+# Generar entradas
+curl -X POST http://localhost:5000/api/payroll/periods/{id}/generate \
+  -H "Authorization: Bearer $TOKEN"
+
+# Aprobar
+curl -X POST http://localhost:5000/api/payroll/periods/{id}/approve \
+  -H "Authorization: Bearer $TOKEN"
+
+# Marcar como pagado
+curl -X POST http://localhost:5000/api/payroll/periods/{id}/pay \
+  -H "Authorization: Bearer $TOKEN"
+
+# Préstamos
+curl http://localhost:5000/api/payroll/loans -H "Authorization: Bearer $TOKEN"
+curl -X POST http://localhost:5000/api/payroll/loans \
+  -H "Authorization: Bearer $TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{"employeeId":"...","amount":100,"totalInstallments":2,"startDate":"2025-01-01"}'
+```
+
+#### Finanzas ✅
+```bash
+# Cuentas
+curl http://localhost:5000/api/finance/accounts -H "Authorization: Bearer $TOKEN"
+curl -X POST http://localhost:5000/api/finance/accounts \
+  -H "Authorization: Bearer $TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{"name":"Cuenta Principal","accountType":"CHECKING","currency":"USD"}'
+
+# Transacciones
+curl http://localhost:5000/api/finance/transactions -H "Authorization: Bearer $TOKEN"
+curl -X POST http://localhost:5000/api/finance/transactions \
+  -H "Authorization: Bearer $TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{"transactionType":"EXPENSE","accountId":"...","amount":50,"category":"SUPPLIES","description":"Test","transactionDate":"2025-12-04"}'
+
+# Transferencias
+curl -X POST http://localhost:5000/api/finance/transfers \
+  -H "Authorization: Bearer $TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{"fromAccountId":"...","toAccountId":"...","amount":100,"transactionDate":"2025-12-04","description":"Transfer test"}'
+
+# Estadísticas
+curl http://localhost:5000/api/finance/stats -H "Authorization: Bearer $TOKEN"
+```
+
+### Script de Pruebas Automatizadas
+
+Crear archivo `backend/tests/api-tests.sh`:
+
+```bash
+#!/bin/bash
+# Script de pruebas de API
+
+BASE_URL="http://localhost:5000/api"
+TOKEN=""
+
+# Colores
+GREEN='\033[0;32m'
+RED='\033[0;31m'
+NC='\033[0m'
+
+# Login y obtener token
+login() {
+  TOKEN=$(curl -s -X POST $BASE_URL/auth/login \
+    -H "Content-Type: application/json" \
+    -d '{"username":"admin","password":"Admin123!"}' | jq -r '.data.token')
+  
+  if [ "$TOKEN" != "null" ] && [ -n "$TOKEN" ]; then
+    echo -e "${GREEN}✓ Login exitoso${NC}"
+  else
+    echo -e "${RED}✗ Login fallido${NC}"
+    exit 1
+  fi
+}
+
+# Test genérico
+test_endpoint() {
+  local method=$1
+  local endpoint=$2
+  local data=$3
+  local expected_status=$4
+  
+  if [ -n "$data" ]; then
+    response=$(curl -s -w "\n%{http_code}" -X $method "$BASE_URL$endpoint" \
+      -H "Authorization: Bearer $TOKEN" \
+      -H "Content-Type: application/json" \
+      -d "$data")
+  else
+    response=$(curl -s -w "\n%{http_code}" -X $method "$BASE_URL$endpoint" \
+      -H "Authorization: Bearer $TOKEN")
+  fi
+  
+  status=$(echo "$response" | tail -n1)
+  body=$(echo "$response" | sed '$d')
+  
+  if [ "$status" -eq "$expected_status" ]; then
+    echo -e "${GREEN}✓ $method $endpoint - Status: $status${NC}"
+  else
+    echo -e "${RED}✗ $method $endpoint - Expected: $expected_status, Got: $status${NC}"
+    echo "$body" | jq .
+  fi
+}
+
+# Ejecutar pruebas
+echo "=== Iniciando pruebas de API ==="
+login
+
+echo ""
+echo "=== Auth ==="
+test_endpoint "GET" "/auth/me" "" 200
+
+echo ""
+echo "=== Employees ==="
+test_endpoint "GET" "/employees" "" 200
+test_endpoint "GET" "/employees/stats" "" 200
+
+echo ""
+echo "=== Payroll ==="
+test_endpoint "GET" "/payroll/periods" "" 200
+test_endpoint "GET" "/payroll/loans" "" 200
+test_endpoint "GET" "/payroll/stats" "" 200
+
+echo ""
+echo "=== Finance ==="
+test_endpoint "GET" "/finance/accounts" "" 200
+test_endpoint "GET" "/finance/transactions" "" 200
+test_endpoint "GET" "/finance/stats" "" 200
+test_endpoint "GET" "/finance/exchange-rates" "" 200
+
+echo ""
+echo "=== Pruebas completadas ==="
+```
+
+---
+
+## 📝 Notas de Desarrollo
+
+### Servicios Activos
+- **PostgreSQL**: puerto 5433 (Docker)
+- **Backend**: http://localhost:5000
+- **Frontend**: http://localhost:5173
+
+### Credenciales
+- **Usuario**: `admin`
+- **Contraseña**: `Admin123!`
+
+### Comandos Útiles
+```bash
+# Iniciar servicios
+cd backend && npm run dev
+cd frontend && npm run dev
+
+# Ver logs del backend
+tail -f backend/logs/combined.log
+
+# Ejecutar pruebas
+cd backend && bash tests/api-tests.sh
+```
+
+---
+
+## 📌 Próximos Pasos Inmediatos
+
+1. ~~**Implementar vistas de detalle** con trazabilidad completa~~ ✅
+2. ~~**Crear página de detalle de empleado** como modelo~~ ✅
+3. ~~**Agregar enlaces entre entidades** en todas las vistas~~ ✅ (EntityLink)
+4. ~~**Implementar módulo de Caja Chica**~~ ✅
+5. ~~**Vista detalle de préstamo** con historial de pagos~~ ✅
+6. ~~**Eliminar modales para crear/editar** - usar páginas completas~~ ✅
+7. ~~**Mejorar organigrama** con vista por departamentos~~ ✅
+8. **Agregar gráficos de evolución de saldo** en cuentas
+9. **Crear dashboards con KPIs** por módulo
+10. **Implementar módulo de Proyectos**
+
+---
+
+## 📝 Cambios v0.5.1 (2025-12-04)
+
+### UI/UX - Eliminación de Modales
+- ✅ Préstamos: Nuevo formulario `/payroll/loans/new`, detalle `/payroll/loans/:id`
+- ✅ Cuentas Bancarias (Finance): Formulario `/finance/accounts/new`, `/finance/accounts/:id/edit`
+- ✅ Caja Chica: Formulario `/petty-cash/new`, `/petty-cash/:id/edit`
+- ✅ Cuentas Bancarias (Empleado): Formulario `/employees/:id/accounts/new`, `/employees/:id/accounts/:id/edit`
+
+### Organigrama Mejorado
+- ✅ Toggle entre vista por Departamentos y vista por Jerarquía
+- ✅ Nodos de departamento con color, manager y contador de empleados
+- ✅ Vista responsive (lista en móvil, árbol en desktop)
+
+### Aprobaciones en Detalle
+- ✅ Aprobación de préstamos movida a página de detalle con confirmación
+- ✅ Cancelación de préstamos con confirmación explícita
+
+### Gestión de Cuentas Bancarias de Empleados
+- ✅ Agregar, editar, eliminar cuentas desde el detalle del empleado
+- ✅ Establecer cuenta como primaria
+- ✅ Formulario completo con tipos: Corriente, Ahorro, Pago Móvil, Zelle, Crypto
