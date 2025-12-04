@@ -38,8 +38,8 @@ Desarrollo de un **Sistema ERP Empresarial Completo** para una pequeña empresa 
 | 1 | **Autenticación y Control de Acceso** | CRÍTICO | Sistema RBAC con permisos granulares, JWT, roles predefinidos |
 | 2 | **Gestión de Proyectos** | CRÍTICO | Trazabilidad de avance, costos, pagos, documentos, múltiples contratistas |
 | 3 | **Caja Chica** | CRÍTICO | Entradas, compras de empleados, pagos, conciliaciones, balances |
-| 4 | **Empleados y Nómina** | CRÍTICO | Ficha completa, documentos, cálculo automático de nómina con deducciones (IVSS, paro, préstamos) |
-| 5 | **Finanzas** | CRÍTICO | Cuentas bancarias, transacciones multi-moneda (Bs/USD), cuentas por cobrar/pagar, conciliación |
+| 4 | **Empleados y Nómina** | CRÍTICO | Ficha completa, **medios de pago múltiples (Binance USDT, bancos, Zelle)**, cálculo automático de nómina con deducciones (IVSS, paro, préstamos), trazabilidad de pagos |
+| 5 | **Finanzas** | CRÍTICO | Cuentas financieras (bancos, **wallets Binance USDT**, caja), transacciones multi-moneda (Bs/USD/**USDT**), cuentas por cobrar/pagar, conciliación, dashboard de pagos por método |
 | 6 | **Procura/Compras** | CRÍTICO | Solicitudes, aprobaciones multi-nivel, órdenes de compra, recepción, proveedores |
 | 7 | **Inventario** | CRÍTICO | Multi-almacén, entradas/salidas, transferencias, ajustes, valoración |
 | 8 | **Flota de Vehículos** | CRÍTICO | Registro de vehículos, documentos con alertas, mantenimientos, asignaciones, combustible |

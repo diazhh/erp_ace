@@ -30,8 +30,8 @@ Este proyecto consiste en el desarrollo de un **Sistema ERP Empresarial Personal
 
 - **Gestión completa de proyectos** con trazabilidad de avance, costos y pagos
 - **Sistema robusto de caja chica** con control de entradas/salidas y conciliaciones
-- **Gestión de empleados y nómina** adaptada a la legislación venezolana
-- **Finanzas multi-moneda** (Bs y USD) con evidencia documental
+- **Gestión de empleados y nómina** adaptada a la legislación venezolana con medios de pago múltiples (Binance USDT, bancos, Pago Móvil, Zelle)
+- **Finanzas multi-moneda** (Bs, USD y USDT) con evidencia documental y soporte para wallets crypto
 - **Procura y gestión de proveedores**
 - **Inventario multi-almacén** con trazabilidad completa
 - **Flota de vehículos** con mantenimientos y costos operativos
@@ -52,7 +52,8 @@ Este proyecto consiste en el desarrollo de un **Sistema ERP Empresarial Personal
 3. Garantizar alta disponibilidad y respaldo de datos
 4. Soportar operaciones offline para contextos con internet irregular
 5. Proveer interfaces responsivas accesibles desde dispositivos móviles
-6. Integrar con sistemas de pago venezolanos (Pago Móvil, Zelle, bancos)
+6. Integrar con sistemas de pago venezolanos (Pago Móvil, Zelle, bancos) y criptomonedas (Binance USDT)
+7. Garantizar seguridad de datos sensibles (wallets, información bancaria) con encriptación
 
 ### 1.3 Stakeholders
 

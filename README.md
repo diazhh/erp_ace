@@ -7,6 +7,26 @@
 
 Este proyecto contiene la planificación técnica completa para el desarrollo de un Sistema ERP empresarial personalizado. La documentación está organizada en los siguientes archivos:
 
+### 🎯 [PRESENTACION_PARA_GERENCIA_Y_EMPLEADOS.md](./PRESENTACION_PARA_GERENCIA_Y_EMPLEADOS.md) ⭐ **NUEVO**
+**Lectura recomendada: 30-40 minutos | DOCUMENTO NO TÉCNICO**
+
+**Documento especial para stakeholders no técnicos: gerentes y empleados**
+
+Presentación visual y fácil de entender de todos los módulos y funcionalidades del ERP:
+- ¿Qué es el ERP y para qué sirve?
+- Explicación de cada módulo en lenguaje sencillo
+- Ejemplos de uso real para cada funcionalidad
+- Beneficios por rol (gerente, contador, supervisor, empleado)
+- Preguntas frecuentes
+- Cronograma de implementación
+- ✅ SIN jerga técnica
+- ✅ Con emojis y formato visual
+- ✅ Ejemplos prácticos del día a día
+
+**👉 Perfecto para presentar el proyecto a la gerencia y para que los empleados entiendan qué viene**
+
+---
+
 ### 🎯 [RESUMEN_EJECUTIVO.md](./RESUMEN_EJECUTIVO.md)
 **Lectura recomendada: 15-20 minutos**
 

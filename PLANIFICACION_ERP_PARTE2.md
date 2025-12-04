@@ -301,15 +301,15 @@ Las historias de usuario están organizadas por prioridad usando el método **Mo
 **Para** tener su ficha en el sistema
 
 **Criterios de Aceptación:**
-- Formulario con pestañas: Datos Personales, Laborales, Bancarios, Usuario Sistema
+- Formulario con pestañas: Datos Personales, Laborales, Usuario Sistema
 - Datos personales: nombre, apellido, cédula (único), fecha nac, teléfono, dirección, foto
 - Datos laborales: cargo, fecha ingreso, salario base, tipo contrato, estado (activo/inactivo)
-- Datos bancarios: banco (selección), tipo cuenta, número cuenta
+- **NOTA:** Datos bancarios/métodos de pago ahora se gestionan en sección separada (ver US-EMP-007)
 - Opción de crear usuario vinculado (genera credenciales temporales)
 - Validación de cédula única
 - Foto opcional pero recomendada
 
-**Estimación:** 14 horas
+**Estimación:** 12 horas (reducido por eliminación de pestaña bancaria)
 
 ---
 
@@ -406,6 +406,88 @@ Las historias de usuario están organizadas por prioridad usando el método **Mo
 - Opción de pago anticipado (saldar de una vez)
 
 **Estimación:** 10 horas
+
+---
+
+#### US-EMP-007 [MUST HAVE] ⭐ **NUEVO**
+**Como** empleado
+**Quiero** registrar mis medios de pago preferidos (banco, Pago Móvil, Zelle, Binance USDT)
+**Para** recibir mi nómina por el método más conveniente
+
+**Criterios de Aceptación:**
+- Interfaz para agregar múltiples medios de pago en perfil de empleado
+- Formulario dinámico según tipo de método seleccionado:
+  - **Transferencia bancaria:** banco, tipo cuenta, número cuenta, titular, cédula
+  - **Pago Móvil:** banco, teléfono, cédula
+  - **Zelle:** email, nombre completo
+  - **Binance USDT:** email Binance, Binance ID, red (TRC20/ERC20/BEP20), wallet address, Binance Pay ID
+  - **Efectivo:** notas
+- Marcar un método como "preferido" (is_primary) - usado por defecto en nóminas
+- Validaciones específicas por método:
+  - Formato de wallet address para Binance
+  - Formato de email válido
+  - Números de cuenta según banco
+- Activar/desactivar métodos sin eliminarlos (mantener histórico)
+- Visualización de lista de métodos con indicador de método preferido
+- Datos sensibles (wallets, cuentas) se almacenan encriptados (AES-256)
+- Solo usuarios con permiso `payment_methods:view_sensitive` ven datos completos
+- Otros usuarios ven datos enmascarados: "Binance (T...X4z9)", "Banco (****1234)"
+
+**Estimación:** 16 horas
+
+---
+
+#### US-EMP-008 [MUST HAVE] ⭐ **NUEVO**
+**Como** jefe de RRHH
+**Quiero** ver los medios de pago de cada empleado al procesar la nómina
+**Para** saber cómo pagarle fácilmente y generar archivos de pago masivo
+
+**Criterios de Aceptación:**
+- Al generar nómina, tabla muestra columna con método de pago preferido de cada empleado
+- Íconos visuales por tipo de método (banco, Binance, Zelle, etc.)
+- Indicador visual destacado si empleado NO tiene método de pago configurado (alerta roja)
+- Opción de cambiar método de pago para un pago específico (sobrescribe preferido solo para esa nómina)
+- Botón "Agrupar por Método" que reorganiza tabla por tipo de pago
+- Exportar archivos específicos por método:
+  - **CSV para Binance:** email, monto USDT, referencia
+  - **TXT para banco:** formato específico del banco para pagos masivos
+  - **Excel para Zelle:** lista con emails y montos
+- Contador visual: "15 pagos Binance ($12,500), 5 pagos banco ($3,200), 2 Zelle ($800)"
+- Al hacer clic en empleado, ver todos sus métodos disponibles
+
+**Estimación:** 12 horas
+
+---
+
+#### US-EMP-009 [MUST HAVE] ⭐ **NUEVO**
+**Como** contador
+**Quiero** registrar un pago de nómina indicando el método usado y evidencia
+**Para** mantener trazabilidad completa de cómo se pagó a cada empleado
+
+**Criterios de Aceptación:**
+- Al marcar nómina como pagada, formulario de pago por cada empleado o masivo
+- **Modo Individual:** Registrar pago empleado por empleado
+  - Seleccionar método usado (de los métodos del empleado o manual)
+  - Campos específicos por método:
+    - **Binance:** Hash/TxID de transacción, red usada (TRC20/etc), fecha/hora
+    - **Banco:** referencia bancaria, cuenta origen, fecha valor
+    - **Zelle:** referencia/confirmación, email usado
+    - **Pago Móvil:** referencia, banco, teléfono
+  - Monto en moneda original (USDT, USD, Bs)
+  - Tasa de cambio aplicada (si aplica conversión)
+  - Comprobante: screenshot de Binance, captura de transferencia, etc.
+- **Modo Masivo:** Marcar grupo de empleados como pagados
+  - Seleccionar cuenta/wallet origen
+  - Subir archivo de respuesta del procesamiento (del banco o Binance)
+  - Sistema parsea y vincula pagos automáticamente
+- Generación de comprobante de pago individual en PDF para cada empleado
+  - Incluye: método usado, referencia, monto, fecha, firma digital
+- Actualización automática de saldo de cuenta/wallet origen
+- Historial completo de pagos en perfil de empleado:
+  - Fecha, monto, método, referencia, comprobante descargable
+- Envío opcional de comprobante por email al empleado
+
+**Estimación:** 18 horas
 
 ---
 
@@ -512,6 +594,37 @@ Las historias de usuario están organizadas por prioridad usando el método **Mo
 - Comparación con período anterior (opcional)
 
 **Estimación:** 20 horas
+
+---
+
+#### US-FIN-007 [SHOULD HAVE] ⭐ **NUEVO**
+**Como** contador
+**Quiero** ver un dashboard de pagos agrupados por método (Binance, bancos, efectivo, Zelle)
+**Para** tener control de cuánto se pagó por cada canal y optimizar flujos de pago
+
+**Criterios de Aceptación:**
+- Gráfico de torta: Distribución de pagos por método en el período
+- Gráfico de barras: Evolución de pagos por método (últimos 6 meses)
+- Tabla resumen: Total pagado por método con cantidad de transacciones
+  - Binance USDT: $45,000 (25 transacciones)
+  - Transferencias bancarias: $18,000 (12 transacciones)
+  - Zelle: $5,500 (8 transacciones)
+  - Pago Móvil: Bs 2,500,000 (15 transacciones)
+  - Efectivo: $1,200 (5 transacciones)
+- Filtros:
+  - Rango de fechas personalizado
+  - Tipo de entidad (empleado / contratista / proveedor)
+  - Proyecto específico
+  - Cuenta/wallet origen
+- Tarjetas de métricas clave:
+  - Método más usado (por cantidad y por monto)
+  - Tendencia vs mes anterior
+  - Comisiones/costos por método (si aplica)
+- Drill-down: Click en método para ver lista de transacciones detalladas
+- Exportar reporte completo a Excel con todas las transacciones
+- Opción de comparar dos períodos
+
+**Estimación:** 10 horas
 
 ---
 
@@ -831,12 +944,20 @@ Las historias de usuario están organizadas por prioridad usando el método **Mo
 
 | Prioridad | Cantidad de Historias | % del Total |
 |-----------|----------------------|-------------|
-| **MUST HAVE** | 42 | 70% |
-| **SHOULD HAVE** | 15 | 25% |
-| **COULD HAVE** | 3 | 5% |
+| **MUST HAVE** | 45 | 70% | ⬆️ +3 nuevas (medios de pago)
+| **SHOULD HAVE** | 16 | 26% | ⬆️ +1 nueva (dashboard pagos)
+| **COULD HAVE** | 3 | 4% |
 | **WON'T HAVE** | 0 | 0% |
 
-**Estimación Total de Historias MUST HAVE:** ~460 horas de desarrollo
+**Total de Historias:** 64
+
+**Estimación Total de Historias MUST HAVE:** ~506 horas de desarrollo (+46h por medios de pago)
+
+**Nuevas Historias Agregadas:**
+- ⭐ US-EMP-007: Registro de medios de pago múltiples (16h)
+- ⭐ US-EMP-008: Visualización de métodos en nómina (12h)
+- ⭐ US-EMP-009: Registro de pagos con método y evidencia (18h)
+- ⭐ US-FIN-007: Dashboard de pagos por método (10h)
 
 ---
 
@@ -1130,14 +1251,121 @@ El desarrollo se organizará en **Sprints de 2 semanas** con un equipo de desarr
 - Dependencias: T2.3, (futuro módulo finanzas)
 - Tareas:
   - Al marcar nómina como pagada, generar transacciones financieras
-  - Vincular con cuenta bancaria
+  - Vincular con cuenta bancaria/wallet
   - Actualizar saldo de cuenta
+
+**T2.8: Modelo y API de Medios de Pago** ⭐ **NUEVO**
+- Tiempo: 1 día (8h)
+- Dependencias: T1.1 (Modelo de Empleados)
+- Tecnologías: Sequelize, crypto (para encriptación AES-256)
+- Tareas:
+  - Crear modelo PaymentMethod con campos:
+    - entity_type, entity_id, method_type, is_primary
+    - method_data_encrypted (JSONB), iv (initialization vector)
+  - Funciones de encriptación/desencriptación de datos sensibles
+  - API CRUD de medios de pago:
+    - POST /payment-methods (crear)
+    - GET /entities/:type/:id/payment-methods (listar por entidad)
+    - PUT /payment-methods/:id (actualizar)
+    - DELETE /payment-methods/:id (soft delete)
+    - PUT /payment-methods/:id/set-primary (marcar como preferido)
+  - Validaciones específicas por tipo:
+    - Wallet address (formato válido TRC20/ERC20)
+    - Email (formato válido)
+    - Números de cuenta (según banco)
+  - Middleware de permisos: `payment_methods:view_sensitive` para ver datos completos
+- Criterio de finalización:
+  - Endpoints funcionando con encriptación
+  - Tests unitarios de encriptación/desencriptación
+  - Validaciones funcionando correctamente
+
+**T2.9: Interfaz de Gestión de Medios de Pago (Empleado)** ⭐ **NUEVO**
+- Tiempo: 1.5 días (12h)
+- Dependencias: T2.8
+- Tecnologías: React Hook Form, Yup (validación), MUI
+- Componentes:
+  - **PaymentMethodList:** Lista de métodos con indicador de preferido
+  - **PaymentMethodForm:** Formulario dinámico que cambia según tipo seleccionado
+    - Componente BankTransferFields
+    - Componente PagoMovilFields
+    - Componente ZelleFields
+    - Componente BinanceUSDTFields (con validación de wallet)
+    - Componente CashFields
+  - **PaymentMethodCard:** Tarjeta visual con ícono por tipo y datos enmascarados
+  - Toggle para activar/desactivar método
+  - Botón "Marcar como Preferido"
+- Validaciones frontend con Yup
+- Manejo de permisos: mostrar datos completos o enmascarados según rol
+- Criterio de finalización:
+  - Empleado puede agregar/editar/eliminar sus métodos
+  - Validaciones funcionan correctamente
+  - Datos sensibles se muestran enmascarados si no tiene permiso
+
+**T2.10: Integración de Medios de Pago en Nómina** ⭐ **NUEVO**
+- Tiempo: 1.5 días (12h)
+- Dependencias: T2.4 (Interfaz de Generación de Nómina), T2.8
+- Tareas:
+  - Modificar tabla de nómina para incluir columna "Método de Pago"
+  - Mostrar ícono y nombre del método preferido de cada empleado
+  - Indicador visual (alerta roja) si empleado sin método configurado
+  - Dropdown para cambiar método para pago específico
+  - Botón "Agrupar por Método" que reorganiza tabla
+  - Contador visual: "X pagos Binance ($Y), Z pagos banco ($W)..."
+  - Funcionalidad de exportar archivos por método:
+    - CSV para Binance con formato: email, monto USDT, referencia
+    - TXT para banco (formato configurable por banco)
+    - Excel para Zelle
+  - Modal al hacer click en empleado mostrando todos sus métodos disponibles
+- Criterio de finalización:
+  - RRHH ve método preferido de cada empleado
+  - Puede exportar archivos de pago masivo correctamente
+  - Alertas funcionando para empleados sin método
+
+**T2.11: Registro de Pago con Método y Evidencia** ⭐ **NUEVO**
+- Tiempo: 1.5 días (12h)
+- Dependencias: T2.10, T2.3
+- Tecnologías: pdfmake (generación de PDFs), multer (upload evidencia)
+- Tareas:
+  - Modificar flujo "Marcar como Pagada" para incluir:
+    - **Modo Individual:** Formulario por empleado
+      - Seleccionar método usado (de sus métodos o manual)
+      - Campos dinámicos según método:
+        - Binance: Hash/TxID, red, fecha/hora
+        - Banco: referencia, cuenta origen, fecha valor
+        - Zelle: referencia, email usado
+        - Pago Móvil: referencia, banco, teléfono
+      - Monto en moneda original
+      - Tasa de cambio (si aplica)
+      - Upload de comprobante (screenshot, PDF)
+    - **Modo Masivo:**
+      - Seleccionar cuenta/wallet origen
+      - Upload archivo de respuesta del procesamiento
+      - Parser automático para vincular pagos
+  - Modelo PayrollPayment:
+    - payroll_record_id, payment_method_id, amount, currency
+    - reference, tx_hash, exchange_rate, evidence_url
+  - Generación de comprobante PDF por empleado con:
+    - Logo empresa, datos empleado, método usado
+    - Referencia/hash, monto, fecha
+    - Código QR para verificación
+  - Actualización de saldo de financial_account
+  - Historial de pagos en perfil de empleado
+  - Opción de envío de comprobante por email
+- Criterio de finalización:
+  - Contador puede registrar pagos con trazabilidad completa
+  - PDFs de comprobantes se generan correctamente
+  - Saldos de cuentas/wallets se actualizan
+  - Historial visible en perfil de empleado
 
 **Entregables Fase 1:**
 - Módulo de Empleados completo y funcional
 - Módulo de Nómina con cálculos automáticos
+- **Sistema de medios de pago múltiples (Binance USDT, bancos, Zelle, etc.)** ⭐
+- **Trazabilidad completa de pagos con evidencia** ⭐
 - Sistema de gestión de documentos con alertas
 - Tests unitarios de lógica crítica
+
+**Nota:** Sprint 2 ahora incluye 46 horas adicionales (~6 días de trabajo para 1 dev). Con 2 devs trabajando en paralelo, el sprint de 2 semanas (10 días laborables) sigue siendo viable.
 
 ---
 
@@ -1147,19 +1375,23 @@ El desarrollo se organizará en **Sprints de 2 semanas** con un equipo de desarr
 
 #### Sprint 3 (Semanas 7-8): Finanzas Básicas
 
-**T3.1: Modelos Financieros (Cuentas Bancarias, Transacciones)**
+**T3.1: Modelos Financieros (Cuentas/Wallets, Transacciones)** ⭐ **ACTUALIZADO**
 - Tiempo: 1 día
 - Tareas:
-  - Modelo BankAccount
-  - Modelo FinancialTransaction
+  - Modelo **FinancialAccount** (generalizado para bancos, wallets crypto, cash)
+    - account_type: 'bank' | 'binance_wallet' | 'cash' | 'other_wallet'
+    - currency: 'VES' | 'USD' | 'USDT' | 'EUR'
+    - account_data: JSONB con datos específicos del tipo
+  - Modelo FinancialTransaction (con payment_method_id FK)
   - Modelo TransactionEvidence
   - Modelo AccountsReceivable
   - Modelo AccountsPayable
   - Migraciones
 
-**T3.2: API de Cuentas Bancarias**
+**T3.2: API de Cuentas Financieras** ⭐ **ACTUALIZADO**
 - Tiempo: 1 día
-- Endpoints: CRUD de cuentas bancarias
+- Endpoints: CRUD de cuentas (bancos, Binance wallets, caja, etc.)
+- Soporte para múltiples tipos de moneda incluyendo USDT
 
 **T3.3: API de Transacciones Financieras (Ingresos/Egresos)**
 - Tiempo: 2 días
