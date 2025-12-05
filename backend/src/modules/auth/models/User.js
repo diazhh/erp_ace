@@ -53,6 +53,20 @@ module.exports = (sequelize) => {
       type: DataTypes.DATE,
       field: 'password_changed_at',
     },
+    employeeId: {
+      type: DataTypes.UUID,
+      allowNull: true,
+      field: 'employee_id',
+      references: {
+        model: 'employees',
+        key: 'id',
+      },
+    },
+    mustChangePassword: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: false,
+      field: 'must_change_password',
+    },
   }, {
     tableName: 'users',
     timestamps: true,

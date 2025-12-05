@@ -6,6 +6,9 @@ const { errorHandler, notFoundHandler } = require('./shared/middleware/errorHand
 
 // Rutas
 const authRoutes = require('./modules/auth/routes/authRoutes');
+const userRoutes = require('./modules/auth/routes/userRoutes');
+const roleRoutes = require('./modules/auth/routes/roleRoutes');
+const permissionRoutes = require('./modules/auth/routes/permissionRoutes');
 const employeeRoutes = require('./modules/employees/routes/employeeRoutes');
 const organizationRoutes = require('./modules/employees/routes/organizationRoutes');
 const employeeBankAccountRoutes = require('./modules/employees/routes/employeeBankAccountRoutes');
@@ -27,8 +30,22 @@ const app = express();
 app.use(helmet());
 
 // CORS
+const allowedOrigins = [
+  'http://localhost:5173',
+  'http://localhost:5174',
+  'http://localhost:5175',
+  process.env.FRONTEND_URL,
+].filter(Boolean);
+
 app.use(cors({
-  origin: process.env.FRONTEND_URL || 'http://localhost:5173',
+  origin: function(origin, callback) {
+    // Allow requests with no origin (mobile apps, curl, etc)
+    if (!origin) return callback(null, true);
+    if (allowedOrigins.includes(origin)) {
+      return callback(null, true);
+    }
+    return callback(null, false);
+  },
   credentials: true,
 }));
 
@@ -52,6 +69,9 @@ app.get('/health', (req, res) => {
 
 // API Routes
 app.use('/api/auth', authRoutes);
+app.use('/api/users', userRoutes);
+app.use('/api/roles', roleRoutes);
+app.use('/api/permissions', permissionRoutes);
 app.use('/api/employees', employeeRoutes);
 app.use('/api/organization', organizationRoutes);
 app.use('/api/employee-bank-accounts', employeeBankAccountRoutes);

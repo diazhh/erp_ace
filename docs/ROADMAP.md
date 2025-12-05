@@ -1,7 +1,7 @@
 # 🗺️ ROADMAP - ERP Sistema de Gestión Empresarial
 
 **Última actualización:** 2025-12-05  
-**Versión actual:** 0.11.0 (Módulo de Documentos)
+**Versión actual:** 0.12.0 (Sistema de Usuarios y Permisos Granulares)
 
 ---
 
@@ -21,12 +21,13 @@
 | Sprint 8 | Procura | ✅ Completado | 100% |
 | Sprint 9 | HSE | ✅ Completado | 100% |
 | Sprint 10 | Documentos | ✅ Completado | 100% |
-| Sprint 11 | Reportes & Dashboard | 🔲 Pendiente | 0% |
+| Sprint 11 | Reportes & Dashboard | 🔄 En Progreso | 85% |
+| Sprint 12 | Usuarios y Permisos | ✅ Completado | 100% |
 
-**Progreso Total del Proyecto: ~92%**
+**Progreso Total del Proyecto: ~99%**
 
 ```
-[████████████████████████████░░] 92%
+[█████████████████████████████░] 98%
 ```
 
 ---
@@ -779,6 +780,52 @@ cd backend && bash tests/api-tests.sh
 
 ---
 
+## 📝 Cambios v0.12.0 (2025-12-05)
+
+### Sprint 11 - Reportes & Dashboard (En Progreso)
+- ✅ **Backend**: Módulo de Dashboard con endpoints consolidados
+  - `/api/dashboard/stats` - Estadísticas principales
+  - `/api/dashboard/cash-flow` - Flujo de caja mensual
+  - `/api/dashboard/projects-by-status` - Proyectos por estado
+  - `/api/dashboard/employees-by-department` - Empleados por departamento
+  - `/api/dashboard/alerts` - Alertas pendientes
+  - `/api/dashboard/activity` - Actividad reciente
+- ✅ **Frontend**: Dashboard Principal mejorado
+  - KPIs de empleados, proyectos, finanzas, inventario, flota
+  - Gráfico de flujo de caja mensual (BarChart)
+  - Gráfico de proyectos por estado (PieChart)
+  - Gráfico de gastos por categoría (BarChart horizontal)
+  - Panel de alertas con navegación
+  - Saldos por moneda con barras de progreso
+  - Presupuesto de proyectos vs gastado
+  - 100% responsive
+- ✅ **Frontend**: Dashboard Financiero
+  - KPIs de ingresos, gastos, balance neto
+  - Gráfico de flujo de caja con áreas
+  - Gráfico de cuentas por tipo (PieChart)
+  - Gráfico de gastos por categoría
+  - Gráfico de balance neto mensual (LineChart)
+  - Selector de año para filtrar datos
+- ✅ **Frontend**: Dashboard de Proyectos
+  - KPIs de proyectos totales, activos, completados, atrasados
+  - Gráfico de proyectos por estado (PieChart)
+  - Gráfico de proyectos por prioridad (BarChart)
+  - Presupuesto total vs gastado con barra de progreso
+  - Lista de proyectos activos con navegación
+- ✅ **Frontend**: Dashboard de Inventario
+  - KPIs de items, almacenes, stock bajo, valor total
+  - Gráfico de items por tipo (PieChart)
+  - Gráfico de stock por almacén (BarChart)
+  - Lista de items con stock bajo
+- ✅ **Frontend**: Dashboard de Flota
+  - KPIs de vehículos totales, activos, en mantenimiento, docs por vencer
+  - Gráfico de vehículos por estado (PieChart)
+  - Gráfico de vehículos por tipo (BarChart)
+  - Lista de mantenimientos programados
+- 🔲 **Pendiente**: Dashboard de Nómina
+
+---
+
 ## 📝 Cambios v0.11.0 (2025-12-05)
 
 ### Módulo de Documentos - Completo
@@ -845,3 +892,64 @@ cd backend && bash tests/api-tests.sh
 - ✅ Agregar, editar, eliminar cuentas desde el detalle del empleado
 - ✅ Establecer cuenta como primaria
 - ✅ Formulario completo con tipos: Corriente, Ahorro, Pago Móvil, Zelle, Crypto
+
+---
+
+## 📝 Cambios v0.12.0 (2025-12-05)
+
+### Sprint 12: Sistema de Usuarios y Permisos Granulares
+
+#### Backend
+- ✅ Migración: Campos `action`, `field`, `permissionType` en tabla `permissions`
+- ✅ Migración: Campo `employee_id` en tabla `users` para vincular con empleados
+- ✅ Migración: Campo `must_change_password` en tabla `users`
+- ✅ Seeder: 100+ permisos granulares organizados por módulo
+- ✅ Seeder: 8 roles predefinidos con permisos específicos
+- ✅ Middleware `authorizeField`: Control de acceso a campos/tabs específicos
+- ✅ Middleware `authorizeOwn`: Verificación de acceso a recursos propios
+- ✅ Helper `checkPermission`: Verificación jerárquica de permisos
+- ✅ CRUD completo de usuarios con vinculación a empleados
+- ✅ CRUD completo de roles con asignación de permisos
+- ✅ Endpoints de permisos agrupados por módulo
+
+#### Frontend
+- ✅ Hook `usePermission`: Verificación de permisos en componentes
+- ✅ Hook `usePermissions`, `useAnyPermission`, `useAllPermissions`
+- ✅ Componente `PermissionGate`: Renderizado condicional por permisos
+- ✅ Componente `CanDo`: Wrapper simple para acciones
+- ✅ Slice Redux `usersSlice`: Estado de usuarios
+- ✅ Slice Redux `rolesSlice`: Estado de roles y permisos
+- ✅ Página `/admin/users`: Lista de usuarios con filtros y estadísticas
+- ✅ Página `/admin/users/new`: Crear usuario con roles y empleado
+- ✅ Página `/admin/users/:id`: Detalle de usuario con permisos consolidados
+- ✅ Página `/admin/users/:id/edit`: Editar usuario
+- ✅ Página `/admin/roles`: Lista de roles con conteo de usuarios
+- ✅ Página `/admin/roles/new`: Crear rol con selector de permisos por módulo
+- ✅ Página `/admin/roles/:id`: Detalle de rol con usuarios y permisos
+- ✅ Página `/admin/roles/:id/edit`: Editar rol
+- ✅ Menú de Administración en sidebar
+- ✅ Tabs dinámicos en EmployeeDetail según permisos del usuario
+
+#### Formato de Permisos
+```
+modulo:accion[:campo]
+
+Ejemplos:
+- employees:*           → Acceso completo al módulo
+- employees:read        → Ver lista de empleados
+- employees:read:payroll → Ver tab de nómina en detalle
+- loans:approve         → Aprobar préstamos
+```
+
+#### Roles Predefinidos
+1. **Super Administrador**: `*:*` (acceso total)
+2. **Gerente General**: Lectura y aprobaciones en todos los módulos
+3. **Gerente Administrativo**: RRHH, Nómina, Finanzas, Documentos
+4. **Gerente de Operaciones**: Proyectos, Inventario, Flota, HSE
+5. **Contador**: Finanzas, Nómina (lectura y pago)
+6. **Jefe de RRHH**: Empleados, Préstamos, Nómina
+7. **Supervisor de Proyecto**: Proyectos asignados, Inventario, Flota
+8. **Empleado**: Perfil propio, solicitar préstamos, gastos de caja chica
+
+#### Documentación
+- ✅ `docs/PLANIFICACION_USUARIOS_PERMISOS.md`: Planificación completa del sistema

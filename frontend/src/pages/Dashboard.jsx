@@ -323,9 +323,11 @@ const Dashboard = () => {
           </Typography>
         </Box>
         <Tooltip title="Actualizar datos">
-          <IconButton onClick={handleRefresh} disabled={loading}>
-            <RefreshIcon />
-          </IconButton>
+          <span>
+            <IconButton onClick={handleRefresh} disabled={loading}>
+              <RefreshIcon />
+            </IconButton>
+          </span>
         </Tooltip>
       </Box>
 

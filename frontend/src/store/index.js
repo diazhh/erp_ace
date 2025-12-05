@@ -11,6 +11,8 @@ import fleetReducer from './slices/fleetSlice';
 import hseReducer from './slices/hseSlice';
 import documentReducer from './slices/documentSlice';
 import dashboardReducer from './slices/dashboardSlice';
+import usersReducer from './slices/usersSlice';
+import rolesReducer from './slices/rolesSlice';
 
 export const store = configureStore({
   reducer: {
@@ -26,6 +28,8 @@ export const store = configureStore({
     hse: hseReducer,
     documents: documentReducer,
     dashboard: dashboardReducer,
+    users: usersReducer,
+    roles: rolesReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({

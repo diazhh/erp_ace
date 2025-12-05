@@ -25,18 +25,21 @@ import BankAccounts from './pages/finance/BankAccounts';
 import BankAccountDetail from './pages/finance/BankAccountDetail';
 import BankAccountForm from './pages/finance/BankAccountForm';
 import Transactions from './pages/finance/Transactions';
+import FinanceDashboard from './pages/finance/FinanceDashboard';
 import PettyCashList from './pages/petty-cash/PettyCashList';
 import PettyCashDetail from './pages/petty-cash/PettyCashDetail';
 import PettyCashForm from './pages/petty-cash/PettyCashForm';
 import ProjectList from './pages/projects/ProjectList';
 import ProjectDetail from './pages/projects/ProjectDetail';
 import ProjectForm from './pages/projects/ProjectForm';
+import ProjectDashboard from './pages/projects/ProjectDashboard';
 import ContractorList from './pages/contractors/ContractorList';
 import ContractorDetail from './pages/contractors/ContractorDetail';
 import ContractorForm from './pages/contractors/ContractorForm';
 import ItemList from './pages/inventory/ItemList';
 import ItemDetail from './pages/inventory/ItemDetail';
 import ItemForm from './pages/inventory/ItemForm';
+import InventoryDashboard from './pages/inventory/InventoryDashboard';
 import WarehouseList from './pages/inventory/WarehouseList';
 import WarehouseDetail from './pages/inventory/WarehouseDetail';
 import WarehouseForm from './pages/inventory/WarehouseForm';
@@ -45,6 +48,7 @@ import MovementForm from './pages/inventory/MovementForm';
 import VehicleList from './pages/fleet/VehicleList';
 import VehicleDetail from './pages/fleet/VehicleDetail';
 import VehicleForm from './pages/fleet/VehicleForm';
+import FleetDashboard from './pages/fleet/FleetDashboard';
 import MaintenanceList from './pages/fleet/MaintenanceList';
 import MaintenanceForm from './pages/fleet/MaintenanceForm';
 import FuelLogList from './pages/fleet/FuelLogList';
@@ -83,6 +87,13 @@ import {
   CategoryList,
   CategoryForm,
 } from './pages/documents';
+// Admin - Users & Roles
+import UserList from './pages/admin/UserList';
+import UserDetail from './pages/admin/UserDetail';
+import UserForm from './pages/admin/UserForm';
+import RoleList from './pages/admin/RoleList';
+import RoleDetail from './pages/admin/RoleDetail';
+import RoleForm from './pages/admin/RoleForm';
 
 function App() {
   const dispatch = useDispatch();
@@ -138,7 +149,8 @@ function App() {
         <Route path="payroll/loans" element={<Loans />} />
         <Route path="payroll/loans/new" element={<LoanForm />} />
         <Route path="payroll/loans/:id" element={<LoanDetail />} />
-        <Route path="finance" element={<Transactions />} />
+        <Route path="finance" element={<FinanceDashboard />} />
+        <Route path="finance/transactions" element={<Transactions />} />
         <Route path="finance/accounts" element={<BankAccounts />} />
         <Route path="finance/accounts/new" element={<BankAccountForm />} />
         <Route path="finance/accounts/:id" element={<BankAccountDetail />} />
@@ -148,7 +160,8 @@ function App() {
         <Route path="petty-cash/:id" element={<PettyCashDetail />} />
         <Route path="petty-cash/:id/edit" element={<PettyCashForm />} />
         {/* Projects */}
-        <Route path="projects" element={<ProjectList />} />
+        <Route path="projects" element={<ProjectDashboard />} />
+        <Route path="projects/list" element={<ProjectList />} />
         <Route path="projects/new" element={<ProjectForm />} />
         <Route path="projects/:id" element={<ProjectDetail />} />
         <Route path="projects/:id/edit" element={<ProjectForm />} />
@@ -158,7 +171,8 @@ function App() {
         <Route path="contractors/:id" element={<ContractorDetail />} />
         <Route path="contractors/:id/edit" element={<ContractorForm />} />
         {/* Inventory */}
-        <Route path="inventory" element={<ItemList />} />
+        <Route path="inventory" element={<InventoryDashboard />} />
+        <Route path="inventory/items" element={<ItemList />} />
         <Route path="inventory/items/new" element={<ItemForm />} />
         <Route path="inventory/items/:id" element={<ItemDetail />} />
         <Route path="inventory/items/:id/edit" element={<ItemForm />} />
@@ -169,7 +183,8 @@ function App() {
         <Route path="inventory/movements" element={<MovementList />} />
         <Route path="inventory/movements/new" element={<MovementForm />} />
         {/* Fleet */}
-        <Route path="fleet" element={<VehicleList />} />
+        <Route path="fleet" element={<FleetDashboard />} />
+        <Route path="fleet/vehicles" element={<VehicleList />} />
         <Route path="fleet/vehicles/new" element={<VehicleForm />} />
         <Route path="fleet/vehicles/:id" element={<VehicleDetail />} />
         <Route path="fleet/vehicles/:id/edit" element={<VehicleForm />} />
@@ -221,6 +236,15 @@ function App() {
         <Route path="documents/categories" element={<CategoryList />} />
         <Route path="documents/categories/new" element={<CategoryForm />} />
         <Route path="documents/categories/:id/edit" element={<CategoryForm />} />
+        {/* Admin - Users & Roles */}
+        <Route path="admin/users" element={<UserList />} />
+        <Route path="admin/users/new" element={<UserForm />} />
+        <Route path="admin/users/:id" element={<UserDetail />} />
+        <Route path="admin/users/:id/edit" element={<UserForm />} />
+        <Route path="admin/roles" element={<RoleList />} />
+        <Route path="admin/roles/new" element={<RoleForm />} />
+        <Route path="admin/roles/:id" element={<RoleDetail />} />
+        <Route path="admin/roles/:id/edit" element={<RoleForm />} />
       </Route>
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>

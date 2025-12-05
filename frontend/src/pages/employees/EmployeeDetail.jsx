@@ -53,6 +53,8 @@ import { fetchEmployeeFull, clearCurrentEmployee } from '../../store/slices/empl
 import EntityLink from '../../components/common/EntityLink';
 import organizationService from '../../services/organizationService';
 import ConfirmDialog from '../../components/ConfirmDialog';
+import { usePermission } from '../../hooks/usePermission';
+import { CanDo } from '../../components/common/PermissionGate';
 
 const statusColors = {
   ACTIVE: 'success',
@@ -61,11 +63,17 @@ const statusColors = {
   TERMINATED: 'error',
 };
 
-const TabPanel = ({ children, value, index, ...other }) => (
-  <div role="tabpanel" hidden={value !== index} {...other}>
-    {value === index && <Box sx={{ py: 3 }}>{children}</Box>}
-  </div>
-);
+const TabPanel = ({ children, value, tabId, visibleTabs, ...other }) => {
+  // Encontrar el índice del tab actual basado en su ID
+  const currentTabId = visibleTabs[value]?.id;
+  const isActive = currentTabId === tabId;
+  
+  return (
+    <div role="tabpanel" hidden={!isActive} {...other}>
+      {isActive && <Box sx={{ py: 3 }}>{children}</Box>}
+    </div>
+  );
+};
 
 const EmployeeDetail = () => {
   const { id } = useParams();
@@ -76,6 +84,29 @@ const EmployeeDetail = () => {
 
   const [activeTab, setActiveTab] = useState(0);
   const [deleteAccountDialog, setDeleteAccountDialog] = useState({ open: false, account: null });
+
+  // Permisos para tabs
+  const canViewAccounts = usePermission('employees:read:accounts');
+  const canViewHierarchy = usePermission('employees:read:hierarchy');
+  const canViewPayroll = usePermission('employees:read:payroll');
+  const canViewLoans = usePermission('employees:read:loans');
+  const canViewDocuments = usePermission('employees:read:documents');
+  const canEdit = usePermission('employees:update');
+
+  // Construir lista de tabs visibles
+  const visibleTabs = [
+    { id: 'info', icon: <PersonIcon />, label: 'Información', visible: true },
+    { id: 'work', icon: <WorkIcon />, label: 'Laboral', visible: true },
+    { id: 'accounts', icon: <BankIcon />, label: 'Cuentas', visible: canViewAccounts },
+    { id: 'hierarchy', icon: <HierarchyIcon />, label: 'Jerarquía', visible: canViewHierarchy },
+    { id: 'payroll', icon: <MoneyIcon />, label: 'Nómina', visible: canViewPayroll },
+    { id: 'loans', icon: <LoanIcon />, label: 'Préstamos', visible: canViewLoans },
+    { id: 'documents', icon: <DocumentIcon />, label: 'Documentos', visible: canViewDocuments },
+    { id: 'audit', icon: <AuditIcon />, label: 'Auditoría', visible: true },
+  ].filter(tab => tab.visible);
+
+  // Obtener el ID del tab activo basado en el índice
+  const getActiveTabId = () => visibleTabs[activeTab]?.id || 'info';
 
   useEffect(() => {
     dispatch(fetchEmployeeFull(id));
@@ -220,13 +251,15 @@ const EmployeeDetail = () => {
           </Box>
 
           <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
-            <Button
-              variant="contained"
-              startIcon={<EditIcon />}
-              onClick={() => navigate(`/employees/${id}/edit`)}
-            >
-              Editar
-            </Button>
+            <CanDo permission="employees:update">
+              <Button
+                variant="contained"
+                startIcon={<EditIcon />}
+                onClick={() => navigate(`/employees/${id}/edit`)}
+              >
+                Editar
+              </Button>
+            </CanDo>
           </Box>
         </Box>
 
@@ -293,20 +326,15 @@ const EmployeeDetail = () => {
           variant="scrollable"
           scrollButtons="auto"
         >
-          <Tab icon={<PersonIcon />} label="Información" iconPosition="start" />
-          <Tab icon={<WorkIcon />} label="Laboral" iconPosition="start" />
-          <Tab icon={<BankIcon />} label="Cuentas" iconPosition="start" />
-          <Tab icon={<HierarchyIcon />} label="Jerarquía" iconPosition="start" />
-          <Tab icon={<MoneyIcon />} label="Nómina" iconPosition="start" />
-          <Tab icon={<LoanIcon />} label="Préstamos" iconPosition="start" />
-          <Tab icon={<DocumentIcon />} label="Documentos" iconPosition="start" />
-          <Tab icon={<AuditIcon />} label="Auditoría" iconPosition="start" />
+          {visibleTabs.map((tab) => (
+            <Tab key={tab.id} icon={tab.icon} label={tab.label} iconPosition="start" />
+          ))}
         </Tabs>
         <Divider />
 
         <Box sx={{ p: 2 }}>
           {/* Tab: Información Personal */}
-          <TabPanel value={activeTab} index={0}>
+          <TabPanel value={activeTab} tabId="info" visibleTabs={visibleTabs}>
             <Grid container spacing={3}>
               <Grid item xs={12} md={6}>
                 <Typography variant="h6" gutterBottom>Datos Personales</Typography>
@@ -409,7 +437,7 @@ const EmployeeDetail = () => {
           </TabPanel>
 
           {/* Tab: Información Laboral */}
-          <TabPanel value={activeTab} index={1}>
+          <TabPanel value={activeTab} tabId="work" visibleTabs={visibleTabs}>
             <Grid container spacing={3}>
               <Grid item xs={12} md={6}>
                 <Typography variant="h6" gutterBottom>Datos Laborales</Typography>
@@ -510,7 +538,7 @@ const EmployeeDetail = () => {
           </TabPanel>
 
           {/* Tab: Cuentas Bancarias */}
-          <TabPanel value={activeTab} index={2}>
+          <TabPanel value={activeTab} tabId="accounts" visibleTabs={visibleTabs}>
             <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
               <Typography variant="h6">Cuentas Bancarias</Typography>
               <Button
@@ -620,7 +648,7 @@ const EmployeeDetail = () => {
           </TabPanel>
 
           {/* Tab: Jerarquía */}
-          <TabPanel value={activeTab} index={3}>
+          <TabPanel value={activeTab} tabId="hierarchy" visibleTabs={visibleTabs}>
             <Grid container spacing={3}>
               {/* Supervisor */}
               <Grid item xs={12} md={6}>
@@ -739,7 +767,7 @@ const EmployeeDetail = () => {
           </TabPanel>
 
           {/* Tab: Nómina */}
-          <TabPanel value={activeTab} index={4}>
+          <TabPanel value={activeTab} tabId="payroll" visibleTabs={visibleTabs}>
             <Typography variant="h6" gutterBottom>Historial de Nóminas</Typography>
             {employee.payrollEntries?.length > 0 ? (
               <TableContainer component={Paper} variant="outlined">
@@ -790,7 +818,7 @@ const EmployeeDetail = () => {
           </TabPanel>
 
           {/* Tab: Préstamos */}
-          <TabPanel value={activeTab} index={5}>
+          <TabPanel value={activeTab} tabId="loans" visibleTabs={visibleTabs}>
             <Typography variant="h6" gutterBottom>Préstamos</Typography>
             {employee.loans?.length > 0 ? (
               <Grid container spacing={2}>
@@ -848,7 +876,7 @@ const EmployeeDetail = () => {
           </TabPanel>
 
           {/* Tab: Documentos */}
-          <TabPanel value={activeTab} index={6}>
+          <TabPanel value={activeTab} tabId="documents" visibleTabs={visibleTabs}>
             <Typography variant="h6" gutterBottom>Documentos del Empleado</Typography>
             {employee.documents?.length > 0 ? (
               <TableContainer component={Paper} variant="outlined">
@@ -907,7 +935,7 @@ const EmployeeDetail = () => {
           </TabPanel>
 
           {/* Tab: Auditoría */}
-          <TabPanel value={activeTab} index={7}>
+          <TabPanel value={activeTab} tabId="audit" visibleTabs={visibleTabs}>
             <Typography variant="h6" gutterBottom>Historial de Cambios</Typography>
             {employee.auditLogs?.length > 0 ? (
               <TableContainer component={Paper} variant="outlined">

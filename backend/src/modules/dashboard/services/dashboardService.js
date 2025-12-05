@@ -267,8 +267,11 @@ class DashboardService {
     const { Vehicle, VehicleMaintenance } = this.models;
 
     const totalVehicles = await Vehicle.count();
-    const activeVehicles = await Vehicle.count({ where: { status: 'ACTIVE' } });
-    const inMaintenance = await Vehicle.count({ where: { status: 'MAINTENANCE' } });
+    // Vehículos disponibles o asignados (activos)
+    const activeVehicles = await Vehicle.count({ 
+      where: { status: { [Op.in]: ['AVAILABLE', 'ASSIGNED'] } } 
+    });
+    const inMaintenance = await Vehicle.count({ where: { status: 'IN_MAINTENANCE' } });
 
     // Vehículos con documentos por vencer (próximos 30 días)
     const thirtyDaysFromNow = new Date();
@@ -279,7 +282,7 @@ class DashboardService {
         [Op.or]: [
           { insuranceExpiry: { [Op.between]: [new Date(), thirtyDaysFromNow] } },
           { technicalReviewExpiry: { [Op.between]: [new Date(), thirtyDaysFromNow] } },
-          { circulationPermitExpiry: { [Op.between]: [new Date(), thirtyDaysFromNow] } },
+          { registrationExpiry: { [Op.between]: [new Date(), thirtyDaysFromNow] } },
         ],
       },
     });
@@ -311,8 +314,8 @@ class DashboardService {
     if (this.models.EmployeeDocument) {
       const expiringEmployeeDocs = await this.models.EmployeeDocument.count({
         where: {
-          expiryDate: { [Op.between]: [today, thirtyDaysFromNow] },
-          status: 'ACTIVE',
+          expirationDate: { [Op.between]: [today, thirtyDaysFromNow] },
+          status: 'VALID',
         },
       });
       if (expiringEmployeeDocs > 0) {
@@ -344,10 +347,13 @@ class DashboardService {
       });
     }
 
-    // Préstamos pendientes de aprobación
+    // Préstamos activos (sin aprobar = sin approvedBy)
     if (this.models.EmployeeLoan) {
       const pendingLoans = await this.models.EmployeeLoan.count({
-        where: { status: 'PENDING' },
+        where: { 
+          status: 'ACTIVE',
+          approvedBy: null,
+        },
       });
       if (pendingLoans > 0) {
         alerts.push({

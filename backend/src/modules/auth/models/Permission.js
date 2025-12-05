@@ -25,6 +25,22 @@ module.exports = (sequelize) => {
       allowNull: false,
       comment: 'Módulo al que pertenece el permiso',
     },
+    action: {
+      type: DataTypes.STRING(50),
+      allowNull: true,
+      comment: 'Acción del permiso (read, create, update, delete, approve, etc.)',
+    },
+    field: {
+      type: DataTypes.STRING(50),
+      allowNull: true,
+      comment: 'Campo o tab específico (payroll, loans, accounts, etc.)',
+    },
+    permissionType: {
+      type: DataTypes.ENUM('module', 'action', 'field'),
+      defaultValue: 'action',
+      field: 'permission_type',
+      comment: 'Tipo de permiso: module (*), action (modulo:accion), field (modulo:accion:campo)',
+    },
   }, {
     tableName: 'permissions',
     timestamps: true,

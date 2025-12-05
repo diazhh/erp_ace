@@ -165,14 +165,24 @@ models.AuditLog.belongsTo(models.User, {
   as: 'user',
 });
 
-// Employee -> User (opcional)
+// Employee -> User (opcional, legacy)
 models.Employee.belongsTo(models.User, {
   foreignKey: 'user_id',
   as: 'user',
 });
 models.User.hasOne(models.Employee, {
   foreignKey: 'user_id',
+  as: 'employeeLegacy',
+});
+
+// User -> Employee (nueva relación principal)
+models.User.belongsTo(models.Employee, {
+  foreignKey: 'employee_id',
   as: 'employee',
+});
+models.Employee.hasOne(models.User, {
+  foreignKey: 'employee_id',
+  as: 'userAccount',
 });
 
 // Employee <-> EmployeeDocument

@@ -48,6 +48,7 @@ const initialState = {
   user: null,
   token: authService.getToken(),
   isAuthenticated: !!authService.getToken(),
+  permissions: [], // Permisos del usuario para control de acceso
   loading: false,
   error: null,
 };
@@ -74,10 +75,13 @@ const authSlice = createSlice({
       })
       .addCase(login.fulfilled, (state, action) => {
         state.loading = false;
-        state.user = action.payload.user;
-        state.token = action.payload.token;
+        // action.payload es { token, user } directamente
+        const { user, token } = action.payload;
+        state.user = user;
+        state.token = token;
+        state.permissions = user?.permissions || [];
         state.isAuthenticated = true;
-        authService.setToken(action.payload.token);
+        authService.setToken(token);
       })
       .addCase(login.rejected, (state, action) => {
         state.loading = false;
@@ -90,7 +94,9 @@ const authSlice = createSlice({
       })
       .addCase(getMe.fulfilled, (state, action) => {
         state.loading = false;
+        // action.payload es el usuario directamente (authService.getMe() devuelve response.data, y el thunk devuelve response.data)
         state.user = action.payload;
+        state.permissions = action.payload?.permissions || [];
         state.isAuthenticated = true;
       })
       .addCase(getMe.rejected, (state, action) => {
@@ -104,6 +110,7 @@ const authSlice = createSlice({
       .addCase(logout.fulfilled, (state) => {
         state.user = null;
         state.token = null;
+        state.permissions = [];
         state.isAuthenticated = false;
         state.loading = false;
       });

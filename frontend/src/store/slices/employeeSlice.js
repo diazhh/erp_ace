@@ -120,8 +120,10 @@ const employeeSlice = createSlice({
       })
       .addCase(fetchEmployees.fulfilled, (state, action) => {
         state.loading = false;
-        state.employees = action.payload.employees;
-        state.pagination = action.payload.pagination;
+        // La respuesta viene como { success, data: { employees, pagination } }
+        const data = action.payload.data || action.payload;
+        state.employees = data.employees || [];
+        state.pagination = data.pagination || state.pagination;
       })
       .addCase(fetchEmployees.rejected, (state, action) => {
         state.loading = false;
