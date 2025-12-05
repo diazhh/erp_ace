@@ -1,7 +1,7 @@
 # 🗺️ ROADMAP - ERP Sistema de Gestión Empresarial
 
 **Última actualización:** 2025-12-04  
-**Versión actual:** 0.2.0
+**Versión actual:** 0.8.0
 
 ---
 
@@ -12,20 +12,20 @@
 | Sprint 0 | Setup & Fundamentos | ✅ Completado | 100% |
 | Sprint 1 | Empleados | ✅ Completado | 100% |
 | Sprint 2 | Nómina | ✅ Completado | 100% |
-| Sprint 3 | Finanzas | 🔲 Pendiente | 0% |
-| Sprint 4 | Caja Chica | 🔲 Pendiente | 0% |
-| Sprint 5 | Proyectos | 🔲 Pendiente | 0% |
-| Sprint 6 | Inventario | 🔲 Pendiente | 0% |
+| Sprint 3 | Finanzas | ✅ Completado | 100% |
+| Sprint 4 | Caja Chica | ✅ Completado | 100% |
+| Sprint 5 | Proyectos | ✅ Completado | 100% |
+| Sprint 6 | Inventario | ✅ Completado | 100% |
 | Sprint 7 | Flota | 🔲 Pendiente | 0% |
 | Sprint 8 | Procura | 🔲 Pendiente | 0% |
 | Sprint 9 | HSE | 🔲 Pendiente | 0% |
 | Sprint 10 | Documentos | 🔲 Pendiente | 0% |
 | Sprint 11 | Reportes | 🔲 Pendiente | 0% |
 
-**Progreso Total del Proyecto: ~25%**
+**Progreso Total del Proyecto: ~60%**
 
 ```
-[████████░░░░░░░░░░░░░░░░░░░░░░] 25%
+[██████████████████░░░░░░░░░░░░] 60%
 ```
 
 ---
@@ -258,16 +258,41 @@
 
 ---
 
-## 🔲 SPRINT 6 - Módulo de Inventario (0%)
+## ✅ SPRINT 6 - Módulo de Inventario (100%)
 
-### Por hacer
-- [ ] Modelo Warehouse (almacenes)
-- [ ] Modelo Product (productos)
-- [ ] Modelo InventoryMovement (movimientos)
-- [ ] Modelo StockLevel (niveles de stock)
-- [ ] Entradas y salidas de inventario
-- [ ] Transferencias entre almacenes
-- [ ] Alertas de stock mínimo
+### Backend
+- [x] Modelo Warehouse (almacenes con tipos: MAIN, SECONDARY, TRANSIT, PROJECT)
+- [x] Modelo InventoryCategory (categorías jerárquicas)
+- [x] Modelo InventoryItem (items con stock, costos, niveles)
+- [x] Modelo WarehouseStock (stock por almacén)
+- [x] Modelo InventoryMovement (movimientos con tipos y razones)
+- [x] Servicio de inventario con lógica de negocio
+- [x] Generación automática de códigos (ALM-XXX, CAT-XXX, ITM-XXXXX, MOV-YYMM-XXXX)
+- [x] Actualización automática de stock (total, reservado, disponible)
+- [x] Cálculo de costo promedio ponderado
+- [x] Controlador con CRUD completo para todas las entidades
+- [x] Rutas protegidas con permisos inventory:read/create/update/delete
+- [x] Endpoints de estadísticas generales y por almacén/item
+- [x] Catálogos: tipos de almacén, tipos de item, tipos de movimiento, razones, unidades
+
+### Frontend
+- [x] Redux slice con thunks para todas las operaciones
+- [x] Página de lista de items con filtros y paginación
+- [x] Vista de cards en mobile, tabla en desktop
+- [x] Indicadores de stock bajo y sin stock
+- [x] Formulario de creación/edición de items (página completa)
+- [x] Vista de detalle de item con tabs (información, stock por almacén, movimientos)
+- [x] KPIs: total items, almacenes, stock bajo, sin stock, valor total
+- [x] Traducciones i18n completas
+
+### Tipos de Movimiento
+- ENTRY: Entrada (compra, donación)
+- EXIT: Salida (uso, venta)
+- TRANSFER: Transferencia entre almacenes
+- ADJUSTMENT_IN/OUT: Ajustes de inventario
+- RETURN: Devolución
+- RESERVATION: Reserva para proyecto
+- RELEASE: Liberación de reserva
 
 ---
 

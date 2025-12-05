@@ -30,10 +30,16 @@ import {
   fetchProjectTypes 
 } from '../../store/slices/projectSlice';
 import { fetchEmployees } from '../../store/slices/employeeSlice';
+import { fetchContractors } from '../../store/slices/contractorSlice';
 
 const currencies = [
   { value: 'USD', label: 'Dólar (USD)' },
   { value: 'VES', label: 'Bolívar (VES)' },
+];
+
+const executionTypes = [
+  { value: 'INTERNAL', label: 'Proyecto Interno', description: 'Ejecutado por personal de la empresa' },
+  { value: 'OUTSOURCED', label: 'Proyecto Contratado', description: 'Ejecutado por un contratista externo' },
 ];
 
 const statusOptions = [
@@ -52,6 +58,7 @@ const priorityOptions = [
 ];
 
 const initialFormData = {
+  executionType: 'INTERNAL',
   name: '',
   description: '',
   clientName: '',
@@ -68,6 +75,8 @@ const initialFormData = {
   location: '',
   address: '',
   managerId: '',
+  contractorId: '',
+  contractAmount: '',
   status: 'PLANNING',
   notes: '',
 };
@@ -82,9 +91,11 @@ const ProjectForm = () => {
   
   const { currentProject, projectTypes, loading } = useSelector((state) => state.projects);
   const { employees } = useSelector((state) => state.employees);
+  const { contractors } = useSelector((state) => state.contractors);
   
   const [formData, setFormData] = useState(initialFormData);
   const [selectedManager, setSelectedManager] = useState(null);
+  const [selectedContractor, setSelectedContractor] = useState(null);
   const [saving, setSaving] = useState(false);
   const [errors, setErrors] = useState({});
 
@@ -93,6 +104,7 @@ const ProjectForm = () => {
   useEffect(() => {
     dispatch(fetchEmployees({ limit: 200, status: 'ACTIVE' }));
     dispatch(fetchProjectTypes());
+    dispatch(fetchContractors({ limit: 200, status: 'ACTIVE' }));
     if (isEdit) {
       dispatch(fetchProjectById(id));
     }
@@ -108,6 +120,9 @@ const ProjectForm = () => {
       });
       if (currentProject.manager) {
         setSelectedManager(currentProject.manager);
+      }
+      if (currentProject.contractor) {
+        setSelectedContractor(currentProject.contractor);
       }
     }
   }, [currentProject, isEdit]);
@@ -125,6 +140,11 @@ const ProjectForm = () => {
     setFormData((prev) => ({ ...prev, managerId: newValue?.id || '' }));
   };
 
+  const handleContractorChange = (event, newValue) => {
+    setSelectedContractor(newValue);
+    setFormData((prev) => ({ ...prev, contractorId: newValue?.id || '' }));
+  };
+
   const validate = () => {
     const newErrors = {};
     if (!formData.name.trim()) newErrors.name = 'Nombre es requerido';
@@ -134,6 +154,13 @@ const ProjectForm = () => {
     }
     if (formData.budget && formData.budget < 0) {
       newErrors.budget = 'Presupuesto no puede ser negativo';
+    }
+    // Validaciones específicas por tipo
+    if (formData.executionType === 'OUTSOURCED' && !formData.contractorId) {
+      newErrors.contractorId = 'Debe seleccionar un contratista';
+    }
+    if (formData.executionType === 'OUTSOURCED' && !formData.contractAmount) {
+      newErrors.contractAmount = 'Debe especificar el monto del contrato';
     }
 
     setErrors(newErrors);
@@ -193,6 +220,40 @@ const ProjectForm = () => {
 
       <Paper sx={{ p: { xs: 2, md: 3 } }}>
         <form onSubmit={handleSubmit}>
+          {/* Tipo de Ejecución - Solo visible al crear */}
+          {!isEdit && (
+            <>
+              <Typography variant="h6" gutterBottom>
+                Tipo de Ejecución
+              </Typography>
+              <Grid container spacing={2} sx={{ mb: 3 }}>
+                {executionTypes.map((type) => (
+                  <Grid item xs={12} md={6} key={type.value}>
+                    <Paper
+                      sx={{
+                        p: 2,
+                        cursor: 'pointer',
+                        border: 2,
+                        borderColor: formData.executionType === type.value ? 'primary.main' : 'divider',
+                        bgcolor: formData.executionType === type.value ? 'primary.lighter' : 'background.paper',
+                        '&:hover': { borderColor: 'primary.main' },
+                      }}
+                      onClick={() => setFormData({ ...formData, executionType: type.value })}
+                    >
+                      <Typography variant="subtitle1" fontWeight="bold">
+                        {type.label}
+                      </Typography>
+                      <Typography variant="body2" color="text.secondary">
+                        {type.description}
+                      </Typography>
+                    </Paper>
+                  </Grid>
+                ))}
+              </Grid>
+              <Divider sx={{ my: 3 }} />
+            </>
+          )}
+
           {/* Información General */}
           <Typography variant="h6" gutterBottom>
             Información General
@@ -242,51 +303,70 @@ const ProjectForm = () => {
 
           <Divider sx={{ my: 3 }} />
 
-          {/* Cliente */}
-          <Typography variant="h6" gutterBottom>
-            Información del Cliente
-          </Typography>
-          <Grid container spacing={2}>
-            <Grid item xs={12} md={6}>
-              <TextField
-                fullWidth
-                label="Nombre del Cliente"
-                name="clientName"
-                value={formData.clientName}
-                onChange={handleChange}
-              />
-            </Grid>
-            <Grid item xs={12} md={6}>
-              <TextField
-                fullWidth
-                label="Contacto"
-                name="clientContact"
-                value={formData.clientContact}
-                onChange={handleChange}
-              />
-            </Grid>
-            <Grid item xs={12} md={6}>
-              <TextField
-                fullWidth
-                label="Email del Cliente"
-                name="clientEmail"
-                type="email"
-                value={formData.clientEmail}
-                onChange={handleChange}
-              />
-            </Grid>
-            <Grid item xs={12} md={6}>
-              <TextField
-                fullWidth
-                label="Teléfono del Cliente"
-                name="clientPhone"
-                value={formData.clientPhone}
-                onChange={handleChange}
-              />
-            </Grid>
-          </Grid>
-
-          <Divider sx={{ my: 3 }} />
+          {/* Sección específica según tipo de ejecución */}
+          {formData.executionType === 'OUTSOURCED' ? (
+            <>
+              {/* Contratista - Solo para proyectos contratados */}
+              <Typography variant="h6" gutterBottom>
+                Contratista
+              </Typography>
+              <Grid container spacing={2}>
+                <Grid item xs={12} md={6}>
+                  <Autocomplete
+                    options={contractors}
+                    getOptionLabel={(option) => `${option.companyName} (${option.code})`}
+                    value={selectedContractor}
+                    onChange={handleContractorChange}
+                    renderInput={(params) => (
+                      <TextField 
+                        {...params} 
+                        label="Seleccionar Contratista" 
+                        required
+                        error={!!errors.contractorId}
+                        helperText={errors.contractorId}
+                      />
+                    )}
+                  />
+                </Grid>
+                <Grid item xs={12} md={6}>
+                  <TextField
+                    fullWidth
+                    label="Monto del Contrato"
+                    name="contractAmount"
+                    type="number"
+                    value={formData.contractAmount}
+                    onChange={handleChange}
+                    required
+                    error={!!errors.contractAmount}
+                    helperText={errors.contractAmount}
+                    inputProps={{ min: 0, step: 0.01 }}
+                  />
+                </Grid>
+              </Grid>
+              <Divider sx={{ my: 3 }} />
+            </>
+          ) : (
+            <>
+              {/* Responsable - Solo para proyectos internos */}
+              <Typography variant="h6" gutterBottom>
+                Responsable del Proyecto
+              </Typography>
+              <Grid container spacing={2}>
+                <Grid item xs={12} md={6}>
+                  <Autocomplete
+                    options={employees}
+                    getOptionLabel={(option) => `${option.firstName} ${option.lastName}`}
+                    value={selectedManager}
+                    onChange={handleManagerChange}
+                    renderInput={(params) => (
+                      <TextField {...params} label="Gerente/Responsable" />
+                    )}
+                  />
+                </Grid>
+              </Grid>
+              <Divider sx={{ my: 3 }} />
+            </>
+          )}
 
           {/* Fechas y Estado */}
           <Typography variant="h6" gutterBottom>
@@ -405,26 +485,11 @@ const ProjectForm = () => {
 
           <Divider sx={{ my: 3 }} />
 
-          {/* Responsable y Ubicación */}
+          {/* Ubicación */}
           <Typography variant="h6" gutterBottom>
-            Responsable y Ubicación
+            Ubicación del Proyecto
           </Typography>
           <Grid container spacing={2}>
-            <Grid item xs={12} md={6}>
-              <Autocomplete
-                options={employees}
-                getOptionLabel={(option) => `${option.firstName} ${option.lastName}`}
-                value={selectedManager}
-                onChange={handleManagerChange}
-                renderInput={(params) => (
-                  <TextField
-                    {...params}
-                    label="Gerente del Proyecto"
-                    helperText="Empleado responsable del proyecto"
-                  />
-                )}
-              />
-            </Grid>
             <Grid item xs={12} md={6}>
               <TextField
                 fullWidth
@@ -435,15 +500,13 @@ const ProjectForm = () => {
                 placeholder="Ciudad, Estado"
               />
             </Grid>
-            <Grid item xs={12}>
+            <Grid item xs={12} md={6}>
               <TextField
                 fullWidth
                 label="Dirección"
                 name="address"
                 value={formData.address}
                 onChange={handleChange}
-                multiline
-                rows={2}
               />
             </Grid>
           </Grid>

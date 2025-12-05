@@ -13,6 +13,13 @@ const payrollRoutes = require('./modules/payroll/routes/payrollRoutes');
 const financeRoutes = require('./modules/finance/routes/financeRoutes');
 const pettyCashRoutes = require('./modules/petty-cash/routes/pettyCashRoutes');
 const projectRoutes = require('./modules/projects/routes/projectRoutes');
+const contractorRoutes = require('./modules/projects/routes/contractorRoutes');
+const inventoryRoutes = require('./modules/inventory/routes/inventoryRoutes');
+const fleetRoutes = require('./modules/fleet/routes/fleetRoutes');
+const procurementRoutes = require('./modules/procurement/routes/procurementRoutes');
+const hseRoutes = require('./modules/hse/routes/hseRoutes');
+const documentRoutes = require('./modules/documents/routes/documentRoutes');
+const dashboardRoutes = require('./modules/dashboard/routes/dashboardRoutes');
 
 const app = express();
 
@@ -52,6 +59,13 @@ app.use('/api/payroll', payrollRoutes);
 app.use('/api/finance', financeRoutes);
 app.use('/api/petty-cash', pettyCashRoutes);
 app.use('/api/projects', projectRoutes);
+app.use('/api/contractors', contractorRoutes);
+app.use('/api/inventory', inventoryRoutes);
+app.use('/api/fleet', fleetRoutes);
+app.use('/api/procurement', procurementRoutes);
+app.use('/api/hse', hseRoutes);
+app.use('/api/documents', documentRoutes);
+app.use('/api/dashboard', dashboardRoutes);
 
 // 404 handler
 app.use(notFoundHandler);

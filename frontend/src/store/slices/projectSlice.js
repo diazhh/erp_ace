@@ -297,6 +297,227 @@ export const deleteExpense = createAsyncThunk(
   }
 );
 
+// Updates (Seguimiento)
+export const fetchUpdates = createAsyncThunk(
+  'projects/fetchUpdates',
+  async ({ projectId, params = {} }, { rejectWithValue }) => {
+    try {
+      const response = await api.get(`/projects/${projectId}/updates`, { params });
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.response?.data?.message || 'Error al cargar actualizaciones');
+    }
+  }
+);
+
+export const createUpdate = createAsyncThunk(
+  'projects/createUpdate',
+  async ({ projectId, data }, { rejectWithValue }) => {
+    try {
+      const response = await api.post(`/projects/${projectId}/updates`, data);
+      return response.data.data;
+    } catch (error) {
+      return rejectWithValue(error.response?.data?.message || 'Error al crear actualización');
+    }
+  }
+);
+
+export const deleteUpdate = createAsyncThunk(
+  'projects/deleteUpdate',
+  async ({ projectId, updateId }, { rejectWithValue }) => {
+    try {
+      await api.delete(`/projects/${projectId}/updates/${updateId}`);
+      return updateId;
+    } catch (error) {
+      return rejectWithValue(error.response?.data?.message || 'Error al eliminar actualización');
+    }
+  }
+);
+
+// Photos
+export const fetchPhotos = createAsyncThunk(
+  'projects/fetchPhotos',
+  async ({ projectId, params = {} }, { rejectWithValue }) => {
+    try {
+      const response = await api.get(`/projects/${projectId}/photos`, { params });
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.response?.data?.message || 'Error al cargar fotos');
+    }
+  }
+);
+
+export const addPhoto = createAsyncThunk(
+  'projects/addPhoto',
+  async ({ projectId, data }, { rejectWithValue }) => {
+    try {
+      const response = await api.post(`/projects/${projectId}/photos`, data);
+      return response.data.data;
+    } catch (error) {
+      return rejectWithValue(error.response?.data?.message || 'Error al agregar foto');
+    }
+  }
+);
+
+export const updatePhoto = createAsyncThunk(
+  'projects/updatePhoto',
+  async ({ projectId, photoId, data }, { rejectWithValue }) => {
+    try {
+      const response = await api.put(`/projects/${projectId}/photos/${photoId}`, data);
+      return response.data.data;
+    } catch (error) {
+      return rejectWithValue(error.response?.data?.message || 'Error al actualizar foto');
+    }
+  }
+);
+
+export const deletePhoto = createAsyncThunk(
+  'projects/deletePhoto',
+  async ({ projectId, photoId }, { rejectWithValue }) => {
+    try {
+      await api.delete(`/projects/${projectId}/photos/${photoId}`);
+      return photoId;
+    } catch (error) {
+      return rejectWithValue(error.response?.data?.message || 'Error al eliminar foto');
+    }
+  }
+);
+
+// Catalogs adicionales
+export const fetchUpdateTypes = createAsyncThunk(
+  'projects/fetchUpdateTypes',
+  async (_, { rejectWithValue }) => {
+    try {
+      const response = await api.get('/projects/update-types');
+      return response.data.data;
+    } catch (error) {
+      return rejectWithValue(error.response?.data?.message || 'Error al cargar tipos de actualización');
+    }
+  }
+);
+
+export const fetchPhotoCategories = createAsyncThunk(
+  'projects/fetchPhotoCategories',
+  async (_, { rejectWithValue }) => {
+    try {
+      const response = await api.get('/projects/photo-categories');
+      return response.data.data;
+    } catch (error) {
+      return rejectWithValue(error.response?.data?.message || 'Error al cargar categorías de fotos');
+    }
+  }
+);
+
+// ==================== VALUATIONS ====================
+
+export const fetchValuations = createAsyncThunk(
+  'projects/fetchValuations',
+  async ({ projectId, params = {} }, { rejectWithValue }) => {
+    try {
+      const response = await api.get(`/projects/${projectId}/valuations`, { params });
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.response?.data?.message || 'Error al cargar valuaciones');
+    }
+  }
+);
+
+export const fetchValuationById = createAsyncThunk(
+  'projects/fetchValuationById',
+  async ({ projectId, valuationId }, { rejectWithValue }) => {
+    try {
+      const response = await api.get(`/projects/${projectId}/valuations/${valuationId}`);
+      return response.data.data;
+    } catch (error) {
+      return rejectWithValue(error.response?.data?.message || 'Error al cargar valuación');
+    }
+  }
+);
+
+export const createValuation = createAsyncThunk(
+  'projects/createValuation',
+  async ({ projectId, data }, { rejectWithValue }) => {
+    try {
+      const response = await api.post(`/projects/${projectId}/valuations`, data);
+      return response.data.data;
+    } catch (error) {
+      return rejectWithValue(error.response?.data?.message || 'Error al crear valuación');
+    }
+  }
+);
+
+export const submitValuation = createAsyncThunk(
+  'projects/submitValuation',
+  async ({ projectId, valuationId }, { rejectWithValue }) => {
+    try {
+      const response = await api.post(`/projects/${projectId}/valuations/${valuationId}/submit`);
+      return response.data.data;
+    } catch (error) {
+      return rejectWithValue(error.response?.data?.message || 'Error al enviar valuación');
+    }
+  }
+);
+
+export const approveValuation = createAsyncThunk(
+  'projects/approveValuation',
+  async ({ projectId, valuationId }, { rejectWithValue }) => {
+    try {
+      const response = await api.post(`/projects/${projectId}/valuations/${valuationId}/approve`);
+      return response.data.data;
+    } catch (error) {
+      return rejectWithValue(error.response?.data?.message || 'Error al aprobar valuación');
+    }
+  }
+);
+
+export const rejectValuation = createAsyncThunk(
+  'projects/rejectValuation',
+  async ({ projectId, valuationId, reason }, { rejectWithValue }) => {
+    try {
+      const response = await api.post(`/projects/${projectId}/valuations/${valuationId}/reject`, { reason });
+      return response.data.data;
+    } catch (error) {
+      return rejectWithValue(error.response?.data?.message || 'Error al rechazar valuación');
+    }
+  }
+);
+
+export const generateInvoiceFromValuation = createAsyncThunk(
+  'projects/generateInvoiceFromValuation',
+  async ({ projectId, valuationId, data }, { rejectWithValue }) => {
+    try {
+      const response = await api.post(`/projects/${projectId}/valuations/${valuationId}/generate-invoice`, data);
+      return response.data.data;
+    } catch (error) {
+      return rejectWithValue(error.response?.data?.message || 'Error al generar factura');
+    }
+  }
+);
+
+export const deleteValuation = createAsyncThunk(
+  'projects/deleteValuation',
+  async ({ projectId, valuationId }, { rejectWithValue }) => {
+    try {
+      await api.delete(`/projects/${projectId}/valuations/${valuationId}`);
+      return valuationId;
+    } catch (error) {
+      return rejectWithValue(error.response?.data?.message || 'Error al eliminar valuación');
+    }
+  }
+);
+
+export const fetchValuationStatuses = createAsyncThunk(
+  'projects/fetchValuationStatuses',
+  async (_, { rejectWithValue }) => {
+    try {
+      const response = await api.get('/projects/valuations/statuses');
+      return response.data.data;
+    } catch (error) {
+      return rejectWithValue(error.response?.data?.message || 'Error al cargar estados de valuación');
+    }
+  }
+);
+
 // ==================== SLICE ====================
 
 const initialState = {
@@ -311,10 +532,23 @@ const initialState = {
   // Expenses
   expenses: [],
   expensesPagination: { total: 0, page: 1, limit: 20, totalPages: 0 },
+  // Updates (Seguimiento)
+  updates: [],
+  updatesPagination: { total: 0, page: 1, limit: 20, totalPages: 0 },
+  // Photos
+  photos: [],
+  photosPagination: { total: 0, page: 1, limit: 50, totalPages: 0 },
+  // Valuations
+  valuations: [],
+  valuationsPagination: { total: 0, page: 1, limit: 20, totalPages: 0 },
+  currentValuation: null,
   // Catalogs
   projectTypes: [],
   expenseTypes: [],
   memberRoles: [],
+  updateTypes: [],
+  photoCategories: [],
+  valuationStatuses: [],
   // Stats
   stats: {
     total: 0,
@@ -322,11 +556,15 @@ const initialState = {
     delayed: 0,
     byStatus: [],
     byPriority: [],
+    byExecutionType: [],
     financial: {
       totalBudget: 0,
       totalActualCost: 0,
       totalRevenue: 0,
       totalProfit: 0,
+      totalContractAmount: 0,
+      totalPaidToContractor: 0,
+      pendingContractorPayments: 0,
     },
   },
   // UI State
@@ -346,6 +584,8 @@ const projectSlice = createSlice({
       state.members = [];
       state.milestones = [];
       state.expenses = [];
+      state.updates = [];
+      state.photos = [];
     },
     clearMembers: (state) => {
       state.members = [];
@@ -356,6 +596,19 @@ const projectSlice = createSlice({
     clearExpenses: (state) => {
       state.expenses = [];
       state.expensesPagination = { total: 0, page: 1, limit: 20, totalPages: 0 };
+    },
+    clearUpdates: (state) => {
+      state.updates = [];
+      state.updatesPagination = { total: 0, page: 1, limit: 20, totalPages: 0 };
+    },
+    clearPhotos: (state) => {
+      state.photos = [];
+      state.photosPagination = { total: 0, page: 1, limit: 50, totalPages: 0 };
+    },
+    clearValuations: (state) => {
+      state.valuations = [];
+      state.valuationsPagination = { total: 0, page: 1, limit: 20, totalPages: 0 };
+      state.currentValuation = null;
     },
   },
   extraReducers: (builder) => {
@@ -497,6 +750,75 @@ const projectSlice = createSlice({
       })
       .addCase(deleteExpense.fulfilled, (state, action) => {
         state.expenses = state.expenses.filter(e => e.id !== action.payload);
+      })
+      // Updates (Seguimiento)
+      .addCase(fetchUpdates.fulfilled, (state, action) => {
+        state.updates = action.payload.data;
+        state.updatesPagination = action.payload.pagination || initialState.updatesPagination;
+      })
+      .addCase(createUpdate.fulfilled, (state, action) => {
+        state.updates.unshift(action.payload);
+      })
+      .addCase(deleteUpdate.fulfilled, (state, action) => {
+        state.updates = state.updates.filter(u => u.id !== action.payload);
+      })
+      // Photos
+      .addCase(fetchPhotos.fulfilled, (state, action) => {
+        state.photos = action.payload.data;
+        state.photosPagination = action.payload.pagination || initialState.photosPagination;
+      })
+      .addCase(addPhoto.fulfilled, (state, action) => {
+        state.photos.push(action.payload);
+      })
+      .addCase(updatePhoto.fulfilled, (state, action) => {
+        const index = state.photos.findIndex(p => p.id === action.payload.id);
+        if (index !== -1) {
+          state.photos[index] = action.payload;
+        }
+      })
+      .addCase(deletePhoto.fulfilled, (state, action) => {
+        state.photos = state.photos.filter(p => p.id !== action.payload);
+      })
+      // Catalogs adicionales
+      .addCase(fetchUpdateTypes.fulfilled, (state, action) => {
+        state.updateTypes = action.payload;
+      })
+      .addCase(fetchPhotoCategories.fulfilled, (state, action) => {
+        state.photoCategories = action.payload;
+      })
+      // Valuations
+      .addCase(fetchValuations.fulfilled, (state, action) => {
+        state.valuations = action.payload.data;
+        state.valuationsPagination = action.payload.pagination;
+      })
+      .addCase(fetchValuationById.fulfilled, (state, action) => {
+        state.currentValuation = action.payload;
+      })
+      .addCase(createValuation.fulfilled, (state, action) => {
+        state.valuations.unshift(action.payload);
+      })
+      .addCase(submitValuation.fulfilled, (state, action) => {
+        const index = state.valuations.findIndex(v => v.id === action.payload.id);
+        if (index !== -1) state.valuations[index] = action.payload;
+      })
+      .addCase(approveValuation.fulfilled, (state, action) => {
+        const index = state.valuations.findIndex(v => v.id === action.payload.id);
+        if (index !== -1) state.valuations[index] = action.payload;
+      })
+      .addCase(rejectValuation.fulfilled, (state, action) => {
+        const index = state.valuations.findIndex(v => v.id === action.payload.id);
+        if (index !== -1) state.valuations[index] = action.payload;
+      })
+      .addCase(generateInvoiceFromValuation.fulfilled, (state, action) => {
+        // La factura se genera, actualizamos la valuación
+        const valuation = state.valuations.find(v => v.invoiceId === action.payload.id);
+        if (valuation) valuation.status = 'INVOICED';
+      })
+      .addCase(deleteValuation.fulfilled, (state, action) => {
+        state.valuations = state.valuations.filter(v => v.id !== action.payload);
+      })
+      .addCase(fetchValuationStatuses.fulfilled, (state, action) => {
+        state.valuationStatuses = action.payload;
       });
   },
 });
@@ -506,7 +828,10 @@ export const {
   clearCurrentProject, 
   clearMembers, 
   clearMilestones, 
-  clearExpenses 
+  clearExpenses,
+  clearUpdates,
+  clearPhotos,
+  clearValuations,
 } = projectSlice.actions;
 
 export default projectSlice.reducer;

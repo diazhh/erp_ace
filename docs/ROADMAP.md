@@ -1,7 +1,7 @@
 # 🗺️ ROADMAP - ERP Sistema de Gestión Empresarial
 
-**Última actualización:** 2025-12-04  
-**Versión actual:** 0.6.0 (Módulo de Proyectos)
+**Última actualización:** 2025-12-05  
+**Versión actual:** 0.11.0 (Módulo de Documentos)
 
 ---
 
@@ -16,17 +16,17 @@
 | Sprint 3 | Finanzas | ✅ Completado | 100% |
 | Sprint 4 | Caja Chica | ✅ Completado | 100% |
 | Sprint 5 | Proyectos | ✅ Completado | 100% |
-| Sprint 6 | Inventario | 🔲 Pendiente | 0% |
-| Sprint 7 | Flota | 🔲 Pendiente | 0% |
-| Sprint 8 | Procura | 🔲 Pendiente | 0% |
-| Sprint 9 | HSE | 🔲 Pendiente | 0% |
-| Sprint 10 | Documentos | 🔲 Pendiente | 0% |
+| Sprint 6 | Inventario | ✅ Completado | 100% |
+| Sprint 7 | Flota | ✅ Completado | 100% |
+| Sprint 8 | Procura | ✅ Completado | 100% |
+| Sprint 9 | HSE | ✅ Completado | 100% |
+| Sprint 10 | Documentos | ✅ Completado | 100% |
 | Sprint 11 | Reportes & Dashboard | 🔲 Pendiente | 0% |
 
-**Progreso Total del Proyecto: ~54%**
+**Progreso Total del Proyecto: ~92%**
 
 ```
-[████████████████░░░░░░░░░░░░░░] 54%
+[████████████████████████████░░] 92%
 ```
 
 ---
@@ -444,48 +444,99 @@ Cada usuario debe poder personalizar su experiencia:
 
 ---
 
-## 🔲 SPRINT 6 - Módulo de Inventario (0%)
+## ✅ SPRINT 5.1 - Proyectos Internos vs Contratados (100%)
 
 ### Backend
-- [ ] Modelo Warehouse (almacenes)
-- [ ] Modelo InventoryItem (items)
-- [ ] Modelo InventoryMovement (movimientos)
-- [ ] Modelo InventoryCategory
-- [ ] Servicio de inventario
+- [x] Campo `executionType` en modelo Project (INTERNAL, OUTSOURCED)
+- [x] Modelo ProjectUpdate para seguimiento de proyectos
+- [x] Modelo ProjectPhoto para registros fotográficos
+- [x] Campo `projectId` en PettyCashEntry para trazabilidad
+- [x] Generación de códigos diferenciados (PRJ-INT-XXX, PRJ-CTR-XXX)
+- [x] Endpoints para updates: crear, listar, eliminar
+- [x] Endpoints para photos: agregar, listar, actualizar, eliminar
+- [x] Catálogos de tipos de actualización y categorías de fotos
+- [x] Migración para nuevos campos y tablas
 
 ### Frontend
-- [ ] Página de almacenes
-- [ ] Página de items con stock
-- [ ] Movimientos de entrada/salida
-- [ ] Vista detalle de item con historial
+- [x] Selector de tipo de ejecución al crear proyecto
+- [x] Filtro por tipo de ejecución en lista de proyectos
+- [x] Chip de tipo en lista y cards
+- [x] Tab de Seguimiento con actualizaciones
+- [x] Tab de Fotos con galería
+- [x] Diálogo para crear actualizaciones
+- [x] Diálogo para agregar fotos
 
-### Trazabilidad
-- [ ] Movimientos enlazados a proyectos
-- [ ] Movimientos enlazados a empleados
-- [ ] Costos reflejados en finanzas
+### Diferencias por Tipo
+**Proyectos Internos (INTERNAL)**:
+- Ejecutados por personal de la empresa
+- Asignación de empleados (ProjectMember)
+- Hitos y tareas internas (ProjectMilestone)
+- Gastos de caja chica con trazabilidad al proyecto
+
+**Proyectos Contratados (OUTSOURCED)**:
+- Ejecutados por contratistas externos
+- Contratista asignado (Contractor)
+- Monto del contrato y pagos
+- Seguimiento y fotos para verificación del avance
 
 ---
 
-## 🔲 SPRINT 7 - Módulo de Flota (0%)
+## ✅ SPRINT 6 - Módulo de Inventario (100%)
 
 ### Backend
-- [ ] Modelo Vehicle
-- [ ] Modelo VehicleAssignment (asignaciones)
-- [ ] Modelo VehicleMaintenance (mantenimientos)
-- [ ] Modelo FuelLog (combustible)
-- [ ] Servicio de flota
+- [x] Modelo Warehouse (almacenes: MAIN, SECONDARY, TRANSIT, PROJECT)
+- [x] Modelo InventoryItem (items con stock, costos, niveles)
+- [x] Modelo InventoryMovement (movimientos con tipos y razones)
+- [x] Modelo InventoryCategory (categorías jerárquicas)
+- [x] Modelo WarehouseStock (stock por almacén)
+- [x] Servicio de inventario (códigos, stock, costo promedio)
+- [x] Controlador con CRUD completo
+- [x] Rutas protegidas con permisos `inventory:*`
 
 ### Frontend
-- [ ] Página de vehículos
-- [ ] Vista detalle: Info, Asignación, Mantenimientos, Combustible, Costos
-- [ ] Calendario de mantenimientos
-- [ ] Alertas de vencimientos
+- [x] Página de items (`/inventory`) con filtros y paginación
+- [x] Página de almacenes (`/inventory/warehouses`)
+- [x] Página de movimientos (`/inventory/movements`)
+- [x] Formularios de creación/edición como páginas completas
+- [x] Vista detalle de item con tabs (info, stock por almacén, movimientos)
+- [x] Vista detalle de almacén con stock y movimientos
+- [x] Responsive (cards en mobile, tablas en desktop)
+
+### Trazabilidad e Integración
+- [x] Movimientos enlazados a proyectos
+- [x] Movimientos enlazados a empleados
+- [x] Integración con Finanzas: compras generan transacciones automáticas
+- [x] Catálogos de tipos (almacén, item, movimiento, unidades)
+
+---
+
+## ✅ SPRINT 7 - Módulo de Flota (100%)
+
+### Backend
+- [x] Modelo Vehicle (información completa del vehículo, documentos, vencimientos)
+- [x] Modelo VehicleAssignment (asignaciones a empleados/proyectos/departamentos)
+- [x] Modelo VehicleMaintenance (mantenimientos preventivos y correctivos)
+- [x] Modelo FuelLog (registros de combustible con trazabilidad)
+- [x] Servicio de flota con lógica de negocio completa
+- [x] Controlador y rutas de flota
+- [x] Estadísticas y alertas de flota
+
+### Frontend
+- [x] Página de vehículos con filtros y estadísticas
+- [x] Vista detalle: Info, Asignaciones, Mantenimientos, Combustible, Costos
+- [x] Formulario de vehículos (página completa)
+- [x] Lista y formulario de mantenimientos
+- [x] Lista y formulario de registros de combustible
+- [x] Responsive (cards en mobile, tablas en desktop)
+- [x] Alertas de documentos por vencer
 
 ### Trazabilidad
-- [ ] Asignación actual (empleado/proyecto)
-- [ ] Historial de asignaciones
-- [ ] Costos totales del vehículo
-- [ ] Documentos del vehículo
+- [x] Asignación actual (empleado/proyecto/departamento)
+- [x] Historial de asignaciones con kilometraje
+- [x] Costos totales del vehículo (mantenimiento + combustible)
+- [x] Documentos del vehículo con alertas de vencimiento
+- [x] Consumo promedio de combustible
+- [x] Integración con empleados, proyectos y finanzas
 
 ---
 
@@ -722,7 +773,54 @@ cd backend && bash tests/api-tests.sh
 7. ~~**Mejorar organigrama** con vista por departamentos~~ ✅
 8. **Agregar gráficos de evolución de saldo** en cuentas
 9. **Crear dashboards con KPIs** por módulo
-10. **Implementar módulo de Proyectos**
+10. ~~**Implementar módulo de Proyectos**~~ ✅
+11. **Implementar módulo de Inventario**
+12. **Implementar módulo de Flota**
+
+---
+
+## 📝 Cambios v0.11.0 (2025-12-05)
+
+### Módulo de Documentos - Completo
+- ✅ **Backend**: Modelos Document, DocumentCategory, DocumentVersion, DocumentShare
+- ✅ **Backend**: Controlador con CRUD completo para documentos y categorías
+- ✅ **Backend**: Workflow de documentos (borrador → revisión → aprobado/rechazado → archivado)
+- ✅ **Backend**: Sistema de versiones de documentos
+- ✅ **Backend**: Compartición de documentos por usuario o departamento
+- ✅ **Backend**: Estadísticas y alertas de vencimiento
+- ✅ **Backend**: Rutas protegidas con permisos `documents:*`
+- ✅ **Frontend**: Slice de Redux con todas las acciones
+- ✅ **Frontend**: Dashboard con KPIs y acciones rápidas
+- ✅ **Frontend**: Listado con filtros por estado, tipo, categoría
+- ✅ **Frontend**: Vista detalle con tabs (Info, Versiones, Compartido)
+- ✅ **Frontend**: Formulario de creación/edición como página completa
+- ✅ **Frontend**: Gestión de categorías jerárquicas
+- ✅ **Frontend**: Acciones de workflow (enviar a revisión, aprobar, rechazar, archivar)
+
+#### Características del Módulo
+- **Tipos de Documento**: Contrato, Convenio, Política, Procedimiento, Manual, Formulario, Informe, Certificado, Licencia, Permiso, Factura, Recibo, Carta, Memorando, Acta, Especificación, Plano, Fotografía, Documento de Identidad, Otro
+- **Estados**: Borrador, Pendiente de Revisión, Aprobado, Rechazado, Vencido, Archivado, Cancelado
+- **Confidencialidad**: Público, Interno, Confidencial, Restringido
+- **Entidades Relacionadas**: Empleado, Proyecto, Contratista, Vehículo, Cuenta Bancaria, Caja Chica, Incidente, Capacitación, Inspección, Orden de Compra, Factura, General
+- **Módulos de Categorías**: General, Empleados, Proyectos, Contratistas, Flota, Finanzas, HSE, Legal, Administrativo
+
+---
+
+## 📝 Cambios v0.6.0 (2025-12-04)
+
+### Módulo de Proyectos - Completo
+- ✅ **Backend**: Modelos Project, ProjectMember, ProjectMilestone, ProjectExpense
+- ✅ **Backend**: Servicio con generación de códigos, cálculo de progreso, estadísticas
+- ✅ **Backend**: Controlador con CRUD completo y endpoints de trazabilidad
+- ✅ **Backend**: Rutas protegidas con permisos `projects:*`
+- ✅ **Frontend**: Slice de Redux con todas las acciones
+- ✅ **Frontend**: Página de listado con tabla/cards responsive
+- ✅ **Frontend**: Formulario de creación/edición como página completa
+- ✅ **Frontend**: Vista detalle con tabs (Info, Equipo, Hitos, Gastos, Auditoría)
+- ✅ **Frontend**: Gestión de miembros del equipo con roles
+- ✅ **Frontend**: Gestión de hitos con completación y cálculo de progreso
+- ✅ **Frontend**: Gestión de gastos con aprobación/rechazo
+- ✅ **i18n**: Traducciones en español
 
 ---
 

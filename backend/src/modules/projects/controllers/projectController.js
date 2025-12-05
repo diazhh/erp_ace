@@ -14,8 +14,8 @@ class ProjectController {
     try {
       const { Project } = require('../../../database/models');
       
-      const code = await projectService.generateProjectCode();
       const {
+        executionType,
         name,
         description,
         clientName,
@@ -34,11 +34,17 @@ class ProjectController {
         managerId,
         departmentId,
         pettyCashId,
+        contractorId,
+        contractAmount,
         notes,
       } = req.body;
       
+      // Generar código según tipo de ejecución
+      const code = await projectService.generateProjectCode(executionType || 'INTERNAL');
+      
       const project = await Project.create({
         code,
+        executionType: executionType || 'INTERNAL',
         name,
         description,
         clientName,
@@ -57,6 +63,8 @@ class ProjectController {
         managerId,
         departmentId,
         pettyCashId,
+        contractorId,
+        contractAmount,
         createdBy: req.user.id,
         notes,
       }, { transaction: t });
@@ -79,14 +87,16 @@ class ProjectController {
    */
   async list(req, res, next) {
     try {
-      const { Project, Employee, Department } = require('../../../database/models');
-      const { status, priority, managerId, departmentId, search, page = 1, limit = 20 } = req.query;
+      const { Project, Employee, Department, Contractor } = require('../../../database/models');
+      const { executionType, status, priority, managerId, departmentId, contractorId, search, page = 1, limit = 20 } = req.query;
       
       const whereClause = {};
+      if (executionType) whereClause.executionType = executionType;
       if (status) whereClause.status = status;
       if (priority) whereClause.priority = priority;
       if (managerId) whereClause.managerId = managerId;
       if (departmentId) whereClause.departmentId = departmentId;
+      if (contractorId) whereClause.contractorId = contractorId;
       if (search) {
         whereClause[Op.or] = [
           { name: { [Op.iLike]: `%${search}%` } },
@@ -102,6 +112,7 @@ class ProjectController {
         include: [
           { model: Employee, as: 'manager', attributes: ['id', 'firstName', 'lastName', 'employeeCode'] },
           { model: Department, as: 'department', attributes: ['id', 'name', 'code'] },
+          { model: Contractor, as: 'contractor', attributes: ['id', 'code', 'companyName', 'status'] },
         ],
         order: [['createdAt', 'DESC']],
         limit: parseInt(limit),
@@ -128,13 +139,14 @@ class ProjectController {
    */
   async getById(req, res, next) {
     try {
-      const { Project, Employee, Department, PettyCash } = require('../../../database/models');
+      const { Project, Employee, Department, PettyCash, Contractor } = require('../../../database/models');
       
       const project = await Project.findByPk(req.params.id, {
         include: [
           { model: Employee, as: 'manager', attributes: ['id', 'firstName', 'lastName', 'employeeCode', 'email'] },
           { model: Department, as: 'department', attributes: ['id', 'name', 'code'] },
           { model: PettyCash, as: 'pettyCash', attributes: ['id', 'code', 'name', 'currentBalance'] },
+          { model: Contractor, as: 'contractor', attributes: ['id', 'code', 'companyName', 'contactName', 'contactPhone', 'contactEmail', 'status', 'rating'] },
         ],
       });
       
@@ -157,7 +169,7 @@ class ProjectController {
   async getFullById(req, res, next) {
     try {
       const { 
-        Project, Employee, Department, PettyCash, User,
+        Project, Employee, Department, PettyCash, User, Contractor,
         ProjectMember, ProjectMilestone, ProjectExpense, AuditLog 
       } = require('../../../database/models');
       
@@ -166,6 +178,7 @@ class ProjectController {
           { model: Employee, as: 'manager', attributes: ['id', 'firstName', 'lastName', 'employeeCode', 'email', 'phone'] },
           { model: Department, as: 'department', attributes: ['id', 'name', 'code'] },
           { model: PettyCash, as: 'pettyCash', attributes: ['id', 'code', 'name', 'currentBalance', 'currency'] },
+          { model: Contractor, as: 'contractor' },
           { model: User, as: 'creator', attributes: ['id', 'username'] },
         ],
       });
@@ -249,6 +262,7 @@ class ProjectController {
       }
       
       const {
+        // No permitir cambiar executionType después de creado
         name,
         description,
         clientName,
@@ -270,6 +284,9 @@ class ProjectController {
         managerId,
         departmentId,
         pettyCashId,
+        contractorId,
+        contractAmount,
+        paidToContractor,
         notes,
       } = req.body;
       
@@ -295,6 +312,9 @@ class ProjectController {
         managerId,
         departmentId,
         pettyCashId,
+        contractorId,
+        contractAmount,
+        paidToContractor,
         notes,
       });
       
@@ -993,6 +1013,335 @@ class ProjectController {
       return res.json({
         success: true,
         data: roles,
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  // ==================== PROJECT UPDATES ====================
+
+  /**
+   * Crear actualización del proyecto
+   */
+  async createUpdate(req, res, next) {
+    try {
+      const { Project, ProjectUpdate, Employee } = require('../../../database/models');
+      
+      const project = await Project.findByPk(req.params.id);
+      if (!project) {
+        throw new NotFoundError('Proyecto no encontrado');
+      }
+      
+      // Obtener el empleado del usuario actual
+      const employee = await Employee.findOne({ where: { userId: req.user.id } });
+      if (!employee) {
+        throw new BadRequestError('Usuario no tiene empleado asociado');
+      }
+      
+      const {
+        updateType,
+        title,
+        description,
+        progressBefore,
+        progressAfter,
+        paymentId,
+        milestoneId,
+        isPublic,
+        notes,
+      } = req.body;
+      
+      const update = await ProjectUpdate.create({
+        projectId: project.id,
+        updateType: updateType || 'PROGRESS',
+        title,
+        description,
+        progressBefore: progressBefore || project.progress,
+        progressAfter,
+        paymentId,
+        milestoneId,
+        reportedBy: employee.id,
+        isPublic: isPublic !== false,
+        notes,
+      });
+      
+      // Si se reporta un nuevo progreso, actualizar el proyecto
+      if (progressAfter !== undefined && progressAfter !== null) {
+        await project.update({ progress: progressAfter });
+      }
+      
+      return res.status(201).json({
+        success: true,
+        message: 'Actualización registrada',
+        data: update,
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  /**
+   * Listar actualizaciones del proyecto
+   */
+  async listUpdates(req, res, next) {
+    try {
+      const { ProjectUpdate, Employee, ProjectMilestone, ContractorPayment, ProjectPhoto } = require('../../../database/models');
+      const { updateType, page = 1, limit = 20 } = req.query;
+      
+      const whereClause = { projectId: req.params.id };
+      if (updateType) whereClause.updateType = updateType;
+      
+      const offset = (parseInt(page) - 1) * parseInt(limit);
+      
+      const { count, rows } = await ProjectUpdate.findAndCountAll({
+        where: whereClause,
+        include: [
+          { model: Employee, as: 'reporter', attributes: ['id', 'firstName', 'lastName', 'employeeCode'] },
+          { model: ProjectMilestone, as: 'milestone', attributes: ['id', 'name'] },
+          { model: ContractorPayment, as: 'payment', attributes: ['id', 'code', 'amount'] },
+          { model: ProjectPhoto, as: 'photos', attributes: ['id', 'photoUrl', 'thumbnailUrl', 'caption'] },
+        ],
+        order: [['reportedAt', 'DESC']],
+        limit: parseInt(limit),
+        offset,
+      });
+      
+      return res.json({
+        success: true,
+        data: rows,
+        pagination: {
+          total: count,
+          page: parseInt(page),
+          limit: parseInt(limit),
+          totalPages: Math.ceil(count / parseInt(limit)),
+        },
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  /**
+   * Eliminar actualización
+   */
+  async deleteUpdate(req, res, next) {
+    try {
+      const { ProjectUpdate, ProjectPhoto } = require('../../../database/models');
+      
+      const update = await ProjectUpdate.findByPk(req.params.updateId);
+      if (!update) {
+        throw new NotFoundError('Actualización no encontrada');
+      }
+      
+      // Eliminar fotos asociadas
+      await ProjectPhoto.destroy({ where: { updateId: update.id } });
+      await update.destroy();
+      
+      return res.json({
+        success: true,
+        message: 'Actualización eliminada',
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  // ==================== PROJECT PHOTOS ====================
+
+  /**
+   * Agregar foto al proyecto
+   */
+  async addPhoto(req, res, next) {
+    try {
+      const { Project, ProjectPhoto } = require('../../../database/models');
+      
+      const project = await Project.findByPk(req.params.id);
+      if (!project) {
+        throw new NotFoundError('Proyecto no encontrado');
+      }
+      
+      const {
+        updateId,
+        photoUrl,
+        thumbnailUrl,
+        caption,
+        category,
+        fileName,
+        fileSize,
+        mimeType,
+        takenAt,
+        latitude,
+        longitude,
+        sortOrder,
+        notes,
+      } = req.body;
+      
+      // Obtener el siguiente orden si no se especifica
+      let order = sortOrder;
+      if (order === undefined) {
+        const lastPhoto = await ProjectPhoto.findOne({
+          where: { projectId: project.id },
+          order: [['sortOrder', 'DESC']],
+        });
+        order = lastPhoto ? lastPhoto.sortOrder + 1 : 0;
+      }
+      
+      const photo = await ProjectPhoto.create({
+        projectId: project.id,
+        updateId,
+        photoUrl,
+        thumbnailUrl,
+        caption,
+        category: category || 'PROGRESS',
+        fileName,
+        fileSize,
+        mimeType,
+        takenAt,
+        latitude,
+        longitude,
+        sortOrder: order,
+        uploadedBy: req.user.id,
+        notes,
+      });
+      
+      return res.status(201).json({
+        success: true,
+        message: 'Foto agregada',
+        data: photo,
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  /**
+   * Listar fotos del proyecto
+   */
+  async listPhotos(req, res, next) {
+    try {
+      const { ProjectPhoto, ProjectUpdate, User } = require('../../../database/models');
+      const { category, page = 1, limit = 50 } = req.query;
+      
+      const whereClause = { projectId: req.params.id };
+      if (category) whereClause.category = category;
+      
+      const offset = (parseInt(page) - 1) * parseInt(limit);
+      
+      const { count, rows } = await ProjectPhoto.findAndCountAll({
+        where: whereClause,
+        include: [
+          { model: ProjectUpdate, as: 'update', attributes: ['id', 'title', 'updateType'] },
+          { model: User, as: 'uploader', attributes: ['id', 'username'] },
+        ],
+        order: [['sortOrder', 'ASC'], ['createdAt', 'DESC']],
+        limit: parseInt(limit),
+        offset,
+      });
+      
+      return res.json({
+        success: true,
+        data: rows,
+        pagination: {
+          total: count,
+          page: parseInt(page),
+          limit: parseInt(limit),
+          totalPages: Math.ceil(count / parseInt(limit)),
+        },
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  /**
+   * Actualizar foto
+   */
+  async updatePhoto(req, res, next) {
+    try {
+      const { ProjectPhoto } = require('../../../database/models');
+      
+      const photo = await ProjectPhoto.findByPk(req.params.photoId);
+      if (!photo) {
+        throw new NotFoundError('Foto no encontrada');
+      }
+      
+      const { caption, category, sortOrder, notes } = req.body;
+      
+      await photo.update({ caption, category, sortOrder, notes });
+      
+      return res.json({
+        success: true,
+        message: 'Foto actualizada',
+        data: photo,
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  /**
+   * Eliminar foto
+   */
+  async deletePhoto(req, res, next) {
+    try {
+      const { ProjectPhoto } = require('../../../database/models');
+      
+      const photo = await ProjectPhoto.findByPk(req.params.photoId);
+      if (!photo) {
+        throw new NotFoundError('Foto no encontrada');
+      }
+      
+      await photo.destroy();
+      
+      return res.json({
+        success: true,
+        message: 'Foto eliminada',
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  /**
+   * Obtener categorías de fotos
+   */
+  async getPhotoCategories(req, res, next) {
+    try {
+      const categories = [
+        { code: 'PROGRESS', name: 'Avance de Obra', icon: 'construction' },
+        { code: 'BEFORE', name: 'Antes', icon: 'history' },
+        { code: 'AFTER', name: 'Después', icon: 'check_circle' },
+        { code: 'ISSUE', name: 'Problema/Incidencia', icon: 'warning' },
+        { code: 'DELIVERY', name: 'Entrega', icon: 'local_shipping' },
+        { code: 'INSPECTION', name: 'Inspección', icon: 'search' },
+        { code: 'OTHER', name: 'Otro', icon: 'photo' },
+      ];
+      return res.json({
+        success: true,
+        data: categories,
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  /**
+   * Obtener tipos de actualización
+   */
+  async getUpdateTypes(req, res, next) {
+    try {
+      const types = [
+        { code: 'PROGRESS', name: 'Reporte de Avance', icon: 'trending_up' },
+        { code: 'ISSUE', name: 'Problema/Incidencia', icon: 'warning' },
+        { code: 'MILESTONE', name: 'Hito Alcanzado', icon: 'flag' },
+        { code: 'PAYMENT', name: 'Pago Realizado', icon: 'payment' },
+        { code: 'PHOTO', name: 'Registro Fotográfico', icon: 'photo_camera' },
+        { code: 'NOTE', name: 'Nota General', icon: 'note' },
+        { code: 'APPROVAL', name: 'Aprobación', icon: 'check_circle' },
+      ];
+      return res.json({
+        success: true,
+        data: types,
       });
     } catch (error) {
       next(error);

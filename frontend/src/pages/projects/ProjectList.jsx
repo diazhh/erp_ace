@@ -76,6 +76,16 @@ const priorityLabels = {
   CRITICAL: 'Crítica',
 };
 
+const executionTypeLabels = {
+  INTERNAL: 'Interno',
+  OUTSOURCED: 'Contratado',
+};
+
+const executionTypeColors = {
+  INTERNAL: 'info',
+  OUTSOURCED: 'secondary',
+};
+
 const ProjectList = () => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
@@ -87,6 +97,7 @@ const ProjectList = () => {
   
   const [filters, setFilters] = useState({
     search: '',
+    executionType: '',
     status: '',
     priority: '',
   });
@@ -96,13 +107,14 @@ const ProjectList = () => {
   useEffect(() => {
     loadProjects();
     dispatch(fetchProjectStats());
-  }, [dispatch, page, rowsPerPage, filters.status, filters.priority]);
+  }, [dispatch, page, rowsPerPage, filters.executionType, filters.status, filters.priority]);
 
   const loadProjects = () => {
     const params = {
       page: page + 1,
       limit: rowsPerPage,
       ...(filters.search && { search: filters.search }),
+      ...(filters.executionType && { executionType: filters.executionType }),
       ...(filters.status && { status: filters.status }),
       ...(filters.priority && { priority: filters.priority }),
     };
@@ -178,6 +190,12 @@ const ProjectList = () => {
                   </Box>
                 </Box>
                 <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.5, alignItems: 'flex-end' }}>
+                  <Chip
+                    label={executionTypeLabels[project.executionType] || 'Interno'}
+                    color={executionTypeColors[project.executionType] || 'info'}
+                    size="small"
+                    variant="outlined"
+                  />
                   <Chip
                     label={statusLabels[project.status]}
                     color={statusColors[project.status]}
@@ -290,6 +308,7 @@ const ProjectList = () => {
           <TableRow>
             <TableCell>Código</TableCell>
             <TableCell>Nombre</TableCell>
+            <TableCell>Tipo</TableCell>
             <TableCell>Cliente</TableCell>
             <TableCell>Estado</TableCell>
             <TableCell>Prioridad</TableCell>
@@ -318,6 +337,14 @@ const ProjectList = () => {
                     </Typography>
                   )}
                 </Box>
+              </TableCell>
+              <TableCell>
+                <Chip
+                  label={executionTypeLabels[project.executionType] || 'Interno'}
+                  color={executionTypeColors[project.executionType] || 'info'}
+                  size="small"
+                  variant="outlined"
+                />
               </TableCell>
               <TableCell>{project.clientName || '-'}</TableCell>
               <TableCell>
@@ -512,7 +539,7 @@ const ProjectList = () => {
       {/* Filters */}
       <Paper sx={{ p: 2, mb: 3 }}>
         <Grid container spacing={2} alignItems="center">
-          <Grid item xs={12} sm={4}>
+          <Grid item xs={12} sm={6} md={3}>
             <TextField
               fullWidth
               size="small"
@@ -529,7 +556,22 @@ const ProjectList = () => {
               }}
             />
           </Grid>
-          <Grid item xs={6} sm={3}>
+          <Grid item xs={6} sm={3} md={2}>
+            <TextField
+              fullWidth
+              size="small"
+              select
+              label="Tipo"
+              value={filters.executionType}
+              onChange={(e) => setFilters({ ...filters, executionType: e.target.value })}
+            >
+              <MenuItem value="">Todos</MenuItem>
+              {Object.entries(executionTypeLabels).map(([key, label]) => (
+                <MenuItem key={key} value={key}>{label}</MenuItem>
+              ))}
+            </TextField>
+          </Grid>
+          <Grid item xs={6} sm={3} md={2}>
             <TextField
               fullWidth
               size="small"
@@ -544,7 +586,7 @@ const ProjectList = () => {
               ))}
             </TextField>
           </Grid>
-          <Grid item xs={6} sm={3}>
+          <Grid item xs={6} sm={3} md={2}>
             <TextField
               fullWidth
               size="small"
@@ -559,7 +601,7 @@ const ProjectList = () => {
               ))}
             </TextField>
           </Grid>
-          <Grid item xs={12} sm={2}>
+          <Grid item xs={6} sm={3} md={1}>
             <Button fullWidth variant="outlined" onClick={handleSearch}>
               Buscar
             </Button>

@@ -11,7 +11,7 @@ module.exports = (sequelize) => {
       type: DataTypes.STRING(20),
       allowNull: false,
       unique: true,
-      comment: 'Código único del proyecto (ej: PRJ-001)',
+      comment: 'Código único del proyecto (ej: PRJ-001 para interno, PRJ-CTR-001 para contratado)',
     },
     name: {
       type: DataTypes.STRING(200),
@@ -21,6 +21,14 @@ module.exports = (sequelize) => {
     description: {
       type: DataTypes.TEXT,
       allowNull: true,
+    },
+    // Tipo de ejecución
+    executionType: {
+      type: DataTypes.ENUM('INTERNAL', 'OUTSOURCED'),
+      allowNull: false,
+      defaultValue: 'INTERNAL',
+      field: 'execution_type',
+      comment: 'INTERNAL: ejecutado por la empresa, OUTSOURCED: ejecutado por contratista',
     },
     // Cliente
     clientName: {
@@ -151,6 +159,28 @@ module.exports = (sequelize) => {
       field: 'petty_cash_id',
       comment: 'Caja chica asignada al proyecto',
     },
+    // Contratista asignado
+    contractorId: {
+      type: DataTypes.UUID,
+      allowNull: true,
+      field: 'contractor_id',
+      comment: 'Contratista que ejecuta el proyecto',
+    },
+    // Monto acordado con el contratista
+    contractAmount: {
+      type: DataTypes.DECIMAL(15, 2),
+      allowNull: true,
+      field: 'contract_amount',
+      comment: 'Monto del contrato con el contratista',
+    },
+    // Pagos realizados al contratista
+    paidToContractor: {
+      type: DataTypes.DECIMAL(15, 2),
+      allowNull: false,
+      defaultValue: 0,
+      field: 'paid_to_contractor',
+      comment: 'Total pagado al contratista',
+    },
     // Auditoría
     createdBy: {
       type: DataTypes.UUID,
@@ -167,9 +197,11 @@ module.exports = (sequelize) => {
     underscored: true,
     indexes: [
       { fields: ['code'], unique: true },
+      { fields: ['execution_type'] },
       { fields: ['status'] },
       { fields: ['manager_id'] },
       { fields: ['department_id'] },
+      { fields: ['contractor_id'] },
       { fields: ['start_date'] },
       { fields: ['end_date'] },
       { fields: ['priority'] },

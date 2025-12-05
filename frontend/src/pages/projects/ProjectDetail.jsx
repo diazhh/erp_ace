@@ -10,6 +10,7 @@ import {
   Grid,
   Card,
   CardContent,
+  CardActions,
   Chip,
   CircularProgress,
   IconButton,
@@ -59,6 +60,10 @@ import {
   LocationOn as LocationIcon,
   Email as EmailIcon,
   Phone as PhoneIcon,
+  Update as UpdateIcon,
+  PhotoLibrary as PhotoIcon,
+  TrendingUp as ProgressIcon,
+  Engineering as ContractorIcon,
 } from '@mui/icons-material';
 import { toast } from 'react-toastify';
 
@@ -76,6 +81,22 @@ import {
   rejectExpense,
   fetchMemberRoles,
   fetchExpenseTypes,
+  fetchUpdates,
+  createUpdate,
+  deleteUpdate,
+  fetchPhotos,
+  addPhoto,
+  deletePhoto,
+  fetchUpdateTypes,
+  fetchPhotoCategories,
+  // Valuations
+  fetchValuations,
+  createValuation,
+  submitValuation,
+  approveValuation,
+  rejectValuation,
+  generateInvoiceFromValuation,
+  deleteValuation,
 } from '../../store/slices/projectSlice';
 import { fetchEmployees } from '../../store/slices/employeeSlice';
 
@@ -139,6 +160,26 @@ const expenseStatusLabels = {
   PAID: 'Pagado',
 };
 
+const valuationStatusColors = {
+  DRAFT: 'default',
+  SUBMITTED: 'info',
+  UNDER_REVIEW: 'warning',
+  APPROVED: 'success',
+  REJECTED: 'error',
+  INVOICED: 'primary',
+  PAID: 'success',
+};
+
+const valuationStatusLabels = {
+  DRAFT: 'Borrador',
+  SUBMITTED: 'Enviada',
+  UNDER_REVIEW: 'En Revisión',
+  APPROVED: 'Aprobada',
+  REJECTED: 'Rechazada',
+  INVOICED: 'Facturada',
+  PAID: 'Pagada',
+};
+
 function TabPanel({ children, value, index, ...other }) {
   return (
     <div role="tabpanel" hidden={value !== index} {...other}>
@@ -155,7 +196,7 @@ const ProjectDetail = () => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
   
-  const { currentProject, members, milestones, expenses, memberRoles, expenseTypes, loading } = useSelector((state) => state.projects);
+  const { currentProject, members, milestones, expenses, updates, photos, valuations, memberRoles, expenseTypes, updateTypes, photoCategories, loading } = useSelector((state) => state.projects);
   const { employees } = useSelector((state) => state.employees);
   
   const [tabValue, setTabValue] = useState(0);
@@ -164,6 +205,11 @@ const ProjectDetail = () => {
   const [memberDialog, setMemberDialog] = useState(false);
   const [milestoneDialog, setMilestoneDialog] = useState(false);
   const [expenseDialog, setExpenseDialog] = useState(false);
+  const [updateDialog, setUpdateDialog] = useState(false);
+  const [photoDialog, setPhotoDialog] = useState(false);
+  const [valuationDialog, setValuationDialog] = useState(false);
+  const [invoiceDialog, setInvoiceDialog] = useState(false);
+  const [selectedValuation, setSelectedValuation] = useState(null);
   
   // Form data
   const [memberForm, setMemberForm] = useState({ employeeId: '', role: '', allocation: 100 });
@@ -172,12 +218,29 @@ const ProjectDetail = () => {
   const [expenseForm, setExpenseForm] = useState({ 
     expenseType: '', description: '', amount: '', expenseDate: '', vendor: '' 
   });
+  const [updateForm, setUpdateForm] = useState({ 
+    updateType: 'PROGRESS', title: '', description: '', progressAfter: '' 
+  });
+  const [photoForm, setPhotoForm] = useState({ 
+    photoUrl: '', caption: '', category: 'PROGRESS' 
+  });
+  const [valuationForm, setValuationForm] = useState({
+    periodStart: '', periodEnd: '', currentPercent: '', description: '', inspectionNotes: ''
+  });
+  const [invoiceForm, setInvoiceForm] = useState({
+    invoiceNumber: '', controlNumber: '', invoiceDate: '', dueDate: '', taxRate: 16, retentionRate: 2, ivaRetentionRate: 75
+  });
 
   useEffect(() => {
     dispatch(fetchProjectFull(id));
     dispatch(fetchEmployees({ limit: 200, status: 'ACTIVE' }));
     dispatch(fetchMemberRoles());
     dispatch(fetchExpenseTypes());
+    dispatch(fetchUpdateTypes());
+    dispatch(fetchPhotoCategories());
+    dispatch(fetchUpdates({ projectId: id }));
+    dispatch(fetchPhotos({ projectId: id }));
+    dispatch(fetchValuations({ projectId: id }));
     
     return () => {
       dispatch(clearCurrentProject());
@@ -318,6 +381,150 @@ const ProjectDetail = () => {
     }
   };
 
+  // Update handlers
+  const handleCreateUpdate = async () => {
+    if (!updateForm.title) {
+      toast.error('El título es requerido');
+      return;
+    }
+    try {
+      await dispatch(createUpdate({ 
+        projectId: id, 
+        data: {
+          ...updateForm,
+          progressAfter: updateForm.progressAfter ? parseInt(updateForm.progressAfter) : null,
+        }
+      })).unwrap();
+      toast.success('Actualización registrada');
+      setUpdateDialog(false);
+      setUpdateForm({ updateType: 'PROGRESS', title: '', description: '', progressAfter: '' });
+      dispatch(fetchProjectFull(id));
+    } catch (error) {
+      toast.error(error);
+    }
+  };
+
+  const handleDeleteUpdate = async (updateId) => {
+    if (window.confirm('¿Está seguro de eliminar esta actualización?')) {
+      try {
+        await dispatch(deleteUpdate({ projectId: id, updateId })).unwrap();
+        toast.success('Actualización eliminada');
+      } catch (error) {
+        toast.error(error);
+      }
+    }
+  };
+
+  // Photo handlers
+  const handleAddPhoto = async () => {
+    if (!photoForm.photoUrl) {
+      toast.error('La URL de la foto es requerida');
+      return;
+    }
+    try {
+      await dispatch(addPhoto({ projectId: id, data: photoForm })).unwrap();
+      toast.success('Foto agregada');
+      setPhotoDialog(false);
+      setPhotoForm({ photoUrl: '', caption: '', category: 'PROGRESS' });
+    } catch (error) {
+      toast.error(error);
+    }
+  };
+
+  const handleDeletePhoto = async (photoId) => {
+    if (window.confirm('¿Está seguro de eliminar esta foto?')) {
+      try {
+        await dispatch(deletePhoto({ projectId: id, photoId })).unwrap();
+        toast.success('Foto eliminada');
+      } catch (error) {
+        toast.error(error);
+      }
+    }
+  };
+
+  // Valuation handlers
+  const handleCreateValuation = async () => {
+    if (!valuationForm.periodStart || !valuationForm.periodEnd || !valuationForm.currentPercent) {
+      toast.error('Complete los campos requeridos');
+      return;
+    }
+    try {
+      await dispatch(createValuation({ projectId: id, data: valuationForm })).unwrap();
+      toast.success('Valuación creada');
+      setValuationDialog(false);
+      setValuationForm({ periodStart: '', periodEnd: '', currentPercent: '', description: '', inspectionNotes: '' });
+      dispatch(fetchProjectFull(id));
+    } catch (error) {
+      toast.error(error);
+    }
+  };
+
+  const handleSubmitValuation = async (valuationId) => {
+    try {
+      await dispatch(submitValuation({ projectId: id, valuationId })).unwrap();
+      toast.success('Valuación enviada para revisión');
+    } catch (error) {
+      toast.error(error);
+    }
+  };
+
+  const handleApproveValuation = async (valuationId) => {
+    try {
+      await dispatch(approveValuation({ projectId: id, valuationId })).unwrap();
+      toast.success('Valuación aprobada');
+    } catch (error) {
+      toast.error(error);
+    }
+  };
+
+  const handleRejectValuation = async (valuationId) => {
+    const reason = window.prompt('Razón del rechazo:');
+    if (!reason) return;
+    try {
+      await dispatch(rejectValuation({ projectId: id, valuationId, reason })).unwrap();
+      toast.success('Valuación rechazada');
+    } catch (error) {
+      toast.error(error);
+    }
+  };
+
+  const handleGenerateInvoice = async () => {
+    if (!invoiceForm.invoiceNumber || !invoiceForm.invoiceDate) {
+      toast.error('Número de factura y fecha son requeridos');
+      return;
+    }
+    try {
+      await dispatch(generateInvoiceFromValuation({ 
+        projectId: id, 
+        valuationId: selectedValuation.id, 
+        data: invoiceForm 
+      })).unwrap();
+      toast.success('Factura generada exitosamente');
+      setInvoiceDialog(false);
+      setSelectedValuation(null);
+      setInvoiceForm({ invoiceNumber: '', controlNumber: '', invoiceDate: '', dueDate: '', taxRate: 16, retentionRate: 2, ivaRetentionRate: 75 });
+      dispatch(fetchValuations({ projectId: id }));
+    } catch (error) {
+      toast.error(error);
+    }
+  };
+
+  const handleDeleteValuation = async (valuationId) => {
+    if (window.confirm('¿Está seguro de eliminar esta valuación?')) {
+      try {
+        await dispatch(deleteValuation({ projectId: id, valuationId })).unwrap();
+        toast.success('Valuación eliminada');
+      } catch (error) {
+        toast.error(error);
+      }
+    }
+  };
+
+  const openInvoiceDialog = (valuation) => {
+    setSelectedValuation(valuation);
+    setInvoiceDialog(true);
+  };
+
   if (loading || !currentProject) {
     return (
       <Box sx={{ display: 'flex', justifyContent: 'center', p: 4 }}>
@@ -328,6 +535,10 @@ const ProjectDetail = () => {
 
   const project = currentProject;
   const stats = project.stats || {};
+  
+  // Offset para tabs dinámicos (Valuaciones solo aparece en OUTSOURCED)
+  const isOutsourced = project.executionType === 'OUTSOURCED';
+  const tabOffset = isOutsourced ? 1 : 0; // +1 si hay tab de Valuaciones
 
   return (
     <Box>
@@ -438,13 +649,18 @@ const ProjectDetail = () => {
         <Tabs 
           value={tabValue} 
           onChange={(e, v) => setTabValue(v)}
-          variant={isMobile ? 'scrollable' : 'standard'}
+          variant="scrollable"
           scrollButtons="auto"
         >
           <Tab icon={<BusinessIcon />} label="Información" iconPosition="start" />
           <Tab icon={<TeamIcon />} label={`Equipo (${members.length})`} iconPosition="start" />
           <Tab icon={<MilestoneIcon />} label={`Hitos (${milestones.length})`} iconPosition="start" />
           <Tab icon={<ExpenseIcon />} label={`Gastos (${expenses.length})`} iconPosition="start" />
+          {project.executionType === 'OUTSOURCED' && (
+            <Tab icon={<MoneyIcon />} label={`Valuaciones (${valuations?.length || 0})`} iconPosition="start" />
+          )}
+          <Tab icon={<UpdateIcon />} label={`Seguimiento (${updates.length})`} iconPosition="start" />
+          <Tab icon={<PhotoIcon />} label={`Fotos (${photos.length})`} iconPosition="start" />
           <Tab icon={<HistoryIcon />} label="Auditoría" iconPosition="start" />
         </Tabs>
       </Paper>
@@ -458,7 +674,16 @@ const ProjectDetail = () => {
               <List dense>
                 <ListItem>
                   <ListItemIcon><FlagIcon /></ListItemIcon>
-                  <ListItemText primary="Tipo" secondary={project.projectType || 'No especificado'} />
+                  <ListItemText 
+                    primary="Tipo de Ejecución" 
+                    secondary={
+                      <Chip 
+                        label={project.executionType === 'OUTSOURCED' ? 'Contratado' : 'Interno'} 
+                        color={project.executionType === 'OUTSOURCED' ? 'secondary' : 'info'}
+                        size="small"
+                      />
+                    } 
+                  />
                 </ListItem>
                 <ListItem>
                   <ListItemIcon><ScheduleIcon /></ListItemIcon>
@@ -494,37 +719,98 @@ const ProjectDetail = () => {
             </Paper>
           </Grid>
           <Grid item xs={12} md={6}>
-            <Paper sx={{ p: 2 }}>
-              <Typography variant="h6" gutterBottom>Cliente</Typography>
-              {project.clientName ? (
+            {project.executionType === 'OUTSOURCED' ? (
+              <Paper sx={{ p: 2 }}>
+                <Typography variant="h6" gutterBottom>
+                  <ContractorIcon sx={{ mr: 1, verticalAlign: 'middle' }} />
+                  Contratista
+                </Typography>
+                {project.contractor ? (
+                  <List dense>
+                    <ListItem>
+                      <ListItemIcon><BusinessIcon /></ListItemIcon>
+                      <ListItemText primary="Empresa" secondary={project.contractor.companyName} />
+                    </ListItem>
+                    {project.contractor.rif && (
+                      <ListItem>
+                        <ListItemIcon><FlagIcon /></ListItemIcon>
+                        <ListItemText primary="RIF" secondary={project.contractor.rif} />
+                      </ListItem>
+                    )}
+                    {project.contractor.contactName && (
+                      <ListItem>
+                        <ListItemIcon><PersonIcon /></ListItemIcon>
+                        <ListItemText primary="Contacto" secondary={project.contractor.contactName} />
+                      </ListItem>
+                    )}
+                    {project.contractor.phone && (
+                      <ListItem>
+                        <ListItemIcon><PhoneIcon /></ListItemIcon>
+                        <ListItemText primary="Teléfono" secondary={project.contractor.phone} />
+                      </ListItem>
+                    )}
+                    <Divider sx={{ my: 1 }} />
+                    <ListItem>
+                      <ListItemIcon><MoneyIcon /></ListItemIcon>
+                      <ListItemText 
+                        primary="Monto del Contrato" 
+                        secondary={formatCurrency(project.contractAmount, project.currency)} 
+                      />
+                    </ListItem>
+                    <ListItem>
+                      <ListItemIcon><MoneyIcon color="success" /></ListItemIcon>
+                      <ListItemText 
+                        primary="Pagado al Contratista" 
+                        secondary={formatCurrency(project.paidToContractor, project.currency)} 
+                      />
+                    </ListItem>
+                    <ListItem>
+                      <ListItemIcon><MoneyIcon color="warning" /></ListItemIcon>
+                      <ListItemText 
+                        primary="Pendiente por Pagar" 
+                        secondary={formatCurrency((project.contractAmount || 0) - (project.paidToContractor || 0), project.currency)} 
+                      />
+                    </ListItem>
+                  </List>
+                ) : (
+                  <Typography color="text.secondary">Sin contratista asignado</Typography>
+                )}
+              </Paper>
+            ) : (
+              <Paper sx={{ p: 2 }}>
+                <Typography variant="h6" gutterBottom>Resumen Financiero</Typography>
                 <List dense>
                   <ListItem>
-                    <ListItemIcon><BusinessIcon /></ListItemIcon>
-                    <ListItemText primary="Nombre" secondary={project.clientName} />
+                    <ListItemIcon><MoneyIcon /></ListItemIcon>
+                    <ListItemText 
+                      primary="Presupuesto" 
+                      secondary={formatCurrency(project.budget, project.currency)} 
+                    />
                   </ListItem>
-                  {project.clientContact && (
-                    <ListItem>
-                      <ListItemIcon><PersonIcon /></ListItemIcon>
-                      <ListItemText primary="Contacto" secondary={project.clientContact} />
-                    </ListItem>
-                  )}
-                  {project.clientEmail && (
-                    <ListItem>
-                      <ListItemIcon><EmailIcon /></ListItemIcon>
-                      <ListItemText primary="Email" secondary={project.clientEmail} />
-                    </ListItem>
-                  )}
-                  {project.clientPhone && (
-                    <ListItem>
-                      <ListItemIcon><PhoneIcon /></ListItemIcon>
-                      <ListItemText primary="Teléfono" secondary={project.clientPhone} />
-                    </ListItem>
-                  )}
+                  <ListItem>
+                    <ListItemIcon><MoneyIcon color="warning" /></ListItemIcon>
+                    <ListItemText 
+                      primary="Costo Real" 
+                      secondary={formatCurrency(project.actualCost, project.currency)} 
+                    />
+                  </ListItem>
+                  <ListItem>
+                    <ListItemIcon><MoneyIcon color={stats.variance >= 0 ? 'success' : 'error'} /></ListItemIcon>
+                    <ListItemText 
+                      primary="Variación" 
+                      secondary={formatCurrency(stats.variance, project.currency)} 
+                    />
+                  </ListItem>
+                  <Divider sx={{ my: 1 }} />
+                  <ListItem>
+                    <ListItemText 
+                      primary="Gastos Aprobados" 
+                      secondary={`${stats.approvedExpenses || 0} de ${expenses.length}`} 
+                    />
+                  </ListItem>
                 </List>
-              ) : (
-                <Typography color="text.secondary">Sin información de cliente</Typography>
-              )}
-            </Paper>
+              </Paper>
+            )}
           </Grid>
         </Grid>
       </TabPanel>
@@ -702,8 +988,251 @@ const ProjectDetail = () => {
         </TableContainer>
       </TabPanel>
 
+      {/* Tab: Valuaciones (solo OUTSOURCED) */}
+      {isOutsourced && (
+        <TabPanel value={tabValue} index={4}>
+          <Box sx={{ display: 'flex', justifyContent: 'flex-end', mb: 2 }}>
+            <Button startIcon={<AddIcon />} variant="contained" onClick={() => setValuationDialog(true)}>
+              Nueva Valuación
+            </Button>
+          </Box>
+          <TableContainer component={Paper}>
+            <Table size="small">
+              <TableHead>
+                <TableRow>
+                  <TableCell>Código</TableCell>
+                  <TableCell>Período</TableCell>
+                  <TableCell align="right">% Avance</TableCell>
+                  <TableCell align="right">Monto</TableCell>
+                  <TableCell align="right">Acumulado</TableCell>
+                  <TableCell>Estado</TableCell>
+                  <TableCell align="center">Acciones</TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {valuations?.map((val) => (
+                  <TableRow key={val.id}>
+                    <TableCell>
+                      <Typography variant="body2" fontWeight="bold">{val.code}</Typography>
+                    </TableCell>
+                    <TableCell>
+                      <Typography variant="body2">
+                        {formatDate(val.periodStart)} - {formatDate(val.periodEnd)}
+                      </Typography>
+                    </TableCell>
+                    <TableCell align="right">
+                      <Typography variant="body2" fontWeight="bold" color="primary">
+                        {val.currentPercent}%
+                      </Typography>
+                    </TableCell>
+                    <TableCell align="right">
+                      {formatCurrency(val.currentAmount, val.currency)}
+                    </TableCell>
+                    <TableCell align="right">
+                      <Box>
+                        <Typography variant="body2" fontWeight="bold">
+                          {val.totalAccumulatedPercent}%
+                        </Typography>
+                        <Typography variant="caption" color="text.secondary">
+                          {formatCurrency(val.totalAccumulatedAmount, val.currency)}
+                        </Typography>
+                      </Box>
+                    </TableCell>
+                    <TableCell>
+                      <Chip 
+                        label={valuationStatusLabels[val.status] || val.status} 
+                        color={valuationStatusColors[val.status] || 'default'}
+                        size="small"
+                      />
+                    </TableCell>
+                    <TableCell align="center">
+                      <Box sx={{ display: 'flex', gap: 0.5, justifyContent: 'center' }}>
+                        {val.status === 'DRAFT' && (
+                          <>
+                            <Tooltip title="Enviar para revisión">
+                              <IconButton size="small" color="info" onClick={() => handleSubmitValuation(val.id)}>
+                                <UpdateIcon fontSize="small" />
+                              </IconButton>
+                            </Tooltip>
+                            <Tooltip title="Eliminar">
+                              <IconButton size="small" color="error" onClick={() => handleDeleteValuation(val.id)}>
+                                <DeleteIcon fontSize="small" />
+                              </IconButton>
+                            </Tooltip>
+                          </>
+                        )}
+                        {(val.status === 'SUBMITTED' || val.status === 'UNDER_REVIEW') && (
+                          <>
+                            <Tooltip title="Aprobar">
+                              <IconButton size="small" color="success" onClick={() => handleApproveValuation(val.id)}>
+                                <CheckIcon fontSize="small" />
+                              </IconButton>
+                            </Tooltip>
+                            <Tooltip title="Rechazar">
+                              <IconButton size="small" color="error" onClick={() => handleRejectValuation(val.id)}>
+                                <CancelIcon fontSize="small" />
+                              </IconButton>
+                            </Tooltip>
+                          </>
+                        )}
+                        {val.status === 'APPROVED' && (
+                          <Tooltip title="Generar Factura">
+                            <IconButton size="small" color="primary" onClick={() => openInvoiceDialog(val)}>
+                              <ExpenseIcon fontSize="small" />
+                            </IconButton>
+                          </Tooltip>
+                        )}
+                        {val.invoice && (
+                          <Tooltip title={`Factura: ${val.invoice.code}`}>
+                            <Chip label={val.invoice.invoiceNumber} size="small" variant="outlined" />
+                          </Tooltip>
+                        )}
+                      </Box>
+                    </TableCell>
+                  </TableRow>
+                ))}
+                {(!valuations || valuations.length === 0) && (
+                  <TableRow>
+                    <TableCell colSpan={7} align="center">
+                      <Typography color="text.secondary">No hay valuaciones registradas</Typography>
+                    </TableCell>
+                  </TableRow>
+                )}
+              </TableBody>
+            </Table>
+          </TableContainer>
+        </TabPanel>
+      )}
+
+      {/* Tab: Seguimiento */}
+      <TabPanel value={tabValue} index={4 + tabOffset}>
+        <Box sx={{ display: 'flex', justifyContent: 'flex-end', mb: 2 }}>
+          <Button startIcon={<AddIcon />} variant="contained" onClick={() => setUpdateDialog(true)}>
+            Nueva Actualización
+          </Button>
+        </Box>
+        <Grid container spacing={2}>
+          {updates.map((update) => (
+            <Grid item xs={12} key={update.id}>
+              <Card>
+                <CardContent>
+                  <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                    <Box>
+                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
+                        <Chip 
+                          label={updateTypes.find(t => t.code === update.updateType)?.name || update.updateType} 
+                          size="small" 
+                          color="primary"
+                          variant="outlined"
+                        />
+                        <Typography variant="caption" color="text.secondary">
+                          {new Date(update.reportedAt).toLocaleString('es-VE')}
+                        </Typography>
+                      </Box>
+                      <Typography variant="h6">{update.title}</Typography>
+                      {update.description && (
+                        <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
+                          {update.description}
+                        </Typography>
+                      )}
+                      {update.progressAfter !== null && (
+                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mt: 1 }}>
+                          <ProgressIcon fontSize="small" color="success" />
+                          <Typography variant="body2">
+                            Progreso: {update.progressBefore}% → {update.progressAfter}%
+                          </Typography>
+                        </Box>
+                      )}
+                      {update.reporter && (
+                        <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mt: 1 }}>
+                          Reportado por: {update.reporter.firstName} {update.reporter.lastName}
+                        </Typography>
+                      )}
+                    </Box>
+                    <IconButton size="small" color="error" onClick={() => handleDeleteUpdate(update.id)}>
+                      <DeleteIcon />
+                    </IconButton>
+                  </Box>
+                  {update.photos && update.photos.length > 0 && (
+                    <Box sx={{ display: 'flex', gap: 1, mt: 2, flexWrap: 'wrap' }}>
+                      {update.photos.map((photo) => (
+                        <Box
+                          key={photo.id}
+                          component="img"
+                          src={photo.thumbnailUrl || photo.photoUrl}
+                          alt={photo.caption}
+                          sx={{ width: 80, height: 80, objectFit: 'cover', borderRadius: 1 }}
+                        />
+                      ))}
+                    </Box>
+                  )}
+                </CardContent>
+              </Card>
+            </Grid>
+          ))}
+          {updates.length === 0 && (
+            <Grid item xs={12}>
+              <Paper sx={{ p: 3, textAlign: 'center' }}>
+                <Typography color="text.secondary">No hay actualizaciones registradas</Typography>
+              </Paper>
+            </Grid>
+          )}
+        </Grid>
+      </TabPanel>
+
+      {/* Tab: Fotos */}
+      <TabPanel value={tabValue} index={5 + tabOffset}>
+        <Box sx={{ display: 'flex', justifyContent: 'flex-end', mb: 2 }}>
+          <Button startIcon={<AddIcon />} variant="contained" onClick={() => setPhotoDialog(true)}>
+            Agregar Foto
+          </Button>
+        </Box>
+        <Grid container spacing={2}>
+          {photos.map((photo) => (
+            <Grid item xs={6} sm={4} md={3} key={photo.id}>
+              <Card>
+                <Box
+                  component="img"
+                  src={photo.photoUrl}
+                  alt={photo.caption}
+                  sx={{ width: '100%', height: 150, objectFit: 'cover' }}
+                />
+                <CardContent sx={{ py: 1 }}>
+                  <Chip 
+                    label={photoCategories.find(c => c.code === photo.category)?.name || photo.category} 
+                    size="small" 
+                    variant="outlined"
+                    sx={{ mb: 1 }}
+                  />
+                  {photo.caption && (
+                    <Typography variant="body2" noWrap>
+                      {photo.caption}
+                    </Typography>
+                  )}
+                  <Typography variant="caption" color="text.secondary">
+                    {new Date(photo.createdAt).toLocaleDateString('es-VE')}
+                  </Typography>
+                </CardContent>
+                <CardActions sx={{ pt: 0 }}>
+                  <IconButton size="small" color="error" onClick={() => handleDeletePhoto(photo.id)}>
+                    <DeleteIcon />
+                  </IconButton>
+                </CardActions>
+              </Card>
+            </Grid>
+          ))}
+          {photos.length === 0 && (
+            <Grid item xs={12}>
+              <Paper sx={{ p: 3, textAlign: 'center' }}>
+                <Typography color="text.secondary">No hay fotos registradas</Typography>
+              </Paper>
+            </Grid>
+          )}
+        </Grid>
+      </TabPanel>
+
       {/* Tab: Auditoría */}
-      <TabPanel value={tabValue} index={4}>
+      <TabPanel value={tabValue} index={6 + tabOffset}>
         <Paper sx={{ p: 2 }}>
           <Typography variant="h6" gutterBottom>Historial de Cambios</Typography>
           {project.auditLogs && project.auditLogs.length > 0 ? (
@@ -888,6 +1417,261 @@ const ProjectDetail = () => {
         <DialogActions>
           <Button onClick={() => setExpenseDialog(false)}>Cancelar</Button>
           <Button variant="contained" onClick={handleCreateExpense}>Registrar</Button>
+        </DialogActions>
+      </Dialog>
+
+      {/* Dialog: Nueva Actualización */}
+      <Dialog open={updateDialog} onClose={() => setUpdateDialog(false)} maxWidth="sm" fullWidth>
+        <DialogTitle>Nueva Actualización</DialogTitle>
+        <DialogContent>
+          <Grid container spacing={2} sx={{ mt: 1 }}>
+            <Grid item xs={12} sm={6}>
+              <TextField
+                select
+                fullWidth
+                label="Tipo de Actualización"
+                value={updateForm.updateType}
+                onChange={(e) => setUpdateForm({ ...updateForm, updateType: e.target.value })}
+              >
+                {updateTypes.map((type) => (
+                  <MenuItem key={type.code} value={type.code}>{type.name}</MenuItem>
+                ))}
+              </TextField>
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              <TextField
+                fullWidth
+                label="Nuevo Progreso (%)"
+                type="number"
+                value={updateForm.progressAfter}
+                onChange={(e) => setUpdateForm({ ...updateForm, progressAfter: e.target.value })}
+                inputProps={{ min: 0, max: 100 }}
+                helperText="Dejar vacío si no cambia"
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <TextField
+                fullWidth
+                label="Título"
+                value={updateForm.title}
+                onChange={(e) => setUpdateForm({ ...updateForm, title: e.target.value })}
+                required
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <TextField
+                fullWidth
+                label="Descripción"
+                value={updateForm.description}
+                onChange={(e) => setUpdateForm({ ...updateForm, description: e.target.value })}
+                multiline
+                rows={3}
+              />
+            </Grid>
+          </Grid>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setUpdateDialog(false)}>Cancelar</Button>
+          <Button variant="contained" onClick={handleCreateUpdate}>Registrar</Button>
+        </DialogActions>
+      </Dialog>
+
+      {/* Dialog: Agregar Foto */}
+      <Dialog open={photoDialog} onClose={() => setPhotoDialog(false)} maxWidth="sm" fullWidth>
+        <DialogTitle>Agregar Foto</DialogTitle>
+        <DialogContent>
+          <Grid container spacing={2} sx={{ mt: 1 }}>
+            <Grid item xs={12}>
+              <TextField
+                fullWidth
+                label="URL de la Foto"
+                value={photoForm.photoUrl}
+                onChange={(e) => setPhotoForm({ ...photoForm, photoUrl: e.target.value })}
+                required
+                helperText="URL de la imagen (ej: https://...)"
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <TextField
+                fullWidth
+                label="Descripción"
+                value={photoForm.caption}
+                onChange={(e) => setPhotoForm({ ...photoForm, caption: e.target.value })}
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <TextField
+                select
+                fullWidth
+                label="Categoría"
+                value={photoForm.category}
+                onChange={(e) => setPhotoForm({ ...photoForm, category: e.target.value })}
+              >
+                {photoCategories.map((cat) => (
+                  <MenuItem key={cat.code} value={cat.code}>{cat.name}</MenuItem>
+                ))}
+              </TextField>
+            </Grid>
+          </Grid>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setPhotoDialog(false)}>Cancelar</Button>
+          <Button variant="contained" onClick={handleAddPhoto}>Agregar</Button>
+        </DialogActions>
+      </Dialog>
+
+      {/* Dialog: Nueva Valuación */}
+      <Dialog open={valuationDialog} onClose={() => setValuationDialog(false)} maxWidth="sm" fullWidth>
+        <DialogTitle>Nueva Valuación</DialogTitle>
+        <DialogContent>
+          <Grid container spacing={2} sx={{ mt: 1 }}>
+            <Grid item xs={12} md={6}>
+              <TextField
+                fullWidth
+                label="Fecha Inicio Período"
+                type="date"
+                value={valuationForm.periodStart}
+                onChange={(e) => setValuationForm({ ...valuationForm, periodStart: e.target.value })}
+                InputLabelProps={{ shrink: true }}
+                required
+              />
+            </Grid>
+            <Grid item xs={12} md={6}>
+              <TextField
+                fullWidth
+                label="Fecha Fin Período"
+                type="date"
+                value={valuationForm.periodEnd}
+                onChange={(e) => setValuationForm({ ...valuationForm, periodEnd: e.target.value })}
+                InputLabelProps={{ shrink: true }}
+                required
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <TextField
+                fullWidth
+                label="Porcentaje de Avance (%)"
+                type="number"
+                value={valuationForm.currentPercent}
+                onChange={(e) => setValuationForm({ ...valuationForm, currentPercent: e.target.value })}
+                inputProps={{ min: 0, max: 100, step: 0.01 }}
+                required
+                helperText="Porcentaje de avance de esta valuación"
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <TextField
+                fullWidth
+                label="Descripción del Trabajo"
+                value={valuationForm.description}
+                onChange={(e) => setValuationForm({ ...valuationForm, description: e.target.value })}
+                multiline
+                rows={3}
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <TextField
+                fullWidth
+                label="Notas de Inspección"
+                value={valuationForm.inspectionNotes}
+                onChange={(e) => setValuationForm({ ...valuationForm, inspectionNotes: e.target.value })}
+                multiline
+                rows={2}
+              />
+            </Grid>
+          </Grid>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setValuationDialog(false)}>Cancelar</Button>
+          <Button variant="contained" onClick={handleCreateValuation}>Crear Valuación</Button>
+        </DialogActions>
+      </Dialog>
+
+      {/* Dialog: Generar Factura */}
+      <Dialog open={invoiceDialog} onClose={() => setInvoiceDialog(false)} maxWidth="sm" fullWidth>
+        <DialogTitle>Generar Factura desde Valuación</DialogTitle>
+        <DialogContent>
+          {selectedValuation && (
+            <Alert severity="info" sx={{ mb: 2 }}>
+              Valuación: <strong>{selectedValuation.code}</strong> - 
+              Monto: <strong>{formatCurrency(selectedValuation.currentAmount, selectedValuation.currency)}</strong>
+            </Alert>
+          )}
+          <Grid container spacing={2} sx={{ mt: 1 }}>
+            <Grid item xs={12} md={6}>
+              <TextField
+                fullWidth
+                label="Número de Factura"
+                value={invoiceForm.invoiceNumber}
+                onChange={(e) => setInvoiceForm({ ...invoiceForm, invoiceNumber: e.target.value })}
+                required
+                helperText="Número de factura del contratista"
+              />
+            </Grid>
+            <Grid item xs={12} md={6}>
+              <TextField
+                fullWidth
+                label="Número de Control"
+                value={invoiceForm.controlNumber}
+                onChange={(e) => setInvoiceForm({ ...invoiceForm, controlNumber: e.target.value })}
+              />
+            </Grid>
+            <Grid item xs={12} md={6}>
+              <TextField
+                fullWidth
+                label="Fecha de Factura"
+                type="date"
+                value={invoiceForm.invoiceDate}
+                onChange={(e) => setInvoiceForm({ ...invoiceForm, invoiceDate: e.target.value })}
+                InputLabelProps={{ shrink: true }}
+                required
+              />
+            </Grid>
+            <Grid item xs={12} md={6}>
+              <TextField
+                fullWidth
+                label="Fecha de Vencimiento"
+                type="date"
+                value={invoiceForm.dueDate}
+                onChange={(e) => setInvoiceForm({ ...invoiceForm, dueDate: e.target.value })}
+                InputLabelProps={{ shrink: true }}
+              />
+            </Grid>
+            <Grid item xs={12} md={4}>
+              <TextField
+                fullWidth
+                label="IVA (%)"
+                type="number"
+                value={invoiceForm.taxRate}
+                onChange={(e) => setInvoiceForm({ ...invoiceForm, taxRate: e.target.value })}
+                inputProps={{ min: 0, max: 100 }}
+              />
+            </Grid>
+            <Grid item xs={12} md={4}>
+              <TextField
+                fullWidth
+                label="Retención ISLR (%)"
+                type="number"
+                value={invoiceForm.retentionRate}
+                onChange={(e) => setInvoiceForm({ ...invoiceForm, retentionRate: e.target.value })}
+                inputProps={{ min: 0, max: 100 }}
+              />
+            </Grid>
+            <Grid item xs={12} md={4}>
+              <TextField
+                fullWidth
+                label="Retención IVA (%)"
+                type="number"
+                value={invoiceForm.ivaRetentionRate}
+                onChange={(e) => setInvoiceForm({ ...invoiceForm, ivaRetentionRate: e.target.value })}
+                inputProps={{ min: 0, max: 100 }}
+              />
+            </Grid>
+          </Grid>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setInvoiceDialog(false)}>Cancelar</Button>
+          <Button variant="contained" onClick={handleGenerateInvoice}>Generar Factura</Button>
         </DialogActions>
       </Dialog>
     </Box>

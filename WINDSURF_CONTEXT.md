@@ -70,9 +70,19 @@ cd backend && bash tests/api-tests.sh
 
 ## 📊 Estado Actual del Proyecto
 
-- **Versión**: 0.3.0
-- **Módulos completados**: Setup, Empleados, Nómina, Finanzas
-- **Próximo módulo**: Caja Chica o Vistas de Detalle con Trazabilidad
+- **Versión**: 0.8.0
+- **Módulos completados**: Setup, Empleados, Nómina, Finanzas, Caja Chica, Proyectos, Inventario (completo con Almacenes, Items, Movimientos)
+- **Próximo módulo**: Flota
+
+### Módulo de Inventario (v0.8.0)
+- **Almacenes**: MAIN, SECONDARY, TRANSIT, PROJECT
+- **Items**: Productos, Materiales, Herramientas, Equipos, Consumibles, Repuestos
+- **Movimientos**: Entrada, Salida, Transferencia, Ajustes, Devolución
+- **Integración con Finanzas**: Compras generan transacciones automáticas
+- **Rutas Frontend**:
+  - `/inventory` → Lista de items
+  - `/inventory/warehouses` → Lista de almacenes
+  - `/inventory/movements` → Lista de movimientos
 
 ---
 
@@ -137,7 +147,10 @@ erp/
 │   │   │   ├── auth/        # Autenticación y usuarios
 │   │   │   ├── employees/   # Gestión de empleados
 │   │   │   ├── payroll/     # Nómina y préstamos
-│   │   │   └── finance/     # Cuentas y transacciones
+│   │   │   ├── finance/     # Cuentas y transacciones
+│   │   │   ├── petty-cash/  # Caja chica
+│   │   │   ├── projects/    # Proyectos y contratistas
+│   │   │   └── inventory/   # Inventario y almacenes
 │   │   └── database/
 │   │       └── models/      # Modelos Sequelize
 │   └── tests/

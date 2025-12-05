@@ -38,6 +38,13 @@ import {
   AccountTree as OrgChartIcon,
   Business as DepartmentIcon,
   ContactPhone as DirectoryIcon,
+  Engineering as ContractorIcon,
+  ShoppingCart as ProcurementIcon,
+  Description as QuoteIcon,
+  Receipt as InvoiceIcon,
+  Payment as PaymentIcon,
+  HealthAndSafety as HSEIcon,
+  Folder as DocumentIcon,
   ExpandLess,
   ExpandMore,
 } from '@mui/icons-material';
@@ -59,8 +66,15 @@ const getMenuItems = (t) => [
   { text: t('menu.bankAccounts'), icon: <AccountsIcon />, path: '/finance/accounts' },
   { text: t('menu.pettyCash') || 'Caja Chica', icon: <PettyCashIcon />, path: '/petty-cash' },
   { text: t('menu.projects'), icon: <ProjectsIcon />, path: '/projects' },
+  { text: 'Contratistas', icon: <ContractorIcon />, path: '/contractors' },
+  { text: 'Órdenes de Compra', icon: <ProcurementIcon />, path: '/procurement/purchase-orders' },
+  { text: 'Cotizaciones', icon: <QuoteIcon />, path: '/procurement/quotes' },
+  { text: 'Facturas', icon: <InvoiceIcon />, path: '/procurement/invoices' },
+  { text: 'Pagos', icon: <PaymentIcon />, path: '/procurement/payments' },
   { text: t('menu.inventory'), icon: <InventoryIcon />, path: '/inventory' },
   { text: t('menu.fleet'), icon: <FleetIcon />, path: '/fleet' },
+  { text: 'HSE', icon: <HSEIcon />, path: '/hse' },
+  { text: 'Documentos', icon: <DocumentIcon />, path: '/documents' },
 ];
 
 const Layout = () => {

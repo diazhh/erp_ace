@@ -31,6 +31,58 @@ import PettyCashForm from './pages/petty-cash/PettyCashForm';
 import ProjectList from './pages/projects/ProjectList';
 import ProjectDetail from './pages/projects/ProjectDetail';
 import ProjectForm from './pages/projects/ProjectForm';
+import ContractorList from './pages/contractors/ContractorList';
+import ContractorDetail from './pages/contractors/ContractorDetail';
+import ContractorForm from './pages/contractors/ContractorForm';
+import ItemList from './pages/inventory/ItemList';
+import ItemDetail from './pages/inventory/ItemDetail';
+import ItemForm from './pages/inventory/ItemForm';
+import WarehouseList from './pages/inventory/WarehouseList';
+import WarehouseDetail from './pages/inventory/WarehouseDetail';
+import WarehouseForm from './pages/inventory/WarehouseForm';
+import MovementList from './pages/inventory/MovementList';
+import MovementForm from './pages/inventory/MovementForm';
+import VehicleList from './pages/fleet/VehicleList';
+import VehicleDetail from './pages/fleet/VehicleDetail';
+import VehicleForm from './pages/fleet/VehicleForm';
+import MaintenanceList from './pages/fleet/MaintenanceList';
+import MaintenanceForm from './pages/fleet/MaintenanceForm';
+import FuelLogList from './pages/fleet/FuelLogList';
+import FuelLogForm from './pages/fleet/FuelLogForm';
+// Procurement
+import PurchaseOrderList from './pages/procurement/PurchaseOrderList';
+import PurchaseOrderDetail from './pages/procurement/PurchaseOrderDetail';
+import PurchaseOrderForm from './pages/procurement/PurchaseOrderForm';
+import InvoiceList from './pages/procurement/InvoiceList';
+import InvoiceDetail from './pages/procurement/InvoiceDetail';
+import InvoiceForm from './pages/procurement/InvoiceForm';
+import PaymentList from './pages/procurement/PaymentList';
+import PaymentDetail from './pages/procurement/PaymentDetail';
+import PaymentForm from './pages/procurement/PaymentForm';
+import QuoteList from './pages/procurement/QuoteList';
+// HSE
+import HSEDashboard from './pages/hse/HSEDashboard';
+import IncidentList from './pages/hse/IncidentList';
+import IncidentDetail from './pages/hse/IncidentDetail';
+import IncidentForm from './pages/hse/IncidentForm';
+import InspectionList from './pages/hse/InspectionList';
+import InspectionDetail from './pages/hse/InspectionDetail';
+import InspectionForm from './pages/hse/InspectionForm';
+import TrainingList from './pages/hse/TrainingList';
+import TrainingDetail from './pages/hse/TrainingDetail';
+import TrainingForm from './pages/hse/TrainingForm';
+import EquipmentList from './pages/hse/EquipmentList';
+import EquipmentDetail from './pages/hse/EquipmentDetail';
+import EquipmentForm from './pages/hse/EquipmentForm';
+// Documents
+import {
+  DocumentsDashboard,
+  DocumentList,
+  DocumentDetail,
+  DocumentForm,
+  CategoryList,
+  CategoryForm,
+} from './pages/documents';
 
 function App() {
   const dispatch = useDispatch();
@@ -100,6 +152,75 @@ function App() {
         <Route path="projects/new" element={<ProjectForm />} />
         <Route path="projects/:id" element={<ProjectDetail />} />
         <Route path="projects/:id/edit" element={<ProjectForm />} />
+        {/* Contractors */}
+        <Route path="contractors" element={<ContractorList />} />
+        <Route path="contractors/new" element={<ContractorForm />} />
+        <Route path="contractors/:id" element={<ContractorDetail />} />
+        <Route path="contractors/:id/edit" element={<ContractorForm />} />
+        {/* Inventory */}
+        <Route path="inventory" element={<ItemList />} />
+        <Route path="inventory/items/new" element={<ItemForm />} />
+        <Route path="inventory/items/:id" element={<ItemDetail />} />
+        <Route path="inventory/items/:id/edit" element={<ItemForm />} />
+        <Route path="inventory/warehouses" element={<WarehouseList />} />
+        <Route path="inventory/warehouses/new" element={<WarehouseForm />} />
+        <Route path="inventory/warehouses/:id" element={<WarehouseDetail />} />
+        <Route path="inventory/warehouses/:id/edit" element={<WarehouseForm />} />
+        <Route path="inventory/movements" element={<MovementList />} />
+        <Route path="inventory/movements/new" element={<MovementForm />} />
+        {/* Fleet */}
+        <Route path="fleet" element={<VehicleList />} />
+        <Route path="fleet/vehicles/new" element={<VehicleForm />} />
+        <Route path="fleet/vehicles/:id" element={<VehicleDetail />} />
+        <Route path="fleet/vehicles/:id/edit" element={<VehicleForm />} />
+        <Route path="fleet/maintenances" element={<MaintenanceList />} />
+        <Route path="fleet/maintenances/new" element={<MaintenanceForm />} />
+        <Route path="fleet/maintenances/:id" element={<MaintenanceForm />} />
+        <Route path="fleet/maintenances/:id/edit" element={<MaintenanceForm />} />
+        <Route path="fleet/fuel-logs" element={<FuelLogList />} />
+        <Route path="fleet/fuel-logs/new" element={<FuelLogForm />} />
+        <Route path="fleet/fuel-logs/:id/edit" element={<FuelLogForm />} />
+        {/* Procurement */}
+        <Route path="procurement/purchase-orders" element={<PurchaseOrderList />} />
+        <Route path="procurement/purchase-orders/new" element={<PurchaseOrderForm />} />
+        <Route path="procurement/purchase-orders/:id" element={<PurchaseOrderDetail />} />
+        <Route path="procurement/purchase-orders/:id/edit" element={<PurchaseOrderForm />} />
+        <Route path="procurement/invoices" element={<InvoiceList />} />
+        <Route path="procurement/invoices/new" element={<InvoiceForm />} />
+        <Route path="procurement/invoices/:id" element={<InvoiceDetail />} />
+        <Route path="procurement/invoices/:id/edit" element={<InvoiceForm />} />
+        <Route path="procurement/payments" element={<PaymentList />} />
+        <Route path="procurement/payments/new" element={<PaymentForm />} />
+        <Route path="procurement/payments/:id" element={<PaymentDetail />} />
+        <Route path="procurement/payments/:id/edit" element={<PaymentForm />} />
+        <Route path="procurement/quotes" element={<QuoteList />} />
+        {/* HSE */}
+        <Route path="hse" element={<HSEDashboard />} />
+        <Route path="hse/incidents" element={<IncidentList />} />
+        <Route path="hse/incidents/new" element={<IncidentForm />} />
+        <Route path="hse/incidents/:id" element={<IncidentDetail />} />
+        <Route path="hse/incidents/:id/edit" element={<IncidentForm />} />
+        <Route path="hse/inspections" element={<InspectionList />} />
+        <Route path="hse/inspections/new" element={<InspectionForm />} />
+        <Route path="hse/inspections/:id" element={<InspectionDetail />} />
+        <Route path="hse/inspections/:id/edit" element={<InspectionForm />} />
+        <Route path="hse/trainings" element={<TrainingList />} />
+        <Route path="hse/trainings/new" element={<TrainingForm />} />
+        <Route path="hse/trainings/:id" element={<TrainingDetail />} />
+        <Route path="hse/trainings/:id/edit" element={<TrainingForm />} />
+        <Route path="hse/equipment" element={<EquipmentList />} />
+        <Route path="hse/equipment/new" element={<EquipmentForm />} />
+        <Route path="hse/equipment/:id" element={<EquipmentDetail />} />
+        <Route path="hse/equipment/:id/edit" element={<EquipmentForm />} />
+        {/* Documents */}
+        <Route path="documents" element={<DocumentsDashboard />} />
+        <Route path="documents/list" element={<DocumentList />} />
+        <Route path="documents/new" element={<DocumentForm />} />
+        <Route path="documents/:id" element={<DocumentDetail />} />
+        <Route path="documents/:id/edit" element={<DocumentForm />} />
+        <Route path="documents/categories" element={<CategoryList />} />
+        <Route path="documents/categories/new" element={<CategoryForm />} />
+        <Route path="documents/categories/:id/edit" element={<CategoryForm />} />
       </Route>
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>

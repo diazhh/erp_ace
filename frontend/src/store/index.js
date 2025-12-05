@@ -5,6 +5,12 @@ import payrollReducer from './slices/payrollSlice';
 import financeReducer from './slices/financeSlice';
 import pettyCashReducer from './slices/pettyCashSlice';
 import projectReducer from './slices/projectSlice';
+import contractorReducer from './slices/contractorSlice';
+import inventoryReducer from './slices/inventorySlice';
+import fleetReducer from './slices/fleetSlice';
+import hseReducer from './slices/hseSlice';
+import documentReducer from './slices/documentSlice';
+import dashboardReducer from './slices/dashboardSlice';
 
 export const store = configureStore({
   reducer: {
@@ -14,6 +20,12 @@ export const store = configureStore({
     finance: financeReducer,
     pettyCash: pettyCashReducer,
     projects: projectReducer,
+    contractors: contractorReducer,
+    inventory: inventoryReducer,
+    fleet: fleetReducer,
+    hse: hseReducer,
+    documents: documentReducer,
+    dashboard: dashboardReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({

@@ -14,6 +14,8 @@ router.get('/stats', authorize('projects:read'), projectController.getGeneralSta
 router.get('/types', authorize('projects:read'), projectController.getProjectTypes);
 router.get('/expense-types', authorize('projects:read'), projectController.getExpenseTypes);
 router.get('/member-roles', authorize('projects:read'), projectController.getMemberRoles);
+router.get('/update-types', authorize('projects:read'), projectController.getUpdateTypes);
+router.get('/photo-categories', authorize('projects:read'), projectController.getPhotoCategories);
 
 // ==================== PROYECTOS ====================
 
@@ -78,5 +80,60 @@ router.post('/:id/expenses/:expenseId/reject', authorize('projects:approve'), pr
 
 // Eliminar gasto
 router.delete('/:id/expenses/:expenseId', authorize('projects:delete'), projectController.deleteExpense);
+
+// ==================== ACTUALIZACIONES (SEGUIMIENTO) ====================
+
+// Listar actualizaciones del proyecto
+router.get('/:id/updates', authorize('projects:read'), projectController.listUpdates);
+
+// Crear actualización
+router.post('/:id/updates', authorize('projects:update'), projectController.createUpdate);
+
+// Eliminar actualización
+router.delete('/:id/updates/:updateId', authorize('projects:delete'), projectController.deleteUpdate);
+
+// ==================== FOTOS ====================
+
+// Listar fotos del proyecto
+router.get('/:id/photos', authorize('projects:read'), projectController.listPhotos);
+
+// Agregar foto
+router.post('/:id/photos', authorize('projects:update'), projectController.addPhoto);
+
+// Actualizar foto
+router.put('/:id/photos/:photoId', authorize('projects:update'), projectController.updatePhoto);
+
+// Eliminar foto
+router.delete('/:id/photos/:photoId', authorize('projects:delete'), projectController.deletePhoto);
+
+// ==================== VALUACIONES ====================
+const valuationController = require('../controllers/valuationController');
+
+// Catálogo de estados de valuación
+router.get('/valuations/statuses', authorize('projects:read'), valuationController.getStatuses);
+
+// Listar valuaciones del proyecto
+router.get('/:id/valuations', authorize('projects:read'), valuationController.list);
+
+// Crear valuación
+router.post('/:id/valuations', authorize('projects:update'), valuationController.create);
+
+// Obtener valuación por ID
+router.get('/:id/valuations/:valuationId', authorize('projects:read'), valuationController.getById);
+
+// Enviar valuación para revisión
+router.post('/:id/valuations/:valuationId/submit', authorize('projects:update'), valuationController.submit);
+
+// Aprobar valuación
+router.post('/:id/valuations/:valuationId/approve', authorize('projects:approve'), valuationController.approve);
+
+// Rechazar valuación
+router.post('/:id/valuations/:valuationId/reject', authorize('projects:approve'), valuationController.reject);
+
+// Generar factura desde valuación
+router.post('/:id/valuations/:valuationId/generate-invoice', authorize('projects:approve'), valuationController.generateInvoice);
+
+// Eliminar valuación
+router.delete('/:id/valuations/:valuationId', authorize('projects:delete'), valuationController.delete);
 
 module.exports = router;

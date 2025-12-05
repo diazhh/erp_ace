@@ -140,6 +140,13 @@ module.exports = (sequelize) => {
       field: 'transaction_id',
       comment: 'Transacción de reposición asociada',
     },
+    // Relación con proyecto (para trazabilidad de gastos)
+    projectId: {
+      type: DataTypes.UUID,
+      allowNull: true,
+      field: 'project_id',
+      comment: 'Proyecto asociado al gasto',
+    },
     // Auditoría
     createdBy: {
       type: DataTypes.UUID,
@@ -162,6 +169,7 @@ module.exports = (sequelize) => {
       { fields: ['status'] },
       { fields: ['category'] },
       { fields: ['beneficiary_id'] },
+      { fields: ['project_id'] },
     ],
   });
 

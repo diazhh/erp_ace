@@ -2,24 +2,29 @@ const { Op } = require('sequelize');
 
 class ProjectService {
   /**
-   * Genera código único para proyecto
+   * Genera código único para proyecto según tipo de ejecución
+   * @param {string} executionType - 'INTERNAL' o 'OUTSOURCED'
    */
-  async generateProjectCode() {
+  async generateProjectCode(executionType = 'INTERNAL') {
     const { Project } = require('../../../database/models');
     
+    // Prefijo según tipo de ejecución
+    const prefix = executionType === 'OUTSOURCED' ? 'PRJ-CTR' : 'PRJ-INT';
+    
     const lastProject = await Project.findOne({
+      where: { executionType },
       order: [['createdAt', 'DESC']],
     });
     
     let nextNumber = 1;
     if (lastProject && lastProject.code) {
-      const match = lastProject.code.match(/PRJ-(\d+)/);
+      const match = lastProject.code.match(/-(\d+)$/);
       if (match) {
         nextNumber = parseInt(match[1], 10) + 1;
       }
     }
     
-    return `PRJ-${String(nextNumber).padStart(3, '0')}`;
+    return `${prefix}-${String(nextNumber).padStart(3, '0')}`;
   }
 
   /**
@@ -206,13 +211,17 @@ class ProjectService {
 
   /**
    * Obtiene estadísticas generales de todos los proyectos
+   * @param {string} executionType - Filtrar por tipo de ejecución (opcional)
    */
-  async getGeneralStats() {
+  async getGeneralStats(executionType = null) {
     const { Project, ProjectMember, ProjectExpense } = require('../../../database/models');
     const { sequelize } = require('../../../database');
     
+    const baseWhere = executionType ? { executionType } : {};
+    
     // Proyectos por estado
     const byStatus = await Project.findAll({
+      where: baseWhere,
       attributes: [
         'status',
         [sequelize.fn('COUNT', sequelize.col('id')), 'count'],
@@ -223,6 +232,7 @@ class ProjectService {
     
     // Proyectos por prioridad
     const byPriority = await Project.findAll({
+      where: baseWhere,
       attributes: [
         'priority',
         [sequelize.fn('COUNT', sequelize.col('id')), 'count'],
@@ -231,25 +241,39 @@ class ProjectService {
       raw: true,
     });
     
+    // Proyectos por tipo de ejecución
+    const byExecutionType = await Project.findAll({
+      attributes: [
+        'executionType',
+        [sequelize.fn('COUNT', sequelize.col('id')), 'count'],
+      ],
+      group: ['executionType'],
+      raw: true,
+    });
+    
     // Totales financieros
     const financials = await Project.findOne({
+      where: baseWhere,
       attributes: [
         [sequelize.fn('SUM', sequelize.col('budget')), 'totalBudget'],
         [sequelize.fn('SUM', sequelize.col('actual_cost')), 'totalActualCost'],
         [sequelize.fn('SUM', sequelize.col('revenue')), 'totalRevenue'],
+        [sequelize.fn('SUM', sequelize.col('contract_amount')), 'totalContractAmount'],
+        [sequelize.fn('SUM', sequelize.col('paid_to_contractor')), 'totalPaidToContractor'],
       ],
       raw: true,
     });
     
     // Proyectos activos
     const activeProjects = await Project.count({
-      where: { status: 'IN_PROGRESS' },
+      where: { ...baseWhere, status: 'IN_PROGRESS' },
     });
     
     // Proyectos atrasados (fecha fin pasada y no completados)
     const today = new Date().toISOString().split('T')[0];
     const delayedProjects = await Project.count({
       where: {
+        ...baseWhere,
         status: { [Op.notIn]: ['COMPLETED', 'CANCELLED'] },
         endDate: { [Op.lt]: today },
       },
@@ -261,11 +285,16 @@ class ProjectService {
       delayed: delayedProjects,
       byStatus,
       byPriority,
+      byExecutionType,
       financial: {
         totalBudget: parseFloat(financials?.totalBudget || 0),
         totalActualCost: parseFloat(financials?.totalActualCost || 0),
         totalRevenue: parseFloat(financials?.totalRevenue || 0),
         totalProfit: parseFloat(financials?.totalRevenue || 0) - parseFloat(financials?.totalActualCost || 0),
+        // Para proyectos contratados
+        totalContractAmount: parseFloat(financials?.totalContractAmount || 0),
+        totalPaidToContractor: parseFloat(financials?.totalPaidToContractor || 0),
+        pendingContractorPayments: parseFloat(financials?.totalContractAmount || 0) - parseFloat(financials?.totalPaidToContractor || 0),
       },
     };
   }

@@ -25,7 +25,7 @@ const seed = async () => {
 
     // Crear permisos
     const modules = [
-      'users', 'roles', 'employees', 'payroll', 'projects',
+      'users', 'roles', 'employees', 'payroll', 'projects', 'contractors',
       'finance', 'petty_cash', 'procurement', 'inventory',
       'fleet', 'hse', 'documents', 'reports', 'audit'
     ];
