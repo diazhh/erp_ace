@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
+import { useTranslation } from 'react-i18next';
 import {
   Box,
   Paper,
@@ -32,11 +33,7 @@ import { fetchContractors, createPurchaseOrder } from '../../store/slices/contra
 import { fetchProjects } from '../../store/slices/projectSlice';
 import api from '../../services/api';
 
-const orderTypes = [
-  { code: 'PURCHASE', name: 'Orden de Compra' },
-  { code: 'SERVICE', name: 'Orden de Servicio' },
-  { code: 'WORK', name: 'Orden de Obra' },
-];
+// orderTypes will be defined inside component using t()
 
 const units = ['UND', 'M', 'M2', 'M3', 'KG', 'LT', 'HR', 'DIA', 'SEM', 'MES', 'GLB'];
 
@@ -44,9 +41,16 @@ const PurchaseOrderForm = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const { t } = useTranslation();
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const isEdit = !!id;
+
+  const orderTypes = [
+    { code: 'PURCHASE', name: t('procurement.orderTypePurchase') },
+    { code: 'SERVICE', name: t('procurement.orderTypeService') },
+    { code: 'WORK', name: t('procurement.orderTypeWork') },
+  ];
 
   const { contractors } = useSelector((state) => state.contractors);
   const { projects } = useSelector((state) => state.projects);
@@ -111,7 +115,7 @@ const PurchaseOrderForm = () => {
         })));
       }
     } catch (error) {
-      toast.error('Error al cargar la orden');
+      toast.error(t('procurement.loadError'));
       navigate('/procurement/purchase-orders');
     } finally {
       setLoading(false);
@@ -155,15 +159,15 @@ const PurchaseOrderForm = () => {
     e.preventDefault();
     
     if (!formData.contractorId) {
-      toast.error('Seleccione un contratista');
+      toast.error(t('procurement.selectContractor'));
       return;
     }
     if (!formData.title) {
-      toast.error('Ingrese un título');
+      toast.error(t('procurement.enterTitle'));
       return;
     }
     if (items.some(item => !item.description || item.quantity <= 0 || item.unitPrice <= 0)) {
-      toast.error('Complete todos los items correctamente');
+      toast.error(t('procurement.completeItems'));
       return;
     }
 
@@ -179,14 +183,14 @@ const PurchaseOrderForm = () => {
 
       if (isEdit) {
         await api.put(`/contractors/purchase-orders/${id}`, data);
-        toast.success('Orden actualizada');
+        toast.success(t('procurement.orderUpdated'));
       } else {
         await dispatch(createPurchaseOrder(data)).unwrap();
-        toast.success('Orden creada');
+        toast.success(t('procurement.orderCreated'));
       }
       navigate('/procurement/purchase-orders');
     } catch (error) {
-      toast.error(error.message || 'Error al guardar');
+      toast.error(error.message || t('procurement.saveError'));
     } finally {
       setLoading(false);
     }
@@ -216,7 +220,7 @@ const PurchaseOrderForm = () => {
           <ArrowBackIcon />
         </IconButton>
         <Typography variant="h5" sx={{ ml: 1 }}>
-          {isEdit ? 'Editar Orden' : 'Nueva Orden de Compra'}
+          {isEdit ? t('procurement.editOrder') : t('procurement.newPurchaseOrder')}
         </Typography>
       </Box>
 
@@ -226,7 +230,7 @@ const PurchaseOrderForm = () => {
           <Grid item xs={12} md={8}>
             <Paper sx={{ p: { xs: 2, md: 3 } }}>
               <Typography variant="h6" gutterBottom>
-                Información General
+                {t('procurement.generalInfo')}
               </Typography>
               <Divider sx={{ mb: 2 }} />
               
@@ -235,7 +239,7 @@ const PurchaseOrderForm = () => {
                   <TextField
                     fullWidth
                     select
-                    label="Contratista *"
+                    label={`${t('procurement.contractor')} *`}
                     name="contractorId"
                     value={formData.contractorId}
                     onChange={handleChange}
@@ -252,12 +256,12 @@ const PurchaseOrderForm = () => {
                   <TextField
                     fullWidth
                     select
-                    label="Proyecto (opcional)"
+                    label={`${t('procurement.project')} (${t('common.optional')})`}
                     name="projectId"
                     value={formData.projectId}
                     onChange={handleChange}
                   >
-                    <MenuItem value="">Sin proyecto</MenuItem>
+                    <MenuItem value="">{t('procurement.noProject')}</MenuItem>
                     {projects.map((p) => (
                       <MenuItem key={p.id} value={p.id}>
                         {p.code} - {p.name}
@@ -269,7 +273,7 @@ const PurchaseOrderForm = () => {
                   <TextField
                     fullWidth
                     select
-                    label="Tipo de Orden *"
+                    label={`${t('procurement.orderType')} *`}
                     name="orderType"
                     value={formData.orderType}
                     onChange={handleChange}
@@ -286,7 +290,7 @@ const PurchaseOrderForm = () => {
                   <TextField
                     fullWidth
                     select
-                    label="Moneda"
+                    label={t('procurement.currency')}
                     name="currency"
                     value={formData.currency}
                     onChange={handleChange}
@@ -299,7 +303,7 @@ const PurchaseOrderForm = () => {
                 <Grid item xs={12}>
                   <TextField
                     fullWidth
-                    label="Título *"
+                    label={`${t('procurement.orderTitle')} *`}
                     name="title"
                     value={formData.title}
                     onChange={handleChange}
@@ -311,7 +315,7 @@ const PurchaseOrderForm = () => {
                     fullWidth
                     multiline
                     rows={3}
-                    label="Descripción"
+                    label={t('procurement.description')}
                     name="description"
                     value={formData.description}
                     onChange={handleChange}
@@ -321,7 +325,7 @@ const PurchaseOrderForm = () => {
                   <TextField
                     fullWidth
                     type="date"
-                    label="Fecha de Orden"
+                    label={t('procurement.orderDate')}
                     name="orderDate"
                     value={formData.orderDate}
                     onChange={handleChange}
@@ -332,7 +336,7 @@ const PurchaseOrderForm = () => {
                   <TextField
                     fullWidth
                     type="date"
-                    label="Fecha de Entrega"
+                    label={t('procurement.deliveryDate')}
                     name="deliveryDate"
                     value={formData.deliveryDate}
                     onChange={handleChange}
@@ -343,7 +347,7 @@ const PurchaseOrderForm = () => {
                   <TextField
                     fullWidth
                     type="number"
-                    label="IVA (%)"
+                    label={t('procurement.taxRate')}
                     name="taxRate"
                     value={formData.taxRate}
                     onChange={handleChange}
@@ -358,7 +362,7 @@ const PurchaseOrderForm = () => {
           <Grid item xs={12} md={4}>
             <Paper sx={{ p: { xs: 2, md: 3 } }}>
               <Typography variant="h6" gutterBottom>
-                Términos
+                {t('procurement.terms')}
               </Typography>
               <Divider sx={{ mb: 2 }} />
               
@@ -366,7 +370,7 @@ const PurchaseOrderForm = () => {
                 <Grid item xs={12}>
                   <TextField
                     fullWidth
-                    label="Condiciones de Pago"
+                    label={t('procurement.paymentTerms')}
                     name="paymentTerms"
                     value={formData.paymentTerms}
                     onChange={handleChange}
@@ -376,7 +380,7 @@ const PurchaseOrderForm = () => {
                 <Grid item xs={12}>
                   <TextField
                     fullWidth
-                    label="Condiciones de Entrega"
+                    label={t('procurement.deliveryTerms')}
                     name="deliveryTerms"
                     value={formData.deliveryTerms}
                     onChange={handleChange}
@@ -385,7 +389,7 @@ const PurchaseOrderForm = () => {
                 <Grid item xs={12}>
                   <TextField
                     fullWidth
-                    label="Garantía"
+                    label={t('procurement.warranty')}
                     name="warranty"
                     value={formData.warranty}
                     onChange={handleChange}
@@ -396,7 +400,7 @@ const PurchaseOrderForm = () => {
                     fullWidth
                     multiline
                     rows={2}
-                    label="Dirección de Entrega"
+                    label={t('procurement.deliveryAddress')}
                     name="deliveryAddress"
                     value={formData.deliveryAddress}
                     onChange={handleChange}
@@ -411,10 +415,10 @@ const PurchaseOrderForm = () => {
             <Paper sx={{ p: { xs: 2, md: 3 } }}>
               <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
                 <Typography variant="h6">
-                  Items
+                  {t('procurement.items')}
                 </Typography>
                 <Button startIcon={<AddIcon />} onClick={addItem}>
-                  Agregar Item
+                  {t('procurement.addItem')}
                 </Button>
               </Box>
               <Divider sx={{ mb: 2 }} />
@@ -423,12 +427,12 @@ const PurchaseOrderForm = () => {
                 <Table size="small">
                   <TableHead>
                     <TableRow>
-                      <TableCell>#</TableCell>
-                      <TableCell>Descripción</TableCell>
-                      <TableCell>Unidad</TableCell>
-                      <TableCell align="right">Cantidad</TableCell>
-                      <TableCell align="right">Precio Unit.</TableCell>
-                      <TableCell align="right">Subtotal</TableCell>
+                      <TableCell>{t('procurement.itemNumber')}</TableCell>
+                      <TableCell>{t('procurement.itemDescription')}</TableCell>
+                      <TableCell>{t('procurement.unit')}</TableCell>
+                      <TableCell align="right">{t('procurement.quantity')}</TableCell>
+                      <TableCell align="right">{t('procurement.unitPrice')}</TableCell>
+                      <TableCell align="right">{t('procurement.subtotal')}</TableCell>
                       <TableCell></TableCell>
                     </TableRow>
                   </TableHead>
@@ -442,7 +446,7 @@ const PurchaseOrderForm = () => {
                             size="small"
                             value={item.description}
                             onChange={(e) => handleItemChange(index, 'description', e.target.value)}
-                            placeholder="Descripción del item"
+                            placeholder={t('procurement.itemPlaceholder')}
                           />
                         </TableCell>
                         <TableCell>
@@ -503,16 +507,16 @@ const PurchaseOrderForm = () => {
               <Box sx={{ mt: 3, display: 'flex', justifyContent: 'flex-end' }}>
                 <Box sx={{ minWidth: 250 }}>
                   <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
-                    <Typography>Subtotal:</Typography>
+                    <Typography>{t('procurement.subtotal')}:</Typography>
                     <Typography>{formatCurrency(calculateSubtotal())}</Typography>
                   </Box>
                   <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
-                    <Typography>IVA ({formData.taxRate}%):</Typography>
+                    <Typography>{t('procurement.taxRate').replace('(%)', '')} ({formData.taxRate}%):</Typography>
                     <Typography>{formatCurrency(calculateTax())}</Typography>
                   </Box>
                   <Divider sx={{ my: 1 }} />
                   <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-                    <Typography variant="h6">Total:</Typography>
+                    <Typography variant="h6">{t('procurement.total')}:</Typography>
                     <Typography variant="h6" color="primary">{formatCurrency(calculateTotal())}</Typography>
                   </Box>
                 </Box>
@@ -527,7 +531,7 @@ const PurchaseOrderForm = () => {
                 fullWidth
                 multiline
                 rows={2}
-                label="Notas"
+                label={t('procurement.notes')}
                 name="notes"
                 value={formData.notes}
                 onChange={handleChange}
@@ -549,7 +553,7 @@ const PurchaseOrderForm = () => {
                 fullWidth={isMobile}
                 disabled={loading}
               >
-                Cancelar
+                {t('common.cancel')}
               </Button>
               <Button 
                 variant="contained" 
@@ -557,7 +561,7 @@ const PurchaseOrderForm = () => {
                 fullWidth={isMobile}
                 disabled={loading}
               >
-                {loading ? <CircularProgress size={24} /> : (isEdit ? 'Guardar Cambios' : 'Crear Orden')}
+                {loading ? <CircularProgress size={24} /> : (isEdit ? t('procurement.saveChanges') : t('procurement.createOrder'))}
               </Button>
             </Box>
           </Grid>

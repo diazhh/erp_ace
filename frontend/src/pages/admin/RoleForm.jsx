@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate, useParams } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import {
   Box,
   Paper,
@@ -25,33 +26,19 @@ import {
 } from '@mui/icons-material';
 import { createRole, updateRole, fetchRoleById, fetchPermissions, clearError, clearSuccess, clearCurrentRole } from '../../store/slices/rolesSlice';
 
-// Nombres amigables para los módulos
-const MODULE_NAMES = {
-  system: 'Sistema',
-  users: 'Usuarios',
-  roles: 'Roles',
-  employees: 'Empleados',
-  loans: 'Préstamos',
-  payroll: 'Nómina',
-  finance: 'Finanzas',
-  petty_cash: 'Caja Chica',
-  projects: 'Proyectos',
-  contractors: 'Contratistas',
-  inventory: 'Inventario',
-  fleet: 'Flota',
-  procurement: 'Procura',
-  hse: 'HSE',
-  documents: 'Documentos',
-  organization: 'Organización',
-  audit: 'Auditoría',
-  reports: 'Reportes',
-};
+// MODULE_NAMES will be defined inside component using t()
 
 const RoleForm = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const { id } = useParams();
   const isEdit = Boolean(id);
+
+  // Nombres amigables para los módulos usando traducciones
+  const getModuleName = (moduleName) => {
+    return t(`admin.modules.${moduleName}`, moduleName);
+  };
 
   const { currentRole, permissions, loading, error, success } = useSelector(state => state.roles);
 
@@ -97,7 +84,7 @@ const RoleForm = () => {
     const newErrors = {};
 
     if (!formData.name.trim()) {
-      newErrors.name = 'El nombre es requerido';
+      newErrors.name = t('admin.roles.nameRequired');
     }
 
     setErrors(newErrors);
@@ -186,10 +173,10 @@ const RoleForm = () => {
       {/* Header */}
       <Box sx={{ display: 'flex', alignItems: 'center', mb: 3, gap: 2 }}>
         <Button startIcon={<BackIcon />} onClick={() => navigate('/admin/roles')}>
-          Volver
+          {t('common.back')}
         </Button>
         <Typography variant="h4" component="h1">
-          {isEdit ? 'Editar Rol' : 'Nuevo Rol'}
+          {isEdit ? t('admin.roles.editRole') : t('admin.roles.newRole')}
         </Typography>
       </Box>
 
@@ -197,7 +184,7 @@ const RoleForm = () => {
       {error && <Alert severity="error" sx={{ mb: 2 }}>{error}</Alert>}
       {isSystemRole && (
         <Alert severity="info" sx={{ mb: 2 }}>
-          Este es un rol del sistema. Solo puede modificar los permisos asignados.
+          {t('admin.roles.systemRoleWarning')}
         </Alert>
       )}
 
@@ -207,13 +194,13 @@ const RoleForm = () => {
           <Grid item xs={12} md={4}>
             <Paper sx={{ p: 3 }}>
               <Typography variant="h6" gutterBottom>
-                Información del Rol
+                {t('admin.roles.roleInfo')}
               </Typography>
               <Divider sx={{ mb: 2 }} />
 
               <TextField
                 fullWidth
-                label="Nombre del Rol"
+                label={t('admin.roles.roleName')}
                 name="name"
                 value={formData.name}
                 onChange={handleChange}
@@ -226,7 +213,7 @@ const RoleForm = () => {
 
               <TextField
                 fullWidth
-                label="Descripción"
+                label={t('admin.roles.description')}
                 name="description"
                 value={formData.description}
                 onChange={handleChange}
@@ -237,7 +224,7 @@ const RoleForm = () => {
 
               <Box sx={{ mt: 3 }}>
                 <Typography variant="body2" color="text.secondary">
-                  Permisos seleccionados: <strong>{formData.permissionIds.length}</strong>
+                  {t('admin.roles.selectedPermissions')}: <strong>{formData.permissionIds.length}</strong>
                 </Typography>
               </Box>
             </Paper>
@@ -247,7 +234,7 @@ const RoleForm = () => {
           <Grid item xs={12} md={8}>
             <Paper sx={{ p: 3 }}>
               <Typography variant="h6" gutterBottom>
-                Permisos
+                {t('admin.roles.permissions')}
               </Typography>
               <Divider sx={{ mb: 2 }} />
 
@@ -266,7 +253,7 @@ const RoleForm = () => {
                         onClick={(e) => e.stopPropagation()}
                       />
                       <Typography sx={{ flexGrow: 1 }}>
-                        {MODULE_NAMES[moduleName] || moduleName}
+                        {getModuleName(moduleName)}
                       </Typography>
                       <Chip
                         label={`${getModuleSelectedCount(moduleName)}/${modulePermissions.length}`}
@@ -312,7 +299,7 @@ const RoleForm = () => {
           <Grid item xs={12}>
             <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: 2 }}>
               <Button onClick={() => navigate('/admin/roles')}>
-                Cancelar
+                {t('common.cancel')}
               </Button>
               <Button
                 type="submit"
@@ -320,7 +307,7 @@ const RoleForm = () => {
                 startIcon={loading ? <CircularProgress size={20} /> : <SaveIcon />}
                 disabled={loading}
               >
-                {isEdit ? 'Guardar Cambios' : 'Crear Rol'}
+                {isEdit ? t('admin.roles.saveChanges') : t('admin.roles.createRole')}
               </Button>
             </Box>
           </Grid>

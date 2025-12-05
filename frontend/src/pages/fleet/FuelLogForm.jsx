@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import {
   Box,
   Paper,
@@ -37,6 +38,7 @@ const FuelLogForm = () => {
   const vehicleIdParam = searchParams.get('vehicleId');
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const isEdit = Boolean(id);
 
   const { currentFuelLog, vehicles, catalogs, loading, error } = useSelector((state) => state.fleet);
@@ -107,17 +109,17 @@ const FuelLogForm = () => {
 
   const validate = () => {
     const errors = {};
-    if (!formData.vehicleId) errors.vehicleId = 'Seleccione un vehículo';
-    if (!formData.fuelDate) errors.fuelDate = 'La fecha es requerida';
-    if (!formData.fuelType) errors.fuelType = 'Seleccione el tipo de combustible';
+    if (!formData.vehicleId) errors.vehicleId = t('fleet.validation.selectVehicle');
+    if (!formData.fuelDate) errors.fuelDate = t('fleet.validation.dateRequired');
+    if (!formData.fuelType) errors.fuelType = t('fleet.validation.selectFuelType');
     if (!formData.quantity || parseFloat(formData.quantity) <= 0) {
-      errors.quantity = 'Ingrese una cantidad válida';
+      errors.quantity = t('fleet.validation.validQuantity');
     }
     if (!formData.unitPrice || parseFloat(formData.unitPrice) <= 0) {
-      errors.unitPrice = 'Ingrese un precio válido';
+      errors.unitPrice = t('fleet.validation.validPrice');
     }
     if (!formData.mileage || parseInt(formData.mileage) <= 0) {
-      errors.mileage = 'Ingrese el kilometraje';
+      errors.mileage = t('fleet.validation.enterMileage');
     }
     setFormErrors(errors);
     return Object.keys(errors).length === 0;
@@ -165,11 +167,11 @@ const FuelLogForm = () => {
     <Box sx={{ p: { xs: 2, md: 3 } }}>
       <Box sx={{ mb: 3 }}>
         <Button startIcon={<BackIcon />} onClick={() => navigate(-1)}>
-          Volver
+          {t('fleet.back')}
         </Button>
         <Typography variant="h4" component="h1" sx={{ mt: 1 }}>
           <FuelIcon sx={{ mr: 1, verticalAlign: 'middle' }} />
-          {isEdit ? 'Editar Registro de Combustible' : 'Registrar Combustible'}
+          {isEdit ? t('fleet.fuelLog.editFuelLog') : t('fleet.fuelLog.newFuelLog')}
         </Typography>
       </Box>
 
@@ -182,7 +184,7 @@ const FuelLogForm = () => {
       <form onSubmit={handleSubmit}>
         <Paper sx={{ p: 3, mb: 3 }}>
           <Typography variant="h6" gutterBottom>
-            Información de la Carga
+            {t('fleet.fuelLog.loadInfo')}
           </Typography>
           <Divider sx={{ mb: 2 }} />
           <Grid container spacing={2}>
@@ -191,7 +193,7 @@ const FuelLogForm = () => {
                 fullWidth
                 required
                 select
-                label="Vehículo"
+                label={t('fleet.fuelLog.vehicle')}
                 value={formData.vehicleId}
                 onChange={handleChange('vehicleId')}
                 error={!!formErrors.vehicleId}
@@ -210,7 +212,7 @@ const FuelLogForm = () => {
                 fullWidth
                 required
                 type="date"
-                label="Fecha"
+                label={t('fleet.fuelLog.date')}
                 value={formData.fuelDate}
                 onChange={handleChange('fuelDate')}
                 error={!!formErrors.fuelDate}
@@ -222,7 +224,7 @@ const FuelLogForm = () => {
               <TextField
                 fullWidth
                 type="time"
-                label="Hora"
+                label={t('fleet.fuelLog.time')}
                 value={formData.fuelTime}
                 onChange={handleChange('fuelTime')}
                 InputLabelProps={{ shrink: true }}
@@ -233,7 +235,7 @@ const FuelLogForm = () => {
                 fullWidth
                 required
                 select
-                label="Tipo de Combustible"
+                label={t('fleet.fuelLog.fuelType')}
                 value={formData.fuelType}
                 onChange={handleChange('fuelType')}
                 error={!!formErrors.fuelType}
@@ -251,7 +253,7 @@ const FuelLogForm = () => {
                 fullWidth
                 required
                 type="number"
-                label="Cantidad (Litros)"
+                label={t('fleet.fuelLog.quantity')}
                 value={formData.quantity}
                 onChange={handleChange('quantity')}
                 error={!!formErrors.quantity}
@@ -264,7 +266,7 @@ const FuelLogForm = () => {
                 fullWidth
                 required
                 type="number"
-                label="Precio Unitario"
+                label={t('fleet.fuelLog.unitPrice')}
                 value={formData.unitPrice}
                 onChange={handleChange('unitPrice')}
                 error={!!formErrors.unitPrice}
@@ -275,7 +277,7 @@ const FuelLogForm = () => {
             <Grid item xs={12} sm={6} md={4}>
               <TextField
                 fullWidth
-                label="Total"
+                label={t('fleet.fuelLog.total')}
                 value={`$ ${calculateTotal().toFixed(2)}`}
                 InputProps={{ readOnly: true }}
               />
@@ -285,7 +287,7 @@ const FuelLogForm = () => {
                 fullWidth
                 required
                 type="number"
-                label="Kilometraje"
+                label={t('fleet.fuelLog.mileage')}
                 value={formData.mileage}
                 onChange={handleChange('mileage')}
                 error={!!formErrors.mileage}
@@ -300,7 +302,7 @@ const FuelLogForm = () => {
                     onChange={handleChange('fullTank')}
                   />
                 }
-                label="Tanque Lleno"
+                label={t('fleet.fuelLog.fullTank')}
               />
             </Grid>
           </Grid>
@@ -308,14 +310,14 @@ const FuelLogForm = () => {
 
         <Paper sx={{ p: 3, mb: 3 }}>
           <Typography variant="h6" gutterBottom>
-            Estación y Pago
+            {t('fleet.fuelLog.stationPayment')}
           </Typography>
           <Divider sx={{ mb: 2 }} />
           <Grid container spacing={2}>
             <Grid item xs={12} sm={6}>
               <TextField
                 fullWidth
-                label="Estación de Servicio"
+                label={t('fleet.fuelLog.station')}
                 value={formData.station}
                 onChange={handleChange('station')}
               />
@@ -323,7 +325,7 @@ const FuelLogForm = () => {
             <Grid item xs={12} sm={6}>
               <TextField
                 fullWidth
-                label="Ubicación"
+                label={t('fleet.fuelLog.location')}
                 value={formData.location}
                 onChange={handleChange('location')}
               />
@@ -331,7 +333,7 @@ const FuelLogForm = () => {
             <Grid item xs={12} sm={6}>
               <TextField
                 fullWidth
-                label="Número de Recibo"
+                label={t('fleet.fuelLog.receiptNumber')}
                 value={formData.receiptNumber}
                 onChange={handleChange('receiptNumber')}
               />
@@ -340,7 +342,7 @@ const FuelLogForm = () => {
               <TextField
                 fullWidth
                 select
-                label="Método de Pago"
+                label={t('fleet.fuelLog.paymentMethod')}
                 value={formData.paymentMethod}
                 onChange={handleChange('paymentMethod')}
               >
@@ -356,7 +358,7 @@ const FuelLogForm = () => {
 
         <Paper sx={{ p: 3, mb: 3 }}>
           <Typography variant="h6" gutterBottom>
-            Asignación (Opcional)
+            {t('fleet.fuelLog.assignment')}
           </Typography>
           <Divider sx={{ mb: 2 }} />
           <Grid container spacing={2}>
@@ -364,11 +366,11 @@ const FuelLogForm = () => {
               <TextField
                 fullWidth
                 select
-                label="Conductor"
+                label={t('fleet.fuelLog.driver')}
                 value={formData.driverId}
                 onChange={handleChange('driverId')}
               >
-                <MenuItem value="">Sin asignar</MenuItem>
+                <MenuItem value="">{t('fleet.fuelLog.noAssigned')}</MenuItem>
                 {employees?.map((emp) => (
                   <MenuItem key={emp.id} value={emp.id}>
                     {emp.firstName} {emp.lastName}
@@ -380,11 +382,11 @@ const FuelLogForm = () => {
               <TextField
                 fullWidth
                 select
-                label="Proyecto"
+                label={t('fleet.fuelLog.project')}
                 value={formData.projectId}
                 onChange={handleChange('projectId')}
               >
-                <MenuItem value="">Sin asignar</MenuItem>
+                <MenuItem value="">{t('fleet.fuelLog.noAssigned')}</MenuItem>
                 {projects?.map((proj) => (
                   <MenuItem key={proj.id} value={proj.id}>
                     {proj.code} - {proj.name}
@@ -397,7 +399,7 @@ const FuelLogForm = () => {
                 fullWidth
                 multiline
                 rows={2}
-                label="Notas"
+                label={t('fleet.fuelLog.notes')}
                 value={formData.notes}
                 onChange={handleChange('notes')}
               />
@@ -407,7 +409,7 @@ const FuelLogForm = () => {
 
         <Box sx={{ display: 'flex', gap: 2, justifyContent: 'flex-end' }}>
           <Button variant="outlined" onClick={() => navigate(-1)}>
-            Cancelar
+            {t('fleet.cancel')}
           </Button>
           <Button
             type="submit"
@@ -415,7 +417,7 @@ const FuelLogForm = () => {
             startIcon={submitting ? <CircularProgress size={20} /> : <SaveIcon />}
             disabled={submitting}
           >
-            {isEdit ? 'Actualizar' : 'Guardar'}
+            {isEdit ? t('fleet.update') : t('fleet.save')}
           </Button>
         </Box>
       </form>

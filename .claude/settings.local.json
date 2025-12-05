@@ -1,7 +1,11 @@
 {
   "permissions": {
     "allow": [
-      "Bash(ls:*)"
+      "Bash(ls:*)",
+      "Bash(chmod:*)",
+      "Bash(npm test:*)",
+      "Bash(lsof:*)",
+      "Bash(node -e:*)"
     ],
     "deny": [],
     "ask": []

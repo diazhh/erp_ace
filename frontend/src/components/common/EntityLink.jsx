@@ -1,5 +1,6 @@
 import { Link as RouterLink } from 'react-router-dom';
 import { Link, Tooltip } from '@mui/material';
+import { useTranslation } from 'react-i18next';
 import {
   Person as PersonIcon,
   AccountBalance as AccountIcon,
@@ -69,10 +70,11 @@ const entityConfig = {
  * @param {string} tooltip - Texto del tooltip (opcional)
  */
 const EntityLink = ({ type, id, label, showIcon = false, tooltip }) => {
+  const { t } = useTranslation();
   const config = entityConfig[type];
   
   if (!config) {
-    console.warn(`EntityLink: Unknown entity type "${type}"`);
+    console.warn(`EntityLink: ${t('components.entityLink.unknownType')} "${type}"`);
     return <span>{label}</span>;
   }
   

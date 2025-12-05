@@ -95,14 +95,14 @@ const EmployeeDetail = () => {
 
   // Construir lista de tabs visibles
   const visibleTabs = [
-    { id: 'info', icon: <PersonIcon />, label: 'Información', visible: true },
-    { id: 'work', icon: <WorkIcon />, label: 'Laboral', visible: true },
-    { id: 'accounts', icon: <BankIcon />, label: 'Cuentas', visible: canViewAccounts },
-    { id: 'hierarchy', icon: <HierarchyIcon />, label: 'Jerarquía', visible: canViewHierarchy },
-    { id: 'payroll', icon: <MoneyIcon />, label: 'Nómina', visible: canViewPayroll },
-    { id: 'loans', icon: <LoanIcon />, label: 'Préstamos', visible: canViewLoans },
-    { id: 'documents', icon: <DocumentIcon />, label: 'Documentos', visible: canViewDocuments },
-    { id: 'audit', icon: <AuditIcon />, label: 'Auditoría', visible: true },
+    { id: 'info', icon: <PersonIcon />, label: t('employees.tabs.info'), visible: true },
+    { id: 'work', icon: <WorkIcon />, label: t('employees.tabs.work'), visible: true },
+    { id: 'accounts', icon: <BankIcon />, label: t('employees.tabs.accounts'), visible: canViewAccounts },
+    { id: 'hierarchy', icon: <HierarchyIcon />, label: t('employees.tabs.hierarchy'), visible: canViewHierarchy },
+    { id: 'payroll', icon: <MoneyIcon />, label: t('employees.tabs.payroll'), visible: canViewPayroll },
+    { id: 'loans', icon: <LoanIcon />, label: t('employees.tabs.loans'), visible: canViewLoans },
+    { id: 'documents', icon: <DocumentIcon />, label: t('employees.tabs.documents'), visible: canViewDocuments },
+    { id: 'audit', icon: <AuditIcon />, label: t('employees.tabs.audit'), visible: true },
   ].filter(tab => tab.visible);
 
   // Obtener el ID del tab activo basado en el índice
@@ -163,10 +163,10 @@ const EmployeeDetail = () => {
 
   const getStatusLabel = (status) => {
     const labels = {
-      ACTIVE: t('common.active'),
-      INACTIVE: t('common.inactive'),
-      ON_LEAVE: 'En licencia',
-      TERMINATED: 'Terminado',
+      ACTIVE: t('employees.status.active'),
+      INACTIVE: t('employees.status.inactive'),
+      ON_LEAVE: t('employees.status.onLeave'),
+      TERMINATED: t('employees.status.terminated'),
     };
     return labels[status] || status;
   };
@@ -176,9 +176,9 @@ const EmployeeDetail = () => {
     const years = differenceInYears(new Date(), new Date(hireDate));
     if (years < 1) {
       const days = differenceInDays(new Date(), new Date(hireDate));
-      return `${days} días`;
+      return `${days} ${t('employees.time.days')}`;
     }
-    return `${years} año${years > 1 ? 's' : ''}`;
+    return `${years} ${years > 1 ? t('employees.time.years') : t('employees.time.year')}`;
   };
 
   if (loading && !employee) {
@@ -194,7 +194,7 @@ const EmployeeDetail = () => {
       <Box sx={{ p: 3 }}>
         <Alert severity="error">{error}</Alert>
         <Button startIcon={<BackIcon />} onClick={() => navigate('/employees')} sx={{ mt: 2 }}>
-          Volver a Empleados
+          {t('employees.backToEmployees')}
         </Button>
       </Box>
     );
@@ -218,7 +218,7 @@ const EmployeeDetail = () => {
             onClick={() => navigate('/employees')}
             sx={{ minWidth: 'auto' }}
           >
-            Volver
+            {t('employees.back')}
           </Button>
 
           <Avatar
@@ -243,10 +243,10 @@ const EmployeeDetail = () => {
               {employee.position} {employee.department && `• ${employee.department}`}
             </Typography>
             <Typography variant="body2" color="text.secondary">
-              Código: {employee.employeeCode} • {employee.idType}-{employee.idNumber}
+              {t('employees.code')}: {employee.employeeCode} • {employee.idType}-{employee.idNumber}
             </Typography>
             <Typography variant="body2" color="text.secondary">
-              Ingreso: {formatDate(employee.hireDate)} • Antigüedad: {calculateSeniority(employee.hireDate)}
+              {t('employees.entry')}: {formatDate(employee.hireDate)} • {t('employees.seniority')}: {calculateSeniority(employee.hireDate)}
             </Typography>
           </Box>
 
@@ -257,7 +257,7 @@ const EmployeeDetail = () => {
                 startIcon={<EditIcon />}
                 onClick={() => navigate(`/employees/${id}/edit`)}
               >
-                Editar
+                {t('employees.edit')}
               </Button>
             </CanDo>
           </Box>
@@ -273,7 +273,7 @@ const EmployeeDetail = () => {
                     {employee.stats.payrollEntriesCount}
                   </Typography>
                   <Typography variant="body2" color="text.secondary">
-                    Nóminas
+                    {t('employees.stats.payrolls')}
                   </Typography>
                 </CardContent>
               </Card>
@@ -285,7 +285,7 @@ const EmployeeDetail = () => {
                     {employee.stats.activeLoans}
                   </Typography>
                   <Typography variant="body2" color="text.secondary">
-                    Préstamos Activos
+                    {t('employees.stats.activeLoans')}
                   </Typography>
                 </CardContent>
               </Card>
@@ -297,7 +297,7 @@ const EmployeeDetail = () => {
                     {formatCurrency(employee.stats.pendingLoanBalance)}
                   </Typography>
                   <Typography variant="body2" color="text.secondary">
-                    Saldo Préstamos
+                    {t('employees.stats.loanBalance')}
                   </Typography>
                 </CardContent>
               </Card>
@@ -309,7 +309,7 @@ const EmployeeDetail = () => {
                     {employee.stats.documentsExpiringSoon}
                   </Typography>
                   <Typography variant="body2" color="text.secondary">
-                    Docs. por Vencer
+                    {t('employees.stats.expiringDocs')}
                   </Typography>
                 </CardContent>
               </Card>
@@ -337,42 +337,42 @@ const EmployeeDetail = () => {
           <TabPanel value={activeTab} tabId="info" visibleTabs={visibleTabs}>
             <Grid container spacing={3}>
               <Grid item xs={12} md={6}>
-                <Typography variant="h6" gutterBottom>Datos Personales</Typography>
+                <Typography variant="h6" gutterBottom>{t('employees.personal.title')}</Typography>
                 <TableContainer>
                   <Table size="small">
                     <TableBody>
                       <TableRow>
-                        <TableCell sx={{ fontWeight: 'bold', width: '40%' }}>Nombre Completo</TableCell>
+                        <TableCell sx={{ fontWeight: 'bold', width: '40%' }}>{t('employees.personal.fullName')}</TableCell>
                         <TableCell>{employee.firstName} {employee.lastName}</TableCell>
                       </TableRow>
                       <TableRow>
-                        <TableCell sx={{ fontWeight: 'bold' }}>Identificación</TableCell>
+                        <TableCell sx={{ fontWeight: 'bold' }}>{t('employees.personal.identification')}</TableCell>
                         <TableCell>{employee.idType}-{employee.idNumber}</TableCell>
                       </TableRow>
                       <TableRow>
-                        <TableCell sx={{ fontWeight: 'bold' }}>Fecha de Nacimiento</TableCell>
+                        <TableCell sx={{ fontWeight: 'bold' }}>{t('employees.personal.birthDate')}</TableCell>
                         <TableCell>{formatDate(employee.birthDate)}</TableCell>
                       </TableRow>
                       <TableRow>
-                        <TableCell sx={{ fontWeight: 'bold' }}>Género</TableCell>
+                        <TableCell sx={{ fontWeight: 'bold' }}>{t('employees.personal.gender')}</TableCell>
                         <TableCell>
-                          {employee.gender === 'M' ? 'Masculino' : employee.gender === 'F' ? 'Femenino' : 'Otro'}
+                          {employee.gender === 'M' ? t('employees.personal.genderMale') : employee.gender === 'F' ? t('employees.personal.genderFemale') : t('employees.personal.genderOther')}
                         </TableCell>
                       </TableRow>
                       <TableRow>
-                        <TableCell sx={{ fontWeight: 'bold' }}>Estado Civil</TableCell>
+                        <TableCell sx={{ fontWeight: 'bold' }}>{t('employees.personal.maritalStatus')}</TableCell>
                         <TableCell>
                           {{
-                            S: 'Soltero/a',
-                            C: 'Casado/a',
-                            D: 'Divorciado/a',
-                            V: 'Viudo/a',
-                            U: 'Unión libre',
+                            S: t('employees.personal.single'),
+                            C: t('employees.personal.married'),
+                            D: t('employees.personal.divorced'),
+                            V: t('employees.personal.widowed'),
+                            U: t('employees.personal.commonLaw'),
                           }[employee.maritalStatus] || '-'}
                         </TableCell>
                       </TableRow>
                       <TableRow>
-                        <TableCell sx={{ fontWeight: 'bold' }}>Nacionalidad</TableCell>
+                        <TableCell sx={{ fontWeight: 'bold' }}>{t('employees.personal.nationality')}</TableCell>
                         <TableCell>{employee.nationality || '-'}</TableCell>
                       </TableRow>
                     </TableBody>
@@ -381,52 +381,52 @@ const EmployeeDetail = () => {
               </Grid>
 
               <Grid item xs={12} md={6}>
-                <Typography variant="h6" gutterBottom>Contacto</Typography>
+                <Typography variant="h6" gutterBottom>{t('employees.contact.title')}</Typography>
                 <TableContainer>
                   <Table size="small">
                     <TableBody>
                       <TableRow>
-                        <TableCell sx={{ fontWeight: 'bold', width: '40%' }}>Email</TableCell>
+                        <TableCell sx={{ fontWeight: 'bold', width: '40%' }}>{t('employees.contact.email')}</TableCell>
                         <TableCell>{employee.email || '-'}</TableCell>
                       </TableRow>
                       <TableRow>
-                        <TableCell sx={{ fontWeight: 'bold' }}>Teléfono</TableCell>
+                        <TableCell sx={{ fontWeight: 'bold' }}>{t('employees.contact.phone')}</TableCell>
                         <TableCell>{employee.phone || '-'}</TableCell>
                       </TableRow>
                       <TableRow>
-                        <TableCell sx={{ fontWeight: 'bold' }}>Celular</TableCell>
+                        <TableCell sx={{ fontWeight: 'bold' }}>{t('employees.contact.mobile')}</TableCell>
                         <TableCell>{employee.mobilePhone || '-'}</TableCell>
                       </TableRow>
                       <TableRow>
-                        <TableCell sx={{ fontWeight: 'bold' }}>Dirección</TableCell>
+                        <TableCell sx={{ fontWeight: 'bold' }}>{t('employees.contact.address')}</TableCell>
                         <TableCell>{employee.address || '-'}</TableCell>
                       </TableRow>
                       <TableRow>
-                        <TableCell sx={{ fontWeight: 'bold' }}>Ciudad</TableCell>
+                        <TableCell sx={{ fontWeight: 'bold' }}>{t('employees.contact.city')}</TableCell>
                         <TableCell>{employee.city || '-'}</TableCell>
                       </TableRow>
                       <TableRow>
-                        <TableCell sx={{ fontWeight: 'bold' }}>Estado</TableCell>
+                        <TableCell sx={{ fontWeight: 'bold' }}>{t('employees.contact.state')}</TableCell>
                         <TableCell>{employee.state || '-'}</TableCell>
                       </TableRow>
                     </TableBody>
                   </Table>
                 </TableContainer>
 
-                <Typography variant="h6" gutterBottom sx={{ mt: 3 }}>Contacto de Emergencia</Typography>
+                <Typography variant="h6" gutterBottom sx={{ mt: 3 }}>{t('employees.emergency.title')}</Typography>
                 <TableContainer>
                   <Table size="small">
                     <TableBody>
                       <TableRow>
-                        <TableCell sx={{ fontWeight: 'bold', width: '40%' }}>Nombre</TableCell>
+                        <TableCell sx={{ fontWeight: 'bold', width: '40%' }}>{t('employees.emergency.name')}</TableCell>
                         <TableCell>{employee.emergencyContactName || '-'}</TableCell>
                       </TableRow>
                       <TableRow>
-                        <TableCell sx={{ fontWeight: 'bold' }}>Teléfono</TableCell>
+                        <TableCell sx={{ fontWeight: 'bold' }}>{t('employees.emergency.phone')}</TableCell>
                         <TableCell>{employee.emergencyContactPhone || '-'}</TableCell>
                       </TableRow>
                       <TableRow>
-                        <TableCell sx={{ fontWeight: 'bold' }}>Relación</TableCell>
+                        <TableCell sx={{ fontWeight: 'bold' }}>{t('employees.emergency.relation')}</TableCell>
                         <TableCell>{employee.emergencyContactRelation || '-'}</TableCell>
                       </TableRow>
                     </TableBody>
@@ -440,39 +440,39 @@ const EmployeeDetail = () => {
           <TabPanel value={activeTab} tabId="work" visibleTabs={visibleTabs}>
             <Grid container spacing={3}>
               <Grid item xs={12} md={6}>
-                <Typography variant="h6" gutterBottom>Datos Laborales</Typography>
+                <Typography variant="h6" gutterBottom>{t('employees.work.title')}</Typography>
                 <TableContainer>
                   <Table size="small">
                     <TableBody>
                       <TableRow>
-                        <TableCell sx={{ fontWeight: 'bold', width: '40%' }}>Código</TableCell>
+                        <TableCell sx={{ fontWeight: 'bold', width: '40%' }}>{t('employees.work.code')}</TableCell>
                         <TableCell>{employee.employeeCode}</TableCell>
                       </TableRow>
                       <TableRow>
-                        <TableCell sx={{ fontWeight: 'bold' }}>Cargo</TableCell>
+                        <TableCell sx={{ fontWeight: 'bold' }}>{t('employees.work.position')}</TableCell>
                         <TableCell>{employee.position}</TableCell>
                       </TableRow>
                       <TableRow>
-                        <TableCell sx={{ fontWeight: 'bold' }}>Departamento</TableCell>
+                        <TableCell sx={{ fontWeight: 'bold' }}>{t('employees.work.department')}</TableCell>
                         <TableCell>{employee.department || '-'}</TableCell>
                       </TableRow>
                       <TableRow>
-                        <TableCell sx={{ fontWeight: 'bold' }}>Tipo de Contrato</TableCell>
+                        <TableCell sx={{ fontWeight: 'bold' }}>{t('employees.work.contractType')}</TableCell>
                         <TableCell>
                           {{
-                            FULL_TIME: 'Tiempo Completo',
-                            PART_TIME: 'Medio Tiempo',
-                            CONTRACT: 'Contrato',
-                            TEMPORARY: 'Temporal',
+                            FULL_TIME: t('employees.work.fullTime'),
+                            PART_TIME: t('employees.work.partTime'),
+                            CONTRACT: t('employees.work.contract'),
+                            TEMPORARY: t('employees.work.temporary'),
                           }[employee.employmentType] || '-'}
                         </TableCell>
                       </TableRow>
                       <TableRow>
-                        <TableCell sx={{ fontWeight: 'bold' }}>Fecha de Ingreso</TableCell>
+                        <TableCell sx={{ fontWeight: 'bold' }}>{t('employees.work.hireDate')}</TableCell>
                         <TableCell>{formatDate(employee.hireDate)}</TableCell>
                       </TableRow>
                       <TableRow>
-                        <TableCell sx={{ fontWeight: 'bold' }}>Horario</TableCell>
+                        <TableCell sx={{ fontWeight: 'bold' }}>{t('employees.work.schedule')}</TableCell>
                         <TableCell>{employee.workSchedule || '-'}</TableCell>
                       </TableRow>
                     </TableBody>
@@ -481,36 +481,36 @@ const EmployeeDetail = () => {
               </Grid>
 
               <Grid item xs={12} md={6}>
-                <Typography variant="h6" gutterBottom>Datos Bancarios</Typography>
+                <Typography variant="h6" gutterBottom>{t('employees.banking.title')}</Typography>
                 <TableContainer>
                   <Table size="small">
                     <TableBody>
                       <TableRow>
-                        <TableCell sx={{ fontWeight: 'bold', width: '40%' }}>Banco</TableCell>
+                        <TableCell sx={{ fontWeight: 'bold', width: '40%' }}>{t('employees.banking.bank')}</TableCell>
                         <TableCell>{employee.bankName || '-'}</TableCell>
                       </TableRow>
                       <TableRow>
-                        <TableCell sx={{ fontWeight: 'bold' }}>Tipo de Cuenta</TableCell>
+                        <TableCell sx={{ fontWeight: 'bold' }}>{t('employees.banking.accountType')}</TableCell>
                         <TableCell>
-                          {employee.bankAccountType === 'CHECKING' ? 'Corriente' : 
-                           employee.bankAccountType === 'SAVINGS' ? 'Ahorro' : '-'}
+                          {employee.bankAccountType === 'CHECKING' ? t('employees.banking.checking') : 
+                           employee.bankAccountType === 'SAVINGS' ? t('employees.banking.savings') : '-'}
                         </TableCell>
                       </TableRow>
                       <TableRow>
-                        <TableCell sx={{ fontWeight: 'bold' }}>Número de Cuenta</TableCell>
+                        <TableCell sx={{ fontWeight: 'bold' }}>{t('employees.banking.accountNumber')}</TableCell>
                         <TableCell>{employee.bankAccountNumber || '-'}</TableCell>
                       </TableRow>
                       <TableRow>
-                        <TableCell sx={{ fontWeight: 'bold' }}>Salario Base</TableCell>
+                        <TableCell sx={{ fontWeight: 'bold' }}>{t('employees.banking.baseSalary')}</TableCell>
                         <TableCell>{formatCurrency(employee.baseSalary, employee.salaryCurrency)}</TableCell>
                       </TableRow>
                       <TableRow>
-                        <TableCell sx={{ fontWeight: 'bold' }}>Frecuencia de Pago</TableCell>
+                        <TableCell sx={{ fontWeight: 'bold' }}>{t('employees.banking.paymentFrequency')}</TableCell>
                         <TableCell>
                           {{
-                            WEEKLY: 'Semanal',
-                            BIWEEKLY: 'Quincenal',
-                            MONTHLY: 'Mensual',
+                            WEEKLY: t('employees.banking.weekly'),
+                            BIWEEKLY: t('employees.banking.biweekly'),
+                            MONTHLY: t('employees.banking.monthly'),
                           }[employee.paymentFrequency] || '-'}
                         </TableCell>
                       </TableRow>
@@ -518,16 +518,16 @@ const EmployeeDetail = () => {
                   </Table>
                 </TableContainer>
 
-                <Typography variant="h6" gutterBottom sx={{ mt: 3 }}>Seguridad Social</Typography>
+                <Typography variant="h6" gutterBottom sx={{ mt: 3 }}>{t('employees.socialSecurity.title')}</Typography>
                 <TableContainer>
                   <Table size="small">
                     <TableBody>
                       <TableRow>
-                        <TableCell sx={{ fontWeight: 'bold', width: '40%' }}>N° Seguro Social</TableCell>
+                        <TableCell sx={{ fontWeight: 'bold', width: '40%' }}>{t('employees.socialSecurity.ssn')}</TableCell>
                         <TableCell>{employee.socialSecurityNumber || '-'}</TableCell>
                       </TableRow>
                       <TableRow>
-                        <TableCell sx={{ fontWeight: 'bold' }}>RIF</TableCell>
+                        <TableCell sx={{ fontWeight: 'bold' }}>{t('employees.socialSecurity.taxId')}</TableCell>
                         <TableCell>{employee.taxId || '-'}</TableCell>
                       </TableRow>
                     </TableBody>
@@ -540,14 +540,14 @@ const EmployeeDetail = () => {
           {/* Tab: Cuentas Bancarias */}
           <TabPanel value={activeTab} tabId="accounts" visibleTabs={visibleTabs}>
             <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
-              <Typography variant="h6">Cuentas Bancarias</Typography>
+              <Typography variant="h6">{t('employees.accounts.title')}</Typography>
               <Button
                 variant="contained"
                 startIcon={<AddIcon />}
                 onClick={handleAddAccount}
                 size="small"
               >
-                Agregar Cuenta
+                {t('employees.accounts.add')}
               </Button>
             </Box>
             {employee.bankAccounts?.length > 0 ? (
@@ -562,52 +562,52 @@ const EmployeeDetail = () => {
                           </Typography>
                           <Box sx={{ display: 'flex', gap: 0.5, alignItems: 'center' }}>
                             {account.isPrimary ? (
-                              <Chip label="Principal" size="small" color="primary" />
+                              <Chip label={t('employees.accounts.primary')} size="small" color="primary" />
                             ) : (
-                              <Tooltip title="Establecer como principal">
+                              <Tooltip title={t('employees.accounts.setPrimary')}>
                                 <IconButton size="small" onClick={() => handleSetPrimary(account.id)}>
                                   <StarBorderIcon fontSize="small" />
                                 </IconButton>
                               </Tooltip>
                             )}
                             <Chip
-                              label={account.status === 'ACTIVE' ? 'Activa' : 'Inactiva'}
+                              label={account.status === 'ACTIVE' ? t('employees.accounts.active') : t('employees.accounts.inactive')}
                               size="small"
                               color={account.status === 'ACTIVE' ? 'success' : 'default'}
                             />
                           </Box>
                         </Box>
                         <Typography variant="body2" color="text.secondary">
-                          Tipo: {{
-                            CHECKING: 'Corriente',
-                            SAVINGS: 'Ahorro',
-                            PAGO_MOVIL: 'Pago Móvil',
-                            ZELLE: 'Zelle',
-                            CRYPTO: 'Crypto',
+                          {t('employees.accounts.type')}: {{
+                            CHECKING: t('employees.banking.checking'),
+                            SAVINGS: t('employees.banking.savings'),
+                            PAGO_MOVIL: t('employees.accounts.pagoMovil'),
+                            ZELLE: t('employees.accounts.zelle'),
+                            CRYPTO: t('employees.accounts.crypto'),
                           }[account.accountType] || account.accountType}
                         </Typography>
                         {account.accountNumber && (
                           <Typography variant="body2">
-                            Número: {account.accountNumber}
+                            {t('employees.accounts.number')}: {account.accountNumber}
                           </Typography>
                         )}
                         {account.phoneNumber && (
                           <Typography variant="body2">
-                            Teléfono: {account.phoneNumber}
+                            {t('employees.accounts.phoneNumber')}: {account.phoneNumber}
                           </Typography>
                         )}
                         {account.zelleEmail && (
                           <Typography variant="body2">
-                            Email Zelle: {account.zelleEmail}
+                            {t('employees.accounts.zelleEmail')}: {account.zelleEmail}
                           </Typography>
                         )}
                         {account.walletAddress && (
                           <Typography variant="body2" noWrap>
-                            Wallet: {account.walletAddress}
+                            {t('employees.accounts.wallet')}: {account.walletAddress}
                           </Typography>
                         )}
                         <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
-                          Moneda: {account.currency} | Porcentaje: {account.paymentPercentage}%
+                          {t('employees.accounts.currency')}: {account.currency} | {t('employees.accounts.percentage')}: {account.paymentPercentage}%
                         </Typography>
                         
                         {/* Acciones */}
@@ -617,7 +617,7 @@ const EmployeeDetail = () => {
                             startIcon={<EditIcon />}
                             onClick={() => handleEditAccount(account.id)}
                           >
-                            Editar
+                            {t('employees.accounts.edit')}
                           </Button>
                           <Button
                             size="small"
@@ -625,7 +625,7 @@ const EmployeeDetail = () => {
                             startIcon={<DeleteIcon />}
                             onClick={() => setDeleteAccountDialog({ open: true, account })}
                           >
-                            Eliminar
+                            {t('employees.accounts.delete')}
                           </Button>
                         </Box>
                       </CardContent>
@@ -638,11 +638,11 @@ const EmployeeDetail = () => {
                 severity="info" 
                 action={
                   <Button color="inherit" size="small" onClick={handleAddAccount}>
-                    Agregar
+                    {t('employees.accounts.addFirst')}
                   </Button>
                 }
               >
-                No hay cuentas bancarias registradas
+                {t('employees.accounts.noAccounts')}
               </Alert>
             )}
           </TabPanel>
@@ -652,7 +652,7 @@ const EmployeeDetail = () => {
             <Grid container spacing={3}>
               {/* Supervisor */}
               <Grid item xs={12} md={6}>
-                <Typography variant="h6" gutterBottom>Supervisor Directo</Typography>
+                <Typography variant="h6" gutterBottom>{t('employees.hierarchy.directSupervisor')}</Typography>
                 {employee.supervisor ? (
                   <Card variant="outlined">
                     <CardContent>
@@ -683,14 +683,14 @@ const EmployeeDetail = () => {
                     </CardContent>
                   </Card>
                 ) : (
-                  <Alert severity="info">Sin supervisor asignado</Alert>
+                  <Alert severity="info">{t('employees.hierarchy.noSupervisor')}</Alert>
                 )}
               </Grid>
 
               {/* Subordinados */}
               <Grid item xs={12} md={6}>
                 <Typography variant="h6" gutterBottom>
-                  Subordinados ({employee.subordinates?.length || 0})
+                  {t('employees.hierarchy.subordinates')} ({employee.subordinates?.length || 0})
                 </Typography>
                 {employee.subordinates?.length > 0 ? (
                   <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
@@ -717,7 +717,7 @@ const EmployeeDetail = () => {
                               </Typography>
                             </Box>
                             <Chip
-                              label={sub.status === 'ACTIVE' ? 'Activo' : 'Inactivo'}
+                              label={sub.status === 'ACTIVE' ? t('employees.status.active') : t('employees.status.inactive')}
                               size="small"
                               color={sub.status === 'ACTIVE' ? 'success' : 'default'}
                             />
@@ -727,19 +727,19 @@ const EmployeeDetail = () => {
                     ))}
                   </Box>
                 ) : (
-                  <Alert severity="info">Sin subordinados directos</Alert>
+                  <Alert severity="info">{t('employees.hierarchy.noSubordinates')}</Alert>
                 )}
               </Grid>
 
               {/* Departamento y Posición */}
               <Grid item xs={12}>
-                <Typography variant="h6" gutterBottom>Ubicación Organizacional</Typography>
+                <Typography variant="h6" gutterBottom>{t('employees.hierarchy.orgLocation')}</Typography>
                 <Grid container spacing={2}>
                   {employee.departmentRef && (
                     <Grid item xs={12} sm={6}>
                       <Card variant="outlined">
                         <CardContent>
-                          <Typography variant="subtitle2" color="text.secondary">Departamento</Typography>
+                          <Typography variant="subtitle2" color="text.secondary">{t('employees.hierarchy.department')}</Typography>
                           <Typography variant="h6">{employee.departmentRef.name}</Typography>
                           <Typography variant="body2" color="text.secondary">
                             {employee.departmentRef.code} | {employee.departmentRef.type}
@@ -752,10 +752,10 @@ const EmployeeDetail = () => {
                     <Grid item xs={12} sm={6}>
                       <Card variant="outlined">
                         <CardContent>
-                          <Typography variant="subtitle2" color="text.secondary">Cargo (Estructura)</Typography>
+                          <Typography variant="subtitle2" color="text.secondary">{t('employees.hierarchy.positionStructure')}</Typography>
                           <Typography variant="h6">{employee.positionRef.name}</Typography>
                           <Typography variant="body2" color="text.secondary">
-                            {employee.positionRef.code} | Nivel {employee.positionRef.level}
+                            {employee.positionRef.code} | {t('employees.hierarchy.level')} {employee.positionRef.level}
                           </Typography>
                         </CardContent>
                       </Card>
@@ -768,18 +768,18 @@ const EmployeeDetail = () => {
 
           {/* Tab: Nómina */}
           <TabPanel value={activeTab} tabId="payroll" visibleTabs={visibleTabs}>
-            <Typography variant="h6" gutterBottom>Historial de Nóminas</Typography>
+            <Typography variant="h6" gutterBottom>{t('employees.payrollHistory.title')}</Typography>
             {employee.payrollEntries?.length > 0 ? (
               <TableContainer component={Paper} variant="outlined">
                 <Table size="small">
                   <TableHead>
                     <TableRow>
-                      <TableCell>Período</TableCell>
-                      <TableCell>Fechas</TableCell>
-                      <TableCell align="right">Salario Bruto</TableCell>
-                      <TableCell align="right">Deducciones</TableCell>
-                      <TableCell align="right">Salario Neto</TableCell>
-                      <TableCell>Estado</TableCell>
+                      <TableCell>{t('employees.payrollHistory.period')}</TableCell>
+                      <TableCell>{t('employees.payrollHistory.dates')}</TableCell>
+                      <TableCell align="right">{t('employees.payrollHistory.grossSalary')}</TableCell>
+                      <TableCell align="right">{t('employees.payrollHistory.deductions')}</TableCell>
+                      <TableCell align="right">{t('employees.payrollHistory.netSalary')}</TableCell>
+                      <TableCell>{t('employees.payrollHistory.status')}</TableCell>
                     </TableRow>
                   </TableHead>
                   <TableBody>
@@ -813,13 +813,13 @@ const EmployeeDetail = () => {
                 </Table>
               </TableContainer>
             ) : (
-              <Alert severity="info">No hay registros de nómina</Alert>
+              <Alert severity="info">{t('employees.payrollHistory.noRecords')}</Alert>
             )}
           </TabPanel>
 
           {/* Tab: Préstamos */}
           <TabPanel value={activeTab} tabId="loans" visibleTabs={visibleTabs}>
-            <Typography variant="h6" gutterBottom>Préstamos</Typography>
+            <Typography variant="h6" gutterBottom>{t('employees.loansSection.title')}</Typography>
             {employee.loans?.length > 0 ? (
               <Grid container spacing={2}>
                 {employee.loans.map((loan) => {
@@ -847,13 +847,13 @@ const EmployeeDetail = () => {
                             {loan.description || loan.loanType}
                           </Typography>
                           <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
-                            <Typography variant="body2">Monto: {formatCurrency(loan.amount)}</Typography>
-                            <Typography variant="body2">Cuota: {formatCurrency(loan.installmentAmount)}</Typography>
+                            <Typography variant="body2">{t('employees.loansSection.amount')}: {formatCurrency(loan.amount)}</Typography>
+                            <Typography variant="body2">{t('employees.loansSection.installment')}: {formatCurrency(loan.installmentAmount)}</Typography>
                           </Box>
                           <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
-                            <Typography variant="body2">Pagado: {formatCurrency(loan.amount - loan.remainingAmount)}</Typography>
+                            <Typography variant="body2">{t('employees.loansSection.paid')}: {formatCurrency(loan.amount - loan.remainingAmount)}</Typography>
                             <Typography variant="body2" color="error.main">
-                              Pendiente: {formatCurrency(loan.remainingAmount)}
+                              {t('employees.loansSection.pending')}: {formatCurrency(loan.remainingAmount)}
                             </Typography>
                           </Box>
                           <LinearProgress 
@@ -862,7 +862,7 @@ const EmployeeDetail = () => {
                             sx={{ height: 8, borderRadius: 4 }}
                           />
                           <Typography variant="caption" color="text.secondary" sx={{ mt: 0.5, display: 'block' }}>
-                            {loan.paidInstallments || 0} de {loan.totalInstallments} cuotas
+                            {loan.paidInstallments || 0} {t('employees.loansSection.installmentsOf')} {loan.totalInstallments} {t('employees.loansSection.installments')}
                           </Typography>
                         </CardContent>
                       </Card>
@@ -871,22 +871,22 @@ const EmployeeDetail = () => {
                 })}
               </Grid>
             ) : (
-              <Alert severity="info">No hay préstamos registrados</Alert>
+              <Alert severity="info">{t('employees.loansSection.noLoans')}</Alert>
             )}
           </TabPanel>
 
           {/* Tab: Documentos */}
           <TabPanel value={activeTab} tabId="documents" visibleTabs={visibleTabs}>
-            <Typography variant="h6" gutterBottom>Documentos del Empleado</Typography>
+            <Typography variant="h6" gutterBottom>{t('employees.documentsSection.title')}</Typography>
             {employee.documents?.length > 0 ? (
               <TableContainer component={Paper} variant="outlined">
                 <Table size="small">
                   <TableHead>
                     <TableRow>
-                      <TableCell>Tipo</TableCell>
-                      <TableCell>Nombre</TableCell>
-                      <TableCell>Fecha de Vencimiento</TableCell>
-                      <TableCell>Estado</TableCell>
+                      <TableCell>{t('employees.documentsSection.type')}</TableCell>
+                      <TableCell>{t('employees.documentsSection.name')}</TableCell>
+                      <TableCell>{t('employees.documentsSection.expirationDate')}</TableCell>
+                      <TableCell>{t('employees.documentsSection.status')}</TableCell>
                     </TableRow>
                   </TableHead>
                   <TableBody>
@@ -905,12 +905,12 @@ const EmployeeDetail = () => {
                             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                               {formatDate(doc.expirationDate)}
                               {isExpiringSoon && (
-                                <Tooltip title="Próximo a vencer">
+                                <Tooltip title={t('employees.documentsSection.expiringSoon')}>
                                   <WarningIcon color="warning" fontSize="small" />
                                 </Tooltip>
                               )}
                               {isExpired && (
-                                <Tooltip title="Vencido">
+                                <Tooltip title={t('employees.documentsSection.expired')}>
                                   <WarningIcon color="error" fontSize="small" />
                                 </Tooltip>
                               )}
@@ -930,22 +930,22 @@ const EmployeeDetail = () => {
                 </Table>
               </TableContainer>
             ) : (
-              <Alert severity="info">No hay documentos registrados</Alert>
+              <Alert severity="info">{t('employees.documentsSection.noDocuments')}</Alert>
             )}
           </TabPanel>
 
           {/* Tab: Auditoría */}
           <TabPanel value={activeTab} tabId="audit" visibleTabs={visibleTabs}>
-            <Typography variant="h6" gutterBottom>Historial de Cambios</Typography>
+            <Typography variant="h6" gutterBottom>{t('employees.audit.title')}</Typography>
             {employee.auditLogs?.length > 0 ? (
               <TableContainer component={Paper} variant="outlined">
                 <Table size="small">
                   <TableHead>
                     <TableRow>
-                      <TableCell>Fecha</TableCell>
-                      <TableCell>Usuario</TableCell>
-                      <TableCell>Acción</TableCell>
-                      <TableCell>Detalles</TableCell>
+                      <TableCell>{t('employees.audit.date')}</TableCell>
+                      <TableCell>{t('employees.audit.user')}</TableCell>
+                      <TableCell>{t('employees.audit.action')}</TableCell>
+                      <TableCell>{t('employees.audit.details')}</TableCell>
                     </TableRow>
                   </TableHead>
                   <TableBody>
@@ -969,7 +969,7 @@ const EmployeeDetail = () => {
                         <TableCell>
                           {log.action === 'UPDATE' && log.oldValues && log.newValues && (
                             <Typography variant="caption" color="text.secondary">
-                              Campos modificados
+                              {t('employees.audit.fieldsModified')}
                             </Typography>
                           )}
                         </TableCell>
@@ -979,7 +979,7 @@ const EmployeeDetail = () => {
                 </Table>
               </TableContainer>
             ) : (
-              <Alert severity="info">No hay registros de auditoría</Alert>
+              <Alert severity="info">{t('employees.audit.noRecords')}</Alert>
             )}
           </TabPanel>
         </Box>
@@ -988,8 +988,8 @@ const EmployeeDetail = () => {
       {/* Confirm Delete Account Dialog */}
       <ConfirmDialog
         open={deleteAccountDialog.open}
-        title="Eliminar Cuenta Bancaria"
-        message={`¿Está seguro de eliminar la cuenta ${deleteAccountDialog.account?.bankName || ''}? Esta acción no se puede deshacer.`}
+        title={t('employees.accounts.deleteTitle')}
+        message={t('employees.accounts.deleteConfirm', { bank: deleteAccountDialog.account?.bankName || '' })}
         onConfirm={handleDeleteAccount}
         onCancel={() => setDeleteAccountDialog({ open: false, account: null })}
       />

@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import {
   Box,
   Paper,
@@ -49,18 +50,21 @@ const statusColors = {
   CANCELLED: 'error',
 };
 
-const statusLabels = {
-  SCHEDULED: 'Programado',
-  IN_PROGRESS: 'En Progreso',
-  COMPLETED: 'Completado',
-  CANCELLED: 'Cancelado',
-};
+// statusLabels will be defined inside component using t()
 
 const MaintenanceList = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
+
+  const statusLabels = {
+    SCHEDULED: t('fleet.maintenance.scheduled'),
+    IN_PROGRESS: t('fleet.maintenance.inProgress'),
+    COMPLETED: t('fleet.maintenance.completed'),
+    CANCELLED: t('fleet.maintenance.cancelled'),
+  };
 
   const { maintenances, maintenancesPagination, catalogs, loading, error } = useSelector(
     (state) => state.fleet
@@ -93,7 +97,7 @@ const MaintenanceList = () => {
   };
 
   const handleComplete = async (id) => {
-    if (window.confirm('¿Marcar este mantenimiento como completado?')) {
+    if (window.confirm(t('fleet.maintenance.completeConfirm'))) {
       await dispatch(completeMaintenance({ id, data: { completedDate: new Date().toISOString().split('T')[0] } }));
       dispatch(fetchMaintenances(filters));
     }
@@ -114,13 +118,13 @@ const MaintenanceList = () => {
       <Grid container spacing={2} alignItems="center">
         <Grid item xs={6} md={3}>
           <FormControl fullWidth size="small">
-            <InputLabel>Estado</InputLabel>
+            <InputLabel>{t('common.status')}</InputLabel>
             <Select
               value={filters.status}
-              label="Estado"
+              label={t('common.status')}
               onChange={(e) => handleFilterChange('status', e.target.value)}
             >
-              <MenuItem value="">Todos</MenuItem>
+              <MenuItem value="">{t('common.all')}</MenuItem>
               {catalogs?.maintenanceStatuses?.map((s) => (
                 <MenuItem key={s.value} value={s.value}>
                   {s.label}
@@ -131,13 +135,13 @@ const MaintenanceList = () => {
         </Grid>
         <Grid item xs={6} md={3}>
           <FormControl fullWidth size="small">
-            <InputLabel>Tipo</InputLabel>
+            <InputLabel>{t('fleet.maintenance.type')}</InputLabel>
             <Select
               value={filters.maintenanceType}
-              label="Tipo"
+              label={t('fleet.maintenance.type')}
               onChange={(e) => handleFilterChange('maintenanceType', e.target.value)}
             >
-              <MenuItem value="">Todos</MenuItem>
+              <MenuItem value="">{t('common.all')}</MenuItem>
               {catalogs?.maintenanceTypes?.map((t) => (
                 <MenuItem key={t.value} value={t.value}>
                   {t.label}
@@ -153,7 +157,7 @@ const MaintenanceList = () => {
             onClick={clearFilters}
             fullWidth
           >
-            Limpiar
+            {t('fleet.clear')}
           </Button>
         </Grid>
         <Grid item xs={6} md={3}>
@@ -163,7 +167,7 @@ const MaintenanceList = () => {
             onClick={() => navigate('/fleet/maintenances/new')}
             fullWidth
           >
-            Nuevo
+            {t('fleet.new')}
           </Button>
         </Grid>
       </Grid>
@@ -200,11 +204,11 @@ const MaintenanceList = () => {
       </CardContent>
       <CardActions>
         <Button size="small" startIcon={<ViewIcon />} onClick={() => navigate(`/fleet/maintenances/${maintenance.id}`)}>
-          Ver
+          {t('common.view')}
         </Button>
         {maintenance.status !== 'COMPLETED' && maintenance.status !== 'CANCELLED' && (
           <Button size="small" color="success" startIcon={<CompleteIcon />} onClick={() => handleComplete(maintenance.id)}>
-            Completar
+            {t('fleet.maintenance.complete')}
           </Button>
         )}
       </CardActions>
@@ -216,14 +220,14 @@ const MaintenanceList = () => {
       <Table>
         <TableHead>
           <TableRow>
-            <TableCell>Código</TableCell>
-            <TableCell>Vehículo</TableCell>
-            <TableCell>Tipo</TableCell>
-            <TableCell>Descripción</TableCell>
-            <TableCell>Fecha</TableCell>
-            <TableCell align="right">Costo</TableCell>
-            <TableCell>Estado</TableCell>
-            <TableCell align="center">Acciones</TableCell>
+            <TableCell>{t('fleet.fuelLog.code')}</TableCell>
+            <TableCell>{t('fleet.fuelLog.vehicle')}</TableCell>
+            <TableCell>{t('fleet.maintenance.type')}</TableCell>
+            <TableCell>{t('fleet.maintenance.description')}</TableCell>
+            <TableCell>{t('fleet.fuelLog.date')}</TableCell>
+            <TableCell align="right">{t('fleet.maintenance.cost')}</TableCell>
+            <TableCell>{t('common.status')}</TableCell>
+            <TableCell align="center">{t('fleet.actions')}</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
@@ -241,7 +245,7 @@ const MaintenanceList = () => {
             <TableRow>
               <TableCell colSpan={8} align="center">
                 <Typography color="text.secondary" sx={{ py: 3 }}>
-                  No se encontraron mantenimientos
+                  {t('fleet.maintenance.noRecords')}
                 </Typography>
               </TableCell>
             </TableRow>
@@ -270,18 +274,18 @@ const MaintenanceList = () => {
                   />
                 </TableCell>
                 <TableCell align="center">
-                  <Tooltip title="Ver detalle">
+                  <Tooltip title={t('fleet.maintenance.viewDetail')}>
                     <IconButton size="small" onClick={() => navigate(`/fleet/maintenances/${m.id}`)}>
                       <ViewIcon />
                     </IconButton>
                   </Tooltip>
-                  <Tooltip title="Editar">
+                  <Tooltip title={t('fleet.edit')}>
                     <IconButton size="small" onClick={() => navigate(`/fleet/maintenances/${m.id}/edit`)}>
                       <EditIcon />
                     </IconButton>
                   </Tooltip>
                   {m.status !== 'COMPLETED' && m.status !== 'CANCELLED' && (
-                    <Tooltip title="Completar">
+                    <Tooltip title={t('fleet.maintenance.complete')}>
                       <IconButton size="small" color="success" onClick={() => handleComplete(m.id)}>
                         <CompleteIcon />
                       </IconButton>
@@ -301,7 +305,7 @@ const MaintenanceList = () => {
       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
         <Typography variant="h4" component="h1">
           <MaintenanceIcon sx={{ mr: 1, verticalAlign: 'middle' }} />
-          Mantenimientos
+          {t('fleet.maintenance.title')}
         </Typography>
       </Box>
 

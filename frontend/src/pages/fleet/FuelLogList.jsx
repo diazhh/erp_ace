@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import {
   Box,
   Paper,
@@ -38,6 +39,7 @@ import { fetchFuelLogs, deleteFuelLog } from '../../store/slices/fleetSlice';
 const FuelLogList = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
 
@@ -66,7 +68,7 @@ const FuelLogList = () => {
   };
 
   const handleDelete = async (id) => {
-    if (window.confirm('¿Está seguro de eliminar este registro?')) {
+    if (window.confirm(t('fleet.fuelLog.deleteConfirm'))) {
       await dispatch(deleteFuelLog(id));
       dispatch(fetchFuelLogs(filters));
     }
@@ -90,7 +92,7 @@ const FuelLogList = () => {
             fullWidth
             size="small"
             type="date"
-            label="Desde"
+            label={t('fleet.fuelLog.from')}
             value={filters.startDate}
             onChange={(e) => handleFilterChange('startDate', e.target.value)}
             InputLabelProps={{ shrink: true }}
@@ -101,7 +103,7 @@ const FuelLogList = () => {
             fullWidth
             size="small"
             type="date"
-            label="Hasta"
+            label={t('fleet.fuelLog.to')}
             value={filters.endDate}
             onChange={(e) => handleFilterChange('endDate', e.target.value)}
             InputLabelProps={{ shrink: true }}
@@ -114,7 +116,7 @@ const FuelLogList = () => {
             onClick={clearFilters}
             fullWidth
           >
-            Limpiar
+            {t('fleet.clear')}
           </Button>
         </Grid>
         <Grid item xs={6} md={3}>
@@ -124,7 +126,7 @@ const FuelLogList = () => {
             onClick={() => navigate('/fleet/fuel-logs/new')}
             fullWidth
           >
-            Nuevo
+            {t('fleet.new')}
           </Button>
         </Grid>
       </Grid>
@@ -149,19 +151,19 @@ const FuelLogList = () => {
         </Box>
         <Grid container spacing={1}>
           <Grid item xs={6}>
-            <Typography variant="body2" color="text.secondary">Fecha</Typography>
+            <Typography variant="body2" color="text.secondary">{t('fleet.fuelLog.date')}</Typography>
             <Typography variant="body2">{formatDate(fuelLog.fuelDate)}</Typography>
           </Grid>
           <Grid item xs={6}>
-            <Typography variant="body2" color="text.secondary">Cantidad</Typography>
+            <Typography variant="body2" color="text.secondary">{t('fleet.fuelLog.quantity')}</Typography>
             <Typography variant="body2">{fuelLog.quantity} L</Typography>
           </Grid>
           <Grid item xs={6}>
-            <Typography variant="body2" color="text.secondary">Kilometraje</Typography>
+            <Typography variant="body2" color="text.secondary">{t('fleet.fuelLog.mileage')}</Typography>
             <Typography variant="body2">{fuelLog.mileage?.toLocaleString()} km</Typography>
           </Grid>
           <Grid item xs={6}>
-            <Typography variant="body2" color="text.secondary">Conductor</Typography>
+            <Typography variant="body2" color="text.secondary">{t('fleet.fuelLog.driver')}</Typography>
             <Typography variant="body2">
               {fuelLog.driver ? `${fuelLog.driver.firstName} ${fuelLog.driver.lastName}` : '-'}
             </Typography>
@@ -170,10 +172,10 @@ const FuelLogList = () => {
       </CardContent>
       <CardActions>
         <Button size="small" startIcon={<EditIcon />} onClick={() => navigate(`/fleet/fuel-logs/${fuelLog.id}/edit`)}>
-          Editar
+          {t('fleet.edit')}
         </Button>
         <Button size="small" color="error" startIcon={<DeleteIcon />} onClick={() => handleDelete(fuelLog.id)}>
-          Eliminar
+          {t('fleet.delete')}
         </Button>
       </CardActions>
     </Card>
@@ -184,16 +186,16 @@ const FuelLogList = () => {
       <Table>
         <TableHead>
           <TableRow>
-            <TableCell>Código</TableCell>
-            <TableCell>Vehículo</TableCell>
-            <TableCell>Fecha</TableCell>
-            <TableCell>Tipo</TableCell>
-            <TableCell align="right">Cantidad</TableCell>
-            <TableCell align="right">Precio Unit.</TableCell>
-            <TableCell align="right">Total</TableCell>
-            <TableCell>Km</TableCell>
-            <TableCell>Conductor</TableCell>
-            <TableCell align="center">Acciones</TableCell>
+            <TableCell>{t('fleet.fuelLog.code')}</TableCell>
+            <TableCell>{t('fleet.fuelLog.vehicle')}</TableCell>
+            <TableCell>{t('fleet.fuelLog.date')}</TableCell>
+            <TableCell>{t('fleet.fuelLog.type')}</TableCell>
+            <TableCell align="right">{t('fleet.fuelLog.quantity')}</TableCell>
+            <TableCell align="right">{t('fleet.fuelLog.unitPrice')}</TableCell>
+            <TableCell align="right">{t('fleet.fuelLog.total')}</TableCell>
+            <TableCell>{t('fleet.fuelLog.km')}</TableCell>
+            <TableCell>{t('fleet.fuelLog.driver')}</TableCell>
+            <TableCell align="center">{t('fleet.actions')}</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
@@ -211,7 +213,7 @@ const FuelLogList = () => {
             <TableRow>
               <TableCell colSpan={10} align="center">
                 <Typography color="text.secondary" sx={{ py: 3 }}>
-                  No se encontraron registros de combustible
+                  {t('fleet.fuelLog.noRecords')}
                 </Typography>
               </TableCell>
             </TableRow>
@@ -236,12 +238,12 @@ const FuelLogList = () => {
                   {f.driver ? `${f.driver.firstName} ${f.driver.lastName}` : '-'}
                 </TableCell>
                 <TableCell align="center">
-                  <Tooltip title="Editar">
+                  <Tooltip title={t('fleet.edit')}>
                     <IconButton size="small" onClick={() => navigate(`/fleet/fuel-logs/${f.id}/edit`)}>
                       <EditIcon />
                     </IconButton>
                   </Tooltip>
-                  <Tooltip title="Eliminar">
+                  <Tooltip title={t('fleet.delete')}>
                     <IconButton size="small" color="error" onClick={() => handleDelete(f.id)}>
                       <DeleteIcon />
                     </IconButton>
@@ -260,7 +262,7 @@ const FuelLogList = () => {
       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
         <Typography variant="h4" component="h1">
           <FuelIcon sx={{ mr: 1, verticalAlign: 'middle' }} />
-          Registros de Combustible
+          {t('fleet.fuelLog.title')}
         </Typography>
       </Box>
 

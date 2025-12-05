@@ -238,7 +238,7 @@ const EmployeeForm = () => {
       <Paper sx={{ p: { xs: 2, md: 3 } }}>
         <form onSubmit={handleSubmit}>
           {/* Datos Personales */}
-          <SectionTitle icon={PersonIcon} title="Datos Personales" />
+          <SectionTitle icon={PersonIcon} title={t('employees.personal.title')} />
           <Grid container spacing={2}>
             <Grid item xs={12} md={6}>
               <TextField
@@ -267,16 +267,16 @@ const EmployeeForm = () => {
             <Grid item xs={12} sm={4} md={2}>
               <TextField
                 name="idType"
-                label="Tipo ID"
+                label={t('employees.form.idType')}
                 value={formData.idType}
                 onChange={handleChange}
                 select
                 fullWidth
               >
-                <MenuItem value="V">V - Venezolano</MenuItem>
-                <MenuItem value="E">E - Extranjero</MenuItem>
-                <MenuItem value="P">P - Pasaporte</MenuItem>
-                <MenuItem value="J">J - Jurídico</MenuItem>
+                <MenuItem value="V">{t('employees.form.idTypeV')}</MenuItem>
+                <MenuItem value="E">{t('employees.form.idTypeE')}</MenuItem>
+                <MenuItem value="P">{t('employees.form.idTypeP')}</MenuItem>
+                <MenuItem value="J">{t('employees.form.idTypeJ')}</MenuItem>
               </TextField>
             </Grid>
             <Grid item xs={12} sm={8} md={4}>
@@ -294,7 +294,7 @@ const EmployeeForm = () => {
             <Grid item xs={12} sm={6} md={3}>
               <TextField
                 name="birthDate"
-                label="Fecha de Nacimiento"
+                label={t('employees.personal.birthDate')}
                 type="date"
                 value={formData.birthDate}
                 onChange={handleChange}
@@ -305,39 +305,39 @@ const EmployeeForm = () => {
             <Grid item xs={12} sm={6} md={3}>
               <TextField
                 name="gender"
-                label="Género"
+                label={t('employees.personal.gender')}
                 value={formData.gender}
                 onChange={handleChange}
                 select
                 fullWidth
               >
-                <MenuItem value="">Sin especificar</MenuItem>
-                <MenuItem value="M">Masculino</MenuItem>
-                <MenuItem value="F">Femenino</MenuItem>
-                <MenuItem value="O">Otro</MenuItem>
+                <MenuItem value="">{t('employees.form.notSpecified')}</MenuItem>
+                <MenuItem value="M">{t('employees.personal.genderMale')}</MenuItem>
+                <MenuItem value="F">{t('employees.personal.genderFemale')}</MenuItem>
+                <MenuItem value="O">{t('employees.personal.genderOther')}</MenuItem>
               </TextField>
             </Grid>
             <Grid item xs={12} sm={6} md={3}>
               <TextField
                 name="maritalStatus"
-                label="Estado Civil"
+                label={t('employees.personal.maritalStatus')}
                 value={formData.maritalStatus}
                 onChange={handleChange}
                 select
                 fullWidth
               >
-                <MenuItem value="">Sin especificar</MenuItem>
-                <MenuItem value="S">Soltero/a</MenuItem>
-                <MenuItem value="C">Casado/a</MenuItem>
-                <MenuItem value="D">Divorciado/a</MenuItem>
-                <MenuItem value="V">Viudo/a</MenuItem>
-                <MenuItem value="U">Unión libre</MenuItem>
+                <MenuItem value="">{t('employees.form.notSpecified')}</MenuItem>
+                <MenuItem value="S">{t('employees.personal.single')}</MenuItem>
+                <MenuItem value="C">{t('employees.personal.married')}</MenuItem>
+                <MenuItem value="D">{t('employees.personal.divorced')}</MenuItem>
+                <MenuItem value="V">{t('employees.personal.widowed')}</MenuItem>
+                <MenuItem value="U">{t('employees.personal.commonLaw')}</MenuItem>
               </TextField>
             </Grid>
             <Grid item xs={12} sm={6} md={3}>
               <TextField
                 name="nationality"
-                label="Nacionalidad"
+                label={t('employees.personal.nationality')}
                 value={formData.nationality}
                 onChange={handleChange}
                 fullWidth
@@ -346,7 +346,7 @@ const EmployeeForm = () => {
             <Grid item xs={12} md={6}>
               <TextField
                 name="email"
-                label="Email"
+                label={t('employees.contact.email')}
                 type="email"
                 value={formData.email}
                 onChange={handleChange}
@@ -360,7 +360,7 @@ const EmployeeForm = () => {
           <Divider sx={{ my: 3 }} />
 
           {/* Datos de Contacto */}
-          <SectionTitle icon={ContactIcon} title="Contacto" />
+          <SectionTitle icon={ContactIcon} title={t('employees.contact.title')} />
           <Grid container spacing={2}>
             <Grid item xs={12} sm={6} md={4}>
               <TextField
@@ -374,7 +374,7 @@ const EmployeeForm = () => {
             <Grid item xs={12} sm={6} md={4}>
               <TextField
                 name="mobilePhone"
-                label="Celular"
+                label={t('employees.contact.mobile')}
                 value={formData.mobilePhone}
                 onChange={handleChange}
                 fullWidth
@@ -383,7 +383,7 @@ const EmployeeForm = () => {
             <Grid item xs={12} sm={6} md={4}>
               <TextField
                 name="extension"
-                label="Extensión"
+                label={t('employees.form.extension')}
                 value={formData.extension}
                 onChange={handleChange}
                 fullWidth
@@ -403,7 +403,7 @@ const EmployeeForm = () => {
             <Grid item xs={12} sm={6}>
               <TextField
                 name="city"
-                label="Ciudad"
+                label={t('employees.contact.city')}
                 value={formData.city}
                 onChange={handleChange}
                 fullWidth
@@ -412,7 +412,7 @@ const EmployeeForm = () => {
             <Grid item xs={12} sm={6}>
               <TextField
                 name="state"
-                label="Estado"
+                label={t('employees.contact.state')}
                 value={formData.state}
                 onChange={handleChange}
                 fullWidth
@@ -422,7 +422,7 @@ const EmployeeForm = () => {
 
           {/* Contacto de Emergencia */}
           <Typography variant="subtitle1" sx={{ mt: 3, mb: 2, fontWeight: 'bold' }}>
-            Contacto de Emergencia
+            {t('employees.emergency.title')}
           </Typography>
           <Grid container spacing={2}>
             <Grid item xs={12} sm={6} md={5}>
@@ -437,7 +437,7 @@ const EmployeeForm = () => {
             <Grid item xs={12} sm={6} md={4}>
               <TextField
                 name="emergencyContactPhone"
-                label="Teléfono emergencia"
+                label={t('employees.emergency.phone')}
                 value={formData.emergencyContactPhone}
                 onChange={handleChange}
                 fullWidth
@@ -446,7 +446,7 @@ const EmployeeForm = () => {
             <Grid item xs={12} sm={6} md={3}>
               <TextField
                 name="emergencyContactRelation"
-                label="Parentesco"
+                label={t('employees.emergency.relation')}
                 value={formData.emergencyContactRelation}
                 onChange={handleChange}
                 fullWidth
@@ -457,7 +457,7 @@ const EmployeeForm = () => {
           <Divider sx={{ my: 3 }} />
 
           {/* Datos Laborales */}
-          <SectionTitle icon={WorkIcon} title="Datos Laborales" />
+          <SectionTitle icon={WorkIcon} title={t('employees.work.title')} />
           <Grid container spacing={2}>
             <Grid item xs={12} md={6}>
               <TextField
@@ -483,13 +483,13 @@ const EmployeeForm = () => {
             <Grid item xs={12} md={6}>
               <TextField
                 name="departmentId"
-                label="Departamento (Estructura)"
+                label={t('employees.form.departmentStructure')}
                 value={formData.departmentId || ''}
                 onChange={handleChange}
                 select
                 fullWidth
               >
-                <MenuItem value="">Sin asignar</MenuItem>
+                <MenuItem value="">{t('employees.form.notSpecified')}</MenuItem>
                 {departments.map((dept) => (
                   <MenuItem key={dept.id} value={dept.id}>
                     {dept.name} ({dept.type})
@@ -500,13 +500,13 @@ const EmployeeForm = () => {
             <Grid item xs={12} md={6}>
               <TextField
                 name="positionId"
-                label="Cargo (Estructura)"
+                label={t('employees.form.positionStructure')}
                 value={formData.positionId || ''}
                 onChange={handleChange}
                 select
                 fullWidth
               >
-                <MenuItem value="">Sin asignar</MenuItem>
+                <MenuItem value="">{t('employees.form.notSpecified')}</MenuItem>
                 {positions.map((pos) => (
                   <MenuItem key={pos.id} value={pos.id}>
                     {pos.name}
@@ -517,13 +517,13 @@ const EmployeeForm = () => {
             <Grid item xs={12} md={6}>
               <TextField
                 name="supervisorId"
-                label="Supervisor Directo"
+                label={t('employees.hierarchy.directSupervisor')}
                 value={formData.supervisorId || ''}
                 onChange={handleChange}
                 select
                 fullWidth
               >
-                <MenuItem value="">Sin supervisor</MenuItem>
+                <MenuItem value="">{t('employees.form.noSupervisor')}</MenuItem>
                 {employees
                   .filter(emp => emp.id !== id)
                   .map((emp) => (
@@ -550,16 +550,16 @@ const EmployeeForm = () => {
             <Grid item xs={12} sm={6} md={3}>
               <TextField
                 name="employmentType"
-                label="Tipo de Contrato"
+                label={t('employees.work.contractType')}
                 value={formData.employmentType}
                 onChange={handleChange}
                 select
                 fullWidth
               >
-                <MenuItem value="FULL_TIME">Tiempo Completo</MenuItem>
-                <MenuItem value="PART_TIME">Medio Tiempo</MenuItem>
-                <MenuItem value="CONTRACT">Contrato</MenuItem>
-                <MenuItem value="TEMPORARY">Temporal</MenuItem>
+                <MenuItem value="FULL_TIME">{t('employees.work.fullTime')}</MenuItem>
+                <MenuItem value="PART_TIME">{t('employees.work.partTime')}</MenuItem>
+                <MenuItem value="CONTRACT">{t('employees.work.contract')}</MenuItem>
+                <MenuItem value="TEMPORARY">{t('employees.work.temporary')}</MenuItem>
               </TextField>
             </Grid>
             <Grid item xs={12} sm={6} md={3}>
@@ -573,14 +573,14 @@ const EmployeeForm = () => {
               >
                 <MenuItem value="ACTIVE">{t('common.active')}</MenuItem>
                 <MenuItem value="INACTIVE">{t('common.inactive')}</MenuItem>
-                <MenuItem value="ON_LEAVE">En licencia</MenuItem>
-                <MenuItem value="TERMINATED">Terminado</MenuItem>
+                <MenuItem value="ON_LEAVE">{t('employees.status.onLeave')}</MenuItem>
+                <MenuItem value="TERMINATED">{t('employees.status.terminated')}</MenuItem>
               </TextField>
             </Grid>
             <Grid item xs={12} sm={6} md={3}>
               <TextField
                 name="officeLocation"
-                label="Ubicación/Oficina"
+                label={t('employees.form.officeLocation')}
                 value={formData.officeLocation}
                 onChange={handleChange}
                 fullWidth
@@ -589,7 +589,7 @@ const EmployeeForm = () => {
             <Grid item xs={12} md={6}>
               <TextField
                 name="workSchedule"
-                label="Horario de Trabajo"
+                label={t('employees.form.workSchedule')}
                 value={formData.workSchedule}
                 onChange={handleChange}
                 fullWidth
@@ -601,7 +601,7 @@ const EmployeeForm = () => {
           <Divider sx={{ my: 3 }} />
 
           {/* Datos de Nómina */}
-          <SectionTitle icon={BankIcon} title="Datos de Nómina" />
+          <SectionTitle icon={BankIcon} title={t('employees.banking.title')} />
           <Grid container spacing={2}>
             <Grid item xs={12} sm={6} md={4}>
               <TextField
@@ -617,7 +617,7 @@ const EmployeeForm = () => {
             <Grid item xs={12} sm={6} md={4}>
               <TextField
                 name="salaryCurrency"
-                label="Moneda"
+                label={t('employees.form.currency')}
                 value={formData.salaryCurrency}
                 onChange={handleChange}
                 select
@@ -631,15 +631,15 @@ const EmployeeForm = () => {
             <Grid item xs={12} sm={6} md={4}>
               <TextField
                 name="paymentFrequency"
-                label="Frecuencia de Pago"
+                label={t('employees.form.paymentFrequency')}
                 value={formData.paymentFrequency}
                 onChange={handleChange}
                 select
                 fullWidth
               >
-                <MenuItem value="WEEKLY">Semanal</MenuItem>
-                <MenuItem value="BIWEEKLY">Quincenal</MenuItem>
-                <MenuItem value="MONTHLY">Mensual</MenuItem>
+                <MenuItem value="WEEKLY">{t('employees.banking.weekly')}</MenuItem>
+                <MenuItem value="BIWEEKLY">{t('employees.banking.biweekly')}</MenuItem>
+                <MenuItem value="MONTHLY">{t('employees.banking.monthly')}</MenuItem>
               </TextField>
             </Grid>
           </Grid>

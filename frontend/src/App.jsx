@@ -24,7 +24,9 @@ import LoanForm from './pages/payroll/LoanForm';
 import BankAccounts from './pages/finance/BankAccounts';
 import BankAccountDetail from './pages/finance/BankAccountDetail';
 import BankAccountForm from './pages/finance/BankAccountForm';
-import Transactions from './pages/finance/Transactions';
+import TransactionList from './pages/finance/TransactionList';
+import TransactionDetail from './pages/finance/TransactionDetail';
+import TransactionForm from './pages/finance/TransactionForm';
 import FinanceDashboard from './pages/finance/FinanceDashboard';
 import PettyCashList from './pages/petty-cash/PettyCashList';
 import PettyCashDetail from './pages/petty-cash/PettyCashDetail';
@@ -150,7 +152,9 @@ function App() {
         <Route path="payroll/loans/new" element={<LoanForm />} />
         <Route path="payroll/loans/:id" element={<LoanDetail />} />
         <Route path="finance" element={<FinanceDashboard />} />
-        <Route path="finance/transactions" element={<Transactions />} />
+        <Route path="finance/transactions" element={<TransactionList />} />
+        <Route path="finance/transactions/new" element={<TransactionForm />} />
+        <Route path="finance/transactions/:id" element={<TransactionDetail />} />
         <Route path="finance/accounts" element={<BankAccounts />} />
         <Route path="finance/accounts/new" element={<BankAccountForm />} />
         <Route path="finance/accounts/:id" element={<BankAccountDetail />} />
