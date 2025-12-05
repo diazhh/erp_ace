@@ -10,7 +10,7 @@ services:
       POSTGRES_USER: erp_user
       POSTGRES_PASSWORD: erp_password_dev_2024
     ports:
-      - "5433:5432"
+      - "5435:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
