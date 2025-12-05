@@ -13,6 +13,7 @@ import documentReducer from './slices/documentSlice';
 import dashboardReducer from './slices/dashboardSlice';
 import usersReducer from './slices/usersSlice';
 import rolesReducer from './slices/rolesSlice';
+import attachmentReducer from './slices/attachmentSlice';
 
 export const store = configureStore({
   reducer: {
@@ -30,6 +31,7 @@ export const store = configureStore({
     dashboard: dashboardReducer,
     users: usersReducer,
     roles: rolesReducer,
+    attachments: attachmentReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({

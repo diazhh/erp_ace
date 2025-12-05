@@ -99,6 +99,7 @@ import {
   deleteValuation,
 } from '../../store/slices/projectSlice';
 import { fetchEmployees } from '../../store/slices/employeeSlice';
+import AttachmentSection from '../../components/common/AttachmentSection';
 
 const statusColors = {
   PLANNING: 'info',
@@ -662,6 +663,7 @@ const ProjectDetail = () => {
           <Tab icon={<UpdateIcon />} label={`Seguimiento (${updates.length})`} iconPosition="start" />
           <Tab icon={<PhotoIcon />} label={`Fotos (${photos.length})`} iconPosition="start" />
           <Tab icon={<HistoryIcon />} label="Auditoría" iconPosition="start" />
+          <Tab label="Documentos" iconPosition="start" />
         </Tabs>
       </Paper>
 
@@ -1249,6 +1251,19 @@ const ProjectDetail = () => {
           ) : (
             <Typography color="text.secondary">Sin registros de auditoría</Typography>
           )}
+        </Paper>
+      </TabPanel>
+
+      {/* Tab: Documentos */}
+      <TabPanel value={tabValue} index={7 + tabOffset}>
+        <Paper sx={{ p: 2 }}>
+          <AttachmentSection
+            entityType="project"
+            entityId={id}
+            title="Documentos del Proyecto"
+            defaultCategory="DOCUMENT"
+            variant="inline"
+          />
         </Paper>
       </TabPanel>
 

@@ -70,9 +70,28 @@ cd backend && bash tests/api-tests.sh
 
 ## 📊 Estado Actual del Proyecto
 
-- **Versión**: 0.8.0
-- **Módulos completados**: Setup, Empleados, Nómina, Finanzas, Caja Chica, Proyectos, Inventario (completo con Almacenes, Items, Movimientos)
-- **Próximo módulo**: Flota
+- **Versión**: 0.13.0
+- **Módulos completados**: Setup, Empleados, Nómina, Finanzas, Caja Chica, Proyectos, Inventario, Flota, Procura, HSE, Documentos, Dashboard, Usuarios/Permisos
+- **Nuevo**: Sistema de Archivos Adjuntos (Attachments)
+
+### Sistema de Archivos Adjuntos (v0.13.0)
+- **Modelo centralizado**: `Attachment` con relación polimórfica
+- **Tipos de entidad soportados**: transaction, petty_cash_entry, vehicle_maintenance, fuel_log, contractor_payment, project_expense, project, incident, inspection, quote, purchase_order, contractor_invoice, inventory_movement, loan_payment, employee_document, training
+- **Categorías**: RECEIPT, INVOICE, PHOTO, BEFORE, AFTER, PROGRESS, EVIDENCE, DOCUMENT, CONTRACT, REPORT, OTHER
+- **Características**:
+  - Upload con drag & drop (react-dropzone)
+  - Thumbnails automáticos para imágenes (sharp)
+  - Galería con lightbox
+  - Máximo 10MB por archivo, 10 archivos por request
+- **Componentes Frontend**:
+  - `FileUpload` - Zona de drop con preview
+  - `AttachmentGallery` - Galería de archivos
+  - `AttachmentSection` - Componente combinado para vistas de detalle
+- **API Endpoints**:
+  - `POST /api/attachments/:entityType/:entityId` - Subir archivos
+  - `GET /api/attachments/:entityType/:entityId` - Listar archivos
+  - `DELETE /api/attachments/:id` - Eliminar archivo
+  - `GET /api/attachments/catalogs` - Catálogos
 
 ### Módulo de Inventario (v0.8.0)
 - **Almacenes**: MAIN, SECONDARY, TRANSIT, PROJECT

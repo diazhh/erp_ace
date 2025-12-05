@@ -40,6 +40,7 @@ import {
 } from '@mui/icons-material';
 import { toast } from 'react-toastify';
 import api from '../../services/api';
+import AttachmentSection from '../../components/common/AttachmentSection';
 
 const statusColors = {
   SCHEDULED: 'warning',
@@ -222,6 +223,7 @@ const InspectionDetail = () => {
           <Tab label="Información General" />
           <Tab label="Checklist" />
           <Tab label="Resultados" />
+          <Tab label="Fotos/Archivos" />
         </Tabs>
       </Paper>
 
@@ -436,6 +438,18 @@ const InspectionDetail = () => {
               La inspección aún no ha sido completada.
             </Typography>
           )}
+        </Paper>
+      )}
+
+      {activeTab === 3 && (
+        <Paper sx={{ p: 3 }}>
+          <AttachmentSection
+            entityType="inspection"
+            entityId={id}
+            title="Fotos de la Inspección"
+            defaultCategory="PHOTO"
+            variant="inline"
+          />
         </Paper>
       )}
 

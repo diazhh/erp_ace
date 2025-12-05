@@ -37,6 +37,7 @@ import {
 } from '@mui/icons-material';
 import { toast } from 'react-toastify';
 import api from '../../services/api';
+import AttachmentSection from '../../components/common/AttachmentSection';
 
 const statusColors = {
   PENDING: 'warning',
@@ -403,6 +404,7 @@ const InvoiceDetail = () => {
           <Tab label="Información" />
           <Tab label="Items" />
           <Tab label="Pagos" />
+          <Tab label="Archivos" />
         </Tabs>
       </Paper>
 
@@ -674,6 +676,18 @@ const InvoiceDetail = () => {
               </TableBody>
             </Table>
           </TableContainer>
+        </Paper>
+      )}
+
+      {activeTab === 3 && (
+        <Paper sx={{ p: 3 }}>
+          <AttachmentSection
+            entityType="contractor_invoice"
+            entityId={id}
+            title="Documentos de la Factura"
+            defaultCategory="INVOICE"
+            variant="inline"
+          />
         </Paper>
       )}
     </Box>

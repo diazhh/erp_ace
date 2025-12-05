@@ -51,6 +51,7 @@ import { toast } from 'react-toastify';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchEmployees } from '../../store/slices/employeeSlice';
 import api from '../../services/api';
+import AttachmentSection from '../../components/common/AttachmentSection';
 
 const statusColors = {
   SCHEDULED: 'warning',
@@ -284,6 +285,7 @@ const TrainingDetail = () => {
         >
           <Tab label="Información General" />
           <Tab label={`Participantes (${training.attendances?.length || 0})`} />
+          <Tab label="Archivos" />
         </Tabs>
       </Paper>
 
@@ -589,6 +591,18 @@ const TrainingDetail = () => {
               No hay participantes registrados
             </Typography>
           )}
+        </Paper>
+      )}
+
+      {activeTab === 2 && (
+        <Paper sx={{ p: 3 }}>
+          <AttachmentSection
+            entityType="training"
+            entityId={id}
+            title="Material de Capacitación"
+            defaultCategory="DOCUMENT"
+            variant="inline"
+          />
         </Paper>
       )}
 

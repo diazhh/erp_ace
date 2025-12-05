@@ -31,3 +31,7 @@ coverage/
 # Temp
 tmp/
 temp/
+
+# Uploads (keep directory structure)
+uploads/*
+!uploads/.gitkeep

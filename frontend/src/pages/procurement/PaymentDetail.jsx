@@ -27,6 +27,7 @@ import {
 } from '@mui/icons-material';
 import { toast } from 'react-toastify';
 import api from '../../services/api';
+import AttachmentSection from '../../components/common/AttachmentSection';
 
 const statusColors = {
   PENDING: 'warning',
@@ -454,6 +455,19 @@ const PaymentDetail = () => {
             </Paper>
           </Grid>
         )}
+
+        {/* Archivos Adjuntos */}
+        <Grid item xs={12}>
+          <Paper sx={{ p: 3 }}>
+            <AttachmentSection
+              entityType="contractor_payment"
+              entityId={id}
+              title="Comprobantes de Pago"
+              defaultCategory="RECEIPT"
+              variant="inline"
+            />
+          </Paper>
+        </Grid>
 
         {/* Audit Info */}
         <Grid item xs={12}>

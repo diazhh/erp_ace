@@ -26,6 +26,7 @@ import {
 import { fetchEmployees } from '../../store/slices/employeeSlice';
 import { fetchProjects } from '../../store/slices/projectSlice';
 import api from '../../services/api';
+import AttachmentSection from '../../components/common/AttachmentSection';
 
 const inspectionTypes = [
   { code: 'WORKPLACE', name: 'Lugar de Trabajo' },
@@ -354,6 +355,21 @@ const InspectionForm = () => {
             />
           </Paper>
         </Grid>
+
+        {/* Archivos Adjuntos - Solo en modo edición */}
+        {isEdit && id && (
+          <Grid item xs={12}>
+            <Paper sx={{ p: 3 }}>
+              <AttachmentSection
+                entityType="inspection"
+                entityId={id}
+                title="Fotos de la Inspección"
+                defaultCategory="PHOTO"
+                variant="inline"
+              />
+            </Paper>
+          </Grid>
+        )}
 
         {/* Actions */}
         <Grid item xs={12}>

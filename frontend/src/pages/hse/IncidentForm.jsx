@@ -20,6 +20,7 @@ import { fetchHSECatalogs, createIncident, updateIncident, fetchIncident } from 
 import { fetchEmployees } from '../../store/slices/employeeSlice';
 import { fetchProjects } from '../../store/slices/projectSlice';
 import api from '../../services/api';
+import AttachmentSection from '../../components/common/AttachmentSection';
 
 const IncidentForm = () => {
   const { id } = useParams();
@@ -414,6 +415,21 @@ const IncidentForm = () => {
             </Grid>
           </Paper>
         </Grid>
+
+        {/* Archivos Adjuntos - Solo en modo edición */}
+        {isEdit && id && (
+          <Grid item xs={12}>
+            <Paper sx={{ p: 3 }}>
+              <AttachmentSection
+                entityType="incident"
+                entityId={id}
+                title="Fotos y Evidencias del Incidente"
+                defaultCategory="EVIDENCE"
+                variant="inline"
+              />
+            </Paper>
+          </Grid>
+        )}
 
         {/* Actions */}
         <Grid item xs={12}>

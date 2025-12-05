@@ -1153,5 +1153,43 @@
     "entityLink": {
       "unknownType": "Tipo de entidad desconocida"
     }
+  },
+  "attachments": {
+    "title": "Archivos Adjuntos",
+    "upload": "Subir archivos",
+    "uploading": "Subiendo...",
+    "gallery": "Galería",
+    "existingFiles": "Archivos existentes",
+    "uploadNew": "Subir nuevos archivos",
+    "noFiles": "No hay archivos adjuntos",
+    "noFilesYet": "Aún no hay archivos. Sube el primero.",
+    "selectedFiles": "Archivos seleccionados",
+    "dropHere": "Suelta los archivos aquí",
+    "dragOrClick": "Arrastra archivos aquí o haz clic para seleccionar",
+    "maxSize": "Máximo",
+    "maxFiles": "Máx. archivos",
+    "category": "Categoría",
+    "description": "Descripción",
+    "deleteConfirm": "¿Eliminar archivo?",
+    "deleteMessage": "¿Estás seguro de que deseas eliminar",
+    "categories": {
+      "receipt": "Recibo",
+      "invoice": "Factura",
+      "photo": "Foto",
+      "before": "Foto Antes",
+      "after": "Foto Después",
+      "progress": "Foto de Avance",
+      "evidence": "Evidencia",
+      "document": "Documento",
+      "contract": "Contrato",
+      "report": "Informe",
+      "other": "Otro"
+    },
+    "errors": {
+      "fileTooLarge": "Archivo muy grande (máx. 10MB)",
+      "invalidType": "Tipo de archivo no permitido",
+      "uploadFailed": "Error al subir archivos",
+      "maxFilesExceeded": "Se excedió el número máximo de archivos"
+    }
   }
 }
