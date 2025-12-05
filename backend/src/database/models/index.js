@@ -62,6 +62,8 @@ const DocumentCategory = require('../../modules/documents/models/DocumentCategor
 const Document = require('../../modules/documents/models/Document');
 const DocumentVersion = require('../../modules/documents/models/DocumentVersion');
 const DocumentShare = require('../../modules/documents/models/DocumentShare');
+// Attachment model
+const Attachment = require('../../modules/attachments/models/Attachment');
 
 // Inicializar modelos
 const models = {
@@ -128,6 +130,8 @@ const models = {
   Document: Document(sequelize),
   DocumentVersion: DocumentVersion(sequelize),
   DocumentShare: DocumentShare(sequelize),
+  // Attachments
+  Attachment: Attachment(sequelize),
 };
 
 // Definir asociaciones
@@ -1446,6 +1450,18 @@ models.DocumentShare.belongsTo(models.User, {
 models.DocumentShare.belongsTo(models.Department, {
   foreignKey: 'shared_with_department_id',
   as: 'sharedWithDepartment',
+});
+
+// ========== ATTACHMENT ASSOCIATIONS ==========
+
+// Attachment -> User (uploadedBy)
+models.Attachment.belongsTo(models.User, {
+  foreignKey: 'uploaded_by',
+  as: 'uploader',
+});
+models.User.hasMany(models.Attachment, {
+  foreignKey: 'uploaded_by',
+  as: 'uploadedAttachments',
 });
 
 module.exports = models;

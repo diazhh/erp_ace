@@ -59,6 +59,7 @@ import PettyCashFormDialog from '../../components/petty-cash/PettyCashFormDialog
 import PettyCashEntryDialog from '../../components/petty-cash/PettyCashEntryDialog';
 import PettyCashReplenishDialog from '../../components/petty-cash/PettyCashReplenishDialog';
 import ConfirmDialog from '../../components/ConfirmDialog';
+import AttachmentSection from '../../components/common/AttachmentSection';
 
 const statusColors = {
   ACTIVE: 'success',
@@ -448,6 +449,10 @@ const PettyCashDetail = () => {
             label="Auditoría" 
             iconPosition="start" 
           />
+          <Tab 
+            label="Archivos" 
+            iconPosition="start" 
+          />
         </Tabs>
         <Divider />
 
@@ -691,6 +696,17 @@ const PettyCashDetail = () => {
             ) : (
               <Alert severity="info">No hay registros de auditoría</Alert>
             )}
+          </TabPanel>
+
+          {/* Tab: Archivos */}
+          <TabPanel value={activeTab} index={3}>
+            <AttachmentSection
+              entityType="petty_cash_entry"
+              entityId={id}
+              title="Recibos y Comprobantes"
+              defaultCategory="RECEIPT"
+              variant="inline"
+            />
           </TabPanel>
         </Box>
       </Paper>

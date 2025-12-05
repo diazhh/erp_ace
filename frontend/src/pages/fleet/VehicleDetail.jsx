@@ -58,6 +58,7 @@ import {
 } from '../../store/slices/fleetSlice';
 import { fetchEmployees } from '../../store/slices/employeeSlice';
 import { fetchProjects } from '../../store/slices/projectSlice';
+import AttachmentSection from '../../components/common/AttachmentSection';
 
 const statusColors = {
   AVAILABLE: 'success',
@@ -642,6 +643,7 @@ const VehicleDetail = () => {
           <Tab icon={<AssignmentIcon />} label="Asignaciones" iconPosition="start" />
           <Tab icon={<MaintenanceIcon />} label="Mantenimientos" iconPosition="start" />
           <Tab icon={<FuelIcon />} label="Combustible" iconPosition="start" />
+          <Tab label="Documentos" iconPosition="start" />
         </Tabs>
       </Paper>
 
@@ -649,6 +651,17 @@ const VehicleDetail = () => {
       <TabPanel value={tabValue} index={1}>{renderAssignmentsTab()}</TabPanel>
       <TabPanel value={tabValue} index={2}>{renderMaintenancesTab()}</TabPanel>
       <TabPanel value={tabValue} index={3}>{renderFuelLogsTab()}</TabPanel>
+      <TabPanel value={tabValue} index={4}>
+        <Paper sx={{ p: 2 }}>
+          <AttachmentSection
+            entityType="vehicle_maintenance"
+            entityId={id}
+            title="Documentos del Vehículo"
+            defaultCategory="DOCUMENT"
+            variant="inline"
+          />
+        </Paper>
+      </TabPanel>
 
       {/* Dialog Nueva Asignación */}
       <Dialog open={assignDialog} onClose={() => setAssignDialog(false)} maxWidth="sm" fullWidth>

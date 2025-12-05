@@ -23,6 +23,7 @@ const procurementRoutes = require('./modules/procurement/routes/procurementRoute
 const hseRoutes = require('./modules/hse/routes/hseRoutes');
 const documentRoutes = require('./modules/documents/routes/documentRoutes');
 const dashboardRoutes = require('./modules/dashboard/routes/dashboardRoutes');
+const attachmentRoutes = require('./modules/attachments/routes/attachmentRoutes');
 
 const app = express();
 
@@ -86,6 +87,10 @@ app.use('/api/procurement', procurementRoutes);
 app.use('/api/hse', hseRoutes);
 app.use('/api/documents', documentRoutes);
 app.use('/api/dashboard', dashboardRoutes);
+app.use('/api/attachments', attachmentRoutes);
+
+// Servir archivos estáticos de uploads
+app.use('/uploads', express.static('uploads'));
 
 // 404 handler
 app.use(notFoundHandler);

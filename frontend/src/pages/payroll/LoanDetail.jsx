@@ -40,6 +40,7 @@ import { es } from 'date-fns/locale';
 import { fetchLoanById, approveLoan, cancelLoan, clearCurrentLoan } from '../../store/slices/payrollSlice';
 import EntityLink from '../../components/common/EntityLink';
 import ConfirmDialog from '../../components/ConfirmDialog';
+import AttachmentSection from '../../components/common/AttachmentSection';
 
 const statusColors = {
   ACTIVE: 'success',
@@ -286,6 +287,7 @@ const LoanDetail = () => {
         >
           <Tab icon={<PaymentIcon />} label={t('payroll.loanInfo')} iconPosition="start" />
           <Tab icon={<HistoryIcon />} label={t('payroll.paymentHistory')} iconPosition="start" />
+          <Tab label={t('attachments.title', 'Archivos')} iconPosition="start" />
         </Tabs>
         <Divider />
 
@@ -439,6 +441,17 @@ const LoanDetail = () => {
                 {t('payroll.noDeductions')}. {t('payroll.deductionsApplied')}
               </Alert>
             )}
+          </TabPanel>
+
+          {/* Tab: Archivos */}
+          <TabPanel value={activeTab} index={2}>
+            <AttachmentSection
+              entityType="loan_payment"
+              entityId={id}
+              title={t('attachments.title', 'Comprobantes de Pago')}
+              defaultCategory="RECEIPT"
+              variant="inline"
+            />
           </TabPanel>
         </Box>
       </Paper>

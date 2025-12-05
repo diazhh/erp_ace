@@ -41,6 +41,7 @@ import {
   fetchFinanceStats,
 } from '../../store/slices/financeSlice';
 import ConfirmDialog from '../../components/ConfirmDialog';
+import AttachmentSection from '../../components/common/AttachmentSection';
 
 const typeColors = {
   INCOME: 'success',
@@ -326,6 +327,7 @@ const TransactionDetail = () => {
           <Tab icon={<ReceiptIcon />} label={t('finance.transactionInfo')} iconPosition="start" />
           <Tab icon={<AccountIcon />} label={t('finance.accountInfo')} iconPosition="start" />
           <Tab icon={<HistoryIcon />} label={t('finance.auditInfo')} iconPosition="start" />
+          <Tab icon={<ReceiptIcon />} label={t('attachments.title', 'Archivos')} iconPosition="start" />
         </Tabs>
       </Paper>
 
@@ -545,6 +547,18 @@ const TransactionDetail = () => {
               </>
             )}
           </Grid>
+        </Paper>
+      )}
+
+      {activeTab === 3 && (
+        <Paper sx={{ p: { xs: 2, md: 3 } }}>
+          <AttachmentSection
+            entityType="transaction"
+            entityId={id}
+            title={t('attachments.title', 'Archivos Adjuntos')}
+            defaultCategory="RECEIPT"
+            variant="inline"
+          />
         </Paper>
       )}
 

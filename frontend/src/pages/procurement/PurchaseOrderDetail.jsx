@@ -46,6 +46,7 @@ import {
 } from '@mui/icons-material';
 import { toast } from 'react-toastify';
 import api from '../../services/api';
+import AttachmentSection from '../../components/common/AttachmentSection';
 
 const statusColors = {
   DRAFT: 'default',
@@ -451,6 +452,7 @@ const PurchaseOrderDetail = () => {
           <Tab label="Información" />
           <Tab label="Items" />
           <Tab label="Facturas" />
+          <Tab label="Archivos" />
         </Tabs>
       </Paper>
 
@@ -679,6 +681,18 @@ const PurchaseOrderDetail = () => {
               </TableBody>
             </Table>
           </TableContainer>
+        </Paper>
+      )}
+
+      {activeTab === 3 && (
+        <Paper sx={{ p: 3 }}>
+          <AttachmentSection
+            entityType="purchase_order"
+            entityId={id}
+            title="Documentos de la Orden de Compra"
+            defaultCategory="DOCUMENT"
+            variant="inline"
+          />
         </Paper>
       )}
 

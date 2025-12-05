@@ -26,6 +26,7 @@ import {
   fetchVehicles,
   clearCurrentMaintenance,
 } from '../../store/slices/fleetSlice';
+import AttachmentSection from '../../components/common/AttachmentSection';
 
 const MaintenanceForm = () => {
   const { id } = useParams();
@@ -378,6 +379,23 @@ const MaintenanceForm = () => {
             </Grid>
           </Grid>
         </Paper>
+
+        {/* Archivos Adjuntos - Solo en modo edición */}
+        {isEdit && id && (
+          <Paper sx={{ p: 3, mb: 3 }}>
+            <AttachmentSection
+              entityType="vehicle_maintenance"
+              entityId={id}
+              title="Archivos Adjuntos (Facturas, Fotos)"
+              defaultExpanded={true}
+              canUpload={true}
+              canDelete={true}
+              showCategory={true}
+              defaultCategory="INVOICE"
+              variant="inline"
+            />
+          </Paper>
+        )}
 
         <Box sx={{ display: 'flex', gap: 2, justifyContent: 'flex-end' }}>
           <Button variant="outlined" onClick={() => navigate(-1)}>

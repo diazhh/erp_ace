@@ -31,6 +31,7 @@ import {
 } from '../../store/slices/fleetSlice';
 import { fetchEmployees } from '../../store/slices/employeeSlice';
 import { fetchProjects } from '../../store/slices/projectSlice';
+import AttachmentSection from '../../components/common/AttachmentSection';
 
 const FuelLogForm = () => {
   const { id } = useParams();
@@ -406,6 +407,19 @@ const FuelLogForm = () => {
             </Grid>
           </Grid>
         </Paper>
+
+        {/* Archivos Adjuntos - Solo en modo edición */}
+        {isEdit && id && (
+          <Paper sx={{ p: 3, mb: 3 }}>
+            <AttachmentSection
+              entityType="fuel_log"
+              entityId={id}
+              title={t('attachments.title', 'Comprobante de Combustible')}
+              defaultCategory="RECEIPT"
+              variant="inline"
+            />
+          </Paper>
+        )}
 
         <Box sx={{ display: 'flex', gap: 2, justifyContent: 'flex-end' }}>
           <Button variant="outlined" onClick={() => navigate(-1)}>

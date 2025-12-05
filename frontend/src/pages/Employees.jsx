@@ -20,6 +20,13 @@ import {
   InputAdornment,
   CircularProgress,
   Tooltip,
+  Grid,
+  Card,
+  CardContent,
+  CardActions,
+  Skeleton,
+  useMediaQuery,
+  useTheme,
 } from '@mui/material';
 import {
   Add as AddIcon,
@@ -27,6 +34,7 @@ import {
   Edit as EditIcon,
   Delete as DeleteIcon,
   Visibility as ViewIcon,
+  Person as PersonIcon,
 } from '@mui/icons-material';
 import { toast } from 'react-toastify';
 
@@ -44,6 +52,8 @@ const Employees = () => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
   const { employees, pagination, loading } = useSelector((state) => state.employees);
 
   const [search, setSearch] = useState('');
@@ -104,8 +114,157 @@ const Employees = () => {
     return labels[status] || status;
   };
 
-  return (
+  const renderMobileCard = (employee) => (
+    <Card key={employee.id} sx={{ mb: 2 }}>
+      <CardContent>
+        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 1 }}>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+            <PersonIcon color="primary" />
+            <Box>
+              <Typography variant="subtitle1" fontWeight="bold">
+                {employee.firstName} {employee.lastName}
+              </Typography>
+              <Typography variant="body2" color="text.secondary">
+                {employee.employeeCode}
+              </Typography>
+            </Box>
+          </Box>
+          <Chip
+            label={getStatusLabel(employee.status)}
+            color={statusColors[employee.status]}
+            size="small"
+          />
+        </Box>
+        <Typography variant="body2" color="text.secondary" sx={{ mb: 0.5 }}>
+          {employee.idType}-{employee.idNumber}
+        </Typography>
+        <Typography variant="body2" fontWeight="medium">
+          {employee.position}
+        </Typography>
+        {employee.department && (
+          <Typography variant="body2" color="text.secondary">
+            {employee.department}
+          </Typography>
+        )}
+      </CardContent>
+      <CardActions>
+        <Button size="small" startIcon={<ViewIcon />} onClick={() => navigate(`/employees/${employee.id}`)}>
+          Ver
+        </Button>
+        <Button size="small" startIcon={<EditIcon />} onClick={() => navigate(`/employees/${employee.id}/edit`)}>
+          Editar
+        </Button>
+        <Button size="small" color="error" startIcon={<DeleteIcon />} onClick={() => handleDeleteClick(employee)}>
+          Eliminar
+        </Button>
+      </CardActions>
+    </Card>
+  );
+
+  const renderMobileList = () => (
     <Box>
+      {loading ? (
+        [...Array(3)].map((_, i) => (
+          <Card key={i} sx={{ mb: 2 }}>
+            <CardContent>
+              <Skeleton variant="text" width="60%" />
+              <Skeleton variant="text" width="40%" />
+              <Skeleton variant="text" width="80%" />
+            </CardContent>
+          </Card>
+        ))
+      ) : employees.length === 0 ? (
+        <Paper sx={{ p: 4, textAlign: 'center' }}>
+          <Typography color="text.secondary">{t('common.noData')}</Typography>
+        </Paper>
+      ) : (
+        employees.map(renderMobileCard)
+      )}
+    </Box>
+  );
+
+  const renderTable = () => (
+    <TableContainer component={Paper}>
+      {loading ? (
+        <Box sx={{ display: 'flex', justifyContent: 'center', p: 4 }}>
+          <CircularProgress />
+        </Box>
+      ) : (
+        <Table>
+          <TableHead>
+            <TableRow>
+              <TableCell>Código</TableCell>
+              <TableCell>{t('employees.firstName')}</TableCell>
+              <TableCell>{t('employees.lastName')}</TableCell>
+              <TableCell>{t('employees.idNumber')}</TableCell>
+              <TableCell>{t('employees.position')}</TableCell>
+              <TableCell>{t('employees.department')}</TableCell>
+              <TableCell>{t('common.status')}</TableCell>
+              <TableCell align="right">{t('common.actions')}</TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {employees.length === 0 ? (
+              <TableRow>
+                <TableCell colSpan={8} align="center">
+                  {t('common.noData')}
+                </TableCell>
+              </TableRow>
+            ) : (
+              employees.map((employee) => (
+                <TableRow key={employee.id} hover>
+                  <TableCell>{employee.employeeCode}</TableCell>
+                  <TableCell>{employee.firstName}</TableCell>
+                  <TableCell>{employee.lastName}</TableCell>
+                  <TableCell>{employee.idType}-{employee.idNumber}</TableCell>
+                  <TableCell>{employee.position}</TableCell>
+                  <TableCell>{employee.department || '-'}</TableCell>
+                  <TableCell>
+                    <Chip
+                      label={getStatusLabel(employee.status)}
+                      color={statusColors[employee.status]}
+                      size="small"
+                    />
+                  </TableCell>
+                  <TableCell align="right">
+                    <Tooltip title="Ver detalle">
+                      <IconButton
+                        size="small"
+                        color="primary"
+                        onClick={() => navigate(`/employees/${employee.id}`)}
+                      >
+                        <ViewIcon />
+                      </IconButton>
+                    </Tooltip>
+                    <Tooltip title={t('common.edit')}>
+                      <IconButton
+                        size="small"
+                        onClick={() => navigate(`/employees/${employee.id}/edit`)}
+                      >
+                        <EditIcon />
+                      </IconButton>
+                    </Tooltip>
+                    <Tooltip title={t('common.delete')}>
+                      <IconButton
+                        size="small"
+                        color="error"
+                        onClick={() => handleDeleteClick(employee)}
+                      >
+                        <DeleteIcon />
+                      </IconButton>
+                    </Tooltip>
+                  </TableCell>
+                </TableRow>
+              ))
+            )}
+          </TableBody>
+        </Table>
+      )}
+    </TableContainer>
+  );
+
+  return (
+    <Box sx={{ p: { xs: 2, md: 3 } }}>
       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
         <Typography variant="h4" fontWeight="bold">
           {t('employees.title')}
@@ -125,7 +284,8 @@ const Employees = () => {
           value={search}
           onChange={handleSearchChange}
           size="small"
-          sx={{ width: 300 }}
+          fullWidth={isMobile}
+          sx={{ width: isMobile ? '100%' : 300 }}
           InputProps={{
             startAdornment: (
               <InputAdornment position="start">
@@ -136,95 +296,19 @@ const Employees = () => {
         />
       </Paper>
 
-      <TableContainer component={Paper}>
-        {loading ? (
-          <Box sx={{ display: 'flex', justifyContent: 'center', p: 4 }}>
-            <CircularProgress />
-          </Box>
-        ) : (
-          <>
-            <Table>
-              <TableHead>
-                <TableRow>
-                  <TableCell>Código</TableCell>
-                  <TableCell>{t('employees.firstName')}</TableCell>
-                  <TableCell>{t('employees.lastName')}</TableCell>
-                  <TableCell>{t('employees.idNumber')}</TableCell>
-                  <TableCell>{t('employees.position')}</TableCell>
-                  <TableCell>{t('employees.department')}</TableCell>
-                  <TableCell>{t('common.status')}</TableCell>
-                  <TableCell align="right">{t('common.actions')}</TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {employees.length === 0 ? (
-                  <TableRow>
-                    <TableCell colSpan={8} align="center">
-                      {t('common.noData')}
-                    </TableCell>
-                  </TableRow>
-                ) : (
-                  employees.map((employee) => (
-                    <TableRow key={employee.id} hover>
-                      <TableCell>{employee.employeeCode}</TableCell>
-                      <TableCell>{employee.firstName}</TableCell>
-                      <TableCell>{employee.lastName}</TableCell>
-                      <TableCell>{employee.idType}-{employee.idNumber}</TableCell>
-                      <TableCell>{employee.position}</TableCell>
-                      <TableCell>{employee.department || '-'}</TableCell>
-                      <TableCell>
-                        <Chip
-                          label={getStatusLabel(employee.status)}
-                          color={statusColors[employee.status]}
-                          size="small"
-                        />
-                      </TableCell>
-                      <TableCell align="right">
-                        <Tooltip title="Ver detalle">
-                          <IconButton
-                            size="small"
-                            color="primary"
-                            onClick={() => navigate(`/employees/${employee.id}`)}
-                          >
-                            <ViewIcon />
-                          </IconButton>
-                        </Tooltip>
-                        <Tooltip title={t('common.edit')}>
-                          <IconButton
-                            size="small"
-                            onClick={() => navigate(`/employees/${employee.id}/edit`)}
-                          >
-                            <EditIcon />
-                          </IconButton>
-                        </Tooltip>
-                        <Tooltip title={t('common.delete')}>
-                          <IconButton
-                            size="small"
-                            color="error"
-                            onClick={() => handleDeleteClick(employee)}
-                          >
-                            <DeleteIcon />
-                          </IconButton>
-                        </Tooltip>
-                      </TableCell>
-                    </TableRow>
-                  ))
-                )}
-              </TableBody>
-            </Table>
-            <TablePagination
-              component="div"
-              count={pagination.total}
-              page={page}
-              onPageChange={handleChangePage}
-              rowsPerPage={rowsPerPage}
-              onRowsPerPageChange={handleChangeRowsPerPage}
-              rowsPerPageOptions={[5, 10, 25, 50]}
-              labelRowsPerPage="Filas por página"
-            />
-          </>
-        )}
-      </TableContainer>
+      {isMobile ? renderMobileList() : renderTable()}
+
+      <TablePagination
+        component={Paper}
+        count={pagination.total}
+        page={page}
+        onPageChange={handleChangePage}
+        rowsPerPage={rowsPerPage}
+        onRowsPerPageChange={handleChangeRowsPerPage}
+        rowsPerPageOptions={[5, 10, 25, 50]}
+        labelRowsPerPage={isMobile ? '' : 'Filas por página'}
+        sx={{ mt: 2 }}
+      />
 
       <ConfirmDialog
         open={deleteDialogOpen}

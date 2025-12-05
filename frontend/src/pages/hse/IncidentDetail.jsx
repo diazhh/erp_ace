@@ -40,6 +40,7 @@ import {
 } from '@mui/icons-material';
 import { toast } from 'react-toastify';
 import api from '../../services/api';
+import AttachmentSection from '../../components/common/AttachmentSection';
 
 const severityColors = {
   LOW: 'success',
@@ -243,6 +244,7 @@ const IncidentDetail = () => {
           <Tab label="Información General" />
           <Tab label="Investigación" />
           <Tab label="Acciones" />
+          <Tab label="Fotos/Archivos" />
         </Tabs>
       </Paper>
 
@@ -556,6 +558,18 @@ const IncidentDetail = () => {
               <Typography variant="body2">{incident.closureNotes}</Typography>
             </>
           )}
+        </Paper>
+      )}
+
+      {activeTab === 3 && (
+        <Paper sx={{ p: 3 }}>
+          <AttachmentSection
+            entityType="incident"
+            entityId={id}
+            title="Fotos y Evidencias del Incidente"
+            defaultCategory="EVIDENCE"
+            variant="inline"
+          />
         </Paper>
       )}
 
