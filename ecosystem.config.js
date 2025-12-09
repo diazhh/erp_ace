@@ -3,7 +3,7 @@ module.exports = {
     {
       name: 'erp-backend',
       script: 'src/server.js',
-      cwd: '/var/erp_ace/backend',
+      cwd: '/var/proyectos/erp_ace/backend',
       instances: 1,
       autorestart: true,
       watch: false,
@@ -21,7 +21,7 @@ module.exports = {
       name: 'erp-frontend',
       script: 'npx',
       args: 'serve -s dist -l 5004',
-      cwd: '/var/erp_ace/frontend',
+      cwd: '/var/proyectos/erp_ace/frontend',
       instances: 1,
       autorestart: true,
       watch: false,
