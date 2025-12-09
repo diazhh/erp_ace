@@ -1,0 +1,14 @@
+# Backups de base de datos
+backups/
+
+# Archivos de sistema
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+logs/
+
+# Temporales
+*.tmp
+*.temp

@@ -68,6 +68,10 @@ router.get('/products/:id/units', authorize('inventory:read'), productController
 // ==================== UNIDADES DE INVENTARIO ====================
 
 router.get('/inventory-units/catalogs', authorize('inventory:read'), inventoryUnitController.getCatalogs);
+router.get('/inventory-units/search', authorize('inventory:read'), inventoryUnitController.findByCodeOrSerial);
+router.get('/inventory-units/available', authorize('inventory:read'), inventoryUnitController.getAvailableForAssignment);
+router.get('/inventory-units/for-return', authorize('inventory:read'), inventoryUnitController.getForReturn);
+router.get('/inventory-units/for-transfer', authorize('inventory:read'), inventoryUnitController.getForTransfer);
 router.get('/inventory-units', authorize('inventory:read'), inventoryUnitController.listUnits);
 router.post('/inventory-units', authorize('inventory:create'), inventoryUnitController.createUnits);
 router.get('/inventory-units/:id', authorize('inventory:read'), inventoryUnitController.getUnit);

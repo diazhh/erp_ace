@@ -107,7 +107,7 @@ module.exports = (sequelize) => {
     },
     // Estado y aprobación
     status: {
-      type: DataTypes.ENUM('PENDING', 'APPROVED', 'REJECTED', 'CANCELLED'),
+      type: DataTypes.ENUM('PENDING', 'APPROVED', 'REJECTED', 'PAID', 'CANCELLED'),
       allowNull: false,
       defaultValue: 'PENDING',
     },
@@ -125,6 +125,24 @@ module.exports = (sequelize) => {
       type: DataTypes.TEXT,
       allowNull: true,
       field: 'rejection_reason',
+    },
+    // Pago
+    paidBy: {
+      type: DataTypes.UUID,
+      allowNull: true,
+      field: 'paid_by',
+      comment: 'Usuario que realizó el pago',
+    },
+    paidAt: {
+      type: DataTypes.DATE,
+      allowNull: true,
+      field: 'paid_at',
+    },
+    paymentReference: {
+      type: DataTypes.STRING(100),
+      allowNull: true,
+      field: 'payment_reference',
+      comment: 'Referencia del pago (número de transferencia, cheque, etc.)',
     },
     // Saldo después del movimiento
     balanceAfter: {

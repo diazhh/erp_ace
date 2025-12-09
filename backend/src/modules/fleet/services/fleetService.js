@@ -773,6 +773,74 @@ class FleetService {
     return { deleted: true };
   }
 
+  /**
+   * Aprobar registro de combustible
+   */
+  async approveFuelLog(id, userId) {
+    const { FuelLog } = this.getModels();
+
+    const fuelLog = await FuelLog.findByPk(id);
+    if (!fuelLog) throw new Error('Registro de combustible no encontrado');
+
+    if (fuelLog.status !== 'PENDING') {
+      throw new Error('Solo se pueden aprobar registros pendientes');
+    }
+
+    await fuelLog.update({
+      status: 'APPROVED',
+      approvedBy: userId,
+      approvedAt: new Date(),
+    });
+
+    return fuelLog;
+  }
+
+  /**
+   * Rechazar registro de combustible
+   */
+  async rejectFuelLog(id, reason, userId) {
+    const { FuelLog } = this.getModels();
+
+    const fuelLog = await FuelLog.findByPk(id);
+    if (!fuelLog) throw new Error('Registro de combustible no encontrado');
+
+    if (fuelLog.status !== 'PENDING') {
+      throw new Error('Solo se pueden rechazar registros pendientes');
+    }
+
+    await fuelLog.update({
+      status: 'REJECTED',
+      rejectionReason: reason,
+      approvedBy: userId,
+      approvedAt: new Date(),
+    });
+
+    return fuelLog;
+  }
+
+  /**
+   * Marcar registro de combustible como pagado
+   */
+  async payFuelLog(id, paymentReference, userId) {
+    const { FuelLog } = this.getModels();
+
+    const fuelLog = await FuelLog.findByPk(id);
+    if (!fuelLog) throw new Error('Registro de combustible no encontrado');
+
+    if (fuelLog.status !== 'APPROVED') {
+      throw new Error('Solo se pueden pagar registros aprobados');
+    }
+
+    await fuelLog.update({
+      status: 'PAID',
+      paidBy: userId,
+      paidAt: new Date(),
+      paymentReference,
+    });
+
+    return fuelLog;
+  }
+
   // ========== STATISTICS ==========
 
   /**

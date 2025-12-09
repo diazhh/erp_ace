@@ -701,6 +701,151 @@ class InventoryUnitService {
   }
 
   /**
+   * Buscar unidad por código o número de serie
+   * Útil para escanear código de barras o buscar manualmente
+   */
+  async findUnitByCodeOrSerial(search) {
+    const { InventoryUnit, Product, Warehouse, Employee, Project } = require('../../../database/models');
+    
+    const unit = await InventoryUnit.findOne({
+      where: {
+        [Op.or]: [
+          { code: search },
+          { serialNumber: search },
+        ],
+      },
+      include: [
+        { model: Product, as: 'product', attributes: ['id', 'code', 'name', 'productType', 'unit', 'brand', 'model', 'requiresSerialNumber'] },
+        { model: Warehouse, as: 'warehouse', attributes: ['id', 'code', 'name'] },
+        { model: Employee, as: 'assignedToEmployee', attributes: ['id', 'firstName', 'lastName', 'employeeCode'] },
+        { model: Project, as: 'assignedToProject', attributes: ['id', 'code', 'name'] },
+      ],
+    });
+    
+    return unit;
+  }
+
+  /**
+   * Obtener unidades disponibles de un producto en un almacén específico
+   * Para seleccionar cuál unidad asignar/transferir
+   */
+  async getAvailableUnitsForSelection(productId, warehouseId, search = null) {
+    const { InventoryUnit, Product } = require('../../../database/models');
+    
+    const where = {
+      productId,
+      status: { [Op.in]: ['AVAILABLE', 'RETURNED'] },
+    };
+    
+    if (warehouseId) {
+      where.warehouseId = warehouseId;
+    }
+    
+    if (search) {
+      where[Op.or] = [
+        { code: { [Op.iLike]: `%${search}%` } },
+        { serialNumber: { [Op.iLike]: `%${search}%` } },
+        { lotNumber: { [Op.iLike]: `%${search}%` } },
+      ];
+    }
+    
+    const units = await InventoryUnit.findAll({
+      where,
+      attributes: ['id', 'code', 'serialNumber', 'lotNumber', 'condition', 'warehouseLocation', 'expiryDate'],
+      include: [
+        { model: Product, as: 'product', attributes: ['id', 'code', 'name', 'requiresSerialNumber'] },
+      ],
+      order: [
+        ['serialNumber', 'ASC NULLS LAST'],
+        ['code', 'ASC'],
+      ],
+      limit: 100,
+    });
+    
+    return units;
+  }
+
+  /**
+   * Obtener unidades asignadas a un empleado para devolución
+   * Muestra las unidades que el empleado tiene asignadas
+   */
+  async getUnitsForReturn(employeeId = null, projectId = null, search = null) {
+    const { InventoryUnit, Product, Warehouse, Employee, Project } = require('../../../database/models');
+    
+    const where = {
+      status: { [Op.in]: ['ASSIGNED', 'IN_USE'] },
+    };
+    
+    if (employeeId) {
+      where.assignedToEmployeeId = employeeId;
+    }
+    
+    if (projectId) {
+      where.assignedToProjectId = projectId;
+    }
+    
+    if (search) {
+      where[Op.or] = [
+        { code: { [Op.iLike]: `%${search}%` } },
+        { serialNumber: { [Op.iLike]: `%${search}%` } },
+      ];
+    }
+    
+    const units = await InventoryUnit.findAll({
+      where,
+      include: [
+        { model: Product, as: 'product', attributes: ['id', 'code', 'name', 'productType', 'requiresSerialNumber'] },
+        { model: Employee, as: 'assignedToEmployee', attributes: ['id', 'firstName', 'lastName', 'employeeCode'] },
+        { model: Project, as: 'assignedToProject', attributes: ['id', 'code', 'name'] },
+      ],
+      order: [['assignedAt', 'DESC']],
+      limit: 100,
+    });
+    
+    return units;
+  }
+
+  /**
+   * Obtener unidades en un almacén para transferencia
+   */
+  async getUnitsForTransfer(warehouseId, productId = null, search = null) {
+    const { InventoryUnit, Product, Warehouse } = require('../../../database/models');
+    
+    const where = {
+      warehouseId,
+      status: { [Op.in]: ['AVAILABLE', 'RETURNED'] },
+    };
+    
+    if (productId) {
+      where.productId = productId;
+    }
+    
+    if (search) {
+      where[Op.or] = [
+        { code: { [Op.iLike]: `%${search}%` } },
+        { serialNumber: { [Op.iLike]: `%${search}%` } },
+        { lotNumber: { [Op.iLike]: `%${search}%` } },
+      ];
+    }
+    
+    const units = await InventoryUnit.findAll({
+      where,
+      include: [
+        { model: Product, as: 'product', attributes: ['id', 'code', 'name', 'productType', 'requiresSerialNumber'] },
+        { model: Warehouse, as: 'warehouse', attributes: ['id', 'code', 'name'] },
+      ],
+      order: [
+        ['product', 'name', 'ASC'],
+        ['serialNumber', 'ASC NULLS LAST'],
+        ['code', 'ASC'],
+      ],
+      limit: 200,
+    });
+    
+    return units;
+  }
+
+  /**
    * Obtener catálogos para formularios
    */
   async getCatalogs() {

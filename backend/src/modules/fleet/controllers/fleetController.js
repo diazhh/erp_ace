@@ -210,6 +210,38 @@ exports.deleteFuelLog = async (req, res) => {
   }
 };
 
+exports.approveFuelLog = async (req, res) => {
+  try {
+    const fuelLog = await fleetService.approveFuelLog(req.params.id, req.user.id);
+    res.json({ success: true, message: 'Registro de combustible aprobado', data: fuelLog });
+  } catch (error) {
+    console.error('Error approving fuel log:', error);
+    res.status(400).json({ success: false, error: error.message });
+  }
+};
+
+exports.rejectFuelLog = async (req, res) => {
+  try {
+    const { reason } = req.body;
+    const fuelLog = await fleetService.rejectFuelLog(req.params.id, reason, req.user.id);
+    res.json({ success: true, message: 'Registro de combustible rechazado', data: fuelLog });
+  } catch (error) {
+    console.error('Error rejecting fuel log:', error);
+    res.status(400).json({ success: false, error: error.message });
+  }
+};
+
+exports.payFuelLog = async (req, res) => {
+  try {
+    const { paymentReference } = req.body;
+    const fuelLog = await fleetService.payFuelLog(req.params.id, paymentReference, req.user.id);
+    res.json({ success: true, message: 'Registro de combustible marcado como pagado', data: fuelLog });
+  } catch (error) {
+    console.error('Error paying fuel log:', error);
+    res.status(400).json({ success: false, error: error.message });
+  }
+};
+
 // ========== STATS & CATALOGS ==========
 
 exports.getStats = async (req, res) => {

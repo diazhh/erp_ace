@@ -45,6 +45,9 @@ router.post('/:id/entries/:entryId/approve', authorize('petty_cash:approve'), pe
 // Rechazar movimiento
 router.post('/:id/entries/:entryId/reject', authorize('petty_cash:approve'), pettyCashController.rejectEntry);
 
+// Pagar movimiento
+router.post('/:id/entries/:entryId/pay', authorize('petty_cash:pay'), pettyCashController.payEntry);
+
 // Cancelar movimiento
 router.post('/:id/entries/:entryId/cancel', authorize('petty_cash:update'), pettyCashController.cancelEntry);
 

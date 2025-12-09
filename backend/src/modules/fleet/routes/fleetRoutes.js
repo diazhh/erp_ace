@@ -35,8 +35,13 @@ router.post('/maintenances/:id/complete', authorize('fleet:update'), fleetContro
 // ========== FUEL LOGS ==========
 router.get('/fuel-logs', authorize('fleet:read'), fleetController.getFuelLogs);
 router.get('/fuel-logs/:id', authorize('fleet:read'), fleetController.getFuelLogById);
-router.post('/fuel-logs', authorize('fleet:create'), fleetController.createFuelLog);
+router.post('/fuel-logs', authorize('fleet:fuel'), fleetController.createFuelLog);
 router.put('/fuel-logs/:id', authorize('fleet:update'), fleetController.updateFuelLog);
 router.delete('/fuel-logs/:id', authorize('fleet:delete'), fleetController.deleteFuelLog);
+
+// Flujo de aprobación de combustible
+router.post('/fuel-logs/:id/approve', authorize('fleet:fuel_approve'), fleetController.approveFuelLog);
+router.post('/fuel-logs/:id/reject', authorize('fleet:fuel_approve'), fleetController.rejectFuelLog);
+router.post('/fuel-logs/:id/pay', authorize('fleet:fuel_pay'), fleetController.payFuelLog);
 
 module.exports = router;

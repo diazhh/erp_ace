@@ -1163,6 +1163,24 @@ models.FuelLog.belongsTo(models.User, {
   as: 'creator',
 });
 
+// FuelLog -> User (approvedBy)
+models.FuelLog.belongsTo(models.User, {
+  foreignKey: 'approved_by',
+  as: 'approver',
+});
+
+// FuelLog -> User (paidBy)
+models.FuelLog.belongsTo(models.User, {
+  foreignKey: 'paid_by',
+  as: 'payer',
+});
+
+// PettyCashEntry -> User (paidBy)
+models.PettyCashEntry.belongsTo(models.User, {
+  foreignKey: 'paid_by',
+  as: 'payer',
+});
+
 // ========== PROCUREMENT ASSOCIATIONS ==========
 
 // Quote -> Contractor

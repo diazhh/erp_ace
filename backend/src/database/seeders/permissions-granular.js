@@ -86,9 +86,11 @@ const PERMISSIONS = {
     { code: 'petty_cash:*', name: 'Caja Chica - Acceso Completo', description: 'Acceso completo al módulo de caja chica', action: '*', permissionType: 'module' },
     { code: 'petty_cash:read', name: 'Ver Caja Chica', description: 'Ver cajas chicas', action: 'read', permissionType: 'action' },
     { code: 'petty_cash:create', name: 'Crear Caja Chica', description: 'Crear nueva caja chica', action: 'create', permissionType: 'action' },
+    { code: 'petty_cash:update', name: 'Editar Caja Chica', description: 'Editar caja chica existente', action: 'update', permissionType: 'action' },
     { code: 'petty_cash:expense', name: 'Registrar Gasto', description: 'Registrar gasto de caja chica', action: 'expense', permissionType: 'action' },
     { code: 'petty_cash:approve', name: 'Aprobar Gasto', description: 'Aprobar gastos de caja chica', action: 'approve', permissionType: 'action' },
     { code: 'petty_cash:reject', name: 'Rechazar Gasto', description: 'Rechazar gastos de caja chica', action: 'reject', permissionType: 'action' },
+    { code: 'petty_cash:pay', name: 'Pagar Gasto', description: 'Marcar gasto como pagado', action: 'pay', permissionType: 'action' },
     { code: 'petty_cash:replenish', name: 'Reponer Caja', description: 'Reponer fondos de caja chica', action: 'replenish', permissionType: 'action' },
   ],
 
@@ -144,6 +146,8 @@ const PERMISSIONS = {
     { code: 'fleet:assign', name: 'Asignar Vehículo', description: 'Asignar vehículo a empleado/proyecto', action: 'assign', permissionType: 'action' },
     { code: 'fleet:maintenance', name: 'Registrar Mantenimiento', description: 'Registrar mantenimiento de vehículo', action: 'maintenance', permissionType: 'action' },
     { code: 'fleet:fuel', name: 'Registrar Combustible', description: 'Registrar carga de combustible', action: 'fuel', permissionType: 'action' },
+    { code: 'fleet:fuel_approve', name: 'Aprobar Combustible', description: 'Aprobar solicitudes de pago de combustible', action: 'fuel_approve', permissionType: 'action' },
+    { code: 'fleet:fuel_pay', name: 'Pagar Combustible', description: 'Marcar pago de combustible como realizado', action: 'fuel_pay', permissionType: 'action' },
   ],
 
   // ========== PROCURA ==========
@@ -268,7 +272,8 @@ const ROLES = {
       'employees:read:payroll', 'employees:read:accounts',
       'payroll:read', 'payroll:pay', 'payroll:export',
       'finance:*',
-      'petty_cash:read', 'petty_cash:approve',
+      'petty_cash:read', 'petty_cash:approve', 'petty_cash:pay',
+      'fleet:read', 'fleet:fuel_approve', 'fleet:fuel_pay',
       'reports:finance', 'reports:payroll',
     ],
   },

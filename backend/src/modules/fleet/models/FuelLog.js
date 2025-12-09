@@ -146,6 +146,55 @@ module.exports = (sequelize) => {
       allowNull: true,
       field: 'notes',
     },
+    // ========== FLUJO DE APROBACIÓN ==========
+    // Estado del registro
+    status: {
+      type: DataTypes.ENUM('PENDING', 'APPROVED', 'REJECTED', 'PAID', 'CANCELLED'),
+      allowNull: false,
+      defaultValue: 'PENDING',
+      field: 'status',
+    },
+    // Aprobación
+    approvedBy: {
+      type: DataTypes.UUID,
+      allowNull: true,
+      field: 'approved_by',
+      references: {
+        model: 'users',
+        key: 'id',
+      },
+    },
+    approvedAt: {
+      type: DataTypes.DATE,
+      allowNull: true,
+      field: 'approved_at',
+    },
+    rejectionReason: {
+      type: DataTypes.TEXT,
+      allowNull: true,
+      field: 'rejection_reason',
+    },
+    // Pago
+    paidBy: {
+      type: DataTypes.UUID,
+      allowNull: true,
+      field: 'paid_by',
+      references: {
+        model: 'users',
+        key: 'id',
+      },
+    },
+    paidAt: {
+      type: DataTypes.DATE,
+      allowNull: true,
+      field: 'paid_at',
+    },
+    paymentReference: {
+      type: DataTypes.STRING(100),
+      allowNull: true,
+      field: 'payment_reference',
+      comment: 'Referencia del pago (número de transferencia, cheque, etc.)',
+    },
     // Auditoría
     createdBy: {
       type: DataTypes.UUID,

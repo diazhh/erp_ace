@@ -384,6 +384,106 @@ exports.bulkReturn = async (req, res, next) => {
 };
 
 /**
+ * Buscar unidad por código o número de serie (para escaneo)
+ */
+exports.findByCodeOrSerial = async (req, res, next) => {
+  try {
+    const { search } = req.query;
+    
+    if (!search) {
+      return res.status(400).json({
+        success: false,
+        message: 'Debe proporcionar un código o número de serie',
+      });
+    }
+    
+    const unit = await inventoryUnitService.findUnitByCodeOrSerial(search);
+    
+    if (!unit) {
+      return res.status(404).json({
+        success: false,
+        message: 'Unidad no encontrada',
+      });
+    }
+    
+    res.json({
+      success: true,
+      data: unit,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+/**
+ * Obtener unidades disponibles para asignación
+ */
+exports.getAvailableForAssignment = async (req, res, next) => {
+  try {
+    const { productId, warehouseId, search } = req.query;
+    
+    if (!productId) {
+      return res.status(400).json({
+        success: false,
+        message: 'Debe proporcionar el ID del producto',
+      });
+    }
+    
+    const units = await inventoryUnitService.getAvailableUnitsForSelection(productId, warehouseId, search);
+    
+    res.json({
+      success: true,
+      data: units,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+/**
+ * Obtener unidades para devolución
+ */
+exports.getForReturn = async (req, res, next) => {
+  try {
+    const { employeeId, projectId, search } = req.query;
+    
+    const units = await inventoryUnitService.getUnitsForReturn(employeeId, projectId, search);
+    
+    res.json({
+      success: true,
+      data: units,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+/**
+ * Obtener unidades para transferencia
+ */
+exports.getForTransfer = async (req, res, next) => {
+  try {
+    const { warehouseId, productId, search } = req.query;
+    
+    if (!warehouseId) {
+      return res.status(400).json({
+        success: false,
+        message: 'Debe proporcionar el ID del almacén de origen',
+      });
+    }
+    
+    const units = await inventoryUnitService.getUnitsForTransfer(warehouseId, productId, search);
+    
+    res.json({
+      success: true,
+      data: units,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+/**
  * Estadísticas de inventario
  */
 exports.getStats = async (req, res, next) => {

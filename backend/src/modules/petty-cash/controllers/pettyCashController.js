@@ -528,6 +528,41 @@ class PettyCashController {
   }
 
   /**
+   * Marcar movimiento como pagado
+   */
+  async payEntry(req, res, next) {
+    try {
+      const { PettyCashEntry } = require('../../../database/models');
+      
+      const entry = await PettyCashEntry.findByPk(req.params.entryId);
+      if (!entry) {
+        throw new NotFoundError('Movimiento no encontrado');
+      }
+      
+      if (entry.status !== 'APPROVED') {
+        throw new BadRequestError('Solo se pueden pagar movimientos aprobados');
+      }
+      
+      const { paymentReference } = req.body;
+      
+      await entry.update({
+        status: 'PAID',
+        paidBy: req.user.id,
+        paidAt: new Date(),
+        paymentReference,
+      });
+      
+      return res.json({
+        success: true,
+        message: 'Movimiento marcado como pagado',
+        data: entry,
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  /**
    * Cancelar movimiento
    */
   async cancelEntry(req, res, next) {
