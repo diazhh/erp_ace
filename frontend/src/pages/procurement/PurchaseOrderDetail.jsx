@@ -47,6 +47,7 @@ import {
 import { toast } from 'react-toastify';
 import api from '../../services/api';
 import AttachmentSection from '../../components/common/AttachmentSection';
+import DownloadPDFButton from '../../components/common/DownloadPDFButton';
 
 const statusColors = {
   DRAFT: 'default',
@@ -173,7 +174,7 @@ const PurchaseOrderDetail = () => {
 
   const handleDownloadPDF = async () => {
     try {
-      const response = await api.get(`/contractors/purchase-orders/${id}/pdf`, {
+      const response = await api.get(`/reports/purchase-orders/${id}`, {
         responseType: 'blob',
       });
       const url = window.URL.createObjectURL(new Blob([response.data]));
@@ -184,143 +185,12 @@ const PurchaseOrderDetail = () => {
       link.click();
       link.remove();
       window.URL.revokeObjectURL(url);
+      toast.success('PDF descargado correctamente');
     } catch (error) {
-      // If PDF endpoint doesn't exist, use print
-      handlePrint();
+      toast.error('Error al descargar PDF');
     }
   };
 
-  const handlePrint = () => {
-    const printWindow = window.open('', '_blank');
-    printWindow.document.write(`
-      <!DOCTYPE html>
-      <html>
-      <head>
-        <title>${orderTypeLabels[order.orderType]} ${order.code}</title>
-        <style>
-          body { font-family: Arial, sans-serif; padding: 20px; margin: 0; }
-          .header { text-align: center; margin-bottom: 30px; border-bottom: 2px solid #333; padding-bottom: 20px; }
-          .header h1 { margin: 0; color: #1976d2; }
-          .header p { margin: 5px 0; color: #666; }
-          .info-section { display: flex; justify-content: space-between; margin-bottom: 30px; }
-          .info-box { width: 48%; }
-          .info-box h3 { margin: 0 0 10px 0; color: #333; border-bottom: 1px solid #ddd; padding-bottom: 5px; }
-          .info-box p { margin: 5px 0; font-size: 14px; }
-          .info-box .label { color: #666; }
-          table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
-          th, td { border: 1px solid #ddd; padding: 10px; text-align: left; }
-          th { background-color: #f5f5f5; font-weight: bold; }
-          .text-right { text-align: right; }
-          .totals { margin-top: 20px; }
-          .totals table { width: 300px; margin-left: auto; }
-          .totals td { border: none; padding: 5px 10px; }
-          .totals .total-row { font-weight: bold; font-size: 16px; border-top: 2px solid #333; }
-          .status { display: inline-block; padding: 5px 15px; border-radius: 20px; font-weight: bold; }
-          .footer { margin-top: 40px; text-align: center; color: #666; font-size: 12px; }
-          .signatures { display: flex; justify-content: space-between; margin-top: 60px; }
-          .signature-box { width: 30%; text-align: center; }
-          .signature-line { border-top: 1px solid #333; margin-top: 50px; padding-top: 10px; }
-          @media print { body { print-color-adjust: exact; -webkit-print-color-adjust: exact; } }
-        </style>
-      </head>
-      <body>
-        <div class="header">
-          <h1>${orderTypeLabels[order.orderType].toUpperCase()}</h1>
-          <p><strong>${order.code}</strong></p>
-          <p>${order.title}</p>
-          <span class="status">${statusLabels[order.status]}</span>
-        </div>
-        
-        <div class="info-section">
-          <div class="info-box">
-            <h3>Contratista</h3>
-            <p><strong>${order.contractor?.companyName || '-'}</strong></p>
-            <p><span class="label">RIF:</span> ${order.contractor?.taxId || '-'}</p>
-            <p><span class="label">Dirección:</span> ${order.contractor?.address || '-'}</p>
-          </div>
-          <div class="info-box">
-            <h3>Información de la Orden</h3>
-            <p><span class="label">Fecha:</span> ${formatDate(order.orderDate)}</p>
-            <p><span class="label">Entrega:</span> ${formatDate(order.deliveryDate)}</p>
-            <p><span class="label">Moneda:</span> ${order.currency}</p>
-            ${order.project ? `<p><span class="label">Proyecto:</span> ${order.project.name}</p>` : ''}
-          </div>
-        </div>
-        
-        ${order.items && order.items.length > 0 ? `
-        <table>
-          <thead>
-            <tr>
-              <th>#</th>
-              <th>Descripción</th>
-              <th>Unidad</th>
-              <th class="text-right">Cantidad</th>
-              <th class="text-right">Precio Unit.</th>
-              <th class="text-right">Subtotal</th>
-            </tr>
-          </thead>
-          <tbody>
-            ${order.items.map((item) => `
-              <tr>
-                <td>${item.itemNumber}</td>
-                <td>${item.description}</td>
-                <td>${item.unit || '-'}</td>
-                <td class="text-right">${item.quantity}</td>
-                <td class="text-right">${formatCurrency(item.unitPrice, order.currency)}</td>
-                <td class="text-right">${formatCurrency(item.subtotal, order.currency)}</td>
-              </tr>
-            `).join('')}
-          </tbody>
-        </table>
-        ` : ''}
-        
-        <div class="totals">
-          <table>
-            <tr>
-              <td class="label">Subtotal:</td>
-              <td class="text-right">${formatCurrency(order.subtotal, order.currency)}</td>
-            </tr>
-            <tr>
-              <td class="label">IVA (${order.taxRate}%):</td>
-              <td class="text-right">${formatCurrency(order.taxAmount, order.currency)}</td>
-            </tr>
-            <tr class="total-row">
-              <td>TOTAL:</td>
-              <td class="text-right">${formatCurrency(order.total, order.currency)}</td>
-            </tr>
-          </table>
-        </div>
-        
-        ${order.paymentTerms || order.deliveryTerms || order.warranty ? `
-        <div style="margin-top: 30px;">
-          <h3>Términos y Condiciones</h3>
-          ${order.paymentTerms ? `<p><strong>Condiciones de Pago:</strong> ${order.paymentTerms}</p>` : ''}
-          ${order.deliveryTerms ? `<p><strong>Condiciones de Entrega:</strong> ${order.deliveryTerms}</p>` : ''}
-          ${order.warranty ? `<p><strong>Garantía:</strong> ${order.warranty}</p>` : ''}
-        </div>
-        ` : ''}
-        
-        <div class="signatures">
-          <div class="signature-box">
-            <div class="signature-line">Elaborado por</div>
-          </div>
-          <div class="signature-box">
-            <div class="signature-line">Autorizado por</div>
-          </div>
-          <div class="signature-box">
-            <div class="signature-line">Recibido por</div>
-          </div>
-        </div>
-        
-        <div class="footer">
-          <p>Documento generado el ${new Date().toLocaleString('es-VE')}</p>
-        </div>
-      </body>
-      </html>
-    `);
-    printWindow.document.close();
-    printWindow.print();
-  };
 
   if (loading) {
     return (

@@ -13,8 +13,6 @@ import {
   Chip,
   CircularProgress,
   IconButton,
-  Tabs,
-  Tab,
   Table,
   TableBody,
   TableCell,
@@ -38,6 +36,9 @@ import {
 } from '@mui/icons-material';
 
 import { fetchItemFull, clearCurrentItem } from '../../store/slices/inventorySlice';
+import ResponsiveTabs from '../../components/common/ResponsiveTabs';
+import AttachmentSection from '../../components/common/AttachmentSection';
+import DownloadPDFButton from '../../components/common/DownloadPDFButton';
 
 const statusColors = {
   ACTIVE: 'success',
@@ -163,7 +164,11 @@ const ItemDetail = () => {
             </Typography>
           </Box>
         </Box>
-        <Box sx={{ display: 'flex', gap: 1 }}>
+        <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
+          <DownloadPDFButton
+            endpoint={`/reports/inventory/items/${id}`}
+            filename={`item-${currentItem.code || currentItem.sku}.pdf`}
+          />
           <Button
             variant="outlined"
             startIcon={<EditIcon />}
@@ -283,18 +288,18 @@ const ItemDetail = () => {
       </Grid>
 
       {/* Tabs */}
-      <Paper sx={{ mb: 3 }}>
-        <Tabs
+      <Paper sx={{ p: isMobile ? 2 : 0, mb: 3 }}>
+        <ResponsiveTabs
+          tabs={[
+            { label: 'Información', icon: <InventoryIcon /> },
+            { label: 'Stock por Almacén', icon: <WarehouseIcon /> },
+            { label: 'Movimientos', icon: <MovementIcon /> },
+            { label: 'Fotos', icon: <CategoryIcon /> },
+          ]}
           value={activeTab}
           onChange={(e, v) => setActiveTab(v)}
-          variant="scrollable"
-          scrollButtons="auto"
-          allowScrollButtonsMobile
-        >
-          <Tab label="Información" icon={<InventoryIcon />} iconPosition="start" />
-          <Tab label="Stock por Almacén" icon={<WarehouseIcon />} iconPosition="start" />
-          <Tab label="Movimientos" icon={<MovementIcon />} iconPosition="start" />
-        </Tabs>
+          ariaLabel="item-tabs"
+        />
       </Paper>
 
       {/* Tab: Información */}
@@ -557,6 +562,23 @@ const ItemDetail = () => {
             </TableBody>
           </Table>
         </TableContainer>
+      </TabPanel>
+
+      {/* Tab: Fotos */}
+      <TabPanel value={activeTab} index={3}>
+        <Paper sx={{ p: 3 }}>
+          <AttachmentSection
+            entityType="inventory_item"
+            entityId={id}
+            title="Fotos del Producto"
+            defaultExpanded={true}
+            canUpload={true}
+            canDelete={true}
+            showCategory={true}
+            defaultCategory="PHOTO"
+            variant="inline"
+          />
+        </Paper>
       </TabPanel>
     </Box>
   );

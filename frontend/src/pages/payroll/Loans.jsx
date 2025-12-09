@@ -29,6 +29,7 @@ import {
 } from '@mui/icons-material';
 
 import { fetchLoans } from '../../store/slices/payrollSlice';
+import DownloadPDFButton from '../../components/common/DownloadPDFButton';
 
 const statusColors = {
   ACTIVE: 'success',
@@ -53,17 +54,32 @@ const Loans = () => {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [statusFilter, setStatusFilter] = useState('');
+  const [startDate, setStartDate] = useState('');
+  const [endDate, setEndDate] = useState('');
+  const [loanTypeFilter, setLoanTypeFilter] = useState('');
 
   useEffect(() => {
     loadLoans();
-  }, [page, rowsPerPage, statusFilter]);
+  }, [page, rowsPerPage, statusFilter, startDate, endDate, loanTypeFilter]);
 
   const loadLoans = () => {
     dispatch(fetchLoans({
       page: page + 1,
       limit: rowsPerPage,
       status: statusFilter || undefined,
+      loanType: loanTypeFilter || undefined,
+      startDate: startDate || undefined,
+      endDate: endDate || undefined,
     }));
+  };
+
+  const buildPdfQueryParams = () => {
+    const params = new URLSearchParams();
+    if (statusFilter) params.append('status', statusFilter);
+    if (loanTypeFilter) params.append('loanType', loanTypeFilter);
+    if (startDate) params.append('startDate', startDate);
+    if (endDate) params.append('endDate', endDate);
+    return params.toString();
   };
 
   const handleChangePage = (event, newPage) => {
@@ -108,23 +124,30 @@ const Loans = () => {
   return (
     <Box>
       {/* Header */}
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
+      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3, flexWrap: 'wrap', gap: 2 }}>
         <Typography variant="h4" fontWeight="bold">
           {t('payroll.loans')}
         </Typography>
-        <Button
-          variant="contained"
-          startIcon={<AddIcon />}
-          onClick={handleNewLoan}
-        >
-          {t('payroll.newLoan')}
-        </Button>
+        <Box sx={{ display: 'flex', gap: 1 }}>
+          <DownloadPDFButton
+            endpoint={`/reports/loans?${buildPdfQueryParams()}`}
+            filename={`prestamos-${new Date().toISOString().split('T')[0]}.pdf`}
+            variant="outlined"
+          />
+          <Button
+            variant="contained"
+            startIcon={<AddIcon />}
+            onClick={handleNewLoan}
+          >
+            {t('payroll.newLoan')}
+          </Button>
+        </Box>
       </Box>
 
       {/* Filters */}
       <Paper sx={{ mb: 2, p: 2 }}>
         <Grid container spacing={2}>
-          <Grid item xs={12} sm={4}>
+          <Grid item xs={12} sm={6} md={3}>
             <TextField
               select
               label={t('common.status')}
@@ -139,6 +162,44 @@ const Loans = () => {
               <MenuItem value="CANCELLED">{t('payroll.loanCancelled')}</MenuItem>
               <MenuItem value="PAUSED">{t('payroll.loanPaused')}</MenuItem>
             </TextField>
+          </Grid>
+          <Grid item xs={12} sm={6} md={3}>
+            <TextField
+              select
+              label={t('payroll.loanType')}
+              value={loanTypeFilter}
+              onChange={(e) => { setLoanTypeFilter(e.target.value); setPage(0); }}
+              fullWidth
+              size="small"
+            >
+              <MenuItem value="">{t('common.all')}</MenuItem>
+              <MenuItem value="PERSONAL">Personal</MenuItem>
+              <MenuItem value="ADVANCE">Adelanto</MenuItem>
+              <MenuItem value="EMERGENCY">Emergencia</MenuItem>
+              <MenuItem value="OTHER">Otro</MenuItem>
+            </TextField>
+          </Grid>
+          <Grid item xs={12} sm={6} md={3}>
+            <TextField
+              type="date"
+              label={t('common.startDate')}
+              value={startDate}
+              onChange={(e) => { setStartDate(e.target.value); setPage(0); }}
+              fullWidth
+              size="small"
+              InputLabelProps={{ shrink: true }}
+            />
+          </Grid>
+          <Grid item xs={12} sm={6} md={3}>
+            <TextField
+              type="date"
+              label={t('common.endDate')}
+              value={endDate}
+              onChange={(e) => { setEndDate(e.target.value); setPage(0); }}
+              fullWidth
+              size="small"
+              InputLabelProps={{ shrink: true }}
+            />
           </Grid>
         </Grid>
       </Paper>

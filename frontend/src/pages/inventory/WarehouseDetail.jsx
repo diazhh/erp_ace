@@ -13,8 +13,6 @@ import {
   Chip,
   CircularProgress,
   IconButton,
-  Tabs,
-  Tab,
   Table,
   TableBody,
   TableCell,
@@ -38,6 +36,10 @@ import {
 } from '@mui/icons-material';
 
 import { fetchWarehouseFull, clearCurrentWarehouse } from '../../store/slices/inventorySlice';
+import ResponsiveTabs from '../../components/common/ResponsiveTabs';
+import AttachmentSection from '../../components/common/AttachmentSection';
+import DownloadPDFButton from '../../components/common/DownloadPDFButton';
+import { PhotoCamera as PhotoIcon } from '@mui/icons-material';
 
 const statusColors = {
   ACTIVE: 'success',
@@ -156,7 +158,11 @@ const WarehouseDetail = () => {
             </Typography>
           </Box>
         </Box>
-        <Box sx={{ display: 'flex', gap: 1 }}>
+        <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
+          <DownloadPDFButton
+            endpoint={`/reports/inventory/warehouses/${id}`}
+            filename={`almacen-${currentWarehouse.code || currentWarehouse.name}.pdf`}
+          />
           <Button
             variant="outlined"
             startIcon={<EditIcon />}
@@ -334,16 +340,17 @@ const WarehouseDetail = () => {
       </Paper>
 
       {/* Tabs */}
-      <Paper sx={{ mb: 3 }}>
-        <Tabs
+      <Paper sx={{ p: isMobile ? 2 : 0, mb: 3 }}>
+        <ResponsiveTabs
+          tabs={[
+            { label: `Stock (${stocks?.length || 0})`, icon: <InventoryIcon /> },
+            { label: `Movimientos (${recentMovements?.length || 0})`, icon: <MovementIcon /> },
+            { label: 'Fotos', icon: <PhotoIcon /> },
+          ]}
           value={activeTab}
           onChange={(e, newValue) => setActiveTab(newValue)}
-          variant={isMobile ? 'scrollable' : 'standard'}
-          scrollButtons="auto"
-        >
-          <Tab label={`Stock (${stocks?.length || 0})`} icon={<InventoryIcon />} iconPosition="start" />
-          <Tab label={`Movimientos (${recentMovements?.length || 0})`} icon={<MovementIcon />} iconPosition="start" />
-        </Tabs>
+          ariaLabel="warehouse-tabs"
+        />
       </Paper>
 
       {/* Tab: Stock */}
@@ -496,6 +503,23 @@ const WarehouseDetail = () => {
             Ver Todos los Movimientos
           </Button>
         </Box>
+      </TabPanel>
+
+      {/* Tab: Fotos */}
+      <TabPanel value={activeTab} index={2}>
+        <Paper sx={{ p: 3 }}>
+          <AttachmentSection
+            entityType="warehouse"
+            entityId={id}
+            title="Fotos del Almacén"
+            defaultExpanded={true}
+            canUpload={true}
+            canDelete={true}
+            showCategory={true}
+            defaultCategory="PHOTO"
+            variant="inline"
+          />
+        </Paper>
       </TabPanel>
     </Box>
   );

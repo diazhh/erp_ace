@@ -9,8 +9,6 @@ import {
   Button,
   Grid,
   Chip,
-  Tabs,
-  Tab,
   Table,
   TableBody,
   TableCell,
@@ -19,6 +17,7 @@ import {
   TableRow,
   Card,
   CardContent,
+  CardActions,
   IconButton,
   Tooltip,
   Dialog,
@@ -59,6 +58,8 @@ import {
 import { fetchEmployees } from '../../store/slices/employeeSlice';
 import { fetchProjects } from '../../store/slices/projectSlice';
 import AttachmentSection from '../../components/common/AttachmentSection';
+import ResponsiveTabs from '../../components/common/ResponsiveTabs';
+import DownloadPDFButton from '../../components/common/DownloadPDFButton';
 
 const statusColors = {
   AVAILABLE: 'success',
@@ -402,11 +403,49 @@ const VehicleDetail = () => {
     </Grid>
   );
 
+  const renderAssignmentCard = (a) => (
+    <Card key={a.id} sx={{ mb: 2 }}>
+      <CardContent sx={{ pb: 1 }}>
+        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 1 }}>
+          <Typography variant="subtitle1" fontWeight="bold">
+            {a.employee
+              ? `${a.employee.firstName} ${a.employee.lastName}`
+              : a.project?.name || a.department?.name || '-'}
+          </Typography>
+          <Chip
+            label={a.status}
+            color={a.status === 'ACTIVE' ? 'success' : 'default'}
+            size="small"
+          />
+        </Box>
+        <Typography variant="body2" color="text.secondary">
+          Tipo: {a.assignmentType}
+        </Typography>
+        <Box sx={{ display: 'flex', gap: 2, mt: 1 }}>
+          <Typography variant="body2">
+            <strong>Inicio:</strong> {formatDate(a.startDate)}
+          </Typography>
+          <Typography variant="body2">
+            <strong>Fin:</strong> {formatDate(a.endDate) || '-'}
+          </Typography>
+        </Box>
+        <Box sx={{ display: 'flex', gap: 2, mt: 0.5 }}>
+          <Typography variant="body2">
+            <strong>Km Inicio:</strong> {a.startMileage?.toLocaleString()}
+          </Typography>
+          <Typography variant="body2">
+            <strong>Km Fin:</strong> {a.endMileage?.toLocaleString() || '-'}
+          </Typography>
+        </Box>
+      </CardContent>
+    </Card>
+  );
+
   const renderAssignmentsTab = () => (
     <Box>
       {vehicle.currentAssignment && (
         <Alert severity="info" sx={{ mb: 2 }}>
-          <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%' }}>
+          <Box sx={{ display: 'flex', flexDirection: { xs: 'column', sm: 'row' }, justifyContent: 'space-between', alignItems: { xs: 'flex-start', sm: 'center' }, gap: 1, width: '100%' }}>
             <Box>
               <Typography variant="subtitle2">Asignación Activa</Typography>
               <Typography variant="body2">
@@ -420,6 +459,7 @@ const VehicleDetail = () => {
               variant="outlined"
               color="warning"
               size="small"
+              fullWidth={isMobile}
               onClick={() => {
                 setEndAssignmentData({
                   endDate: new Date().toISOString().split('T')[0],
@@ -441,33 +481,34 @@ const VehicleDetail = () => {
           startIcon={<AddIcon />}
           onClick={() => setAssignDialog(true)}
           sx={{ mb: 2 }}
+          fullWidth={isMobile}
         >
           Nueva Asignación
         </Button>
       )}
 
-      <TableContainer component={Paper}>
-        <Table size="small">
-          <TableHead>
-            <TableRow>
-              <TableCell>Tipo</TableCell>
-              <TableCell>Asignado a</TableCell>
-              <TableCell>Fecha Inicio</TableCell>
-              <TableCell>Fecha Fin</TableCell>
-              <TableCell>Km Inicio</TableCell>
-              <TableCell>Km Fin</TableCell>
-              <TableCell>Estado</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {vehicle.assignments?.length === 0 ? (
+      {vehicle.assignments?.length === 0 ? (
+        <Paper sx={{ p: 3, textAlign: 'center' }}>
+          <Typography color="text.secondary">Sin asignaciones</Typography>
+        </Paper>
+      ) : isMobile ? (
+        <Box>{vehicle.assignments?.map(renderAssignmentCard)}</Box>
+      ) : (
+        <TableContainer component={Paper}>
+          <Table size="small">
+            <TableHead>
               <TableRow>
-                <TableCell colSpan={7} align="center">
-                  <Typography color="text.secondary">Sin asignaciones</Typography>
-                </TableCell>
+                <TableCell>Tipo</TableCell>
+                <TableCell>Asignado a</TableCell>
+                <TableCell>Fecha Inicio</TableCell>
+                <TableCell>Fecha Fin</TableCell>
+                <TableCell>Km Inicio</TableCell>
+                <TableCell>Km Fin</TableCell>
+                <TableCell>Estado</TableCell>
               </TableRow>
-            ) : (
-              vehicle.assignments?.map((a) => (
+            </TableHead>
+            <TableBody>
+              {vehicle.assignments?.map((a) => (
                 <TableRow key={a.id}>
                   <TableCell>{a.assignmentType}</TableCell>
                   <TableCell>
@@ -487,12 +528,41 @@ const VehicleDetail = () => {
                     />
                   </TableCell>
                 </TableRow>
-              ))
-            )}
-          </TableBody>
-        </Table>
-      </TableContainer>
+              ))}
+            </TableBody>
+          </Table>
+        </TableContainer>
+      )}
     </Box>
+  );
+
+  const renderMaintenanceCard = (m) => (
+    <Card key={m.id} sx={{ mb: 2, cursor: 'pointer' }} onClick={() => navigate(`/fleet/maintenances/${m.id}`)}>
+      <CardContent sx={{ pb: 1 }}>
+        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 1 }}>
+          <Box>
+            <Typography variant="subtitle1" fontWeight="bold">{m.code}</Typography>
+            <Typography variant="body2" color="text.secondary">{m.maintenanceType}</Typography>
+          </Box>
+          <Chip
+            label={m.status}
+            color={m.status === 'COMPLETED' ? 'success' : m.status === 'IN_PROGRESS' ? 'warning' : 'default'}
+            size="small"
+          />
+        </Box>
+        <Typography variant="body2" sx={{ mb: 1 }}>
+          {m.description?.substring(0, 80)}...
+        </Typography>
+        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <Typography variant="body2" color="text.secondary">
+            {formatDate(m.completedDate || m.scheduledDate)} • {m.mileageAtService?.toLocaleString()} km
+          </Typography>
+          <Typography variant="body1" fontWeight="bold" color="primary">
+            {formatCurrency(m.totalCost)}
+          </Typography>
+        </Box>
+      </CardContent>
+    </Card>
   );
 
   const renderMaintenancesTab = () => (
@@ -502,32 +572,33 @@ const VehicleDetail = () => {
         startIcon={<AddIcon />}
         onClick={() => navigate(`/fleet/maintenances/new?vehicleId=${id}`)}
         sx={{ mb: 2 }}
+        fullWidth={isMobile}
       >
         Nuevo Mantenimiento
       </Button>
 
-      <TableContainer component={Paper}>
-        <Table size="small">
-          <TableHead>
-            <TableRow>
-              <TableCell>Código</TableCell>
-              <TableCell>Tipo</TableCell>
-              <TableCell>Descripción</TableCell>
-              <TableCell>Fecha</TableCell>
-              <TableCell>Km</TableCell>
-              <TableCell align="right">Costo</TableCell>
-              <TableCell>Estado</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {vehicle.maintenances?.length === 0 ? (
+      {vehicle.maintenances?.length === 0 ? (
+        <Paper sx={{ p: 3, textAlign: 'center' }}>
+          <Typography color="text.secondary">Sin mantenimientos</Typography>
+        </Paper>
+      ) : isMobile ? (
+        <Box>{vehicle.maintenances?.map(renderMaintenanceCard)}</Box>
+      ) : (
+        <TableContainer component={Paper}>
+          <Table size="small">
+            <TableHead>
               <TableRow>
-                <TableCell colSpan={7} align="center">
-                  <Typography color="text.secondary">Sin mantenimientos</Typography>
-                </TableCell>
+                <TableCell>Código</TableCell>
+                <TableCell>Tipo</TableCell>
+                <TableCell>Descripción</TableCell>
+                <TableCell>Fecha</TableCell>
+                <TableCell>Km</TableCell>
+                <TableCell align="right">Costo</TableCell>
+                <TableCell>Estado</TableCell>
               </TableRow>
-            ) : (
-              vehicle.maintenances?.map((m) => (
+            </TableHead>
+            <TableBody>
+              {vehicle.maintenances?.map((m) => (
                 <TableRow key={m.id} hover sx={{ cursor: 'pointer' }} onClick={() => navigate(`/fleet/maintenances/${m.id}`)}>
                   <TableCell>{m.code}</TableCell>
                   <TableCell>{m.maintenanceType}</TableCell>
@@ -543,12 +614,51 @@ const VehicleDetail = () => {
                     />
                   </TableCell>
                 </TableRow>
-              ))
-            )}
-          </TableBody>
-        </Table>
-      </TableContainer>
+              ))}
+            </TableBody>
+          </Table>
+        </TableContainer>
+      )}
     </Box>
+  );
+
+  const renderFuelLogCard = (f) => (
+    <Card key={f.id} sx={{ mb: 2 }}>
+      <CardContent sx={{ pb: 1 }}>
+        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 1 }}>
+          <Box>
+            <Typography variant="subtitle1" fontWeight="bold">{f.code}</Typography>
+            <Typography variant="body2" color="text.secondary">
+              {formatDate(f.fuelDate)} • {f.fuelType}
+            </Typography>
+          </Box>
+          <Typography variant="h6" fontWeight="bold" color="primary">
+            {formatCurrency(f.totalCost)}
+          </Typography>
+        </Box>
+        <Divider sx={{ my: 1 }} />
+        <Grid container spacing={1}>
+          <Grid item xs={6}>
+            <Typography variant="body2" color="text.secondary">Cantidad</Typography>
+            <Typography variant="body1" fontWeight="medium">{f.quantity} L</Typography>
+          </Grid>
+          <Grid item xs={6}>
+            <Typography variant="body2" color="text.secondary">Precio/L</Typography>
+            <Typography variant="body1">{formatCurrency(f.unitPrice)}</Typography>
+          </Grid>
+          <Grid item xs={6}>
+            <Typography variant="body2" color="text.secondary">Kilometraje</Typography>
+            <Typography variant="body1">{f.mileage?.toLocaleString()} km</Typography>
+          </Grid>
+          <Grid item xs={6}>
+            <Typography variant="body2" color="text.secondary">Conductor</Typography>
+            <Typography variant="body1">
+              {f.driver ? `${f.driver.firstName} ${f.driver.lastName}` : '-'}
+            </Typography>
+          </Grid>
+        </Grid>
+      </CardContent>
+    </Card>
   );
 
   const renderFuelLogsTab = () => (
@@ -558,33 +668,34 @@ const VehicleDetail = () => {
         startIcon={<AddIcon />}
         onClick={() => navigate(`/fleet/fuel-logs/new?vehicleId=${id}`)}
         sx={{ mb: 2 }}
+        fullWidth={isMobile}
       >
         Registrar Combustible
       </Button>
 
-      <TableContainer component={Paper}>
-        <Table size="small">
-          <TableHead>
-            <TableRow>
-              <TableCell>Código</TableCell>
-              <TableCell>Fecha</TableCell>
-              <TableCell>Tipo</TableCell>
-              <TableCell align="right">Cantidad</TableCell>
-              <TableCell align="right">Precio Unit.</TableCell>
-              <TableCell align="right">Total</TableCell>
-              <TableCell>Km</TableCell>
-              <TableCell>Conductor</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {vehicle.fuelLogs?.length === 0 ? (
+      {vehicle.fuelLogs?.length === 0 ? (
+        <Paper sx={{ p: 3, textAlign: 'center' }}>
+          <Typography color="text.secondary">Sin registros de combustible</Typography>
+        </Paper>
+      ) : isMobile ? (
+        <Box>{vehicle.fuelLogs?.map(renderFuelLogCard)}</Box>
+      ) : (
+        <TableContainer component={Paper}>
+          <Table size="small">
+            <TableHead>
               <TableRow>
-                <TableCell colSpan={8} align="center">
-                  <Typography color="text.secondary">Sin registros de combustible</Typography>
-                </TableCell>
+                <TableCell>Código</TableCell>
+                <TableCell>Fecha</TableCell>
+                <TableCell>Tipo</TableCell>
+                <TableCell align="right">Cantidad</TableCell>
+                <TableCell align="right">Precio Unit.</TableCell>
+                <TableCell align="right">Total</TableCell>
+                <TableCell>Km</TableCell>
+                <TableCell>Conductor</TableCell>
               </TableRow>
-            ) : (
-              vehicle.fuelLogs?.map((f) => (
+            </TableHead>
+            <TableBody>
+              {vehicle.fuelLogs?.map((f) => (
                 <TableRow key={f.id} hover>
                   <TableCell>{f.code}</TableCell>
                   <TableCell>{formatDate(f.fuelDate)}</TableCell>
@@ -597,11 +708,11 @@ const VehicleDetail = () => {
                     {f.driver ? `${f.driver.firstName} ${f.driver.lastName}` : '-'}
                   </TableCell>
                 </TableRow>
-              ))
-            )}
-          </TableBody>
-        </Table>
-      </TableContainer>
+              ))}
+            </TableBody>
+          </Table>
+        </TableContainer>
+      )}
     </Box>
   );
 
@@ -622,29 +733,35 @@ const VehicleDetail = () => {
             <Chip label={statusLabels[vehicle.status]} color={statusColors[vehicle.status]} />
           </Box>
         </Box>
-        <Button
-          variant="contained"
-          startIcon={<EditIcon />}
-          onClick={() => navigate(`/fleet/vehicles/${id}/edit`)}
-        >
-          Editar
-        </Button>
+        <Box sx={{ display: 'flex', gap: 1 }}>
+          <DownloadPDFButton
+            endpoint={`/reports/vehicles/${id}`}
+            filename={`vehiculo-${vehicle.plate}.pdf`}
+          />
+          <Button
+            variant="contained"
+            startIcon={<EditIcon />}
+            onClick={() => navigate(`/fleet/vehicles/${id}/edit`)}
+          >
+            Editar
+          </Button>
+        </Box>
       </Box>
 
       {/* Tabs */}
-      <Paper sx={{ mb: 2 }}>
-        <Tabs
+      <Paper sx={{ p: isMobile ? 2 : 0, mb: 2 }}>
+        <ResponsiveTabs
+          tabs={[
+            { label: 'Información', icon: <CarIcon /> },
+            { label: 'Asignaciones', icon: <AssignmentIcon /> },
+            { label: 'Mantenimientos', icon: <MaintenanceIcon /> },
+            { label: 'Combustible', icon: <FuelIcon /> },
+            { label: 'Documentos' },
+          ]}
           value={tabValue}
           onChange={(e, v) => setTabValue(v)}
-          variant={isMobile ? 'scrollable' : 'standard'}
-          scrollButtons="auto"
-        >
-          <Tab icon={<CarIcon />} label="Información" iconPosition="start" />
-          <Tab icon={<AssignmentIcon />} label="Asignaciones" iconPosition="start" />
-          <Tab icon={<MaintenanceIcon />} label="Mantenimientos" iconPosition="start" />
-          <Tab icon={<FuelIcon />} label="Combustible" iconPosition="start" />
-          <Tab label="Documentos" iconPosition="start" />
-        </Tabs>
+          ariaLabel="vehicle-tabs"
+        />
       </Paper>
 
       <TabPanel value={tabValue} index={0}>{renderInfoTab()}</TabPanel>
@@ -654,7 +771,7 @@ const VehicleDetail = () => {
       <TabPanel value={tabValue} index={4}>
         <Paper sx={{ p: 2 }}>
           <AttachmentSection
-            entityType="vehicle_maintenance"
+            entityType="vehicle"
             entityId={id}
             title="Documentos del Vehículo"
             defaultCategory="DOCUMENT"

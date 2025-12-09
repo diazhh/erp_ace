@@ -1,0 +1,2 @@
+# Este directorio almacena los respaldos de la base de datos
+# Los archivos .sql.gz son ignorados por git

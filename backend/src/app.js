@@ -25,6 +25,7 @@ const documentRoutes = require('./modules/documents/routes/documentRoutes');
 const dashboardRoutes = require('./modules/dashboard/routes/dashboardRoutes');
 const attachmentRoutes = require('./modules/attachments/routes/attachmentRoutes');
 const reportRoutes = require('./modules/reports/routes/reportRoutes');
+const backupRoutes = require('./modules/backup/backup.routes');
 
 const app = express();
 
@@ -94,6 +95,7 @@ app.use('/api/documents', documentRoutes);
 app.use('/api/dashboard', dashboardRoutes);
 app.use('/api/attachments', attachmentRoutes);
 app.use('/api/reports', reportRoutes);
+app.use('/api/backup', backupRoutes);
 
 // Servir archivos estáticos de uploads
 app.use('/uploads', express.static('uploads'));

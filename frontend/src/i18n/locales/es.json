@@ -1183,8 +1183,18 @@
       "document": "Documento",
       "contract": "Contrato",
       "report": "Informe",
+      "profile": "Foto de Perfil",
+      "idDocument": "Documento de Identidad",
+      "id_document": "Documento de Identidad",
+      "certificate": "Certificado",
+      "warranty": "Garantía",
+      "manual": "Manual",
       "other": "Otro"
     },
+    "employeeFiles": "Archivos del Empleado",
+    "productPhotos": "Fotos del Producto",
+    "warehousePhotos": "Fotos del Almacén",
+    "contractorFiles": "Documentos del Contratista",
     "errors": {
       "fileTooLarge": "Archivo muy grande (máx. 10MB)",
       "invalidType": "Tipo de archivo no permitido",

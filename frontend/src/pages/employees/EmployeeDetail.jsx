@@ -6,8 +6,6 @@ import {
   Box,
   Paper,
   Typography,
-  Tabs,
-  Tab,
   Chip,
   Button,
   Avatar,
@@ -26,6 +24,8 @@ import {
   Alert,
   IconButton,
   Tooltip,
+  useMediaQuery,
+  useTheme,
 } from '@mui/material';
 import {
   ArrowBack as BackIcon,
@@ -55,6 +55,9 @@ import organizationService from '../../services/organizationService';
 import ConfirmDialog from '../../components/ConfirmDialog';
 import { usePermission } from '../../hooks/usePermission';
 import { CanDo } from '../../components/common/PermissionGate';
+import ResponsiveTabs from '../../components/common/ResponsiveTabs';
+import AttachmentSection from '../../components/common/AttachmentSection';
+import DownloadPDFButton from '../../components/common/DownloadPDFButton';
 
 const statusColors = {
   ACTIVE: 'success',
@@ -80,6 +83,8 @@ const EmployeeDetail = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { t } = useTranslation();
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
   const { currentEmployee: employee, loading, error } = useSelector((state) => state.employees);
 
   const [activeTab, setActiveTab] = useState(0);
@@ -251,6 +256,10 @@ const EmployeeDetail = () => {
           </Box>
 
           <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
+            <DownloadPDFButton
+              endpoint={`/reports/employees/${id}`}
+              filename={`empleado-${employee.employeeCode}.pdf`}
+            />
             <CanDo permission="employees:update">
               <Button
                 variant="contained"
@@ -319,20 +328,16 @@ const EmployeeDetail = () => {
       </Paper>
 
       {/* Tabs */}
-      <Paper>
-        <Tabs
+      <Paper sx={{ p: isMobile ? 2 : 0 }}>
+        <ResponsiveTabs
+          tabs={visibleTabs.map((tab) => ({ label: tab.label, icon: tab.icon }))}
           value={activeTab}
           onChange={handleTabChange}
-          variant="scrollable"
-          scrollButtons="auto"
-        >
-          {visibleTabs.map((tab) => (
-            <Tab key={tab.id} icon={tab.icon} label={tab.label} iconPosition="start" />
-          ))}
-        </Tabs>
-        <Divider />
+          ariaLabel="employee-tabs"
+        />
+        {!isMobile && <Divider />}
 
-        <Box sx={{ p: 2 }}>
+        <Box sx={{ p: { xs: 0, md: 2 } }}>
           {/* Tab: Información Personal */}
           <TabPanel value={activeTab} tabId="info" visibleTabs={visibleTabs}>
             <Grid container spacing={3}>
@@ -877,61 +882,81 @@ const EmployeeDetail = () => {
 
           {/* Tab: Documentos */}
           <TabPanel value={activeTab} tabId="documents" visibleTabs={visibleTabs}>
-            <Typography variant="h6" gutterBottom>{t('employees.documentsSection.title')}</Typography>
-            {employee.documents?.length > 0 ? (
-              <TableContainer component={Paper} variant="outlined">
-                <Table size="small">
-                  <TableHead>
-                    <TableRow>
-                      <TableCell>{t('employees.documentsSection.type')}</TableCell>
-                      <TableCell>{t('employees.documentsSection.name')}</TableCell>
-                      <TableCell>{t('employees.documentsSection.expirationDate')}</TableCell>
-                      <TableCell>{t('employees.documentsSection.status')}</TableCell>
-                    </TableRow>
-                  </TableHead>
-                  <TableBody>
-                    {employee.documents.map((doc) => {
-                      const isExpiringSoon = doc.expirationDate && 
-                        differenceInDays(new Date(doc.expirationDate), new Date()) <= 30 &&
-                        differenceInDays(new Date(doc.expirationDate), new Date()) > 0;
-                      const isExpired = doc.expirationDate && 
-                        differenceInDays(new Date(doc.expirationDate), new Date()) <= 0;
-                      
-                      return (
-                        <TableRow key={doc.id} hover>
-                          <TableCell>{doc.documentType}</TableCell>
-                          <TableCell>{doc.documentName}</TableCell>
-                          <TableCell>
-                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                              {formatDate(doc.expirationDate)}
-                              {isExpiringSoon && (
-                                <Tooltip title={t('employees.documentsSection.expiringSoon')}>
-                                  <WarningIcon color="warning" fontSize="small" />
-                                </Tooltip>
-                              )}
-                              {isExpired && (
-                                <Tooltip title={t('employees.documentsSection.expired')}>
-                                  <WarningIcon color="error" fontSize="small" />
-                                </Tooltip>
-                              )}
-                            </Box>
-                          </TableCell>
-                          <TableCell>
-                            <Chip
-                              label={doc.status}
-                              size="small"
-                              color={doc.status === 'VALID' ? 'success' : doc.status === 'EXPIRED' ? 'error' : 'default'}
-                            />
-                          </TableCell>
+            <Grid container spacing={3}>
+              {/* Documentos del sistema (EmployeeDocument) */}
+              <Grid item xs={12}>
+                <Typography variant="h6" gutterBottom>{t('employees.documentsSection.title')}</Typography>
+                {employee.documents?.length > 0 ? (
+                  <TableContainer component={Paper} variant="outlined">
+                    <Table size="small">
+                      <TableHead>
+                        <TableRow>
+                          <TableCell>{t('employees.documentsSection.type')}</TableCell>
+                          <TableCell>{t('employees.documentsSection.name')}</TableCell>
+                          <TableCell>{t('employees.documentsSection.expirationDate')}</TableCell>
+                          <TableCell>{t('employees.documentsSection.status')}</TableCell>
                         </TableRow>
-                      );
-                    })}
-                  </TableBody>
-                </Table>
-              </TableContainer>
-            ) : (
-              <Alert severity="info">{t('employees.documentsSection.noDocuments')}</Alert>
-            )}
+                      </TableHead>
+                      <TableBody>
+                        {employee.documents.map((doc) => {
+                          const isExpiringSoon = doc.expirationDate && 
+                            differenceInDays(new Date(doc.expirationDate), new Date()) <= 30 &&
+                            differenceInDays(new Date(doc.expirationDate), new Date()) > 0;
+                          const isExpired = doc.expirationDate && 
+                            differenceInDays(new Date(doc.expirationDate), new Date()) <= 0;
+                          
+                          return (
+                            <TableRow key={doc.id} hover>
+                              <TableCell>{doc.documentType}</TableCell>
+                              <TableCell>{doc.documentName}</TableCell>
+                              <TableCell>
+                                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                                  {formatDate(doc.expirationDate)}
+                                  {isExpiringSoon && (
+                                    <Tooltip title={t('employees.documentsSection.expiringSoon')}>
+                                      <WarningIcon color="warning" fontSize="small" />
+                                    </Tooltip>
+                                  )}
+                                  {isExpired && (
+                                    <Tooltip title={t('employees.documentsSection.expired')}>
+                                      <WarningIcon color="error" fontSize="small" />
+                                    </Tooltip>
+                                  )}
+                                </Box>
+                              </TableCell>
+                              <TableCell>
+                                <Chip
+                                  label={doc.status}
+                                  size="small"
+                                  color={doc.status === 'VALID' ? 'success' : doc.status === 'EXPIRED' ? 'error' : 'default'}
+                                />
+                              </TableCell>
+                            </TableRow>
+                          );
+                        })}
+                      </TableBody>
+                    </Table>
+                  </TableContainer>
+                ) : (
+                  <Alert severity="info">{t('employees.documentsSection.noDocuments')}</Alert>
+                )}
+              </Grid>
+
+              {/* Archivos Adjuntos (Attachments) */}
+              <Grid item xs={12}>
+                <AttachmentSection
+                  entityType="employee"
+                  entityId={id}
+                  title={t('attachments.employeeFiles', 'Archivos del Empleado')}
+                  defaultExpanded={true}
+                  canUpload={canEdit}
+                  canDelete={canEdit}
+                  showCategory={true}
+                  defaultCategory="DOCUMENT"
+                  variant="accordion"
+                />
+              </Grid>
+            </Grid>
           </TabPanel>
 
           {/* Tab: Auditoría */}

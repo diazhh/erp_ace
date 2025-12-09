@@ -35,6 +35,7 @@ import {
   Clear as ClearIcon,
 } from '@mui/icons-material';
 import { fetchFuelLogs, deleteFuelLog } from '../../store/slices/fleetSlice';
+import DownloadPDFButton from '../../components/common/DownloadPDFButton';
 
 const FuelLogList = () => {
   const dispatch = useDispatch();
@@ -119,7 +120,15 @@ const FuelLogList = () => {
             {t('fleet.clear')}
           </Button>
         </Grid>
-        <Grid item xs={6} md={3}>
+        <Grid item xs={6} md={2}>
+          <DownloadPDFButton
+            endpoint={`/reports/fuel-logs?startDate=${filters.startDate || ''}&endDate=${filters.endDate || ''}`}
+            filename={`combustibles-${new Date().toISOString().split('T')[0]}.pdf`}
+            variant="outlined"
+            fullWidth
+          />
+        </Grid>
+        <Grid item xs={6} md={2}>
           <Button
             variant="contained"
             startIcon={<AddIcon />}

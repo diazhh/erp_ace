@@ -35,3 +35,7 @@ temp/
 # Uploads (keep directory structure)
 uploads/*
 !uploads/.gitkeep
+
+# Backups (keep directory structure, ignore backup files)
+backups/*
+!backups/.gitkeep

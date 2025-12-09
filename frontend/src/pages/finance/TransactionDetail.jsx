@@ -29,6 +29,7 @@ import {
   AccountBalance as AccountIcon,
   Receipt as ReceiptIcon,
   History as HistoryIcon,
+  PictureAsPdf as PdfIcon,
 } from '@mui/icons-material';
 import { toast } from 'react-toastify';
 
@@ -42,6 +43,7 @@ import {
 } from '../../store/slices/financeSlice';
 import ConfirmDialog from '../../components/ConfirmDialog';
 import AttachmentSection from '../../components/common/AttachmentSection';
+import api from '../../services/api';
 
 const typeColors = {
   INCOME: 'success',
@@ -93,6 +95,27 @@ const TransactionDetail = () => {
 
   const handleReconcileClick = () => {
     setConfirmDialog({ open: true, action: 'reconcile' });
+  };
+
+  const handleDownloadPDF = async () => {
+    try {
+      const response = await api.get(`/reports/transactions/${id}`, {
+        responseType: 'blob',
+      });
+      
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', `transaccion-${transaction.code}.pdf`);
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      window.URL.revokeObjectURL(url);
+      
+      toast.success(t('common.downloadSuccess', 'PDF descargado correctamente'));
+    } catch (error) {
+      toast.error(t('common.downloadError', 'Error al descargar PDF'));
+    }
   };
 
   const handleConfirmAction = async () => {
@@ -237,33 +260,43 @@ const TransactionDetail = () => {
           </Box>
         </Box>
         
-        {canModify && (
-          <Box sx={{ 
-            display: 'flex', 
-            gap: 1,
-            flexDirection: { xs: 'column', sm: 'row' },
-            width: { xs: '100%', sm: 'auto' },
-          }}>
-            <Button
-              variant="contained"
-              color="success"
-              startIcon={<ReconcileIcon />}
-              onClick={handleReconcileClick}
-              fullWidth={isMobile}
-            >
-              {t('finance.reconcile')}
-            </Button>
-            <Button
-              variant="outlined"
-              color="error"
-              startIcon={<CancelIcon />}
-              onClick={handleCancelClick}
-              fullWidth={isMobile}
-            >
-              {t('common.cancel')}
-            </Button>
-          </Box>
-        )}
+        <Box sx={{ 
+          display: 'flex', 
+          gap: 1,
+          flexDirection: { xs: 'column', sm: 'row' },
+          width: { xs: '100%', sm: 'auto' },
+        }}>
+          <Button
+            variant="outlined"
+            startIcon={<PdfIcon />}
+            onClick={handleDownloadPDF}
+            fullWidth={isMobile}
+          >
+            {t('common.downloadPDF', 'Descargar PDF')}
+          </Button>
+          {canModify && (
+            <>
+              <Button
+                variant="contained"
+                color="success"
+                startIcon={<ReconcileIcon />}
+                onClick={handleReconcileClick}
+                fullWidth={isMobile}
+              >
+                {t('finance.reconcile')}
+              </Button>
+              <Button
+                variant="outlined"
+                color="error"
+                startIcon={<CancelIcon />}
+                onClick={handleCancelClick}
+                fullWidth={isMobile}
+              >
+                {t('common.cancel')}
+              </Button>
+            </>
+          )}
+        </Box>
       </Box>
 
       {/* Summary Card */}

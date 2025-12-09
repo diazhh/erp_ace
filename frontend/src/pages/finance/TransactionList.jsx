@@ -48,6 +48,7 @@ import {
   reconcileTransaction,
 } from '../../store/slices/financeSlice';
 import ConfirmDialog from '../../components/ConfirmDialog';
+import DownloadPDFButton from '../../components/common/DownloadPDFButton';
 
 const typeColors = {
   INCOME: 'success',
@@ -307,6 +308,12 @@ const TransactionList = () => {
           >
             {t('finance.newTransfer')}
           </Button>
+          <DownloadPDFButton
+            endpoint={`/reports/transactions?type=${typeFilter || ''}&accountId=${accountFilter || ''}`}
+            filename={`transacciones-${new Date().toISOString().split('T')[0]}.pdf`}
+            variant="outlined"
+            fullWidth={isMobile}
+          />
         </Box>
       </Box>
 

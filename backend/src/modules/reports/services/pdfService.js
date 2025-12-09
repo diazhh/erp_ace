@@ -65,20 +65,40 @@ class PDFService {
   /**
    * Agregar encabezado estándar al documento
    */
-  addHeader(doc, { title, subtitle, companyName = 'ERP ACE', showDate = true, showLogo = false }) {
+  addHeader(doc, { 
+    title, 
+    subtitle, 
+    companyName = 'ERP ACE', 
+    companyInfo = 'Sistema de Gestión Empresarial',
+    showDate = true, 
+    showLogo = false,
+    entityInfo = null // Información de la entidad relacionada
+  }) {
     const pageWidth = doc.page.width - doc.page.margins.left - doc.page.margins.right;
     const startX = doc.page.margins.left;
     let currentY = doc.page.margins.top;
 
+    // Calcular altura del encabezado
+    const headerHeight = entityInfo ? 90 : 70;
+
     // Fondo del encabezado
-    doc.rect(startX - 10, currentY - 10, pageWidth + 20, 70)
+    doc.rect(startX - 10, currentY - 10, pageWidth + 20, headerHeight)
        .fill(this.colors.primary);
 
     // Nombre de la empresa
     doc.font(this.fonts.bold)
        .fontSize(18)
        .fillColor('#ffffff')
-       .text(companyName, startX, currentY, { width: pageWidth });
+       .text(companyName, startX, currentY, { width: pageWidth * 0.6 });
+
+    // Información de la empresa (lado derecho)
+    doc.font(this.fonts.regular)
+       .fontSize(8)
+       .fillColor('#ffffff')
+       .text(companyInfo, startX, currentY, { 
+         width: pageWidth, 
+         align: 'right' 
+       });
 
     currentY += 25;
 
@@ -88,7 +108,7 @@ class PDFService {
        .fillColor('#ffffff')
        .text(title, startX, currentY, { width: pageWidth });
 
-    currentY += 20;
+    currentY += 18;
 
     // Subtítulo si existe
     if (subtitle) {
@@ -99,9 +119,20 @@ class PDFService {
       currentY += 15;
     }
 
-    // Fecha de generación
+    // Información de entidad relacionada
+    if (entityInfo) {
+      doc.font(this.fonts.italic)
+         .fontSize(9)
+         .fillColor('#ffffff')
+         .text(entityInfo, startX, currentY, { width: pageWidth });
+      currentY += 15;
+    }
+
+    // Fecha de generación (fuera del encabezado azul)
+    currentY = doc.page.margins.top + headerHeight + 5;
+    
     if (showDate) {
-      const dateText = `Generado: ${new Date().toLocaleString('es-ES', {
+      const dateText = `Fecha de generación: ${new Date().toLocaleString('es-ES', {
         dateStyle: 'long',
         timeStyle: 'short',
       })}`;
@@ -109,7 +140,7 @@ class PDFService {
       doc.font(this.fonts.regular)
          .fontSize(8)
          .fillColor(this.colors.textLight)
-         .text(dateText, startX, currentY + 25, { 
+         .text(dateText, startX, currentY, { 
            width: pageWidth, 
            align: 'right' 
          });
@@ -119,7 +150,7 @@ class PDFService {
     doc.fillColor(this.colors.text);
 
     // Retornar posición Y después del encabezado
-    return currentY + 50;
+    return currentY + 20;
   }
 
   /**

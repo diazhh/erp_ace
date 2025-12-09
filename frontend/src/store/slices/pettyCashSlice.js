@@ -115,6 +115,18 @@ export const fetchEntries = createAsyncThunk(
   }
 );
 
+export const fetchEntryById = createAsyncThunk(
+  'pettyCash/fetchEntryById',
+  async ({ pettyCashId, entryId }, { rejectWithValue }) => {
+    try {
+      const response = await api.get(`/petty-cash/${pettyCashId}/entries/${entryId}`);
+      return response.data.data;
+    } catch (error) {
+      return rejectWithValue(error.response?.data?.message || 'Error al cargar movimiento');
+    }
+  }
+);
+
 export const createEntry = createAsyncThunk(
   'pettyCash/createEntry',
   async ({ pettyCashId, data }, { rejectWithValue }) => {
@@ -184,6 +196,8 @@ const initialState = {
   // Entries
   entries: [],
   entriesPagination: { total: 0, page: 1, limit: 20, totalPages: 0 },
+  currentEntry: null,
+  entryLoading: false,
   // Categories
   categories: [],
   // Stats
@@ -212,6 +226,9 @@ const pettyCashSlice = createSlice({
     clearEntries: (state) => {
       state.entries = [];
       state.entriesPagination = { total: 0, page: 1, limit: 20, totalPages: 0 };
+    },
+    clearCurrentEntry: (state) => {
+      state.currentEntry = null;
     },
   },
   extraReducers: (builder) => {
@@ -309,9 +326,22 @@ const pettyCashSlice = createSlice({
         if (index !== -1) {
           state.entries[index] = action.payload;
         }
+      })
+      // Fetch Entry By Id
+      .addCase(fetchEntryById.pending, (state) => {
+        state.entryLoading = true;
+        state.error = null;
+      })
+      .addCase(fetchEntryById.fulfilled, (state, action) => {
+        state.entryLoading = false;
+        state.currentEntry = action.payload;
+      })
+      .addCase(fetchEntryById.rejected, (state, action) => {
+        state.entryLoading = false;
+        state.error = action.payload;
       });
   },
 });
 
-export const { clearError, clearCurrentPettyCash, clearEntries } = pettyCashSlice.actions;
+export const { clearError, clearCurrentPettyCash, clearEntries, clearCurrentEntry } = pettyCashSlice.actions;
 export default pettyCashSlice.reducer;

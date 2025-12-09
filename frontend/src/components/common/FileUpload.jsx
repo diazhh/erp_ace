@@ -102,6 +102,11 @@ const FileUpload = ({
     { value: 'DOCUMENT', label: t('attachments.categories.document', 'Documento') },
     { value: 'CONTRACT', label: t('attachments.categories.contract', 'Contrato') },
     { value: 'REPORT', label: t('attachments.categories.report', 'Informe') },
+    { value: 'PROFILE', label: t('attachments.categories.profile', 'Foto de Perfil') },
+    { value: 'ID_DOCUMENT', label: t('attachments.categories.idDocument', 'Documento de Identidad') },
+    { value: 'CERTIFICATE', label: t('attachments.categories.certificate', 'Certificado') },
+    { value: 'WARRANTY', label: t('attachments.categories.warranty', 'Garantía') },
+    { value: 'MANUAL', label: t('attachments.categories.manual', 'Manual') },
     { value: 'OTHER', label: t('attachments.categories.other', 'Otro') },
   ];
 

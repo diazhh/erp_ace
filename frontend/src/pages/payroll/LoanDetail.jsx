@@ -22,8 +22,8 @@ import {
   TableHead,
   TableRow,
   IconButton,
-  Tabs,
-  Tab,
+  useTheme,
+  useMediaQuery,
 } from '@mui/material';
 import {
   ArrowBack as BackIcon,
@@ -41,6 +41,8 @@ import { fetchLoanById, approveLoan, cancelLoan, clearCurrentLoan } from '../../
 import EntityLink from '../../components/common/EntityLink';
 import ConfirmDialog from '../../components/ConfirmDialog';
 import AttachmentSection from '../../components/common/AttachmentSection';
+import ResponsiveTabs from '../../components/common/ResponsiveTabs';
+import DownloadPDFButton from '../../components/common/DownloadPDFButton';
 
 const statusColors = {
   ACTIVE: 'success',
@@ -71,6 +73,8 @@ const LoanDetail = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { t } = useTranslation();
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
   const { currentLoan: loan, loading, error } = useSelector((state) => state.payroll);
 
   const [activeTab, setActiveTab] = useState(0);
@@ -184,6 +188,10 @@ const LoanDetail = () => {
 
           {/* Acciones */}
           <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
+            <DownloadPDFButton
+              endpoint={`/reports/loans/${id}`}
+              filename={`prestamo-${loan.code}.pdf`}
+            />
             {canApprove && (
               <Button
                 variant="contained"
@@ -278,20 +286,20 @@ const LoanDetail = () => {
       </Paper>
 
       {/* Tabs */}
-      <Paper>
-        <Tabs
+      <Paper sx={{ p: isMobile ? 2 : 0 }}>
+        <ResponsiveTabs
+          tabs={[
+            { label: t('payroll.loanInfo'), icon: <PaymentIcon /> },
+            { label: t('payroll.paymentHistory'), icon: <HistoryIcon /> },
+            { label: t('attachments.title', 'Archivos') },
+          ]}
           value={activeTab}
           onChange={(e, v) => setActiveTab(v)}
-          variant="scrollable"
-          scrollButtons="auto"
-        >
-          <Tab icon={<PaymentIcon />} label={t('payroll.loanInfo')} iconPosition="start" />
-          <Tab icon={<HistoryIcon />} label={t('payroll.paymentHistory')} iconPosition="start" />
-          <Tab label={t('attachments.title', 'Archivos')} iconPosition="start" />
-        </Tabs>
-        <Divider />
+          ariaLabel="loan-tabs"
+        />
+        {!isMobile && <Divider />}
 
-        <Box sx={{ p: 2 }}>
+        <Box sx={{ p: { xs: 0, md: 2 } }}>
           {/* Tab: Información */}
           <TabPanel value={activeTab} index={0}>
             <Grid container spacing={3}>

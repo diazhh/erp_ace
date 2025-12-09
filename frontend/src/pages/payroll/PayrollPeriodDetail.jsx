@@ -42,6 +42,7 @@ import {
 import EntityLink from '../../components/common/EntityLink';
 import PayrollEntryEditDialog from '../../components/payroll/PayrollEntryEditDialog';
 import ConfirmDialog from '../../components/ConfirmDialog';
+import DownloadPDFButton from '../../components/common/DownloadPDFButton';
 
 const statusColors = {
   DRAFT: 'default',
@@ -319,13 +320,11 @@ const PayrollPeriodDetail = () => {
               {t('payroll.markAsPaid')}
             </Button>
           )}
-          <Button
-            variant="outlined"
-            startIcon={<PrintIcon />}
+          <DownloadPDFButton
+            endpoint={`/reports/payroll/${id}`}
+            filename={`nomina-${period.code || period.name}.pdf`}
             disabled={!period.entries?.length}
-          >
-            {t('payroll.printPayroll')}
-          </Button>
+          />
         </Box>
       </Paper>
 

@@ -422,7 +422,7 @@ class PettyCashController {
    */
   async getEntryById(req, res, next) {
     try {
-      const { PettyCashEntry, PettyCash, Employee, User } = require('../../../database/models');
+      const { PettyCashEntry, PettyCash, Employee, User, Project } = require('../../../database/models');
       
       const entry = await PettyCashEntry.findByPk(req.params.entryId, {
         include: [
@@ -430,6 +430,7 @@ class PettyCashController {
           { model: Employee, as: 'beneficiary', attributes: ['id', 'firstName', 'lastName'] },
           { model: User, as: 'creator', attributes: ['id', 'username'] },
           { model: User, as: 'approver', attributes: ['id', 'username'] },
+          { model: Project, as: 'project', attributes: ['id', 'code', 'name'], required: false },
         ],
       });
       

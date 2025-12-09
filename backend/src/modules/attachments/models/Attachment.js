@@ -25,7 +25,16 @@ module.exports = (sequelize) => {
         'inventory_movement',
         'loan_payment',
         'employee_document',
-        'training'
+        'training',
+        // Nuevos tipos agregados v0.14.0
+        'employee',
+        'warehouse',
+        'inventory_item',
+        'contractor',
+        'vehicle',
+        'project_milestone',
+        'petty_cash',
+        'bank_account'
       ),
       allowNull: false,
       field: 'entity_type',
@@ -84,7 +93,13 @@ module.exports = (sequelize) => {
         'DOCUMENT',     // Documento general
         'CONTRACT',     // Contrato
         'REPORT',       // Informe
-        'OTHER'         // Otro
+        'OTHER',        // Otro
+        // Nuevas categorías v0.14.0
+        'PROFILE',      // Foto de perfil
+        'ID_DOCUMENT',  // Documento de identidad
+        'CERTIFICATE',  // Certificado
+        'WARRANTY',     // Garantía
+        'MANUAL'        // Manual
       ),
       allowNull: false,
       defaultValue: 'OTHER',

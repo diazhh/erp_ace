@@ -42,6 +42,7 @@ import {
   CheckCircle as CompleteIcon,
 } from '@mui/icons-material';
 import { fetchMaintenances, fetchFleetCatalogs, completeMaintenance } from '../../store/slices/fleetSlice';
+import DownloadPDFButton from '../../components/common/DownloadPDFButton';
 
 const statusColors = {
   SCHEDULED: 'default',
@@ -160,7 +161,15 @@ const MaintenanceList = () => {
             {t('fleet.clear')}
           </Button>
         </Grid>
-        <Grid item xs={6} md={3}>
+        <Grid item xs={6} md={2}>
+          <DownloadPDFButton
+            endpoint={`/reports/maintenances?status=${filters.status || ''}&maintenanceType=${filters.maintenanceType || ''}`}
+            filename={`mantenimientos-${new Date().toISOString().split('T')[0]}.pdf`}
+            variant="outlined"
+            fullWidth
+          />
+        </Grid>
+        <Grid item xs={6} md={2}>
           <Button
             variant="contained"
             startIcon={<AddIcon />}

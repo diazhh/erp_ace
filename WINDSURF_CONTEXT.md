@@ -232,6 +232,57 @@ cd backend && bash tests/api-tests.sh
 
 ---
 
+## 🚀 Deploy a Producción
+
+### Servidor de Producción
+| Parámetro | Valor |
+|-----------|-------|
+| IP | 144.126.150.120 |
+| Hostname | vmi1759824.contaboserver.net |
+| SSH Alias | `ssh 144` |
+| Ruta Proyecto | `/var/proyectos/erp_ace` |
+| Backend Port | 5003 |
+| Frontend Port | 5004 |
+
+### URLs de Producción
+- **Backend**: http://144.126.150.120:5003
+- **Frontend**: http://144.126.150.120:5004
+
+### Comando de Deploy
+```bash
+# Deploy completo (git pull + build + restart PM2)
+bash scripts/deploy-production.sh
+```
+
+### ⚠️ REGLA DE DEPLOY PARA WINDSURF
+**Cuando el usuario pida hacer deploy a producción, ejecutar:**
+```bash
+bash scripts/deploy-production.sh
+```
+
+Este script automáticamente:
+1. Conecta vía SSH al servidor 144
+2. Hace `git pull origin main`
+3. Instala dependencias del backend (`npm install --production`)
+4. Compila el frontend (`npm install && npm run build`)
+5. Reinicia PM2 backend (`pm2 restart erp-backend`)
+6. Reinicia PM2 frontend (`pm2 restart erp-frontend`)
+
+### PM2 en Producción
+```bash
+# Ver estado
+ssh 144 "pm2 list | grep erp"
+
+# Ver logs
+ssh 144 "pm2 logs erp-backend --lines 50"
+ssh 144 "pm2 logs erp-frontend --lines 50"
+
+# Reiniciar manualmente
+ssh 144 "pm2 restart erp-backend erp-frontend"
+```
+
+---
+
 ## 📝 Al Continuar una Conversación
 
 Menciona:

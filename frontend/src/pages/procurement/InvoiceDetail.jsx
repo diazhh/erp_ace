@@ -38,6 +38,7 @@ import {
 import { toast } from 'react-toastify';
 import api from '../../services/api';
 import AttachmentSection from '../../components/common/AttachmentSection';
+import DownloadPDFButton from '../../components/common/DownloadPDFButton';
 
 const statusColors = {
   PENDING: 'warning',
@@ -315,13 +316,10 @@ const InvoiceDetail = () => {
           </Typography>
         </Box>
         <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
-          <Button 
-            variant="outlined" 
-            startIcon={<PdfIcon />} 
-            onClick={handleDownloadPDF}
-          >
-            Descargar PDF
-          </Button>
+          <DownloadPDFButton
+            endpoint={`/reports/contractor-invoices/${id}`}
+            filename={`factura-${invoice.code}.pdf`}
+          />
           {invoice.status === 'PENDING' && (
             <>
               <Button variant="contained" color="success" startIcon={<ApproveIcon />} onClick={handleApprove}>

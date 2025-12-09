@@ -14,8 +14,6 @@ import {
   Chip,
   CircularProgress,
   IconButton,
-  Tabs,
-  Tab,
   LinearProgress,
   Divider,
   List,
@@ -100,6 +98,8 @@ import {
 } from '../../store/slices/projectSlice';
 import { fetchEmployees } from '../../store/slices/employeeSlice';
 import AttachmentSection from '../../components/common/AttachmentSection';
+import ResponsiveTabs from '../../components/common/ResponsiveTabs';
+import DownloadPDFButton from '../../components/common/DownloadPDFButton';
 
 const statusColors = {
   PLANNING: 'info',
@@ -558,6 +558,10 @@ const ProjectDetail = () => {
         </Box>
         <Chip label={statusLabels[project.status]} color={statusColors[project.status]} />
         <Chip label={priorityLabels[project.priority]} color={priorityColors[project.priority]} variant="outlined" />
+        <DownloadPDFButton
+          endpoint={`/reports/projects/${id}`}
+          filename={`proyecto-${project.code}.pdf`}
+        />
         <Button
           variant="outlined"
           startIcon={<EditIcon />}
@@ -646,25 +650,23 @@ const ProjectDetail = () => {
       </Paper>
 
       {/* Tabs */}
-      <Paper sx={{ mb: 3 }}>
-        <Tabs 
-          value={tabValue} 
+      <Paper sx={{ p: isMobile ? 2 : 0, mb: 3 }}>
+        <ResponsiveTabs
+          tabs={[
+            { label: 'Información', icon: <BusinessIcon /> },
+            { label: `Equipo (${members.length})`, icon: <TeamIcon /> },
+            { label: `Hitos (${milestones.length})`, icon: <MilestoneIcon /> },
+            { label: `Gastos (${expenses.length})`, icon: <ExpenseIcon /> },
+            ...(project.executionType === 'OUTSOURCED' ? [{ label: `Valuaciones (${valuations?.length || 0})`, icon: <MoneyIcon /> }] : []),
+            { label: `Seguimiento (${updates.length})`, icon: <UpdateIcon /> },
+            { label: `Fotos (${photos.length})`, icon: <PhotoIcon /> },
+            { label: 'Auditoría', icon: <HistoryIcon /> },
+            { label: 'Documentos' },
+          ]}
+          value={tabValue}
           onChange={(e, v) => setTabValue(v)}
-          variant="scrollable"
-          scrollButtons="auto"
-        >
-          <Tab icon={<BusinessIcon />} label="Información" iconPosition="start" />
-          <Tab icon={<TeamIcon />} label={`Equipo (${members.length})`} iconPosition="start" />
-          <Tab icon={<MilestoneIcon />} label={`Hitos (${milestones.length})`} iconPosition="start" />
-          <Tab icon={<ExpenseIcon />} label={`Gastos (${expenses.length})`} iconPosition="start" />
-          {project.executionType === 'OUTSOURCED' && (
-            <Tab icon={<MoneyIcon />} label={`Valuaciones (${valuations?.length || 0})`} iconPosition="start" />
-          )}
-          <Tab icon={<UpdateIcon />} label={`Seguimiento (${updates.length})`} iconPosition="start" />
-          <Tab icon={<PhotoIcon />} label={`Fotos (${photos.length})`} iconPosition="start" />
-          <Tab icon={<HistoryIcon />} label="Auditoría" iconPosition="start" />
-          <Tab label="Documentos" iconPosition="start" />
-        </Tabs>
+          ariaLabel="project-tabs"
+        />
       </Paper>
 
       {/* Tab: Información */}

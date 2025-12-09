@@ -11,8 +11,6 @@ import {
   Chip,
   CircularProgress,
   IconButton,
-  Tabs,
-  Tab,
   Divider,
   List,
   ListItem,
@@ -41,6 +39,7 @@ import {
 import { toast } from 'react-toastify';
 import api from '../../services/api';
 import AttachmentSection from '../../components/common/AttachmentSection';
+import ResponsiveTabs from '../../components/common/ResponsiveTabs';
 
 const statusColors = {
   SCHEDULED: 'warning',
@@ -213,18 +212,18 @@ const InspectionDetail = () => {
       </Box>
 
       {/* Tabs */}
-      <Paper sx={{ mb: 3 }}>
-        <Tabs
+      <Paper sx={{ p: isMobile ? 2 : 0, mb: 3 }}>
+        <ResponsiveTabs
+          tabs={[
+            { label: 'Información General' },
+            { label: 'Checklist' },
+            { label: 'Resultados' },
+            { label: 'Fotos/Archivos' },
+          ]}
           value={activeTab}
           onChange={(e, v) => setActiveTab(v)}
-          variant={isMobile ? 'scrollable' : 'standard'}
-          scrollButtons="auto"
-        >
-          <Tab label="Información General" />
-          <Tab label="Checklist" />
-          <Tab label="Resultados" />
-          <Tab label="Fotos/Archivos" />
-        </Tabs>
+          ariaLabel="inspection-tabs"
+        />
       </Paper>
 
       {/* Tab Content */}

@@ -113,4 +113,185 @@ router.get('/hse', reportController.downloadHSEReport);
  */
 router.get('/financial', reportController.downloadFinancialReport);
 
+/**
+ * @route   GET /api/reports/transactions/:id
+ * @desc    Descargar comprobante de transacción en PDF
+ * @access  Private
+ */
+router.get('/transactions/:id', reportController.downloadTransactionReport);
+
+// ==================== PRÉSTAMOS ====================
+
+/**
+ * @route   GET /api/reports/loans/:id
+ * @desc    Descargar reporte de préstamo en PDF
+ * @access  Private
+ */
+router.get('/loans/:id', reportController.downloadLoanReport);
+
+// ==================== COMPRAS ====================
+
+/**
+ * @route   GET /api/reports/quotes/:id
+ * @desc    Descargar cotización en PDF
+ * @access  Private
+ */
+router.get('/quotes/:id', reportController.downloadQuoteReport);
+
+/**
+ * @route   GET /api/reports/purchase-orders/:id
+ * @desc    Descargar orden de compra en PDF
+ * @access  Private
+ */
+router.get('/purchase-orders/:id', reportController.downloadPurchaseOrderReport);
+
+// ==================== CONTRATISTAS ====================
+
+/**
+ * @route   GET /api/reports/contractor-payments/:id
+ * @desc    Descargar comprobante de pago a contratista en PDF
+ * @access  Private
+ */
+router.get('/contractor-payments/:id', reportController.downloadContractorPaymentReport);
+
+/**
+ * @route   GET /api/reports/contractor-invoices/:id
+ * @desc    Descargar factura de contratista en PDF
+ * @access  Private
+ */
+router.get('/contractor-invoices/:id', reportController.downloadContractorInvoiceReport);
+
+// ==================== VEHÍCULOS ====================
+
+/**
+ * @route   GET /api/reports/vehicles/:id
+ * @desc    Descargar reporte de vehículo en PDF
+ * @access  Private
+ */
+router.get('/vehicles/:id', reportController.downloadVehicleReport);
+
+/**
+ * @route   GET /api/reports/fuel-logs
+ * @desc    Descargar listado de recargas de combustible en PDF
+ * @access  Private
+ * @query   startDate, endDate, vehicleId
+ */
+router.get('/fuel-logs', reportController.downloadFuelLogsReport);
+
+/**
+ * @route   GET /api/reports/fuel-logs/:id
+ * @desc    Descargar detalle de recarga de combustible en PDF
+ * @access  Private
+ */
+router.get('/fuel-logs/:id', reportController.downloadFuelLogReport);
+
+/**
+ * @route   GET /api/reports/maintenances
+ * @desc    Descargar listado de mantenimientos en PDF
+ * @access  Private
+ * @query   startDate, endDate, vehicleId, maintenanceType
+ */
+router.get('/maintenances', reportController.downloadMaintenancesReport);
+
+/**
+ * @route   GET /api/reports/maintenances/:id
+ * @desc    Descargar detalle de mantenimiento en PDF
+ * @access  Private
+ */
+router.get('/maintenances/:id', reportController.downloadMaintenanceReport);
+
+// ==================== TRANSACCIONES ====================
+
+/**
+ * @route   GET /api/reports/transactions
+ * @desc    Descargar listado de transacciones en PDF
+ * @access  Private
+ * @query   startDate, endDate, type, accountId, categoryId
+ */
+router.get('/transactions', reportController.downloadTransactionsListReport);
+
+// ==================== CUENTAS BANCARIAS ====================
+
+/**
+ * @route   GET /api/reports/bank-accounts/:id
+ * @desc    Descargar reporte de cuenta bancaria con transacciones en PDF
+ * @access  Private
+ */
+router.get('/bank-accounts/:id', reportController.downloadBankAccountReport);
+
+// ==================== PRÉSTAMOS ====================
+
+/**
+ * @route   GET /api/reports/loans
+ * @desc    Descargar listado de préstamos en PDF
+ * @access  Private
+ * @query   status, startDate, endDate, employeeId
+ */
+router.get('/loans', reportController.downloadLoansListReport);
+
+// ==================== CAJA CHICA MOVIMIENTOS ====================
+
+/**
+ * @route   GET /api/reports/petty-cash-entries/:id
+ * @desc    Descargar comprobante de movimiento de caja chica en PDF
+ * @access  Private
+ */
+router.get('/petty-cash-entries/:id', reportController.downloadPettyCashEntryReport);
+
+// ==================== COTIZACIONES ====================
+
+/**
+ * @route   GET /api/reports/quotes
+ * @desc    Descargar listado de cotizaciones en PDF
+ * @access  Private
+ * @query   status, startDate, endDate, supplierId
+ */
+router.get('/quotes', reportController.downloadQuotesListReport);
+
+// ==================== ÓRDENES DE COMPRA ====================
+
+/**
+ * @route   GET /api/reports/purchase-orders
+ * @desc    Descargar listado de órdenes de compra en PDF
+ * @access  Private
+ * @query   status, startDate, endDate, supplierId
+ */
+router.get('/purchase-orders', reportController.downloadPurchaseOrdersListReport);
+
+// ==================== FACTURAS DE CONTRATISTAS ====================
+
+/**
+ * @route   GET /api/reports/contractor-invoices
+ * @desc    Descargar listado de facturas de contratistas en PDF
+ * @access  Private
+ * @query   status, startDate, endDate, contractorId
+ */
+router.get('/contractor-invoices', reportController.downloadContractorInvoicesListReport);
+
+// ==================== PAGOS A CONTRATISTAS ====================
+
+/**
+ * @route   GET /api/reports/contractor-payments
+ * @desc    Descargar listado de pagos a contratistas en PDF
+ * @access  Private
+ * @query   startDate, endDate, contractorId
+ */
+router.get('/contractor-payments', reportController.downloadContractorPaymentsListReport);
+
+// ==================== INVENTARIO ====================
+
+/**
+ * @route   GET /api/reports/inventory/items/:id
+ * @desc    Descargar reporte de item de inventario en PDF
+ * @access  Private
+ */
+router.get('/inventory/items/:id', reportController.downloadInventoryItemReport);
+
+/**
+ * @route   GET /api/reports/inventory/warehouses/:id
+ * @desc    Descargar reporte de almacén en PDF
+ * @access  Private
+ */
+router.get('/inventory/warehouses/:id', reportController.downloadWarehouseReport);
+
 module.exports = router;

@@ -80,6 +80,11 @@ const categoryColors = {
   DOCUMENT: 'default',
   CONTRACT: 'primary',
   REPORT: 'secondary',
+  PROFILE: 'primary',
+  ID_DOCUMENT: 'warning',
+  CERTIFICATE: 'success',
+  WARRANTY: 'info',
+  MANUAL: 'secondary',
   OTHER: 'default',
 };
 

@@ -43,6 +43,7 @@ import { es } from 'date-fns/locale';
 
 import { fetchAccountFull, clearCurrentAccount } from '../../store/slices/financeSlice';
 import EntityLink from '../../components/common/EntityLink';
+import DownloadPDFButton from '../../components/common/DownloadPDFButton';
 
 const accountTypeLabels = {
   CHECKING: 'Corriente',
@@ -208,6 +209,12 @@ const BankAccountDetail = () => {
             <Typography variant="h4" fontWeight="bold" color="primary.main">
               {formatCurrency(account.currentBalance, account.currency)}
             </Typography>
+            <DownloadPDFButton
+              endpoint={`/reports/bank-accounts/${id}`}
+              filename={`cuenta-${account.accountNumber || account.name}.pdf`}
+              size="small"
+              sx={{ mt: 1 }}
+            />
           </Box>
         </Box>
 

@@ -37,6 +37,7 @@ import {
 } from '@mui/icons-material';
 import { toast } from 'react-toastify';
 import api from '../../services/api';
+import DownloadPDFButton from '../../components/common/DownloadPDFButton';
 
 const statusColors = {
   DRAFT: 'default',
@@ -350,13 +351,20 @@ const QuoteList = () => {
         <Typography variant="h4" fontWeight="bold">
           Cotizaciones
         </Typography>
-        <Button
-          variant="contained"
-          startIcon={<AddIcon />}
-          onClick={() => navigate('/procurement/quotes/new')}
-        >
-          Registrar Cotización
-        </Button>
+        <Box sx={{ display: 'flex', gap: 1 }}>
+          <DownloadPDFButton
+            endpoint={`/reports/quotes?status=${filters.status || ''}`}
+            filename={`cotizaciones-${new Date().toISOString().split('T')[0]}.pdf`}
+            variant="outlined"
+          />
+          <Button
+            variant="contained"
+            startIcon={<AddIcon />}
+            onClick={() => navigate('/procurement/quotes/new')}
+          >
+            Registrar Cotización
+          </Button>
+        </Box>
       </Box>
 
       {/* Filters */}

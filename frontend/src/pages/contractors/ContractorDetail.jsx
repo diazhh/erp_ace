@@ -10,11 +10,10 @@ import {
   Grid,
   Card,
   CardContent,
+  CardActions,
   Chip,
   CircularProgress,
   IconButton,
-  Tabs,
-  Tab,
   Divider,
   List,
   ListItem,
@@ -68,6 +67,9 @@ import {
   fetchInvoices,
   fetchPayments,
 } from '../../store/slices/contractorSlice';
+import ResponsiveTabs from '../../components/common/ResponsiveTabs';
+import AttachmentSection from '../../components/common/AttachmentSection';
+import { AttachFile as AttachIcon } from '@mui/icons-material';
 
 const statusColors = {
   ACTIVE: 'success',
@@ -255,19 +257,20 @@ const ContractorDetail = () => {
       </Grid>
 
       {/* Tabs */}
-      <Paper sx={{ mb: 3 }}>
-        <Tabs 
-          value={tabValue} 
+      <Paper sx={{ p: isMobile ? 2 : 0, mb: 3 }}>
+        <ResponsiveTabs
+          tabs={[
+            { label: 'Información', icon: <BusinessIcon /> },
+            { label: `Cuentas (${bankAccounts.length})`, icon: <BankIcon /> },
+            { label: `Documentos (${documents.length})`, icon: <DocumentIcon /> },
+            { label: `Facturas (${invoices.length})`, icon: <InvoiceIcon /> },
+            { label: `Pagos (${payments.length})`, icon: <PaymentIcon /> },
+            { label: 'Archivos', icon: <AttachIcon /> },
+          ]}
+          value={tabValue}
           onChange={(e, v) => setTabValue(v)}
-          variant="scrollable"
-          scrollButtons="auto"
-        >
-          <Tab icon={<BusinessIcon />} label="Información" iconPosition="start" />
-          <Tab icon={<BankIcon />} label={`Cuentas (${bankAccounts.length})`} iconPosition="start" />
-          <Tab icon={<DocumentIcon />} label={`Documentos (${documents.length})`} iconPosition="start" />
-          <Tab icon={<InvoiceIcon />} label={`Facturas (${invoices.length})`} iconPosition="start" />
-          <Tab icon={<PaymentIcon />} label={`Pagos (${payments.length})`} iconPosition="start" />
-        </Tabs>
+          ariaLabel="contractor-tabs"
+        />
       </Paper>
 
       {/* Tab: Información */}
@@ -536,6 +539,23 @@ const ContractorDetail = () => {
             </TableBody>
           </Table>
         </TableContainer>
+      </TabPanel>
+
+      {/* Tab: Archivos */}
+      <TabPanel value={tabValue} index={5}>
+        <Paper sx={{ p: 3 }}>
+          <AttachmentSection
+            entityType="contractor"
+            entityId={id}
+            title="Documentos y Archivos del Contratista"
+            defaultExpanded={true}
+            canUpload={true}
+            canDelete={true}
+            showCategory={true}
+            defaultCategory="DOCUMENT"
+            variant="inline"
+          />
+        </Paper>
       </TabPanel>
 
       {/* Dialog: Agregar Cuenta Bancaria */}

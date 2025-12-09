@@ -11,8 +11,6 @@ import {
   Chip,
   CircularProgress,
   IconButton,
-  Tabs,
-  Tab,
   Divider,
   List,
   ListItem,
@@ -52,6 +50,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { fetchEmployees } from '../../store/slices/employeeSlice';
 import api from '../../services/api';
 import AttachmentSection from '../../components/common/AttachmentSection';
+import ResponsiveTabs from '../../components/common/ResponsiveTabs';
 
 const statusColors = {
   SCHEDULED: 'warning',
@@ -276,17 +275,17 @@ const TrainingDetail = () => {
       </Box>
 
       {/* Tabs */}
-      <Paper sx={{ mb: 3 }}>
-        <Tabs
+      <Paper sx={{ p: isMobile ? 2 : 0, mb: 3 }}>
+        <ResponsiveTabs
+          tabs={[
+            { label: 'Información General' },
+            { label: `Participantes (${training.attendances?.length || 0})` },
+            { label: 'Archivos' },
+          ]}
           value={activeTab}
           onChange={(e, v) => setActiveTab(v)}
-          variant={isMobile ? 'scrollable' : 'standard'}
-          scrollButtons="auto"
-        >
-          <Tab label="Información General" />
-          <Tab label={`Participantes (${training.attendances?.length || 0})`} />
-          <Tab label="Archivos" />
-        </Tabs>
+          ariaLabel="training-tabs"
+        />
       </Paper>
 
       {/* Tab Content */}

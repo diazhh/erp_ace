@@ -39,6 +39,7 @@ import {
 } from '@mui/icons-material';
 
 import { fetchPurchaseOrders } from '../../store/slices/contractorSlice';
+import DownloadPDFButton from '../../components/common/DownloadPDFButton';
 
 const statusColors = {
   DRAFT: 'default',
@@ -337,13 +338,20 @@ const PurchaseOrderList = () => {
         <Typography variant="h4" fontWeight="bold">
           Órdenes de Compra
         </Typography>
-        <Button
-          variant="contained"
-          startIcon={<AddIcon />}
-          onClick={handleNewOrder}
-        >
-          Nueva Orden
-        </Button>
+        <Box sx={{ display: 'flex', gap: 1 }}>
+          <DownloadPDFButton
+            endpoint={`/reports/purchase-orders?status=${filters.status || ''}`}
+            filename={`ordenes-compra-${new Date().toISOString().split('T')[0]}.pdf`}
+            variant="outlined"
+          />
+          <Button
+            variant="contained"
+            startIcon={<AddIcon />}
+            onClick={handleNewOrder}
+          >
+            Nueva Orden
+          </Button>
+        </Box>
       </Box>
 
       {/* Filters */}

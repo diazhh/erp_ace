@@ -36,6 +36,7 @@ import {
 import { toast } from 'react-toastify';
 
 import organizationService from '../../services/organizationService';
+import DownloadPDFButton from '../../components/common/DownloadPDFButton';
 
 const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
 
@@ -268,6 +269,11 @@ const Directory = () => {
           Directorio de Empleados
         </Typography>
         <Box sx={{ display: 'flex', gap: 1 }}>
+          <DownloadPDFButton
+            endpoint={`/reports/employees?departmentId=${selectedDepartment || ''}`}
+            filename={`empleados-${new Date().toISOString().split('T')[0]}.pdf`}
+            variant="outlined"
+          />
           <Button
             variant="outlined"
             startIcon={<BusinessIcon />}

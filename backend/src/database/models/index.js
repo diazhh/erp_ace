@@ -42,6 +42,9 @@ const InventoryCategory = require('../../modules/inventory/models/InventoryCateg
 const InventoryItem = require('../../modules/inventory/models/InventoryItem');
 const WarehouseStock = require('../../modules/inventory/models/WarehouseStock');
 const InventoryMovement = require('../../modules/inventory/models/InventoryMovement');
+const Product = require('../../modules/inventory/models/Product');
+const InventoryUnit = require('../../modules/inventory/models/InventoryUnit');
+const InventoryUnitHistory = require('../../modules/inventory/models/InventoryUnitHistory');
 // Fleet models
 const Vehicle = require('../../modules/fleet/models/Vehicle');
 const VehicleAssignment = require('../../modules/fleet/models/VehicleAssignment');
@@ -110,6 +113,9 @@ const models = {
   InventoryItem: InventoryItem(sequelize),
   WarehouseStock: WarehouseStock(sequelize),
   InventoryMovement: InventoryMovement(sequelize),
+  Product: Product(sequelize),
+  InventoryUnit: InventoryUnit(sequelize),
+  InventoryUnitHistory: InventoryUnitHistory(sequelize),
   // Fleet
   Vehicle: Vehicle(sequelize),
   VehicleAssignment: VehicleAssignment(sequelize),
@@ -1462,6 +1468,154 @@ models.Attachment.belongsTo(models.User, {
 models.User.hasMany(models.Attachment, {
   foreignKey: 'uploaded_by',
   as: 'uploadedAttachments',
+});
+
+// ========== PRODUCT & INVENTORY UNIT ASSOCIATIONS ==========
+
+// Product -> InventoryCategory
+models.Product.belongsTo(models.InventoryCategory, {
+  foreignKey: 'category_id',
+  as: 'category',
+});
+models.InventoryCategory.hasMany(models.Product, {
+  foreignKey: 'category_id',
+  as: 'products',
+});
+
+// Product -> Contractor (preferred supplier)
+models.Product.belongsTo(models.Contractor, {
+  foreignKey: 'preferred_supplier_id',
+  as: 'preferredSupplier',
+});
+
+// Product -> User (createdBy)
+models.Product.belongsTo(models.User, {
+  foreignKey: 'created_by',
+  as: 'creator',
+});
+
+// Product <-> InventoryUnit
+models.Product.hasMany(models.InventoryUnit, {
+  foreignKey: 'product_id',
+  as: 'units',
+});
+models.InventoryUnit.belongsTo(models.Product, {
+  foreignKey: 'product_id',
+  as: 'product',
+});
+
+// InventoryUnit -> Warehouse
+models.InventoryUnit.belongsTo(models.Warehouse, {
+  foreignKey: 'warehouse_id',
+  as: 'warehouse',
+});
+models.Warehouse.hasMany(models.InventoryUnit, {
+  foreignKey: 'warehouse_id',
+  as: 'units',
+});
+
+// InventoryUnit -> Employee (assignedTo)
+models.InventoryUnit.belongsTo(models.Employee, {
+  foreignKey: 'assigned_to_employee_id',
+  as: 'assignedToEmployee',
+});
+models.Employee.hasMany(models.InventoryUnit, {
+  foreignKey: 'assigned_to_employee_id',
+  as: 'assignedUnits',
+});
+
+// InventoryUnit -> Project (assignedTo)
+models.InventoryUnit.belongsTo(models.Project, {
+  foreignKey: 'assigned_to_project_id',
+  as: 'assignedToProject',
+});
+models.Project.hasMany(models.InventoryUnit, {
+  foreignKey: 'assigned_to_project_id',
+  as: 'assignedUnits',
+});
+
+// InventoryUnit -> Contractor (supplier)
+models.InventoryUnit.belongsTo(models.Contractor, {
+  foreignKey: 'supplier_id',
+  as: 'supplier',
+});
+
+// InventoryUnit -> PurchaseOrder
+models.InventoryUnit.belongsTo(models.PurchaseOrder, {
+  foreignKey: 'purchase_order_id',
+  as: 'purchaseOrder',
+});
+models.PurchaseOrder.hasMany(models.InventoryUnit, {
+  foreignKey: 'purchase_order_id',
+  as: 'inventoryUnits',
+});
+
+// InventoryUnit -> User (createdBy, retiredBy)
+models.InventoryUnit.belongsTo(models.User, {
+  foreignKey: 'created_by',
+  as: 'creator',
+});
+models.InventoryUnit.belongsTo(models.User, {
+  foreignKey: 'retired_by',
+  as: 'retirer',
+});
+
+// InventoryUnit <-> InventoryUnitHistory
+models.InventoryUnit.hasMany(models.InventoryUnitHistory, {
+  foreignKey: 'unit_id',
+  as: 'history',
+});
+models.InventoryUnitHistory.belongsTo(models.InventoryUnit, {
+  foreignKey: 'unit_id',
+  as: 'unit',
+});
+
+// InventoryUnitHistory -> Warehouse (from/to)
+models.InventoryUnitHistory.belongsTo(models.Warehouse, {
+  foreignKey: 'from_warehouse_id',
+  as: 'fromWarehouse',
+});
+models.InventoryUnitHistory.belongsTo(models.Warehouse, {
+  foreignKey: 'to_warehouse_id',
+  as: 'toWarehouse',
+});
+
+// InventoryUnitHistory -> Employee (from/to/delivered/received)
+models.InventoryUnitHistory.belongsTo(models.Employee, {
+  foreignKey: 'from_employee_id',
+  as: 'fromEmployee',
+});
+models.InventoryUnitHistory.belongsTo(models.Employee, {
+  foreignKey: 'to_employee_id',
+  as: 'toEmployee',
+});
+models.InventoryUnitHistory.belongsTo(models.Employee, {
+  foreignKey: 'delivered_by',
+  as: 'deliveredByEmployee',
+});
+models.InventoryUnitHistory.belongsTo(models.Employee, {
+  foreignKey: 'received_by',
+  as: 'receivedByEmployee',
+});
+
+// InventoryUnitHistory -> Project (from/to)
+models.InventoryUnitHistory.belongsTo(models.Project, {
+  foreignKey: 'from_project_id',
+  as: 'fromProject',
+});
+models.InventoryUnitHistory.belongsTo(models.Project, {
+  foreignKey: 'to_project_id',
+  as: 'toProject',
+});
+
+// InventoryUnitHistory -> User (performedBy, authorizedBy)
+models.InventoryUnitHistory.belongsTo(models.User, {
+  foreignKey: 'performed_by',
+  as: 'performer',
+});
+models.InventoryUnitHistory.belongsTo(models.User, {
+  foreignKey: 'authorized_by',
+  as: 'authorizer',
 });
 
 module.exports = models;

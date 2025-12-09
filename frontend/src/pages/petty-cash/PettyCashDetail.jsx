@@ -6,13 +6,12 @@ import {
   Box,
   Paper,
   Typography,
-  Tabs,
-  Tab,
   Chip,
   Button,
   Grid,
   Card,
   CardContent,
+  CardActions,
   Table,
   TableBody,
   TableCell,
@@ -43,6 +42,7 @@ import {
   History as AuditIcon,
   Person as PersonIcon,
   Warning as WarningIcon,
+  Visibility as ViewIcon,
 } from '@mui/icons-material';
 import { toast } from 'react-toastify';
 
@@ -60,6 +60,8 @@ import PettyCashEntryDialog from '../../components/petty-cash/PettyCashEntryDial
 import PettyCashReplenishDialog from '../../components/petty-cash/PettyCashReplenishDialog';
 import ConfirmDialog from '../../components/ConfirmDialog';
 import AttachmentSection from '../../components/common/AttachmentSection';
+import ResponsiveTabs from '../../components/common/ResponsiveTabs';
+import DownloadPDFButton from '../../components/common/DownloadPDFButton';
 
 const statusColors = {
   ACTIVE: 'success',
@@ -361,6 +363,11 @@ const PettyCashDetail = () => {
           >
             Editar
           </Button>
+          <DownloadPDFButton
+            endpoint={`/reports/petty-cash/${id}`}
+            filename={`caja-chica-${pettyCash.code || id}.pdf`}
+            fullWidth={isMobile}
+          />
           <Button
             variant="outlined"
             startIcon={<RefreshIcon />}
@@ -427,90 +434,138 @@ const PettyCashDetail = () => {
       </Paper>
 
       {/* Tabs */}
-      <Paper>
-        <Tabs
+      <Paper sx={{ p: isMobile ? 2 : 0 }}>
+        <ResponsiveTabs
+          tabs={[
+            { label: 'Movimientos', icon: <ExpenseIcon /> },
+            { label: 'Información', icon: <WalletIcon /> },
+            { label: 'Auditoría', icon: <AuditIcon /> },
+            { label: 'Archivos' },
+          ]}
           value={activeTab}
           onChange={handleTabChange}
-          variant="scrollable"
-          scrollButtons="auto"
-        >
-          <Tab 
-            icon={isMobile ? null : <ExpenseIcon />} 
-            label="Movimientos" 
-            iconPosition="start" 
-          />
-          <Tab 
-            icon={isMobile ? null : <WalletIcon />} 
-            label="Información" 
-            iconPosition="start" 
-          />
-          <Tab 
-            icon={isMobile ? null : <AuditIcon />} 
-            label="Auditoría" 
-            iconPosition="start" 
-          />
-          <Tab 
-            label="Archivos" 
-            iconPosition="start" 
-          />
-        </Tabs>
-        <Divider />
+          ariaLabel="petty-cash-tabs"
+        />
+        {!isMobile && <Divider />}
 
-        <Box sx={{ p: { xs: 1, md: 2 } }}>
+        <Box sx={{ p: { xs: 0, md: 2 } }}>
           {/* Tab: Movimientos */}
           <TabPanel value={activeTab} index={0}>
-            <TableContainer sx={{ overflowX: 'auto' }}>
-              <Table size="small">
-                <TableHead>
-                  <TableRow>
-                    <TableCell>Fecha</TableCell>
-                    {!isMobile && <TableCell>Código</TableCell>}
-                    <TableCell>Tipo</TableCell>
-                    {!isTablet && <TableCell>Categoría</TableCell>}
-                    {!isMobile && <TableCell>Descripción</TableCell>}
-                    {!isTablet && <TableCell>Beneficiario</TableCell>}
-                    <TableCell align="right">Monto</TableCell>
-                    <TableCell>Estado</TableCell>
-                    <TableCell align="right">Acciones</TableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {entries.length === 0 ? (
+            {entries.length === 0 ? (
+              <Paper sx={{ p: 3, textAlign: 'center' }}>
+                <Typography color="text.secondary">No hay movimientos registrados</Typography>
+              </Paper>
+            ) : isMobile ? (
+              <Box>
+                {entries.map((entry) => (
+                  <Card key={entry.id} sx={{ mb: 2, cursor: 'pointer' }} onClick={() => navigate(`/petty-cash/${id}/entries/${entry.id}`)}>
+                    <CardContent sx={{ pb: 1 }}>
+                      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 1 }}>
+                        <Box>
+                          <Typography variant="subtitle1" fontWeight="bold">{entry.code}</Typography>
+                          <Typography variant="body2" color="text.secondary">
+                            {formatDate(entry.entryDate)} • {entry.category || 'Sin categoría'}
+                          </Typography>
+                        </Box>
+                        <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 0.5 }}>
+                          <Chip
+                            label={entryTypeLabels[entry.entryType]}
+                            color={entryTypeColors[entry.entryType]}
+                            size="small"
+                            variant="outlined"
+                          />
+                          <Chip
+                            label={entry.status}
+                            color={entryStatusColors[entry.status]}
+                            size="small"
+                          />
+                        </Box>
+                      </Box>
+                      <Typography variant="body2" sx={{ mb: 1 }}>
+                        {entry.description?.substring(0, 80)}...
+                      </Typography>
+                      <Divider sx={{ my: 1 }} />
+                      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                        <Typography variant="body2" color="text.secondary">
+                          {entry.beneficiary 
+                            ? `${entry.beneficiary.firstName} ${entry.beneficiary.lastName}`
+                            : entry.beneficiaryName || '-'}
+                        </Typography>
+                        <Typography 
+                          variant="h6" 
+                          fontWeight="bold" 
+                          color={entry.entryType === 'EXPENSE' ? 'error.main' : 'success.main'}
+                        >
+                          {entry.entryType === 'EXPENSE' ? '-' : '+'}
+                          {formatCurrency(entry.amount, entry.currency)}
+                        </Typography>
+                      </Box>
+                    </CardContent>
+                    {entry.status === 'PENDING' && (
+                      <CardActions sx={{ justifyContent: 'flex-end', pt: 0 }}>
+                        <Button
+                          size="small"
+                          color="success"
+                          startIcon={<ApproveIcon />}
+                          onClick={(e) => { e.stopPropagation(); setConfirmDialog({ open: true, entry, action: 'approve' }); }}
+                        >
+                          Aprobar
+                        </Button>
+                        <Button
+                          size="small"
+                          color="error"
+                          startIcon={<RejectIcon />}
+                          onClick={(e) => { e.stopPropagation(); setConfirmDialog({ open: true, entry, action: 'reject' }); }}
+                        >
+                          Rechazar
+                        </Button>
+                      </CardActions>
+                    )}
+                  </Card>
+                ))}
+              </Box>
+            ) : (
+              <TableContainer sx={{ overflowX: 'auto' }}>
+                <Table size="small">
+                  <TableHead>
                     <TableRow>
-                      <TableCell colSpan={isMobile ? 5 : 9} align="center">
-                        No hay movimientos registrados
-                      </TableCell>
+                      <TableCell>Fecha</TableCell>
+                      <TableCell>Código</TableCell>
+                      <TableCell>Tipo</TableCell>
+                      <TableCell>Categoría</TableCell>
+                      <TableCell>Descripción</TableCell>
+                      <TableCell>Beneficiario</TableCell>
+                      <TableCell align="right">Monto</TableCell>
+                      <TableCell>Estado</TableCell>
+                      <TableCell align="right">Acciones</TableCell>
                     </TableRow>
-                  ) : (
-                    entries.map((entry) => (
+                  </TableHead>
+                  <TableBody>
+                    {entries.map((entry) => (
                       <TableRow key={entry.id} hover>
                         <TableCell sx={{ whiteSpace: 'nowrap' }}>{formatDate(entry.entryDate)}</TableCell>
-                        {!isMobile && <TableCell sx={{ whiteSpace: 'nowrap' }}>{entry.code}</TableCell>}
+                        <TableCell sx={{ whiteSpace: 'nowrap' }}>{entry.code}</TableCell>
                         <TableCell>
                           <Chip
-                            label={isMobile ? entry.entryType[0] : entryTypeLabels[entry.entryType]}
+                            label={entryTypeLabels[entry.entryType]}
                             color={entryTypeColors[entry.entryType]}
                             size="small"
                             variant="outlined"
                           />
                         </TableCell>
-                        {!isTablet && <TableCell>{entry.category || '-'}</TableCell>}
-                        {!isMobile && (
-                          <TableCell sx={{ maxWidth: 200, overflow: 'hidden', textOverflow: 'ellipsis' }}>
-                            {entry.description}
-                          </TableCell>
-                        )}
-                        {!isTablet && (
-                          <TableCell>
-                            {entry.beneficiary ? (
-                              <EntityLink
-                                type="employee"
-                                id={entry.beneficiary.id}
-                                label={`${entry.beneficiary.firstName} ${entry.beneficiary.lastName}`}
-                              />
-                            ) : entry.beneficiaryName || '-'}
-                          </TableCell>
-                        )}
+                        <TableCell>{entry.category || '-'}</TableCell>
+                        <TableCell sx={{ maxWidth: 200, overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                          {entry.description}
+                        </TableCell>
+                        <TableCell>
+                          {entry.beneficiary ? (
+                            <EntityLink
+                              type="employee"
+                              id={entry.beneficiary.id}
+                              label={`${entry.beneficiary.firstName} ${entry.beneficiary.lastName}`}
+                            />
+                          ) : entry.beneficiaryName || '-'}
+                        </TableCell>
                         <TableCell align="right" sx={{ 
                           fontWeight: 'bold',
                           color: entry.entryType === 'EXPENSE' ? 'error.main' : 'success.main',
@@ -521,12 +576,21 @@ const PettyCashDetail = () => {
                         </TableCell>
                         <TableCell>
                           <Chip
-                            label={isMobile ? entry.status[0] : entry.status}
+                            label={entry.status}
                             color={entryStatusColors[entry.status]}
                             size="small"
                           />
                         </TableCell>
                         <TableCell align="right">
+                          <Tooltip title="Ver detalle">
+                            <IconButton
+                              size="small"
+                              color="primary"
+                              onClick={() => navigate(`/petty-cash/${id}/entries/${entry.id}`)}
+                            >
+                              <ViewIcon fontSize="small" />
+                            </IconButton>
+                          </Tooltip>
                           {entry.status === 'PENDING' && (
                             <>
                               <Tooltip title="Aprobar">
@@ -551,13 +615,13 @@ const PettyCashDetail = () => {
                           )}
                         </TableCell>
                       </TableRow>
-                    ))
-                  )}
-                </TableBody>
-              </Table>
-            </TableContainer>
+                    ))}
+                  </TableBody>
+                </Table>
+              </TableContainer>
+            )}
             <TablePagination
-              component="div"
+              component={Paper}
               count={entriesPagination.total}
               page={page}
               onPageChange={(e, newPage) => setPage(newPage)}
@@ -567,7 +631,8 @@ const PettyCashDetail = () => {
                 setPage(0);
               }}
               rowsPerPageOptions={[10, 20, 50]}
-              labelRowsPerPage="Filas por página"
+              labelRowsPerPage={isMobile ? '' : 'Filas por página'}
+              sx={{ mt: 2 }}
             />
           </TabPanel>
 

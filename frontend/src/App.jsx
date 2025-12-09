@@ -31,6 +31,7 @@ import FinanceDashboard from './pages/finance/FinanceDashboard';
 import PettyCashList from './pages/petty-cash/PettyCashList';
 import PettyCashDetail from './pages/petty-cash/PettyCashDetail';
 import PettyCashForm from './pages/petty-cash/PettyCashForm';
+import PettyCashEntryDetail from './pages/petty-cash/PettyCashEntryDetail';
 import ProjectList from './pages/projects/ProjectList';
 import ProjectDetail from './pages/projects/ProjectDetail';
 import ProjectForm from './pages/projects/ProjectForm';
@@ -163,6 +164,7 @@ function App() {
         <Route path="petty-cash/new" element={<PettyCashForm />} />
         <Route path="petty-cash/:id" element={<PettyCashDetail />} />
         <Route path="petty-cash/:id/edit" element={<PettyCashForm />} />
+        <Route path="petty-cash/:id/entries/:entryId" element={<PettyCashEntryDetail />} />
         {/* Projects */}
         <Route path="projects" element={<ProjectDashboard />} />
         <Route path="projects/list" element={<ProjectList />} />
