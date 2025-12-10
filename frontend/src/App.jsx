@@ -97,6 +97,8 @@ import UserForm from './pages/admin/UserForm';
 import RoleList from './pages/admin/RoleList';
 import RoleDetail from './pages/admin/RoleDetail';
 import RoleForm from './pages/admin/RoleForm';
+import WhatsAppConfig from './pages/admin/WhatsAppConfig';
+import Settings from './pages/Settings';
 
 function App() {
   const dispatch = useDispatch();
@@ -251,6 +253,10 @@ function App() {
         <Route path="admin/roles/new" element={<RoleForm />} />
         <Route path="admin/roles/:id" element={<RoleDetail />} />
         <Route path="admin/roles/:id/edit" element={<RoleForm />} />
+        {/* WhatsApp */}
+        <Route path="admin/whatsapp" element={<WhatsAppConfig />} />
+        {/* Settings */}
+        <Route path="settings" element={<Settings />} />
       </Route>
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>

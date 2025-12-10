@@ -62,6 +62,7 @@ import {
   AdminPanelSettings as AdminIcon,
   ManageAccounts as UsersIcon,
   Security as RolesIcon,
+  WhatsApp as WhatsAppIcon,
 } from '@mui/icons-material';
 
 import { logout } from '../store/slices/authSlice';
@@ -270,10 +271,11 @@ const Layout = () => {
       id: 'admin', 
       text: 'Administración', 
       icon: <AdminIcon />,
-      permissions: ['users:read', 'users:*', 'roles:read', 'roles:*'],
+      permissions: ['users:read', 'users:*', 'roles:read', 'roles:*', 'whatsapp:read', 'whatsapp:*'],
       children: [
         { text: 'Usuarios', icon: <UsersIcon />, path: '/admin/users', permissions: ['users:read', 'users:*'] },
         { text: 'Roles', icon: <RolesIcon />, path: '/admin/roles', permissions: ['roles:read', 'roles:*'] },
+        { text: 'WhatsApp', icon: <WhatsAppIcon />, path: '/admin/whatsapp', permissions: ['whatsapp:read', 'whatsapp:*', 'whatsapp:manage'] },
       ],
     },
   ];
@@ -381,7 +383,7 @@ const Layout = () => {
             anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
             transformOrigin={{ vertical: 'top', horizontal: 'right' }}
           >
-            <MenuItem onClick={handleMenuClose}>
+            <MenuItem onClick={() => { handleMenuClose(); navigate('/settings'); }}>
               <ListItemIcon>
                 <PersonIcon fontSize="small" />
               </ListItemIcon>

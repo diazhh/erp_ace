@@ -12,7 +12,7 @@ const startServer = async () => {
     // Sincronizar modelos (solo en desarrollo)
     if (config.env === 'development') {
       // Importar modelos para que se registren las asociaciones
-      require('./database/models');
+      const models = require('./database/models');
       
       // Sincronizar sin alter para evitar conflictos con constraints existentes
       // Para cambios de esquema, usar migraciones
@@ -22,6 +22,15 @@ const startServer = async () => {
       } catch (syncError) {
         logger.warn('⚠️ Advertencia al sincronizar modelos (puede ignorarse si las tablas ya existen):', syncError.message);
       }
+
+      // Initialize WhatsApp user controller with models
+      const userWhatsappController = require('./modules/whatsapp/controllers/userWhatsappController');
+      userWhatsappController.setModels(models);
+    } else {
+      // Production: also initialize models
+      const models = require('./database/models');
+      const userWhatsappController = require('./modules/whatsapp/controllers/userWhatsappController');
+      userWhatsappController.setModels(models);
     }
 
     // Iniciar servidor

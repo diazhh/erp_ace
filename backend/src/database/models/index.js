@@ -67,6 +67,9 @@ const DocumentVersion = require('../../modules/documents/models/DocumentVersion'
 const DocumentShare = require('../../modules/documents/models/DocumentShare');
 // Attachment model
 const Attachment = require('../../modules/attachments/models/Attachment');
+// WhatsApp models
+const WhatsAppSession = require('../../modules/whatsapp/models/WhatsAppSession');
+const UserWhatsApp = require('../../modules/whatsapp/models/UserWhatsApp');
 
 // Inicializar modelos
 const models = {
@@ -138,6 +141,9 @@ const models = {
   DocumentShare: DocumentShare(sequelize),
   // Attachments
   Attachment: Attachment(sequelize),
+  // WhatsApp
+  WhatsAppSession: WhatsAppSession(sequelize),
+  UserWhatsApp: UserWhatsApp(sequelize),
 };
 
 // Definir asociaciones
@@ -1634,6 +1640,18 @@ models.InventoryUnitHistory.belongsTo(models.User, {
 models.InventoryUnitHistory.belongsTo(models.User, {
   foreignKey: 'authorized_by',
   as: 'authorizer',
+});
+
+// ========== WHATSAPP ASSOCIATIONS ==========
+
+// UserWhatsApp -> User
+models.UserWhatsApp.belongsTo(models.User, {
+  foreignKey: 'user_id',
+  as: 'user',
+});
+models.User.hasOne(models.UserWhatsApp, {
+  foreignKey: 'user_id',
+  as: 'whatsapp',
 });
 
 module.exports = models;

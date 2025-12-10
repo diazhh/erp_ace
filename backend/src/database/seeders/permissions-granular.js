@@ -205,6 +205,13 @@ const PERMISSIONS = {
     { code: 'reports:inventory', name: 'Reportes de Inventario', description: 'Ver reportes de inventario', action: 'inventory', permissionType: 'action' },
     { code: 'reports:fleet', name: 'Reportes de Flota', description: 'Ver reportes de flota', action: 'fleet', permissionType: 'action' },
   ],
+
+  // ========== WHATSAPP ==========
+  whatsapp: [
+    { code: 'whatsapp:*', name: 'WhatsApp - Acceso Completo', description: 'Acceso completo al módulo de WhatsApp', action: '*', permissionType: 'module' },
+    { code: 'whatsapp:read', name: 'Ver Estado WhatsApp', description: 'Ver estado de conexión de WhatsApp', action: 'read', permissionType: 'action' },
+    { code: 'whatsapp:manage', name: 'Gestionar WhatsApp', description: 'Conectar, desconectar y enviar mensajes de prueba', action: 'manage', permissionType: 'action' },
+  ],
 };
 
 // Roles predefinidos con sus permisos
