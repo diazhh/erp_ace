@@ -98,6 +98,7 @@ import RoleList from './pages/admin/RoleList';
 import RoleDetail from './pages/admin/RoleDetail';
 import RoleForm from './pages/admin/RoleForm';
 import WhatsAppConfig from './pages/admin/WhatsAppConfig';
+import EmailConfig from './pages/admin/EmailConfig';
 import Settings from './pages/Settings';
 
 function App() {
@@ -255,6 +256,8 @@ function App() {
         <Route path="admin/roles/:id/edit" element={<RoleForm />} />
         {/* WhatsApp */}
         <Route path="admin/whatsapp" element={<WhatsAppConfig />} />
+        {/* Email */}
+        <Route path="admin/email" element={<EmailConfig />} />
         {/* Settings */}
         <Route path="settings" element={<Settings />} />
       </Route>

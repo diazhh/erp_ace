@@ -15,6 +15,7 @@ import usersReducer from './slices/usersSlice';
 import rolesReducer from './slices/rolesSlice';
 import attachmentReducer from './slices/attachmentSlice';
 import whatsappReducer from './slices/whatsappSlice';
+import emailReducer from './slices/emailSlice';
 
 export const store = configureStore({
   reducer: {
@@ -34,6 +35,7 @@ export const store = configureStore({
     roles: rolesReducer,
     attachments: attachmentReducer,
     whatsapp: whatsappReducer,
+    email: emailReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({

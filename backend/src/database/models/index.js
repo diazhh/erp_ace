@@ -70,6 +70,11 @@ const Attachment = require('../../modules/attachments/models/Attachment');
 // WhatsApp models
 const WhatsAppSession = require('../../modules/whatsapp/models/WhatsAppSession');
 const UserWhatsApp = require('../../modules/whatsapp/models/UserWhatsApp');
+// Email models
+const EmailConfig = require('../../modules/email/models/EmailConfig');
+const EmailTemplate = require('../../modules/email/models/EmailTemplate');
+const UserEmail = require('../../modules/email/models/UserEmail');
+const EmailLog = require('../../modules/email/models/EmailLog');
 
 // Inicializar modelos
 const models = {
@@ -144,6 +149,11 @@ const models = {
   // WhatsApp
   WhatsAppSession: WhatsAppSession(sequelize),
   UserWhatsApp: UserWhatsApp(sequelize),
+  // Email
+  EmailConfig: EmailConfig(sequelize),
+  EmailTemplate: EmailTemplate(sequelize),
+  UserEmail: UserEmail(sequelize),
+  EmailLog: EmailLog(sequelize),
 };
 
 // Definir asociaciones
@@ -1652,6 +1662,50 @@ models.UserWhatsApp.belongsTo(models.User, {
 models.User.hasOne(models.UserWhatsApp, {
   foreignKey: 'user_id',
   as: 'whatsapp',
+});
+
+// ========== EMAIL ASSOCIATIONS ==========
+
+// EmailConfig -> User (createdBy, updatedBy)
+models.EmailConfig.belongsTo(models.User, {
+  foreignKey: 'created_by',
+  as: 'creator',
+});
+models.EmailConfig.belongsTo(models.User, {
+  foreignKey: 'updated_by',
+  as: 'updater',
+});
+
+// EmailTemplate -> User (createdBy, updatedBy)
+models.EmailTemplate.belongsTo(models.User, {
+  foreignKey: 'created_by',
+  as: 'creator',
+});
+models.EmailTemplate.belongsTo(models.User, {
+  foreignKey: 'updated_by',
+  as: 'updater',
+});
+
+// UserEmail -> User
+models.UserEmail.belongsTo(models.User, {
+  foreignKey: 'user_id',
+  as: 'user',
+});
+models.User.hasOne(models.UserEmail, {
+  foreignKey: 'user_id',
+  as: 'emailConfig',
+});
+
+// EmailLog -> EmailTemplate
+models.EmailLog.belongsTo(models.EmailTemplate, {
+  foreignKey: 'template_id',
+  as: 'template',
+});
+
+// EmailLog -> User
+models.EmailLog.belongsTo(models.User, {
+  foreignKey: 'user_id',
+  as: 'user',
 });
 
 module.exports = models;

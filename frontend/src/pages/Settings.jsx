@@ -30,6 +30,7 @@ import {
   Send as SendIcon,
   Delete as DeleteIcon,
   Notifications as NotificationsIcon,
+  Email as EmailIcon,
 } from '@mui/icons-material';
 import {
   fetchUserWhatsAppConfig,
@@ -37,9 +38,19 @@ import {
   verifyCode,
   updateNotifications,
   removeUserWhatsApp,
-  clearSuccess,
-  clearError,
+  clearSuccess as clearWhatsAppSuccess,
+  clearError as clearWhatsAppError,
 } from '../store/slices/whatsappSlice';
+import {
+  fetchUserEmailConfig,
+  setUserEmail,
+  verifyUserEmail,
+  resendVerificationCode,
+  updateEmailNotifications,
+  removeUserEmail,
+  clearSuccess as clearEmailSuccess,
+  clearError as clearEmailError,
+} from '../store/slices/emailSlice';
 
 const COUNTRY_CODES = [
   { code: '+58', country: 'Venezuela' },
@@ -60,53 +71,95 @@ const Settings = () => {
 
   const { user } = useSelector((state) => state.auth);
   const {
-    userConfig,
-    verificationPending,
-    verificationExpires,
-    loading,
-    error,
-    success,
+    userConfig: whatsappConfig,
+    verificationPending: waVerificationPending,
+    loading: waLoading,
+    error: waError,
+    success: waSuccess,
   } = useSelector((state) => state.whatsapp);
+  
+  const {
+    userConfig: emailConfig,
+    verificationPending: emailVerificationPending,
+    loading: emailLoading,
+    error: emailError,
+    success: emailSuccess,
+  } = useSelector((state) => state.email);
 
+  // WhatsApp state
   const [phoneNumber, setPhoneNumber] = useState('');
   const [countryCode, setCountryCode] = useState('+58');
   const [verificationCodeInput, setVerificationCodeInput] = useState('');
   const [showVerificationInput, setShowVerificationInput] = useState(false);
+  
+  // Email state
+  const [emailInput, setEmailInput] = useState('');
+  const [emailVerificationCode, setEmailVerificationCode] = useState('');
+  const [showEmailVerification, setShowEmailVerification] = useState(false);
 
-  // Load user WhatsApp config
+  // Load user configs
   useEffect(() => {
     dispatch(fetchUserWhatsAppConfig());
+    dispatch(fetchUserEmailConfig());
   }, [dispatch]);
 
-  // Update local state when config loads
+  // Update local state when WhatsApp config loads
   useEffect(() => {
-    if (userConfig) {
-      setPhoneNumber(userConfig.phoneNumber || '');
-      setCountryCode(userConfig.countryCode || '+58');
+    if (whatsappConfig) {
+      setPhoneNumber(whatsappConfig.phoneNumber || '');
+      setCountryCode(whatsappConfig.countryCode || '+58');
     }
-  }, [userConfig]);
+  }, [whatsappConfig]);
+
+  // Update local state when Email config loads
+  useEffect(() => {
+    if (emailConfig?.email) {
+      setEmailInput(emailConfig.email || '');
+    }
+  }, [emailConfig]);
 
   // Show verification input when pending
   useEffect(() => {
-    if (verificationPending) {
+    if (waVerificationPending) {
       setShowVerificationInput(true);
     }
-  }, [verificationPending]);
-
-  // Clear messages
-  useEffect(() => {
-    if (success) {
-      const timer = setTimeout(() => dispatch(clearSuccess()), 5000);
-      return () => clearTimeout(timer);
-    }
-  }, [success, dispatch]);
+  }, [waVerificationPending]);
 
   useEffect(() => {
-    if (error) {
-      const timer = setTimeout(() => dispatch(clearError()), 5000);
+    if (emailVerificationPending) {
+      setShowEmailVerification(true);
+    }
+  }, [emailVerificationPending]);
+
+  // Clear WhatsApp messages
+  useEffect(() => {
+    if (waSuccess) {
+      const timer = setTimeout(() => dispatch(clearWhatsAppSuccess()), 5000);
       return () => clearTimeout(timer);
     }
-  }, [error, dispatch]);
+  }, [waSuccess, dispatch]);
+
+  useEffect(() => {
+    if (waError) {
+      const timer = setTimeout(() => dispatch(clearWhatsAppError()), 5000);
+      return () => clearTimeout(timer);
+    }
+  }, [waError, dispatch]);
+
+  // Clear Email messages
+  useEffect(() => {
+    if (emailSuccess) {
+      const timer = setTimeout(() => dispatch(clearEmailSuccess()), 5000);
+      return () => clearTimeout(timer);
+    }
+  }, [emailSuccess, dispatch]);
+
+  useEffect(() => {
+    if (emailError) {
+      const timer = setTimeout(() => dispatch(clearEmailError()), 5000);
+      return () => clearTimeout(timer);
+    }
+  }, [emailError, dispatch]);
 
   const handleRequestVerification = async () => {
     if (!phoneNumber) return;
@@ -142,6 +195,46 @@ const Settings = () => {
     }
   };
 
+  // Email handlers
+  const handleSetEmail = async () => {
+    if (!emailInput) return;
+    try {
+      await dispatch(setUserEmail(emailInput)).unwrap();
+      setShowEmailVerification(true);
+    } catch (err) {
+      // Error handled by slice
+    }
+  };
+
+  const handleVerifyEmail = async () => {
+    if (!emailVerificationCode || emailVerificationCode.length !== 6) return;
+    try {
+      await dispatch(verifyUserEmail(emailVerificationCode)).unwrap();
+      setShowEmailVerification(false);
+      setEmailVerificationCode('');
+      dispatch(fetchUserEmailConfig());
+    } catch (err) {
+      // Error handled by slice
+    }
+  };
+
+  const handleResendEmailCode = async () => {
+    await dispatch(resendVerificationCode());
+  };
+
+  const handleToggleEmailNotifications = async (event) => {
+    await dispatch(updateEmailNotifications(event.target.checked));
+  };
+
+  const handleRemoveEmail = async () => {
+    if (window.confirm('¿Estás seguro de eliminar la configuración de Email?')) {
+      await dispatch(removeUserEmail());
+      setEmailInput('');
+      setShowEmailVerification(false);
+      setEmailVerificationCode('');
+    }
+  };
+
   return (
     <Box sx={{ p: { xs: 2, md: 3 } }}>
       {/* Header */}
@@ -158,14 +251,14 @@ const Settings = () => {
       </Box>
 
       {/* Alerts */}
-      {success && (
+      {(waSuccess || emailSuccess) && (
         <Alert severity="success" sx={{ mb: 2 }}>
-          {success}
+          {waSuccess || emailSuccess}
         </Alert>
       )}
-      {error && (
+      {(waError || emailError) && (
         <Alert severity="error" sx={{ mb: 2 }}>
-          {error}
+          {waError || emailError}
         </Alert>
       )}
 
@@ -203,7 +296,7 @@ const Settings = () => {
                 <Typography variant="h6">
                   Notificaciones WhatsApp
                 </Typography>
-                {userConfig?.isVerified && (
+                {whatsappConfig?.isVerified && (
                   <Chip
                     icon={<VerifiedIcon />}
                     label="Verificado"
@@ -214,20 +307,20 @@ const Settings = () => {
               </Box>
               <Divider sx={{ mb: 2 }} />
 
-              {userConfig?.isVerified ? (
+              {whatsappConfig?.isVerified ? (
                 // Verified state
                 <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
                   <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                     <PhoneIcon color="action" />
                     <Typography variant="body1">
-                      {userConfig.countryCode} {userConfig.phoneNumber}
+                      {whatsappConfig.countryCode} {whatsappConfig.phoneNumber}
                     </Typography>
                   </Box>
 
                   <FormControlLabel
                     control={
                       <Switch
-                        checked={userConfig.notificationsEnabled}
+                        checked={whatsappConfig.notificationsEnabled}
                         onChange={handleToggleNotifications}
                         color="primary"
                       />
@@ -236,7 +329,7 @@ const Settings = () => {
                   />
 
                   <Typography variant="caption" color="text.secondary">
-                    Verificado el: {new Date(userConfig.verifiedAt).toLocaleDateString()}
+                    Verificado el: {new Date(whatsappConfig.verifiedAt).toLocaleDateString()}
                   </Typography>
 
                   <Button
@@ -271,8 +364,8 @@ const Settings = () => {
                       variant="contained"
                       color="success"
                       onClick={handleVerifyCode}
-                      disabled={loading || verificationCodeInput.length !== 6}
-                      startIcon={loading ? <CircularProgress size={20} color="inherit" /> : <VerifiedIcon />}
+                      disabled={waLoading || verificationCodeInput.length !== 6}
+                      startIcon={waLoading ? <CircularProgress size={20} color="inherit" /> : <VerifiedIcon />}
                     >
                       Verificar
                     </Button>
@@ -291,7 +384,7 @@ const Settings = () => {
                     variant="text"
                     size="small"
                     onClick={handleRequestVerification}
-                    disabled={loading}
+                    disabled={waLoading}
                   >
                     Reenviar código
                   </Button>
@@ -344,8 +437,149 @@ const Settings = () => {
                     variant="contained"
                     color="success"
                     onClick={handleRequestVerification}
-                    disabled={loading || !phoneNumber}
-                    startIcon={loading ? <CircularProgress size={20} color="inherit" /> : <SendIcon />}
+                    disabled={waLoading || !phoneNumber}
+                    startIcon={waLoading ? <CircularProgress size={20} color="inherit" /> : <SendIcon />}
+                  >
+                    Enviar código de verificación
+                  </Button>
+                </Box>
+              )}
+            </CardContent>
+          </Card>
+        </Grid>
+
+        {/* Email Configuration Card */}
+        <Grid item xs={12} md={6}>
+          <Card>
+            <CardContent>
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 2 }}>
+                <EmailIcon sx={{ color: '#1976d2' }} />
+                <Typography variant="h6">
+                  Notificaciones por Email
+                </Typography>
+                {emailConfig?.isVerified && (
+                  <Chip
+                    icon={<VerifiedIcon />}
+                    label="Verificado"
+                    color="success"
+                    size="small"
+                  />
+                )}
+              </Box>
+              <Divider sx={{ mb: 2 }} />
+
+              {emailConfig?.isVerified ? (
+                // Verified state
+                <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                    <EmailIcon color="action" />
+                    <Typography variant="body1">
+                      {emailConfig.email}
+                    </Typography>
+                  </Box>
+
+                  <FormControlLabel
+                    control={
+                      <Switch
+                        checked={emailConfig.notificationsEnabled}
+                        onChange={handleToggleEmailNotifications}
+                        color="primary"
+                      />
+                    }
+                    label="Recibir notificaciones por Email"
+                  />
+
+                  <Typography variant="caption" color="text.secondary">
+                    Verificado el: {new Date(emailConfig.verifiedAt).toLocaleDateString()}
+                  </Typography>
+
+                  <Button
+                    variant="outlined"
+                    color="error"
+                    startIcon={<DeleteIcon />}
+                    onClick={handleRemoveEmail}
+                    size="small"
+                  >
+                    Eliminar configuración
+                  </Button>
+                </Box>
+              ) : showEmailVerification ? (
+                // Verification code input
+                <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+                  <Alert severity="info">
+                    Se ha enviado un código de verificación a tu correo ({emailInput})
+                  </Alert>
+
+                  <TextField
+                    label="Código de verificación"
+                    value={emailVerificationCode}
+                    onChange={(e) => setEmailVerificationCode(e.target.value.replace(/\D/g, '').slice(0, 6))}
+                    placeholder="123456"
+                    fullWidth
+                    inputProps={{ maxLength: 6 }}
+                    helperText="Ingresa el código de 6 dígitos enviado a tu correo"
+                  />
+
+                  <Box sx={{ display: 'flex', gap: 2 }}>
+                    <Button
+                      variant="contained"
+                      color="primary"
+                      onClick={handleVerifyEmail}
+                      disabled={emailLoading || emailVerificationCode.length !== 6}
+                      startIcon={emailLoading ? <CircularProgress size={20} color="inherit" /> : <VerifiedIcon />}
+                    >
+                      Verificar
+                    </Button>
+                    <Button
+                      variant="outlined"
+                      onClick={() => {
+                        setShowEmailVerification(false);
+                        setEmailVerificationCode('');
+                      }}
+                    >
+                      Cancelar
+                    </Button>
+                  </Box>
+
+                  <Button
+                    variant="text"
+                    size="small"
+                    onClick={handleResendEmailCode}
+                    disabled={emailLoading}
+                  >
+                    Reenviar código
+                  </Button>
+                </Box>
+              ) : (
+                // Email input
+                <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+                  <Typography variant="body2" color="text.secondary">
+                    Configura tu correo electrónico para recibir notificaciones del sistema
+                  </Typography>
+
+                  <TextField
+                    label="Correo electrónico"
+                    value={emailInput}
+                    onChange={(e) => setEmailInput(e.target.value)}
+                    placeholder="tu@email.com"
+                    fullWidth
+                    size="small"
+                    type="email"
+                    InputProps={{
+                      startAdornment: (
+                        <InputAdornment position="start">
+                          <EmailIcon />
+                        </InputAdornment>
+                      ),
+                    }}
+                  />
+
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    onClick={handleSetEmail}
+                    disabled={emailLoading || !emailInput}
+                    startIcon={emailLoading ? <CircularProgress size={20} color="inherit" /> : <SendIcon />}
                   >
                     Enviar código de verificación
                   </Button>
@@ -361,7 +595,7 @@ const Settings = () => {
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
               <NotificationsIcon color="info" />
               <Typography variant="h6" color="info.main">
-                Sobre las notificaciones de WhatsApp
+                Sobre las notificaciones
               </Typography>
             </Box>
             <Box component="ul" sx={{ m: 0, pl: 2 }}>
@@ -372,7 +606,7 @@ const Settings = () => {
               </li>
               <li>
                 <Typography variant="body2">
-                  Tu número de teléfono debe tener WhatsApp activo para recibir los mensajes.
+                  Puedes configurar tanto WhatsApp como Email para recibir notificaciones.
                 </Typography>
               </li>
               <li>

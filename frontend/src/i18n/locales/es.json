@@ -1199,7 +1199,13 @@
       "fileTooLarge": "Archivo muy grande (máx. 10MB)",
       "invalidType": "Tipo de archivo no permitido",
       "uploadFailed": "Error al subir archivos",
-      "maxFilesExceeded": "Se excedió el número máximo de archivos"
+      "maxFilesExceeded": "Se excedió el numero maximo de archivos"
+    }
+  },
+  "email": {
+    "config": {
+      "title": "Configuracion de Email",
+      "subtitle": "Configura el servidor SMTP y plantillas de correo"
     }
   }
 }

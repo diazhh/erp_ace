@@ -212,6 +212,13 @@ const PERMISSIONS = {
     { code: 'whatsapp:read', name: 'Ver Estado WhatsApp', description: 'Ver estado de conexión de WhatsApp', action: 'read', permissionType: 'action' },
     { code: 'whatsapp:manage', name: 'Gestionar WhatsApp', description: 'Conectar, desconectar y enviar mensajes de prueba', action: 'manage', permissionType: 'action' },
   ],
+
+  // ========== EMAIL ==========
+  email: [
+    { code: 'email:*', name: 'Email - Acceso Completo', description: 'Acceso completo al módulo de Email', action: '*', permissionType: 'module' },
+    { code: 'email:read', name: 'Ver Configuración Email', description: 'Ver configuración SMTP y plantillas', action: 'read', permissionType: 'action' },
+    { code: 'email:manage', name: 'Gestionar Email', description: 'Configurar SMTP, editar plantillas y enviar correos de prueba', action: 'manage', permissionType: 'action' },
+  ],
 };
 
 // Roles predefinidos con sus permisos

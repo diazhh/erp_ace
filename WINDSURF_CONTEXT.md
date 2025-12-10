@@ -70,9 +70,33 @@ cd backend && bash tests/api-tests.sh
 
 ## 📊 Estado Actual del Proyecto
 
-- **Versión**: 0.13.0
-- **Módulos completados**: Setup, Empleados, Nómina, Finanzas, Caja Chica, Proyectos, Inventario, Flota, Procura, HSE, Documentos, Dashboard, Usuarios/Permisos
-- **Nuevo**: Sistema de Archivos Adjuntos (Attachments)
+- **Versión**: 0.15.0
+- **Módulos completados**: Setup, Empleados, Nómina, Finanzas, Caja Chica, Proyectos, Inventario, Flota, Procura, HSE, Documentos, Dashboard, Usuarios/Permisos, Attachments, WhatsApp, **Email**
+- **Nuevo**: Sistema de Email (v0.15.0)
+
+### Sistema de Email (v0.15.0)
+- **Librería**: nodemailer
+- **Modelos**: EmailConfig, EmailTemplate, UserEmail, EmailLog
+- **Servicio**: emailService.js (singleton)
+- **Funcionalidades Admin**:
+  - Configurar servidor SMTP (host, puerto, usuario, contraseña)
+  - Probar conexión SMTP
+  - Enviar correos de prueba
+  - Gestionar plantillas de correo
+  - Ver historial de correos enviados
+  - Ver estadísticas de envío
+- **Funcionalidades Usuario**:
+  - Configurar email para notificaciones
+  - Verificar email con código enviado
+  - Activar/desactivar notificaciones por email
+- **Plantillas Predeterminadas**:
+  - `VERIFY_EMAIL` - Verificación de correo
+  - `WELCOME` - Bienvenida a nuevos usuarios
+  - `PASSWORD_RESET` - Recuperación de contraseña
+- **Rutas Frontend**:
+  - `/admin/email` → Configuración admin
+  - `/settings` → Configuración usuario (incluye Email)
+- **Permisos**: email:read, email:manage
 
 ### Sistema de Archivos Adjuntos (v0.13.0)
 - **Modelo centralizado**: `Attachment` con relación polimórfica

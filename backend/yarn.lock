@@ -3704,6 +3704,11 @@ node-wav@^0.0.2:
   resolved "https://registry.npmjs.org/node-wav/-/node-wav-0.0.2.tgz"
   integrity sha512-M6Rm/bbG6De/gKGxOpeOobx/dnGuP0dz40adqx38boqHhlWssBJZgLCPBNtb9NkrmnKYiV04xELq+R6PFOnoLA==
 
+nodemailer@^7.0.11:
+  version "7.0.11"
+  resolved "https://registry.npmjs.org/nodemailer/-/nodemailer-7.0.11.tgz"
+  integrity sha512-gnXhNRE0FNhD7wPSCGhdNh46Hs6nm+uTyg+Kq0cZukNQiYdnCsoQjodNP9BQVG9XrcK/v6/MgpAPBUFyzh9pvw==
+
 nodemon@^3.0.2:
   version "3.1.11"
   resolved "https://registry.npmjs.org/nodemon/-/nodemon-3.1.11.tgz"

@@ -63,6 +63,7 @@ import {
   ManageAccounts as UsersIcon,
   Security as RolesIcon,
   WhatsApp as WhatsAppIcon,
+  Email as EmailIcon,
 } from '@mui/icons-material';
 
 import { logout } from '../store/slices/authSlice';
@@ -271,11 +272,12 @@ const Layout = () => {
       id: 'admin', 
       text: 'Administración', 
       icon: <AdminIcon />,
-      permissions: ['users:read', 'users:*', 'roles:read', 'roles:*', 'whatsapp:read', 'whatsapp:*'],
+      permissions: ['users:read', 'users:*', 'roles:read', 'roles:*', 'whatsapp:read', 'whatsapp:*', 'email:read', 'email:*'],
       children: [
         { text: 'Usuarios', icon: <UsersIcon />, path: '/admin/users', permissions: ['users:read', 'users:*'] },
         { text: 'Roles', icon: <RolesIcon />, path: '/admin/roles', permissions: ['roles:read', 'roles:*'] },
         { text: 'WhatsApp', icon: <WhatsAppIcon />, path: '/admin/whatsapp', permissions: ['whatsapp:read', 'whatsapp:*', 'whatsapp:manage'] },
+        { text: 'Email', icon: <EmailIcon />, path: '/admin/email', permissions: ['email:read', 'email:*', 'email:manage'] },
       ],
     },
   ];
