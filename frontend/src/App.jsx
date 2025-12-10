@@ -100,6 +100,27 @@ import RoleForm from './pages/admin/RoleForm';
 import WhatsAppConfig from './pages/admin/WhatsAppConfig';
 import EmailConfig from './pages/admin/EmailConfig';
 import Settings from './pages/Settings';
+// Assets
+import AssetList from './pages/assets/AssetList';
+import AssetDetail from './pages/assets/AssetDetail';
+import AssetForm from './pages/assets/AssetForm';
+import AssetCategoryList from './pages/assets/AssetCategoryList';
+// CRM
+import CrmDashboard from './pages/crm/CrmDashboard';
+import ClientList from './pages/crm/ClientList';
+import ClientDetail from './pages/crm/ClientDetail';
+import ClientForm from './pages/crm/ClientForm';
+import OpportunityList from './pages/crm/OpportunityList';
+import OpportunityDetail from './pages/crm/OpportunityDetail';
+import OpportunityForm from './pages/crm/OpportunityForm';
+// Quality
+import QualityDashboard from './pages/quality/QualityDashboard';
+import QualityInspectionList from './pages/quality/InspectionList';
+import QualityInspectionDetail from './pages/quality/InspectionDetail';
+import QualityInspectionForm from './pages/quality/InspectionForm';
+import NonConformanceList from './pages/quality/NonConformanceList';
+import NonConformanceDetail from './pages/quality/NonConformanceDetail';
+import NonConformanceForm from './pages/quality/NonConformanceForm';
 
 function App() {
   const dispatch = useDispatch();
@@ -245,6 +266,32 @@ function App() {
         <Route path="documents/categories" element={<CategoryList />} />
         <Route path="documents/categories/new" element={<CategoryForm />} />
         <Route path="documents/categories/:id/edit" element={<CategoryForm />} />
+        {/* Assets */}
+        <Route path="assets" element={<AssetList />} />
+        <Route path="assets/new" element={<AssetForm />} />
+        <Route path="assets/categories" element={<AssetCategoryList />} />
+        <Route path="assets/:id" element={<AssetDetail />} />
+        <Route path="assets/:id/edit" element={<AssetForm />} />
+        {/* CRM */}
+        <Route path="crm" element={<CrmDashboard />} />
+        <Route path="crm/clients" element={<ClientList />} />
+        <Route path="crm/clients/new" element={<ClientForm />} />
+        <Route path="crm/clients/:id" element={<ClientDetail />} />
+        <Route path="crm/clients/:id/edit" element={<ClientForm />} />
+        <Route path="crm/opportunities" element={<OpportunityList />} />
+        <Route path="crm/opportunities/new" element={<OpportunityForm />} />
+        <Route path="crm/opportunities/:id" element={<OpportunityDetail />} />
+        <Route path="crm/opportunities/:id/edit" element={<OpportunityForm />} />
+        {/* Quality */}
+        <Route path="quality" element={<QualityDashboard />} />
+        <Route path="quality/inspections" element={<QualityInspectionList />} />
+        <Route path="quality/inspections/new" element={<QualityInspectionForm />} />
+        <Route path="quality/inspections/:id" element={<QualityInspectionDetail />} />
+        <Route path="quality/inspections/:id/edit" element={<QualityInspectionForm />} />
+        <Route path="quality/non-conformances" element={<NonConformanceList />} />
+        <Route path="quality/non-conformances/new" element={<NonConformanceForm />} />
+        <Route path="quality/non-conformances/:id" element={<NonConformanceDetail />} />
+        <Route path="quality/non-conformances/:id/edit" element={<NonConformanceForm />} />
         {/* Admin - Users & Roles */}
         <Route path="admin/users" element={<UserList />} />
         <Route path="admin/users/new" element={<UserForm />} />

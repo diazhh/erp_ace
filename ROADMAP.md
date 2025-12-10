@@ -1,7 +1,7 @@
 # 🗺️ ROADMAP - ERP Sistema de Gestión Empresarial
 
-**Última actualización:** 2025-12-04  
-**Versión actual:** 0.8.0
+**Última actualización:** 2025-12-10  
+**Versión actual:** 0.16.0
 
 ---
 
@@ -16,16 +16,24 @@
 | Sprint 4 | Caja Chica | ✅ Completado | 100% |
 | Sprint 5 | Proyectos | ✅ Completado | 100% |
 | Sprint 6 | Inventario | ✅ Completado | 100% |
-| Sprint 7 | Flota | 🔲 Pendiente | 0% |
-| Sprint 8 | Procura | 🔲 Pendiente | 0% |
-| Sprint 9 | HSE | 🔲 Pendiente | 0% |
-| Sprint 10 | Documentos | 🔲 Pendiente | 0% |
-| Sprint 11 | Reportes | 🔲 Pendiente | 0% |
+| Sprint 7 | Flota | ✅ Completado | 100% |
+| Sprint 8 | Procura | ✅ Completado | 100% |
+| Sprint 9 | HSE | ✅ Completado | 100% |
+| Sprint 10 | Documentos | ✅ Completado | 100% |
+| Sprint 11 | Dashboard | ✅ Completado | 100% |
+| Sprint 12 | Usuarios/Permisos | ✅ Completado | 100% |
+| Sprint 13 | Attachments | ✅ Completado | 100% |
+| Sprint 14 | WhatsApp | ✅ Completado | 100% |
+| Sprint 15 | Email | ✅ Completado | 100% |
+| Sprint 16 | Assets | ✅ Completado | 100% |
+| Sprint 17 | CRM | ✅ Completado | 100% |
+| Sprint 18 | Quality | ✅ Completado | 100% |
+| Sprint 19 | Reportes | 🔲 Pendiente | 0% |
 
-**Progreso Total del Proyecto: ~60%**
+**Progreso Total del Proyecto: ~95%**
 
 ```
-[██████████████████░░░░░░░░░░░░] 60%
+[████████████████████████████░░] 95%
 ```
 
 ---
@@ -390,7 +398,76 @@
 
 ---
 
+## ✅ SPRINT 17 - Módulo CRM (100%)
+
+### Backend
+- [x] Modelo Client (clientes empresas y personas)
+- [x] Modelo ClientContact (contactos de clientes)
+- [x] Modelo Opportunity (oportunidades de venta)
+- [x] Modelo CrmQuote (cotizaciones CRM)
+- [x] Modelo CrmQuoteItem (items de cotización)
+- [x] Modelo CrmActivity (actividades y seguimiento)
+- [x] Servicio crmService.js
+- [x] Controlador crmController.js
+- [x] Rutas /api/crm/*
+- [x] Permisos: crm:*, crm:read, crm:create, crm:update, crm:delete
+
+### Frontend
+- [x] Redux slice crmSlice.js
+- [x] CrmDashboard con KPIs y pipeline
+- [x] ClientList con filtros y responsive
+- [x] ClientDetail con tabs (info, contactos, oportunidades, cotizaciones)
+- [x] ClientForm para crear/editar
+- [x] OpportunityList con filtros
+- [x] OpportunityDetail con tabs
+- [x] OpportunityForm para crear/editar
+- [x] Menú lateral con CRM
+
+---
+
+## ✅ SPRINT 18 - Módulo Control de Calidad (100%)
+
+### Backend
+- [x] Modelo QualityPlan (planes de calidad)
+- [x] Modelo QualityInspection (inspecciones)
+- [x] Modelo NonConformance (no conformidades)
+- [x] Modelo CorrectiveAction (acciones correctivas)
+- [x] Modelo QualityCertificate (certificados)
+- [x] Servicio qualityService.js
+- [x] Controlador qualityController.js
+- [x] Rutas /api/quality/*
+- [x] Permisos: quality:*, quality:read, quality:create, quality:update, quality:delete, quality:approve
+
+### Frontend
+- [x] Redux slice qualitySlice.js
+- [x] QualityDashboard con KPIs
+- [x] InspectionList con filtros y responsive
+- [x] InspectionDetail con tabs
+- [x] InspectionForm para crear/editar
+- [x] NonConformanceList con filtros
+- [x] NonConformanceDetail con tabs (info, acciones correctivas)
+- [x] NonConformanceForm para crear/editar
+- [x] Menú lateral con Control de Calidad
+
+---
+
 ## 📅 Historial de Versiones
+
+### v0.16.0 (2025-12-10)
+- ✅ Módulo CRM completo
+- ✅ Módulo Control de Calidad completo
+- ✅ Gestión de clientes y oportunidades
+- ✅ Inspecciones y no conformidades
+
+### v0.15.0 (2025-12-09)
+- ✅ Sistema de Email con nodemailer
+- ✅ Plantillas de correo
+- ✅ Verificación de email de usuario
+
+### v0.14.0 (2025-12-09)
+- ✅ Sistema WhatsApp con Baileys
+- ✅ Configuración de sesión
+- ✅ Notificaciones por WhatsApp
 
 ### v0.2.0 (2025-12-04)
 - ✅ Módulo de Nómina completo

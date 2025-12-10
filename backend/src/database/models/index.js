@@ -75,6 +75,25 @@ const EmailConfig = require('../../modules/email/models/EmailConfig');
 const EmailTemplate = require('../../modules/email/models/EmailTemplate');
 const UserEmail = require('../../modules/email/models/UserEmail');
 const EmailLog = require('../../modules/email/models/EmailLog');
+// Asset models
+const AssetCategory = require('../../modules/assets/models/AssetCategory');
+const Asset = require('../../modules/assets/models/Asset');
+const AssetMaintenance = require('../../modules/assets/models/AssetMaintenance');
+const AssetTransfer = require('../../modules/assets/models/AssetTransfer');
+const AssetDepreciation = require('../../modules/assets/models/AssetDepreciation');
+// CRM models
+const Client = require('../../modules/crm/models/Client');
+const ClientContact = require('../../modules/crm/models/ClientContact');
+const Opportunity = require('../../modules/crm/models/Opportunity');
+const CrmQuote = require('../../modules/crm/models/CrmQuote');
+const CrmQuoteItem = require('../../modules/crm/models/CrmQuoteItem');
+const CrmActivity = require('../../modules/crm/models/CrmActivity');
+// Quality models
+const QualityPlan = require('../../modules/quality/models/QualityPlan');
+const QualityInspection = require('../../modules/quality/models/QualityInspection');
+const NonConformance = require('../../modules/quality/models/NonConformance');
+const CorrectiveAction = require('../../modules/quality/models/CorrectiveAction');
+const QualityCertificate = require('../../modules/quality/models/QualityCertificate');
 
 // Inicializar modelos
 const models = {
@@ -154,6 +173,25 @@ const models = {
   EmailTemplate: EmailTemplate(sequelize),
   UserEmail: UserEmail(sequelize),
   EmailLog: EmailLog(sequelize),
+  // Assets
+  AssetCategory: AssetCategory(sequelize),
+  Asset: Asset(sequelize),
+  AssetMaintenance: AssetMaintenance(sequelize),
+  AssetTransfer: AssetTransfer(sequelize),
+  AssetDepreciation: AssetDepreciation(sequelize),
+  // CRM
+  Client: Client(sequelize),
+  ClientContact: ClientContact(sequelize),
+  Opportunity: Opportunity(sequelize),
+  CrmQuote: CrmQuote(sequelize),
+  CrmQuoteItem: CrmQuoteItem(sequelize),
+  CrmActivity: CrmActivity(sequelize),
+  // Quality
+  QualityPlan: QualityPlan(sequelize),
+  QualityInspection: QualityInspection(sequelize),
+  NonConformance: NonConformance(sequelize),
+  CorrectiveAction: CorrectiveAction(sequelize),
+  QualityCertificate: QualityCertificate(sequelize),
 };
 
 // Definir asociaciones
@@ -1706,6 +1744,516 @@ models.EmailLog.belongsTo(models.EmailTemplate, {
 models.EmailLog.belongsTo(models.User, {
   foreignKey: 'user_id',
   as: 'user',
+});
+
+// ========== ASSET ASSOCIATIONS ==========
+
+// AssetCategory self-reference (hierarchy)
+models.AssetCategory.belongsTo(models.AssetCategory, {
+  foreignKey: 'parent_id',
+  as: 'parent',
+});
+models.AssetCategory.hasMany(models.AssetCategory, {
+  foreignKey: 'parent_id',
+  as: 'children',
+});
+
+// AssetCategory -> User (createdBy)
+models.AssetCategory.belongsTo(models.User, {
+  foreignKey: 'created_by',
+  as: 'creator',
+});
+
+// Asset -> AssetCategory
+models.Asset.belongsTo(models.AssetCategory, {
+  foreignKey: 'category_id',
+  as: 'category',
+});
+models.AssetCategory.hasMany(models.Asset, {
+  foreignKey: 'category_id',
+  as: 'assets',
+});
+
+// Asset -> Contractor (supplier)
+models.Asset.belongsTo(models.Contractor, {
+  foreignKey: 'supplier_id',
+  as: 'supplier',
+});
+models.Contractor.hasMany(models.Asset, {
+  foreignKey: 'supplier_id',
+  as: 'suppliedAssets',
+});
+
+// Asset -> PurchaseOrder
+models.Asset.belongsTo(models.PurchaseOrder, {
+  foreignKey: 'purchase_order_id',
+  as: 'purchaseOrder',
+});
+models.PurchaseOrder.hasMany(models.Asset, {
+  foreignKey: 'purchase_order_id',
+  as: 'assets',
+});
+
+// Asset -> Warehouse (location)
+models.Asset.belongsTo(models.Warehouse, {
+  foreignKey: 'location_id',
+  as: 'location',
+});
+models.Warehouse.hasMany(models.Asset, {
+  foreignKey: 'location_id',
+  as: 'assets',
+});
+
+// Asset -> Employee (assignedTo)
+models.Asset.belongsTo(models.Employee, {
+  foreignKey: 'assigned_to_employee_id',
+  as: 'assignedToEmployee',
+});
+models.Employee.hasMany(models.Asset, {
+  foreignKey: 'assigned_to_employee_id',
+  as: 'assignedAssets',
+});
+
+// Asset -> Project (assignedTo)
+models.Asset.belongsTo(models.Project, {
+  foreignKey: 'assigned_to_project_id',
+  as: 'assignedToProject',
+});
+models.Project.hasMany(models.Asset, {
+  foreignKey: 'assigned_to_project_id',
+  as: 'assignedAssets',
+});
+
+// Asset -> Department (assignedTo)
+models.Asset.belongsTo(models.Department, {
+  foreignKey: 'assigned_to_department_id',
+  as: 'assignedToDepartment',
+});
+models.Department.hasMany(models.Asset, {
+  foreignKey: 'assigned_to_department_id',
+  as: 'assignedAssets',
+});
+
+// Asset -> User (createdBy, disposedBy)
+models.Asset.belongsTo(models.User, {
+  foreignKey: 'created_by',
+  as: 'creator',
+});
+models.Asset.belongsTo(models.User, {
+  foreignKey: 'disposed_by',
+  as: 'disposer',
+});
+
+// Asset <-> AssetMaintenance
+models.Asset.hasMany(models.AssetMaintenance, {
+  foreignKey: 'asset_id',
+  as: 'maintenances',
+});
+models.AssetMaintenance.belongsTo(models.Asset, {
+  foreignKey: 'asset_id',
+  as: 'asset',
+});
+
+// AssetMaintenance -> Contractor (serviceProvider)
+models.AssetMaintenance.belongsTo(models.Contractor, {
+  foreignKey: 'service_provider_id',
+  as: 'serviceProvider',
+});
+
+// AssetMaintenance -> Transaction
+models.AssetMaintenance.belongsTo(models.Transaction, {
+  foreignKey: 'transaction_id',
+  as: 'transaction',
+});
+
+// AssetMaintenance -> User (createdBy, completedBy)
+models.AssetMaintenance.belongsTo(models.User, {
+  foreignKey: 'created_by',
+  as: 'creator',
+});
+models.AssetMaintenance.belongsTo(models.User, {
+  foreignKey: 'completed_by',
+  as: 'completer',
+});
+
+// Asset <-> AssetTransfer
+models.Asset.hasMany(models.AssetTransfer, {
+  foreignKey: 'asset_id',
+  as: 'transfers',
+});
+models.AssetTransfer.belongsTo(models.Asset, {
+  foreignKey: 'asset_id',
+  as: 'asset',
+});
+
+// AssetTransfer -> Warehouse (from/to)
+models.AssetTransfer.belongsTo(models.Warehouse, {
+  foreignKey: 'from_location_id',
+  as: 'fromLocation',
+});
+models.AssetTransfer.belongsTo(models.Warehouse, {
+  foreignKey: 'to_location_id',
+  as: 'toLocation',
+});
+
+// AssetTransfer -> Employee (from/to)
+models.AssetTransfer.belongsTo(models.Employee, {
+  foreignKey: 'from_employee_id',
+  as: 'fromEmployee',
+});
+models.AssetTransfer.belongsTo(models.Employee, {
+  foreignKey: 'to_employee_id',
+  as: 'toEmployee',
+});
+
+// AssetTransfer -> Project (from/to)
+models.AssetTransfer.belongsTo(models.Project, {
+  foreignKey: 'from_project_id',
+  as: 'fromProject',
+});
+models.AssetTransfer.belongsTo(models.Project, {
+  foreignKey: 'to_project_id',
+  as: 'toProject',
+});
+
+// AssetTransfer -> Department (from/to)
+models.AssetTransfer.belongsTo(models.Department, {
+  foreignKey: 'from_department_id',
+  as: 'fromDepartment',
+});
+models.AssetTransfer.belongsTo(models.Department, {
+  foreignKey: 'to_department_id',
+  as: 'toDepartment',
+});
+
+// AssetTransfer -> User (requestedBy, approvedBy, deliveredBy, receivedBy, createdBy)
+models.AssetTransfer.belongsTo(models.User, {
+  foreignKey: 'requested_by',
+  as: 'requester',
+});
+models.AssetTransfer.belongsTo(models.User, {
+  foreignKey: 'approved_by',
+  as: 'approver',
+});
+models.AssetTransfer.belongsTo(models.User, {
+  foreignKey: 'delivered_by',
+  as: 'deliverer',
+});
+models.AssetTransfer.belongsTo(models.User, {
+  foreignKey: 'received_by',
+  as: 'receiver',
+});
+models.AssetTransfer.belongsTo(models.User, {
+  foreignKey: 'created_by',
+  as: 'creator',
+});
+
+// Asset <-> AssetDepreciation
+models.Asset.hasMany(models.AssetDepreciation, {
+  foreignKey: 'asset_id',
+  as: 'depreciations',
+});
+models.AssetDepreciation.belongsTo(models.Asset, {
+  foreignKey: 'asset_id',
+  as: 'asset',
+});
+
+// AssetDepreciation -> Transaction
+models.AssetDepreciation.belongsTo(models.Transaction, {
+  foreignKey: 'transaction_id',
+  as: 'transaction',
+});
+
+// AssetDepreciation -> User (calculatedBy, postedBy, createdBy)
+models.AssetDepreciation.belongsTo(models.User, {
+  foreignKey: 'calculated_by',
+  as: 'calculator',
+});
+models.AssetDepreciation.belongsTo(models.User, {
+  foreignKey: 'posted_by',
+  as: 'poster',
+});
+models.AssetDepreciation.belongsTo(models.User, {
+  foreignKey: 'created_by',
+  as: 'creator',
+});
+
+// ========== CRM ASSOCIATIONS ==========
+
+// Client -> User (assignedTo, createdBy)
+models.Client.belongsTo(models.User, {
+  foreignKey: 'assigned_to_id',
+  as: 'assignedTo',
+});
+models.Client.belongsTo(models.User, {
+  foreignKey: 'created_by',
+  as: 'creator',
+});
+
+// Client <-> ClientContact
+models.Client.hasMany(models.ClientContact, {
+  foreignKey: 'client_id',
+  as: 'contacts',
+});
+models.ClientContact.belongsTo(models.Client, {
+  foreignKey: 'client_id',
+  as: 'client',
+});
+
+// ClientContact -> User (createdBy)
+models.ClientContact.belongsTo(models.User, {
+  foreignKey: 'created_by',
+  as: 'creator',
+});
+
+// Client <-> Opportunity
+models.Client.hasMany(models.Opportunity, {
+  foreignKey: 'client_id',
+  as: 'opportunities',
+});
+models.Opportunity.belongsTo(models.Client, {
+  foreignKey: 'client_id',
+  as: 'client',
+});
+
+// Opportunity -> ClientContact
+models.Opportunity.belongsTo(models.ClientContact, {
+  foreignKey: 'contact_id',
+  as: 'contact',
+});
+
+// Opportunity -> Project (resultante)
+models.Opportunity.belongsTo(models.Project, {
+  foreignKey: 'project_id',
+  as: 'project',
+});
+
+// Opportunity -> User (assignedTo, createdBy)
+models.Opportunity.belongsTo(models.User, {
+  foreignKey: 'assigned_to_id',
+  as: 'assignedTo',
+});
+models.Opportunity.belongsTo(models.User, {
+  foreignKey: 'created_by',
+  as: 'creator',
+});
+
+// Client <-> CrmQuote
+models.Client.hasMany(models.CrmQuote, {
+  foreignKey: 'client_id',
+  as: 'quotes',
+});
+models.CrmQuote.belongsTo(models.Client, {
+  foreignKey: 'client_id',
+  as: 'client',
+});
+
+// CrmQuote -> Opportunity
+models.CrmQuote.belongsTo(models.Opportunity, {
+  foreignKey: 'opportunity_id',
+  as: 'opportunity',
+});
+models.Opportunity.hasMany(models.CrmQuote, {
+  foreignKey: 'opportunity_id',
+  as: 'quotes',
+});
+
+// CrmQuote -> ClientContact
+models.CrmQuote.belongsTo(models.ClientContact, {
+  foreignKey: 'contact_id',
+  as: 'contact',
+});
+
+// CrmQuote -> User (assignedTo, createdBy, sentBy)
+models.CrmQuote.belongsTo(models.User, {
+  foreignKey: 'assigned_to_id',
+  as: 'assignedTo',
+});
+models.CrmQuote.belongsTo(models.User, {
+  foreignKey: 'created_by',
+  as: 'creator',
+});
+models.CrmQuote.belongsTo(models.User, {
+  foreignKey: 'sent_by',
+  as: 'sender',
+});
+
+// CrmQuote <-> CrmQuoteItem
+models.CrmQuote.hasMany(models.CrmQuoteItem, {
+  foreignKey: 'quote_id',
+  as: 'items',
+});
+models.CrmQuoteItem.belongsTo(models.CrmQuote, {
+  foreignKey: 'quote_id',
+  as: 'quote',
+});
+
+// CrmActivity -> ClientContact
+models.CrmActivity.belongsTo(models.ClientContact, {
+  foreignKey: 'contact_id',
+  as: 'contact',
+});
+
+// CrmActivity -> User (assignedTo, createdBy, completedBy)
+models.CrmActivity.belongsTo(models.User, {
+  foreignKey: 'assigned_to_id',
+  as: 'assignedTo',
+});
+models.CrmActivity.belongsTo(models.User, {
+  foreignKey: 'created_by',
+  as: 'creator',
+});
+models.CrmActivity.belongsTo(models.User, {
+  foreignKey: 'completed_by',
+  as: 'completer',
+});
+
+// ========== QUALITY ASSOCIATIONS ==========
+
+// QualityPlan -> Project
+models.QualityPlan.belongsTo(models.Project, {
+  foreignKey: 'project_id',
+  as: 'project',
+});
+models.Project.hasMany(models.QualityPlan, {
+  foreignKey: 'project_id',
+  as: 'qualityPlans',
+});
+
+// QualityPlan -> Employee (qualityManager)
+models.QualityPlan.belongsTo(models.Employee, {
+  foreignKey: 'quality_manager_id',
+  as: 'qualityManager',
+});
+
+// QualityPlan -> User (approvedBy, createdBy)
+models.QualityPlan.belongsTo(models.User, {
+  foreignKey: 'approved_by',
+  as: 'approver',
+});
+models.QualityPlan.belongsTo(models.User, {
+  foreignKey: 'created_by',
+  as: 'creator',
+});
+
+// QualityPlan <-> QualityInspection
+models.QualityPlan.hasMany(models.QualityInspection, {
+  foreignKey: 'quality_plan_id',
+  as: 'inspections',
+});
+models.QualityInspection.belongsTo(models.QualityPlan, {
+  foreignKey: 'quality_plan_id',
+  as: 'qualityPlan',
+});
+
+// QualityInspection -> Project
+models.QualityInspection.belongsTo(models.Project, {
+  foreignKey: 'project_id',
+  as: 'project',
+});
+models.Project.hasMany(models.QualityInspection, {
+  foreignKey: 'project_id',
+  as: 'qualityInspections',
+});
+
+// QualityInspection -> Employee (inspector)
+models.QualityInspection.belongsTo(models.Employee, {
+  foreignKey: 'inspector_id',
+  as: 'inspector',
+});
+
+// QualityInspection -> User (createdBy)
+models.QualityInspection.belongsTo(models.User, {
+  foreignKey: 'created_by',
+  as: 'creator',
+});
+
+// QualityInspection <-> NonConformance
+models.QualityInspection.hasMany(models.NonConformance, {
+  foreignKey: 'inspection_id',
+  as: 'nonConformances',
+});
+models.NonConformance.belongsTo(models.QualityInspection, {
+  foreignKey: 'inspection_id',
+  as: 'inspection',
+});
+
+// NonConformance -> Project
+models.NonConformance.belongsTo(models.Project, {
+  foreignKey: 'project_id',
+  as: 'project',
+});
+models.Project.hasMany(models.NonConformance, {
+  foreignKey: 'project_id',
+  as: 'nonConformances',
+});
+
+// NonConformance -> Employee (detectedBy, responsible)
+models.NonConformance.belongsTo(models.Employee, {
+  foreignKey: 'detected_by_id',
+  as: 'detectedBy',
+});
+models.NonConformance.belongsTo(models.Employee, {
+  foreignKey: 'responsible_id',
+  as: 'responsible',
+});
+
+// NonConformance -> User (verifiedBy, createdBy)
+models.NonConformance.belongsTo(models.User, {
+  foreignKey: 'verified_by_id',
+  as: 'verifiedBy',
+});
+models.NonConformance.belongsTo(models.User, {
+  foreignKey: 'created_by',
+  as: 'creator',
+});
+
+// NonConformance <-> CorrectiveAction
+models.NonConformance.hasMany(models.CorrectiveAction, {
+  foreignKey: 'non_conformance_id',
+  as: 'correctiveActions',
+});
+models.CorrectiveAction.belongsTo(models.NonConformance, {
+  foreignKey: 'non_conformance_id',
+  as: 'nonConformance',
+});
+
+// CorrectiveAction -> Employee (responsible)
+models.CorrectiveAction.belongsTo(models.Employee, {
+  foreignKey: 'responsible_id',
+  as: 'responsible',
+});
+
+// CorrectiveAction -> User (verifiedBy, createdBy)
+models.CorrectiveAction.belongsTo(models.User, {
+  foreignKey: 'verified_by_id',
+  as: 'verifiedBy',
+});
+models.CorrectiveAction.belongsTo(models.User, {
+  foreignKey: 'created_by',
+  as: 'creator',
+});
+
+// QualityCertificate -> Project
+models.QualityCertificate.belongsTo(models.Project, {
+  foreignKey: 'project_id',
+  as: 'project',
+});
+models.Project.hasMany(models.QualityCertificate, {
+  foreignKey: 'project_id',
+  as: 'qualityCertificates',
+});
+
+// QualityCertificate -> QualityInspection
+models.QualityCertificate.belongsTo(models.QualityInspection, {
+  foreignKey: 'inspection_id',
+  as: 'inspection',
+});
+
+// QualityCertificate -> User (createdBy)
+models.QualityCertificate.belongsTo(models.User, {
+  foreignKey: 'created_by',
+  as: 'creator',
 });
 
 module.exports = models;

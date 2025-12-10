@@ -64,6 +64,12 @@ import {
   Security as RolesIcon,
   WhatsApp as WhatsAppIcon,
   Email as EmailIcon,
+  Inventory2 as AssetIcon,
+  Business as CrmIcon,
+  TrendingUp as OpportunityIcon,
+  VerifiedUser as QualityIcon,
+  FindInPage as QualityInspectionIcon,
+  ReportProblem as NCIcon,
 } from '@mui/icons-material';
 
 import { logout } from '../store/slices/authSlice';
@@ -266,6 +272,38 @@ const Layout = () => {
         { text: 'Dashboard', icon: <DashboardIcon />, path: '/documents' },
         { text: 'Lista', icon: <ListIcon />, path: '/documents/list' },
         { text: 'Categorías', icon: <CategoryIcon />, path: '/documents/categories' },
+      ],
+    },
+    { 
+      id: 'assets', 
+      text: 'Activos Fijos', 
+      icon: <AssetIcon />,
+      permissions: ['assets:read', 'assets:*'],
+      children: [
+        { text: 'Lista', icon: <ListIcon />, path: '/assets' },
+        { text: 'Categorías', icon: <CategoryIcon />, path: '/assets/categories' },
+      ],
+    },
+    { 
+      id: 'crm', 
+      text: 'CRM', 
+      icon: <CrmIcon />,
+      permissions: ['crm:read', 'crm:*'],
+      children: [
+        { text: 'Dashboard', icon: <DashboardIcon />, path: '/crm' },
+        { text: 'Clientes', icon: <CrmIcon />, path: '/crm/clients' },
+        { text: 'Oportunidades', icon: <OpportunityIcon />, path: '/crm/opportunities' },
+      ],
+    },
+    { 
+      id: 'quality', 
+      text: 'Control de Calidad', 
+      icon: <QualityIcon />,
+      permissions: ['quality:read', 'quality:*'],
+      children: [
+        { text: 'Dashboard', icon: <DashboardIcon />, path: '/quality' },
+        { text: 'Inspecciones', icon: <QualityInspectionIcon />, path: '/quality/inspections' },
+        { text: 'No Conformidades', icon: <NCIcon />, path: '/quality/non-conformances' },
       ],
     },
     { 

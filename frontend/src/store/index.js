@@ -16,6 +16,9 @@ import rolesReducer from './slices/rolesSlice';
 import attachmentReducer from './slices/attachmentSlice';
 import whatsappReducer from './slices/whatsappSlice';
 import emailReducer from './slices/emailSlice';
+import assetReducer from './slices/assetSlice';
+import crmReducer from './slices/crmSlice';
+import qualityReducer from './slices/qualitySlice';
 
 export const store = configureStore({
   reducer: {
@@ -36,6 +39,9 @@ export const store = configureStore({
     attachments: attachmentReducer,
     whatsapp: whatsappReducer,
     email: emailReducer,
+    assets: assetReducer,
+    crm: crmReducer,
+    quality: qualityReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({

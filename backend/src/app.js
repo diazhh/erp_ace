@@ -29,6 +29,9 @@ const backupRoutes = require('./modules/backup/backup.routes');
 const approvalRoutes = require('./modules/approvals/routes/approvalRoutes');
 const whatsappRoutes = require('./modules/whatsapp/routes/whatsappRoutes');
 const emailRoutes = require('./modules/email/routes/emailRoutes');
+const assetRoutes = require('./modules/assets/routes/assetRoutes');
+const crmRoutes = require('./modules/crm/routes/crmRoutes');
+const qualityRoutes = require('./modules/quality/routes/qualityRoutes');
 
 const app = express();
 
@@ -102,6 +105,9 @@ app.use('/api/backup', backupRoutes);
 app.use('/api/approvals', approvalRoutes);
 app.use('/api/whatsapp', whatsappRoutes);
 app.use('/api/email', emailRoutes);
+app.use('/api/assets', assetRoutes);
+app.use('/api/crm', crmRoutes);
+app.use('/api/quality', qualityRoutes);
 
 // Servir archivos estáticos de uploads
 app.use('/uploads', express.static('uploads'));

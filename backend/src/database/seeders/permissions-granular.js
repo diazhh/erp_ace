@@ -219,6 +219,42 @@ const PERMISSIONS = {
     { code: 'email:read', name: 'Ver Configuración Email', description: 'Ver configuración SMTP y plantillas', action: 'read', permissionType: 'action' },
     { code: 'email:manage', name: 'Gestionar Email', description: 'Configurar SMTP, editar plantillas y enviar correos de prueba', action: 'manage', permissionType: 'action' },
   ],
+
+  // ========== ACTIVOS FIJOS ==========
+  assets: [
+    { code: 'assets:*', name: 'Activos Fijos - Acceso Completo', description: 'Acceso completo al módulo de activos fijos', action: '*', permissionType: 'module' },
+    { code: 'assets:read', name: 'Ver Activos', description: 'Ver lista de activos fijos', action: 'read', permissionType: 'action' },
+    { code: 'assets:read:maintenances', name: 'Ver Mantenimientos', description: 'Ver tab de mantenimientos', action: 'read', field: 'maintenances', permissionType: 'field' },
+    { code: 'assets:read:transfers', name: 'Ver Transferencias', description: 'Ver tab de transferencias', action: 'read', field: 'transfers', permissionType: 'field' },
+    { code: 'assets:read:depreciation', name: 'Ver Depreciación', description: 'Ver tab de depreciación', action: 'read', field: 'depreciation', permissionType: 'field' },
+    { code: 'assets:create', name: 'Crear Activo', description: 'Crear nuevos activos fijos', action: 'create', permissionType: 'action' },
+    { code: 'assets:update', name: 'Editar Activo', description: 'Editar activos existentes', action: 'update', permissionType: 'action' },
+    { code: 'assets:delete', name: 'Eliminar Activo', description: 'Eliminar activos', action: 'delete', permissionType: 'action' },
+    { code: 'assets:dispose', name: 'Dar de Baja Activo', description: 'Dar de baja o vender activos', action: 'dispose', permissionType: 'action' },
+    { code: 'assets:maintenance', name: 'Gestionar Mantenimientos', description: 'Crear y completar mantenimientos de activos', action: 'maintenance', permissionType: 'action' },
+    { code: 'assets:transfer', name: 'Transferir Activo', description: 'Crear y completar transferencias de activos', action: 'transfer', permissionType: 'action' },
+    { code: 'assets:transfer_approve', name: 'Aprobar Transferencia', description: 'Aprobar transferencias de activos', action: 'transfer_approve', permissionType: 'action' },
+    { code: 'assets:depreciation', name: 'Gestionar Depreciación', description: 'Calcular y ejecutar depreciación de activos', action: 'depreciation', permissionType: 'action' },
+  ],
+
+  // ========== CRM ==========
+  crm: [
+    { code: 'crm:*', name: 'CRM - Acceso Completo', description: 'Acceso completo al módulo de CRM', action: '*', permissionType: 'module' },
+    { code: 'crm:read', name: 'Ver CRM', description: 'Ver clientes, oportunidades y cotizaciones', action: 'read', permissionType: 'action' },
+    { code: 'crm:create', name: 'Crear en CRM', description: 'Crear clientes, oportunidades y cotizaciones', action: 'create', permissionType: 'action' },
+    { code: 'crm:update', name: 'Editar en CRM', description: 'Editar clientes, oportunidades y cotizaciones', action: 'update', permissionType: 'action' },
+    { code: 'crm:delete', name: 'Eliminar en CRM', description: 'Eliminar clientes, oportunidades y cotizaciones', action: 'delete', permissionType: 'action' },
+  ],
+
+  // ========== CONTROL DE CALIDAD ==========
+  quality: [
+    { code: 'quality:*', name: 'Calidad - Acceso Completo', description: 'Acceso completo al módulo de control de calidad', action: '*', permissionType: 'module' },
+    { code: 'quality:read', name: 'Ver Calidad', description: 'Ver planes, inspecciones y no conformidades', action: 'read', permissionType: 'action' },
+    { code: 'quality:create', name: 'Crear en Calidad', description: 'Crear planes, inspecciones y no conformidades', action: 'create', permissionType: 'action' },
+    { code: 'quality:update', name: 'Editar en Calidad', description: 'Editar planes, inspecciones y no conformidades', action: 'update', permissionType: 'action' },
+    { code: 'quality:delete', name: 'Eliminar en Calidad', description: 'Eliminar registros de calidad', action: 'delete', permissionType: 'action' },
+    { code: 'quality:approve', name: 'Aprobar en Calidad', description: 'Aprobar planes, cerrar NC y verificar acciones correctivas', action: 'approve', permissionType: 'action' },
+  ],
 };
 
 // Roles predefinidos con sus permisos
@@ -248,6 +284,8 @@ const ROLES = {
       'organization:read',
       'reports:*',
       'audit:read',
+      'assets:read', 'assets:read:maintenances', 'assets:read:transfers', 'assets:read:depreciation',
+      'assets:dispose', 'assets:transfer_approve', 'assets:depreciation',
     ],
   },
   'Gerente Administrativo': {
@@ -263,6 +301,7 @@ const ROLES = {
       'organization:*',
       'users:read',
       'reports:finance', 'reports:payroll',
+      'assets:*',
     ],
   },
   'Gerente de Operaciones': {
@@ -277,6 +316,8 @@ const ROLES = {
       'hse:*',
       'procurement:create', 'procurement:read',
       'reports:projects', 'reports:inventory', 'reports:fleet',
+      'assets:read', 'assets:create', 'assets:update', 'assets:maintenance', 'assets:transfer',
+      'assets:read:maintenances', 'assets:read:transfers',
     ],
   },
   'Contador': {
@@ -289,6 +330,7 @@ const ROLES = {
       'petty_cash:read', 'petty_cash:approve', 'petty_cash:pay',
       'fleet:read', 'fleet:fuel_approve', 'fleet:fuel_pay',
       'reports:finance', 'reports:payroll',
+      'assets:read', 'assets:read:depreciation', 'assets:depreciation',
     ],
   },
   'Jefe de RRHH': {

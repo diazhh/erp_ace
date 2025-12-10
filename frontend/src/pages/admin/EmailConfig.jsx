@@ -43,7 +43,9 @@ import {
   History as HistoryIcon,
   Edit as EditIcon,
   Visibility as ViewIcon,
+  Add as AddIcon,
 } from '@mui/icons-material';
+import EmailTemplateEditor from '../../components/email/EmailTemplateEditor';
 import {
   fetchEmailConfig,
   saveEmailConfig,
@@ -596,72 +598,97 @@ const EmailConfig = () => {
         </Paper>
       </TabPanel>
 
-      {/* Edit Template Dialog */}
-      <Dialog open={editDialogOpen} onClose={() => setEditDialogOpen(false)} maxWidth="md" fullWidth>
-        <DialogTitle>
-          Editar Plantilla: {editingTemplate?.name}
+      {/* Edit Template Dialog - Full Screen for WYSIWYG */}
+      <Dialog 
+        open={editDialogOpen} 
+        onClose={() => setEditDialogOpen(false)} 
+        maxWidth="xl" 
+        fullWidth
+        PaperProps={{
+          sx: { 
+            height: '90vh',
+            maxHeight: '90vh',
+          }
+        }}
+      >
+        <DialogTitle sx={{ pb: 1 }}>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+            <TemplateIcon color="primary" />
+            <Box>
+              <Typography variant="h6">
+                Editar Plantilla: {editingTemplate?.name}
+              </Typography>
+              <Typography variant="caption" color="text.secondary">
+                Código: {editingTemplate?.code}
+              </Typography>
+            </Box>
+            <Box sx={{ flexGrow: 1 }} />
+            <FormControlLabel
+              control={
+                <Switch
+                  checked={templateForm.isActive}
+                  onChange={(e) => setTemplateForm(prev => ({ ...prev, isActive: e.target.checked }))}
+                />
+              }
+              label="Activa"
+            />
+          </Box>
         </DialogTitle>
-        <DialogContent>
-          <Grid container spacing={2} sx={{ mt: 1 }}>
-            <Grid item xs={12}>
+        <Divider />
+        <DialogContent sx={{ display: 'flex', flexDirection: 'column', p: 3 }}>
+          <Grid container spacing={2} sx={{ mb: 3 }}>
+            <Grid item xs={12} md={6}>
               <TextField
                 fullWidth
-                label="Nombre"
+                label="Nombre de la plantilla"
                 value={templateForm.name}
                 onChange={(e) => setTemplateForm(prev => ({ ...prev, name: e.target.value }))}
+                size="small"
               />
             </Grid>
-            <Grid item xs={12}>
+            <Grid item xs={12} md={6}>
               <TextField
                 fullWidth
-                label="Asunto"
+                label="Asunto del correo"
                 value={templateForm.subject}
                 onChange={(e) => setTemplateForm(prev => ({ ...prev, subject: e.target.value }))}
-                helperText="Variables disponibles: {{appName}}, {{userName}}, etc."
+                size="small"
+                helperText="Puedes usar variables Mustache: {{userName}}, {{appName}}, etc."
               />
             </Grid>
-            <Grid item xs={12}>
-              <TextField
-                fullWidth
-                multiline
-                rows={12}
-                label="Contenido HTML"
-                value={templateForm.bodyHtml}
-                onChange={(e) => setTemplateForm(prev => ({ ...prev, bodyHtml: e.target.value }))}
-              />
-            </Grid>
-            <Grid item xs={12}>
-              <FormControlLabel
-                control={
-                  <Switch
-                    checked={templateForm.isActive}
-                    onChange={(e) => setTemplateForm(prev => ({ ...prev, isActive: e.target.checked }))}
-                  />
-                }
-                label="Plantilla activa"
-              />
-            </Grid>
-            {editingTemplate?.variables && (
-              <Grid item xs={12}>
-                <Typography variant="subtitle2" gutterBottom>Variables disponibles:</Typography>
-                <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
-                  {editingTemplate.variables.map((v, i) => (
-                    <Chip
-                      key={i}
-                      label={`{{${v.name}}}`}
-                      size="small"
-                      title={v.description}
-                    />
-                  ))}
-                </Box>
-              </Grid>
-            )}
           </Grid>
+          
+          <Box sx={{ flexGrow: 1, minHeight: 0 }}>
+            <EmailTemplateEditor
+              template={editingTemplate}
+              value={templateForm.bodyHtml}
+              onChange={(html) => setTemplateForm(prev => ({ ...prev, bodyHtml: html }))}
+              variables={editingTemplate?.variables || [
+                { name: 'appName', description: 'Nombre de la aplicación', example: 'ERP Atilax' },
+                { name: 'userName', description: 'Nombre del usuario', example: 'Juan Pérez' },
+                { name: 'userEmail', description: 'Email del usuario', example: 'juan@empresa.com' },
+                { name: 'verificationCode', description: 'Código de verificación', example: '123456' },
+                { name: 'verificationUrl', description: 'URL de verificación' },
+                { name: 'resetUrl', description: 'URL para resetear contraseña' },
+                { name: 'companyName', description: 'Nombre de la empresa' },
+                { name: 'currentYear', description: 'Año actual', example: '2024' },
+                { name: 'supportEmail', description: 'Email de soporte' },
+              ]}
+            />
+          </Box>
         </DialogContent>
-        <DialogActions>
-          <Button onClick={() => setEditDialogOpen(false)}>Cancelar</Button>
-          <Button variant="contained" onClick={handleSaveTemplate}>
-            Guardar
+        <Divider />
+        <DialogActions sx={{ px: 3, py: 2 }}>
+          <Button onClick={() => setEditDialogOpen(false)} color="inherit">
+            Cancelar
+          </Button>
+          <Button 
+            variant="contained" 
+            onClick={handleSaveTemplate}
+            disabled={loading}
+            startIcon={loading ? <CircularProgress size={16} /> : null}
+          >
+            Guardar Plantilla
           </Button>
         </DialogActions>
       </Dialog>

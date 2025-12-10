@@ -70,9 +70,44 @@ cd backend && bash tests/api-tests.sh
 
 ## 📊 Estado Actual del Proyecto
 
-- **Versión**: 0.15.0
-- **Módulos completados**: Setup, Empleados, Nómina, Finanzas, Caja Chica, Proyectos, Inventario, Flota, Procura, HSE, Documentos, Dashboard, Usuarios/Permisos, Attachments, WhatsApp, **Email**
-- **Nuevo**: Sistema de Email (v0.15.0)
+- **Versión**: 0.16.0
+- **Módulos completados**: Setup, Empleados, Nómina, Finanzas, Caja Chica, Proyectos, Inventario, Flota, Procura, HSE, Documentos, Dashboard, Usuarios/Permisos, Attachments, WhatsApp, Email, Assets, **CRM**, **Quality**
+- **Nuevo**: CRM y Control de Calidad (v0.16.0)
+
+### Módulo CRM (v0.16.0)
+- **Modelos**: Client, ClientContact, Opportunity, CrmQuote, CrmQuoteItem, CrmActivity
+- **Funcionalidades**:
+  - Gestión de clientes (empresas y personas)
+  - Oportunidades de venta con pipeline
+  - Cotizaciones y seguimiento
+  - Actividades y tareas
+- **Rutas Frontend**:
+  - `/crm` → Dashboard CRM
+  - `/crm/clients` → Lista de clientes
+  - `/crm/clients/new` → Nuevo cliente
+  - `/crm/clients/:id` → Detalle cliente con tabs
+  - `/crm/opportunities` → Lista de oportunidades
+  - `/crm/opportunities/new` → Nueva oportunidad
+  - `/crm/opportunities/:id` → Detalle oportunidad
+- **Permisos**: crm:*, crm:read, crm:create, crm:update, crm:delete
+
+### Módulo Control de Calidad (v0.16.0)
+- **Modelos**: QualityPlan, QualityInspection, NonConformance, CorrectiveAction, QualityCertificate
+- **Funcionalidades**:
+  - Planes de calidad por proyecto
+  - Inspecciones con resultados
+  - No conformidades (NC) con clasificación
+  - Acciones correctivas y preventivas
+  - Certificados de calidad
+- **Rutas Frontend**:
+  - `/quality` → Dashboard Calidad
+  - `/quality/inspections` → Lista de inspecciones
+  - `/quality/inspections/new` → Nueva inspección
+  - `/quality/inspections/:id` → Detalle inspección
+  - `/quality/non-conformances` → Lista de NC
+  - `/quality/non-conformances/new` → Nueva NC
+  - `/quality/non-conformances/:id` → Detalle NC
+- **Permisos**: quality:*, quality:read, quality:create, quality:update, quality:delete, quality:approve
 
 ### Sistema de Email (v0.15.0)
 - **Librería**: nodemailer
