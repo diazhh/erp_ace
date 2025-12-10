@@ -48,46 +48,7 @@ cd /home/diazhh/dev/erp && git branch --show-current
 
 ---
 
-### Paso 2: Verificar Migraciones Pendientes
-
-```bash
-ssh 144 "cd /var/proyectos/erp_ace/backend && npx sequelize-cli db:migrate:status 2>&1 | grep -E '^(up|down)'"
-```
-
-Contar cuántas dicen "down":
-- Si hay migraciones "down" → HAY CAMBIOS DE BD, continuar con Paso 3
-- Si todas dicen "up" → NO hay cambios de BD, saltar al Paso 5
-
----
-
-### Paso 3: Backup de BD de Producción (SOLO si hay migraciones)
-
-```bash
-mkdir -p /home/diazhh/dev/erp/backups
-PGPASSWORD=erp_password_2024 pg_dump -h 144.126.150.120 -p 15433 -U erp_user -d erp_db --no-owner --no-acl -F c -f /home/diazhh/dev/erp/backups/pre_deploy_$(date +%Y%m%d_%H%M%S).sql
-```
-
-Verificar:
-```bash
-ls -lh /home/diazhh/dev/erp/backups/*.sql | tail -1
-```
-
----
-
-### Paso 4: Ejecutar Migraciones en Producción (SOLO si hay pendientes)
-
-```bash
-ssh 144 "cd /var/proyectos/erp_ace/backend && NODE_ENV=production npx sequelize-cli db:migrate"
-```
-
-Verificar que todas quedaron "up":
-```bash
-ssh 144 "cd /var/proyectos/erp_ace/backend && npx sequelize-cli db:migrate:status 2>&1 | grep -E '^(up|down)'"
-```
-
----
-
-### Paso 5: Commit y Push de Cambios Locales
+### Paso 2: Commit y Push de Cambios Locales
 
 ```bash
 cd /home/diazhh/dev/erp && git status --porcelain
@@ -102,7 +63,7 @@ git push origin main
 
 ---
 
-### Paso 6: Pull en el Servidor
+### Paso 3: Pull en el Servidor
 
 ```bash
 ssh 144 "cd /var/proyectos/erp_ace && git fetch origin main && git pull origin main"
@@ -117,6 +78,47 @@ ssh 144 "cd /var/proyectos/erp_ace && git rev-parse --short HEAD"
 **Si no coinciden**, forzar:
 ```bash
 ssh 144 "cd /var/proyectos/erp_ace && git fetch origin && git reset --hard origin/main"
+```
+
+---
+
+### Paso 4: Verificar Migraciones Pendientes
+
+**DESPUÉS del pull**, verificar si hay migraciones nuevas:
+
+```bash
+ssh 144 "cd /var/proyectos/erp_ace/backend && npx sequelize-cli db:migrate:status 2>&1 | grep -E '^(up|down)'"
+```
+
+Contar cuántas dicen "down":
+- Si hay migraciones "down" → HAY CAMBIOS DE BD, continuar con Paso 5
+- Si todas dicen "up" → NO hay cambios de BD, saltar al Paso 7
+
+---
+
+### Paso 5: Backup de BD de Producción (SOLO si hay migraciones)
+
+```bash
+mkdir -p /home/diazhh/dev/erp/backups
+PGPASSWORD=erp_password_2024 pg_dump -h 144.126.150.120 -p 15433 -U erp_user -d erp_db --no-owner --no-acl -F c -f /home/diazhh/dev/erp/backups/pre_deploy_$(date +%Y%m%d_%H%M%S).sql
+```
+
+Verificar:
+```bash
+ls -lh /home/diazhh/dev/erp/backups/*.sql | tail -1
+```
+
+---
+
+### Paso 6: Ejecutar Migraciones en Producción (SOLO si hay pendientes)
+
+```bash
+ssh 144 "cd /var/proyectos/erp_ace/backend && NODE_ENV=production npx sequelize-cli db:migrate"
+```
+
+Verificar que todas quedaron "up":
+```bash
+ssh 144 "cd /var/proyectos/erp_ace/backend && npx sequelize-cli db:migrate:status 2>&1 | grep -E '^(up|down)'"
 ```
 
 ---
@@ -163,9 +165,11 @@ ssh 144 "curl -s http://localhost:5003/health"
 # Descargar BD de producción
 PGPASSWORD=erp_password_2024 pg_dump -h 144.126.150.120 -p 15433 -U erp_user -d erp_db --no-owner --no-acl -F c -f /home/diazhh/dev/erp/backups/post_deploy_$(date +%Y%m%d_%H%M%S).sql
 
-# Restaurar en local
+# Restaurar en local (terminar conexiones primero)
 BACKUP_FILE=$(ls -t /home/diazhh/dev/erp/backups/post_deploy_*.sql | head -1)
 docker cp $BACKUP_FILE erp_postgres:/tmp/restore.sql
+docker exec erp_postgres psql -U erp_user -d postgres -c "UPDATE pg_database SET datallowconn = false WHERE datname = 'erp_db';"
+docker exec erp_postgres psql -U erp_user -d postgres -c "SELECT pg_terminate_backend(pid) FROM pg_stat_activity WHERE datname = 'erp_db';"
 docker exec erp_postgres psql -U erp_user -d postgres -c "DROP DATABASE IF EXISTS erp_db;"
 docker exec erp_postgres psql -U erp_user -d postgres -c "CREATE DATABASE erp_db OWNER erp_user;"
 docker exec erp_postgres pg_restore -U erp_user -d erp_db --no-owner --no-acl /tmp/restore.sql
