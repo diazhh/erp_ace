@@ -70,6 +70,8 @@ const Attachment = require('../../modules/attachments/models/Attachment');
 // WhatsApp models
 const WhatsAppSession = require('../../modules/whatsapp/models/WhatsAppSession');
 const UserWhatsApp = require('../../modules/whatsapp/models/UserWhatsApp');
+const WhatsAppTemplate = require('../../modules/whatsapp/models/WhatsAppTemplate');
+const WhatsAppLog = require('../../modules/whatsapp/models/WhatsAppLog');
 // Email models
 const EmailConfig = require('../../modules/email/models/EmailConfig');
 const EmailTemplate = require('../../modules/email/models/EmailTemplate');
@@ -88,6 +90,9 @@ const Opportunity = require('../../modules/crm/models/Opportunity');
 const CrmQuote = require('../../modules/crm/models/CrmQuote');
 const CrmQuoteItem = require('../../modules/crm/models/CrmQuoteItem');
 const CrmActivity = require('../../modules/crm/models/CrmActivity');
+// Expense Report models
+const ExpenseReport = require('../../modules/petty-cash/models/ExpenseReport');
+const ExpenseReportItem = require('../../modules/petty-cash/models/ExpenseReportItem');
 // Quality models
 const QualityPlan = require('../../modules/quality/models/QualityPlan');
 const QualityInspection = require('../../modules/quality/models/QualityInspection');
@@ -168,6 +173,8 @@ const models = {
   // WhatsApp
   WhatsAppSession: WhatsAppSession(sequelize),
   UserWhatsApp: UserWhatsApp(sequelize),
+  WhatsAppTemplate: WhatsAppTemplate(sequelize),
+  WhatsAppLog: WhatsAppLog(sequelize),
   // Email
   EmailConfig: EmailConfig(sequelize),
   EmailTemplate: EmailTemplate(sequelize),
@@ -192,6 +199,9 @@ const models = {
   NonConformance: NonConformance(sequelize),
   CorrectiveAction: CorrectiveAction(sequelize),
   QualityCertificate: QualityCertificate(sequelize),
+  // Expense Reports
+  ExpenseReport: ExpenseReport(sequelize),
+  ExpenseReportItem: ExpenseReportItem(sequelize),
 };
 
 // Definir asociaciones
@@ -1746,6 +1756,34 @@ models.EmailLog.belongsTo(models.User, {
   as: 'user',
 });
 
+// ========== WHATSAPP TEMPLATE ASSOCIATIONS ==========
+
+// WhatsAppTemplate -> User (createdBy, updatedBy)
+models.WhatsAppTemplate.belongsTo(models.User, {
+  foreignKey: 'created_by',
+  as: 'creator',
+});
+models.WhatsAppTemplate.belongsTo(models.User, {
+  foreignKey: 'updated_by',
+  as: 'updater',
+});
+
+// WhatsAppLog -> WhatsAppTemplate
+models.WhatsAppLog.belongsTo(models.WhatsAppTemplate, {
+  foreignKey: 'template_id',
+  as: 'template',
+});
+models.WhatsAppTemplate.hasMany(models.WhatsAppLog, {
+  foreignKey: 'template_id',
+  as: 'logs',
+});
+
+// WhatsAppLog -> User (sentBy)
+models.WhatsAppLog.belongsTo(models.User, {
+  foreignKey: 'sent_by',
+  as: 'sender',
+});
+
 // ========== ASSET ASSOCIATIONS ==========
 
 // AssetCategory self-reference (hierarchy)
@@ -2254,6 +2292,82 @@ models.QualityCertificate.belongsTo(models.QualityInspection, {
 models.QualityCertificate.belongsTo(models.User, {
   foreignKey: 'created_by',
   as: 'creator',
+});
+
+// ========== EXPENSE REPORT ASSOCIATIONS ==========
+
+// ExpenseReport -> PettyCashEntry
+models.ExpenseReport.belongsTo(models.PettyCashEntry, {
+  foreignKey: 'petty_cash_entry_id',
+  as: 'pettyCashEntry',
+});
+models.PettyCashEntry.hasOne(models.ExpenseReport, {
+  foreignKey: 'petty_cash_entry_id',
+  as: 'expenseReport',
+});
+
+// ExpenseReport -> Employee
+models.ExpenseReport.belongsTo(models.Employee, {
+  foreignKey: 'employee_id',
+  as: 'employee',
+});
+models.Employee.hasMany(models.ExpenseReport, {
+  foreignKey: 'employee_id',
+  as: 'expenseReports',
+});
+
+// ExpenseReport -> Project
+models.ExpenseReport.belongsTo(models.Project, {
+  foreignKey: 'project_id',
+  as: 'project',
+});
+models.Project.hasMany(models.ExpenseReport, {
+  foreignKey: 'project_id',
+  as: 'expenseReports',
+});
+
+// ExpenseReport -> User (createdBy, approvedBy)
+models.ExpenseReport.belongsTo(models.User, {
+  foreignKey: 'created_by',
+  as: 'creator',
+});
+models.ExpenseReport.belongsTo(models.User, {
+  foreignKey: 'approved_by',
+  as: 'approver',
+});
+
+// ExpenseReport <-> ExpenseReportItem
+models.ExpenseReport.hasMany(models.ExpenseReportItem, {
+  foreignKey: 'expense_report_id',
+  as: 'items',
+});
+models.ExpenseReportItem.belongsTo(models.ExpenseReport, {
+  foreignKey: 'expense_report_id',
+  as: 'expenseReport',
+});
+
+// ExpenseReportItem -> InventoryItem
+models.ExpenseReportItem.belongsTo(models.InventoryItem, {
+  foreignKey: 'inventory_item_id',
+  as: 'inventoryItem',
+});
+
+// ExpenseReportItem -> InventoryMovement
+models.ExpenseReportItem.belongsTo(models.InventoryMovement, {
+  foreignKey: 'inventory_movement_id',
+  as: 'inventoryMovement',
+});
+
+// ExpenseReportItem -> Asset
+models.ExpenseReportItem.belongsTo(models.Asset, {
+  foreignKey: 'asset_id',
+  as: 'asset',
+});
+
+// ExpenseReportItem -> FuelLog
+models.ExpenseReportItem.belongsTo(models.FuelLog, {
+  foreignKey: 'fuel_log_id',
+  as: 'fuelLog',
 });
 
 module.exports = models;

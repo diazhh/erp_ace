@@ -1207,5 +1207,65 @@
       "title": "Configuracion de Email",
       "subtitle": "Configura el servidor SMTP y plantillas de correo"
     }
+  },
+  "expenseReports": {
+    "title": "Reportes de Gastos",
+    "newReport": "Nuevo Reporte",
+    "editReport": "Editar Reporte",
+    "reportDetail": "Detalle del Reporte",
+    "code": "Código",
+    "reportDate": "Fecha del Reporte",
+    "employee": "Empleado",
+    "pettyCashEntry": "Movimiento de Caja Chica",
+    "amountReceived": "Monto Recibido",
+    "totalSpent": "Total Gastado",
+    "changeReturned": "Vuelto Devuelto",
+    "difference": "Diferencia",
+    "status": "Estado",
+    "project": "Proyecto",
+    "notes": "Notas",
+    "items": "Items",
+    "addItem": "Agregar Item",
+    "itemType": "Tipo de Gasto",
+    "description": "Descripción",
+    "quantity": "Cantidad",
+    "unitPrice": "Precio Unitario",
+    "amount": "Monto",
+    "receiptNumber": "N° Factura",
+    "receiptDate": "Fecha Factura",
+    "vendor": "Proveedor",
+    "vendorRif": "RIF Proveedor",
+    "saveDraft": "Guardar Borrador",
+    "saveAndSubmit": "Guardar y Enviar",
+    "submit": "Enviar para Aprobación",
+    "approve": "Aprobar",
+    "reject": "Rechazar",
+    "rejectionReason": "Motivo de Rechazo",
+    "statuses": {
+      "DRAFT": "Borrador",
+      "SUBMITTED": "Enviado",
+      "APPROVED": "Aprobado",
+      "REJECTED": "Rechazado",
+      "CANCELLED": "Cancelado"
+    },
+    "itemTypes": {
+      "INVENTORY": "Inventario",
+      "ASSET": "Activo Fijo",
+      "FUEL": "Combustible",
+      "SERVICE": "Servicio",
+      "OTHER": "Otro"
+    },
+    "messages": {
+      "created": "Reporte creado exitosamente",
+      "updated": "Reporte actualizado",
+      "submitted": "Reporte enviado para aprobación",
+      "approved": "Reporte aprobado",
+      "rejected": "Reporte rechazado"
+    },
+    "errors": {
+      "selectEntry": "Seleccione un movimiento de caja chica",
+      "selectEmployee": "Seleccione un empleado",
+      "addItems": "Agregue al menos un item"
+    }
   }
 }

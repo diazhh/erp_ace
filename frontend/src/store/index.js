@@ -19,6 +19,7 @@ import emailReducer from './slices/emailSlice';
 import assetReducer from './slices/assetSlice';
 import crmReducer from './slices/crmSlice';
 import qualityReducer from './slices/qualitySlice';
+import expenseReportReducer from './slices/expenseReportSlice';
 
 export const store = configureStore({
   reducer: {
@@ -42,6 +43,7 @@ export const store = configureStore({
     assets: assetReducer,
     crm: crmReducer,
     quality: qualityReducer,
+    expenseReports: expenseReportReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({

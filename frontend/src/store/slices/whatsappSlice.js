@@ -129,6 +129,110 @@ export const removeUserWhatsApp = createAsyncThunk(
   }
 );
 
+// ============================================
+// TEMPLATE THUNKS - WhatsApp Message Templates
+// ============================================
+
+export const fetchWhatsAppTemplates = createAsyncThunk(
+  'whatsapp/fetchTemplates',
+  async (params = {}, { rejectWithValue }) => {
+    try {
+      const response = await api.get('/whatsapp/templates', { params });
+      return response.data.data;
+    } catch (error) {
+      return rejectWithValue(error.response?.data?.message || 'Error al obtener plantillas');
+    }
+  }
+);
+
+export const fetchWhatsAppTemplateById = createAsyncThunk(
+  'whatsapp/fetchTemplateById',
+  async (id, { rejectWithValue }) => {
+    try {
+      const response = await api.get(`/whatsapp/templates/${id}`);
+      return response.data.data;
+    } catch (error) {
+      return rejectWithValue(error.response?.data?.message || 'Error al obtener plantilla');
+    }
+  }
+);
+
+export const createWhatsAppTemplate = createAsyncThunk(
+  'whatsapp/createTemplate',
+  async (data, { rejectWithValue }) => {
+    try {
+      const response = await api.post('/whatsapp/templates', data);
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.response?.data?.message || 'Error al crear plantilla');
+    }
+  }
+);
+
+export const updateWhatsAppTemplate = createAsyncThunk(
+  'whatsapp/updateTemplate',
+  async ({ id, data }, { rejectWithValue }) => {
+    try {
+      const response = await api.put(`/whatsapp/templates/${id}`, data);
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.response?.data?.message || 'Error al actualizar plantilla');
+    }
+  }
+);
+
+export const deleteWhatsAppTemplate = createAsyncThunk(
+  'whatsapp/deleteTemplate',
+  async (id, { rejectWithValue }) => {
+    try {
+      const response = await api.delete(`/whatsapp/templates/${id}`);
+      return { id, ...response.data };
+    } catch (error) {
+      return rejectWithValue(error.response?.data?.message || 'Error al eliminar plantilla');
+    }
+  }
+);
+
+export const previewWhatsAppTemplate = createAsyncThunk(
+  'whatsapp/previewTemplate',
+  async ({ id, variables }, { rejectWithValue }) => {
+    try {
+      const response = await api.post(`/whatsapp/templates/${id}/preview`, { variables });
+      return response.data.data;
+    } catch (error) {
+      return rejectWithValue(error.response?.data?.message || 'Error al previsualizar plantilla');
+    }
+  }
+);
+
+// ============================================
+// LOG THUNKS - WhatsApp Message History
+// ============================================
+
+export const fetchWhatsAppLogs = createAsyncThunk(
+  'whatsapp/fetchLogs',
+  async ({ page = 1, limit = 50, status, templateCode } = {}, { rejectWithValue }) => {
+    try {
+      const response = await api.get('/whatsapp/logs', { params: { page, limit, status, templateCode } });
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.response?.data?.message || 'Error al obtener historial');
+    }
+  }
+);
+
+export const fetchWhatsAppLogStats = createAsyncThunk(
+  'whatsapp/fetchLogStats',
+  async (_, { rejectWithValue }) => {
+    try {
+      const response = await api.get('/whatsapp/logs/stats');
+      return response.data.data;
+    } catch (error) {
+      return rejectWithValue(error.response?.data?.message || 'Error al obtener estadísticas');
+    }
+  }
+);
+
 const initialState = {
   // Admin state
   status: 'disconnected', // disconnected, connecting, connected, qr_pending
@@ -141,6 +245,16 @@ const initialState = {
   userConfig: null,
   verificationPending: false,
   verificationExpires: null,
+  
+  // Templates state
+  templates: [],
+  currentTemplate: null,
+  templatePreview: null,
+  
+  // Logs state
+  logs: [],
+  logsPagination: { total: 0, page: 1, limit: 50, totalPages: 0 },
+  logStats: null,
   
   // UI state
   loading: false,
@@ -302,6 +416,91 @@ const whatsappSlice = createSlice({
         state.success = action.payload.message;
         state.userConfig = null;
         state.verificationPending = false;
+      })
+      // ============================================
+      // TEMPLATE REDUCERS
+      // ============================================
+      // Fetch templates
+      .addCase(fetchWhatsAppTemplates.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(fetchWhatsAppTemplates.fulfilled, (state, action) => {
+        state.loading = false;
+        state.templates = action.payload;
+      })
+      .addCase(fetchWhatsAppTemplates.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+      // Fetch template by ID
+      .addCase(fetchWhatsAppTemplateById.fulfilled, (state, action) => {
+        state.currentTemplate = action.payload;
+      })
+      // Create template
+      .addCase(createWhatsAppTemplate.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(createWhatsAppTemplate.fulfilled, (state, action) => {
+        state.loading = false;
+        state.success = action.payload.message;
+        if (action.payload.data) {
+          state.templates.push(action.payload.data);
+        }
+      })
+      .addCase(createWhatsAppTemplate.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+      // Update template
+      .addCase(updateWhatsAppTemplate.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(updateWhatsAppTemplate.fulfilled, (state, action) => {
+        state.loading = false;
+        state.success = action.payload.message;
+        if (action.payload.data) {
+          const index = state.templates.findIndex(t => t.id === action.payload.data.id);
+          if (index !== -1) {
+            state.templates[index] = action.payload.data;
+          }
+        }
+      })
+      .addCase(updateWhatsAppTemplate.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+      // Delete template
+      .addCase(deleteWhatsAppTemplate.fulfilled, (state, action) => {
+        state.success = action.payload.message;
+        state.templates = state.templates.filter(t => t.id !== action.payload.id);
+      })
+      // Preview template
+      .addCase(previewWhatsAppTemplate.fulfilled, (state, action) => {
+        state.templatePreview = action.payload;
+      })
+      // ============================================
+      // LOG REDUCERS
+      // ============================================
+      // Fetch logs
+      .addCase(fetchWhatsAppLogs.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(fetchWhatsAppLogs.fulfilled, (state, action) => {
+        state.loading = false;
+        state.logs = action.payload.data;
+        state.logsPagination = action.payload.pagination;
+      })
+      .addCase(fetchWhatsAppLogs.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+      // Fetch log stats
+      .addCase(fetchWhatsAppLogStats.fulfilled, (state, action) => {
+        state.logStats = action.payload;
       });
   },
 });

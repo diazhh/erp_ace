@@ -15,6 +15,7 @@ const employeeBankAccountRoutes = require('./modules/employees/routes/employeeBa
 const payrollRoutes = require('./modules/payroll/routes/payrollRoutes');
 const financeRoutes = require('./modules/finance/routes/financeRoutes');
 const pettyCashRoutes = require('./modules/petty-cash/routes/pettyCashRoutes');
+const expenseReportRoutes = require('./modules/petty-cash/routes/expenseReportRoutes');
 const projectRoutes = require('./modules/projects/routes/projectRoutes');
 const contractorRoutes = require('./modules/projects/routes/contractorRoutes');
 const inventoryRoutes = require('./modules/inventory/routes/inventoryRoutes');
@@ -91,6 +92,7 @@ app.use('/api/employee-bank-accounts', employeeBankAccountRoutes);
 app.use('/api/payroll', payrollRoutes);
 app.use('/api/finance', financeRoutes);
 app.use('/api/petty-cash', pettyCashRoutes);
+app.use('/api/expense-reports', expenseReportRoutes);
 app.use('/api/projects', projectRoutes);
 app.use('/api/contractors', contractorRoutes);
 app.use('/api/inventory', inventoryRoutes);

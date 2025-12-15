@@ -3,6 +3,7 @@ const { Boom } = require('@hapi/boom');
 const path = require('path');
 const fs = require('fs');
 const logger = require('../../../shared/utils/logger');
+const { WhatsAppTemplate, WhatsAppLog } = require('../../../database/models');
 
 class WhatsAppService {
   constructor() {
@@ -245,8 +246,161 @@ class WhatsAppService {
    * Send verification code to a phone number
    */
   async sendVerificationCode(phoneNumber, code) {
-    const message = `🔐 Tu código de verificación para ERP es: *${code}*\n\nEste código expira en 10 minutos.\n\n_No compartas este código con nadie._`;
-    return this.sendMessage(phoneNumber, message);
+    // Try to use template first, fallback to hardcoded message
+    try {
+      return await this.sendTemplateMessage('VERIFY_CODE', phoneNumber, null, { code });
+    } catch (error) {
+      // Fallback if template doesn't exist
+      const message = `🔐 Tu código de verificación para ERP es: *${code}*\n\nEste código expira en 10 minutos.\n\n_No compartas este código con nadie._`;
+      return this.sendMessage(phoneNumber, message);
+    }
+  }
+
+  /**
+   * Replace variables in a template message
+   */
+  replaceVariables(template, variables) {
+    let result = template;
+    Object.keys(variables).forEach(key => {
+      const regex = new RegExp(`{{${key}}}`, 'g');
+      result = result.replace(regex, variables[key] || '');
+    });
+    return result;
+  }
+
+  /**
+   * Send a message using a template
+   * @param {string} templateCode - Template code (e.g., 'WELCOME', 'REMINDER')
+   * @param {string} phoneNumber - Recipient phone number
+   * @param {string|null} toName - Recipient name (optional)
+   * @param {object} variables - Variables to replace in template
+   * @param {string|null} userId - User ID who triggered the send (optional)
+   */
+  async sendTemplateMessage(templateCode, phoneNumber, toName = null, variables = {}, userId = null) {
+    if (!this.socket || this.status !== 'connected') {
+      throw new Error('WhatsApp is not connected');
+    }
+
+    try {
+      // Get template
+      const template = await WhatsAppTemplate.findOne({
+        where: { code: templateCode, isActive: true },
+      });
+
+      if (!template) {
+        throw new Error(`Plantilla ${templateCode} no encontrada o inactiva`);
+      }
+
+      // Default variables
+      const defaultVars = {
+        appName: process.env.APP_NAME || 'ERP System',
+        year: new Date().getFullYear().toString(),
+        date: new Date().toLocaleDateString('es-ES'),
+        time: new Date().toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' }),
+      };
+
+      const allVariables = { ...defaultVars, ...variables };
+
+      // Replace variables in message
+      const finalMessage = this.replaceVariables(template.message, allVariables);
+
+      // Create log entry
+      const log = await WhatsAppLog.create({
+        templateId: template.id,
+        templateCode: templateCode,
+        toPhone: phoneNumber,
+        toName: toName,
+        message: finalMessage,
+        status: 'PENDING',
+        metadata: { variables: allVariables },
+        sentBy: userId,
+      });
+
+      // Send message
+      const formattedNumber = phoneNumber.replace(/[^0-9]/g, '');
+      const jid = `${formattedNumber}@s.whatsapp.net`;
+
+      const result = await this.socket.sendMessage(jid, { text: finalMessage });
+
+      // Update log
+      await log.update({
+        status: 'SENT',
+        messageId: result.key.id,
+        sentAt: new Date(),
+      });
+
+      logger.info(`Template message sent to ${phoneNumber}: ${templateCode}`);
+      return { success: true, messageId: result.key.id, logId: log.id };
+    } catch (error) {
+      logger.error(`Error sending template message to ${phoneNumber}:`, error);
+
+      // Update log if exists
+      const log = await WhatsAppLog.findOne({
+        where: { toPhone: phoneNumber, status: 'PENDING' },
+        order: [['createdAt', 'DESC']],
+      });
+
+      if (log) {
+        await log.update({
+          status: 'FAILED',
+          error: error.message,
+        });
+      }
+
+      throw error;
+    }
+  }
+
+  /**
+   * Send a message and log it (without template)
+   */
+  async sendMessageWithLog(phoneNumber, message, toName = null, userId = null) {
+    if (!this.socket || this.status !== 'connected') {
+      throw new Error('WhatsApp is not connected');
+    }
+
+    try {
+      // Create log entry
+      const log = await WhatsAppLog.create({
+        toPhone: phoneNumber,
+        toName: toName,
+        message: message,
+        status: 'PENDING',
+        sentBy: userId,
+      });
+
+      // Send message
+      const formattedNumber = phoneNumber.replace(/[^0-9]/g, '');
+      const jid = `${formattedNumber}@s.whatsapp.net`;
+
+      const result = await this.socket.sendMessage(jid, { text: message });
+
+      // Update log
+      await log.update({
+        status: 'SENT',
+        messageId: result.key.id,
+        sentAt: new Date(),
+      });
+
+      logger.info(`Message sent to ${phoneNumber}`);
+      return { success: true, messageId: result.key.id, logId: log.id };
+    } catch (error) {
+      logger.error(`Error sending message to ${phoneNumber}:`, error);
+
+      const log = await WhatsAppLog.findOne({
+        where: { toPhone: phoneNumber, status: 'PENDING' },
+        order: [['createdAt', 'DESC']],
+      });
+
+      if (log) {
+        await log.update({
+          status: 'FAILED',
+          error: error.message,
+        });
+      }
+
+      throw error;
+    }
   }
 }
 

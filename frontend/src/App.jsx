@@ -121,6 +121,8 @@ import QualityInspectionForm from './pages/quality/InspectionForm';
 import NonConformanceList from './pages/quality/NonConformanceList';
 import NonConformanceDetail from './pages/quality/NonConformanceDetail';
 import NonConformanceForm from './pages/quality/NonConformanceForm';
+// Expense Reports
+import { ExpenseReportList, ExpenseReportDetail, ExpenseReportForm } from './pages/petty-cash/expense-reports';
 
 function App() {
   const dispatch = useDispatch();
@@ -189,6 +191,11 @@ function App() {
         <Route path="petty-cash/:id" element={<PettyCashDetail />} />
         <Route path="petty-cash/:id/edit" element={<PettyCashForm />} />
         <Route path="petty-cash/:id/entries/:entryId" element={<PettyCashEntryDetail />} />
+        {/* Expense Reports */}
+        <Route path="petty-cash/expense-reports" element={<ExpenseReportList />} />
+        <Route path="petty-cash/expense-reports/new" element={<ExpenseReportForm />} />
+        <Route path="petty-cash/expense-reports/:id" element={<ExpenseReportDetail />} />
+        <Route path="petty-cash/expense-reports/:id/edit" element={<ExpenseReportForm />} />
         {/* Projects */}
         <Route path="projects" element={<ProjectDashboard />} />
         <Route path="projects/list" element={<ProjectList />} />

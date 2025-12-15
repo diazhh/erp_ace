@@ -255,6 +255,15 @@ const PERMISSIONS = {
     { code: 'quality:delete', name: 'Eliminar en Calidad', description: 'Eliminar registros de calidad', action: 'delete', permissionType: 'action' },
     { code: 'quality:approve', name: 'Aprobar en Calidad', description: 'Aprobar planes, cerrar NC y verificar acciones correctivas', action: 'approve', permissionType: 'action' },
   ],
+
+  // ========== REPORTES DE GASTOS (RENDICIONES) ==========
+  expense_reports: [
+    { code: 'expense_reports:*', name: 'Reportes de Gastos - Acceso Completo', description: 'Acceso completo al módulo de reportes de gastos', action: '*', permissionType: 'module' },
+    { code: 'expense_reports:read', name: 'Ver Reportes de Gastos', description: 'Ver reportes de rendición de gastos', action: 'read', permissionType: 'action' },
+    { code: 'expense_reports:create', name: 'Crear Reporte de Gastos', description: 'Crear reportes de rendición de gastos', action: 'create', permissionType: 'action' },
+    { code: 'expense_reports:update', name: 'Editar Reporte de Gastos', description: 'Editar reportes de gastos en borrador', action: 'update', permissionType: 'action' },
+    { code: 'expense_reports:approve', name: 'Aprobar Reporte de Gastos', description: 'Aprobar o rechazar reportes de gastos', action: 'approve', permissionType: 'action' },
+  ],
 };
 
 // Roles predefinidos con sus permisos
@@ -274,6 +283,7 @@ const ROLES = {
       'payroll:read', 'payroll:approve',
       'finance:read', 'finance:export',
       'petty_cash:read', 'petty_cash:approve',
+      'expense_reports:read', 'expense_reports:approve',
       'projects:*',
       'contractors:read', 'contractors:pay',
       'inventory:read',
@@ -297,6 +307,7 @@ const ROLES = {
       'payroll:*',
       'finance:*',
       'petty_cash:*',
+      'expense_reports:*',
       'documents:*',
       'organization:*',
       'users:read',
@@ -328,6 +339,7 @@ const ROLES = {
       'payroll:read', 'payroll:pay', 'payroll:export',
       'finance:*',
       'petty_cash:read', 'petty_cash:approve', 'petty_cash:pay',
+      'expense_reports:read', 'expense_reports:approve',
       'fleet:read', 'fleet:fuel_approve', 'fleet:fuel_pay',
       'reports:finance', 'reports:payroll',
       'assets:read', 'assets:read:depreciation', 'assets:depreciation',
@@ -356,6 +368,7 @@ const ROLES = {
       'inventory:read', 'inventory:movement',
       'fleet:read', 'fleet:fuel',
       'petty_cash:expense',
+      'expense_reports:create', 'expense_reports:update', 'expense_reports:read',
       'hse:create', 'hse:read',
     ],
   },
@@ -366,6 +379,7 @@ const ROLES = {
       'employees:read:personal', // Solo su propio perfil
       'loans:read', 'loans:create', // Solo sus préstamos
       'petty_cash:expense', // Registrar gastos
+      'expense_reports:create', 'expense_reports:update', 'expense_reports:read', // Reportar gastos
       'documents:read', // Solo sus documentos
       'reports:dashboard',
     ],

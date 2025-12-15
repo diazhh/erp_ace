@@ -202,7 +202,16 @@ const Layout = () => {
         { text: t('menu.bankAccounts'), icon: <AccountsIcon />, path: '/finance/accounts' },
       ],
     },
-    { id: 'pettyCash', text: t('menu.pettyCash') || 'Caja Chica', icon: <PettyCashIcon />, path: '/petty-cash', permissions: ['petty_cash:read', 'petty_cash:*', 'petty_cash:expense'] },
+    { 
+      id: 'pettyCash', 
+      text: t('menu.pettyCash') || 'Caja Chica', 
+      icon: <PettyCashIcon />,
+      permissions: ['petty_cash:read', 'petty_cash:*', 'petty_cash:expense', 'expense_reports:read', 'expense_reports:*'],
+      children: [
+        { text: 'Cajas', icon: <PettyCashIcon />, path: '/petty-cash', permissions: ['petty_cash:read', 'petty_cash:*'] },
+        { text: 'Reportes de Gastos', icon: <TransactionsIcon />, path: '/petty-cash/expense-reports', permissions: ['expense_reports:read', 'expense_reports:*', 'petty_cash:expense', 'petty_cash:*'] },
+      ],
+    },
     { 
       id: 'projects', 
       text: t('menu.projects'), 
