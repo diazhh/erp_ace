@@ -1,6 +1,9 @@
 require('dotenv').config();
 const { sequelize } = require('./index');
 const { seedPermissions } = require('./seeders/permissions-granular');
+const { seedProduction } = require('./seeders/production-seeder');
+const seedAFE = require('./seeders/afe-seeder');
+const { seedContracts } = require('./seeders/contractSeeder');
 
 const seed = async () => {
   try {
@@ -48,6 +51,17 @@ const seed = async () => {
         }
       }
     }
+
+    // Ejecutar seeder de producción
+    await seedProduction(models);
+
+    // Ejecutar seeder de AFE
+    await seedAFE(models);
+
+    // Ejecutar seeder de Contracts
+    const adminUser = await User.findOne({ where: { username: 'admin' } });
+    const clients = await models.Client?.findAll({ limit: 3 }) || [];
+    await seedContracts(models, adminUser, clients);
 
     console.log('\n🎉 Seed completado exitosamente!');
     process.exit(0);

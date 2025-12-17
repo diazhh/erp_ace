@@ -22,6 +22,8 @@ import {
   Divider,
   Card,
   CardContent,
+  useMediaQuery,
+  useTheme,
 } from '@mui/material';
 import {
   ArrowBack as BackIcon,
@@ -85,6 +87,8 @@ const InspectionDetail = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { id } = useParams();
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
   const { currentInspection, loading, error } = useSelector((state) => state.quality);
   const [activeTab, setActiveTab] = useState(0);
@@ -256,30 +260,52 @@ const InspectionDetail = () => {
   );
 
   const renderNCsTab = () => (
-    <TableContainer component={Paper}>
-      <Table>
-        <TableHead>
-          <TableRow>
-            <TableCell>Código</TableCell>
-            <TableCell>Título</TableCell>
-            <TableCell>Tipo</TableCell>
-            <TableCell>Estado</TableCell>
-            <TableCell>Fecha Detectada</TableCell>
-            <TableCell>Acciones</TableCell>
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {currentInspection.nonConformances?.length > 0 ? (
-            currentInspection.nonConformances.map((nc) => (
+    currentInspection.nonConformances?.length === 0 ? (
+      <Paper sx={{ p: 3, textAlign: 'center' }}>
+        <Typography color="text.secondary">No hay no conformidades registradas para esta inspección</Typography>
+      </Paper>
+    ) : isMobile ? (
+      <Box>
+        {currentInspection.nonConformances?.map((nc) => (
+          <Card key={nc.id} variant="outlined" sx={{ mb: 2, cursor: 'pointer' }} onClick={() => navigate(`/quality/non-conformances/${nc.id}`)}>
+            <CardContent sx={{ pb: 1 }}>
+              <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 1 }}>
+                <Box>
+                  <Typography variant="subtitle1" fontWeight="bold">{nc.code}</Typography>
+                  <Typography variant="body2">{nc.title}</Typography>
+                </Box>
+                <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.5, alignItems: 'flex-end' }}>
+                  <Chip label={ncTypeLabels[nc.ncType]} color={ncTypeColors[nc.ncType]} size="small" />
+                  <Chip label={ncStatusLabels[nc.status]} size="small" variant="outlined" />
+                </Box>
+              </Box>
+              <Typography variant="body2" color="text.secondary">
+                Detectada: {formatDate(nc.detectedDate)}
+              </Typography>
+            </CardContent>
+          </Card>
+        ))}
+      </Box>
+    ) : (
+      <TableContainer component={Paper}>
+        <Table>
+          <TableHead>
+            <TableRow>
+              <TableCell>Código</TableCell>
+              <TableCell>Título</TableCell>
+              <TableCell>Tipo</TableCell>
+              <TableCell>Estado</TableCell>
+              <TableCell>Fecha Detectada</TableCell>
+              <TableCell>Acciones</TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {currentInspection.nonConformances?.map((nc) => (
               <TableRow key={nc.id}>
                 <TableCell>{nc.code}</TableCell>
                 <TableCell>{nc.title}</TableCell>
                 <TableCell>
-                  <Chip
-                    label={ncTypeLabels[nc.ncType]}
-                    color={ncTypeColors[nc.ncType]}
-                    size="small"
-                  />
+                  <Chip label={ncTypeLabels[nc.ncType]} color={ncTypeColors[nc.ncType]} size="small" />
                 </TableCell>
                 <TableCell>
                   <Chip label={ncStatusLabels[nc.status]} size="small" />
@@ -291,17 +317,11 @@ const InspectionDetail = () => {
                   </Button>
                 </TableCell>
               </TableRow>
-            ))
-          ) : (
-            <TableRow>
-              <TableCell colSpan={6} align="center">
-                No hay no conformidades registradas para esta inspección
-              </TableCell>
-            </TableRow>
-          )}
-        </TableBody>
-      </Table>
-    </TableContainer>
+            ))}
+          </TableBody>
+        </Table>
+      </TableContainer>
+    )
   );
 
   return (

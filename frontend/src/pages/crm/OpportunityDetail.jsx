@@ -23,6 +23,8 @@ import {
   Card,
   CardContent,
   LinearProgress,
+  useMediaQuery,
+  useTheme,
 } from '@mui/material';
 import {
   ArrowBack as BackIcon,
@@ -91,6 +93,8 @@ const OpportunityDetail = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { id } = useParams();
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
   const { currentOpportunity, loading, error } = useSelector((state) => state.crm);
   const [activeTab, setActiveTab] = useState(0);
@@ -306,21 +310,51 @@ const OpportunityDetail = () => {
   );
 
   const renderQuotesTab = () => (
-    <TableContainer component={Paper}>
-      <Table>
-        <TableHead>
-          <TableRow>
-            <TableCell>Código</TableCell>
-            <TableCell>Fecha</TableCell>
-            <TableCell>Estado</TableCell>
-            <TableCell align="right">Total</TableCell>
-            <TableCell>Válida Hasta</TableCell>
-            <TableCell>Acciones</TableCell>
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {currentOpportunity.quotes?.length > 0 ? (
-            currentOpportunity.quotes.map((quote) => (
+    currentOpportunity.quotes?.length === 0 ? (
+      <Paper sx={{ p: 3, textAlign: 'center' }}>
+        <Typography color="text.secondary">No hay cotizaciones para esta oportunidad</Typography>
+      </Paper>
+    ) : isMobile ? (
+      <Box>
+        {currentOpportunity.quotes?.map((quote) => (
+          <Card key={quote.id} variant="outlined" sx={{ mb: 2, cursor: 'pointer' }} onClick={() => navigate(`/crm/quotes/${quote.id}`)}>
+            <CardContent sx={{ pb: 1 }}>
+              <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 1 }}>
+                <Box>
+                  <Typography variant="subtitle1" fontWeight="bold">{quote.code}</Typography>
+                  <Typography variant="body2" color="text.secondary">
+                    {formatDate(quote.quoteDate)}
+                  </Typography>
+                </Box>
+                <Chip label={quoteStatusLabels[quote.status]} size="small" />
+              </Box>
+              <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <Typography variant="body2" color="text.secondary">
+                  Válida: {formatDate(quote.validUntil)}
+                </Typography>
+                <Typography variant="h6" fontWeight="bold" color="primary">
+                  {formatCurrency(quote.totalAmount, quote.currency)}
+                </Typography>
+              </Box>
+            </CardContent>
+          </Card>
+        ))}
+      </Box>
+    ) : (
+      <TableContainer component={Paper}>
+        <Table>
+          <TableHead>
+            <TableRow>
+              <TableCell>Código</TableCell>
+              <TableCell>Fecha</TableCell>
+              <TableCell>Estado</TableCell>
+              <TableCell align="right">Total</TableCell>
+              <TableCell>Válida Hasta</TableCell>
+              <TableCell>Acciones</TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {currentOpportunity.quotes?.map((quote) => (
               <TableRow key={quote.id}>
                 <TableCell>{quote.code}</TableCell>
                 <TableCell>{formatDate(quote.quoteDate)}</TableCell>
@@ -337,34 +371,62 @@ const OpportunityDetail = () => {
                   </Button>
                 </TableCell>
               </TableRow>
-            ))
-          ) : (
-            <TableRow>
-              <TableCell colSpan={6} align="center">
-                No hay cotizaciones para esta oportunidad
-              </TableCell>
-            </TableRow>
-          )}
-        </TableBody>
-      </Table>
-    </TableContainer>
+            ))}
+          </TableBody>
+        </Table>
+      </TableContainer>
+    )
   );
 
   const renderActivitiesTab = () => (
-    <TableContainer component={Paper}>
-      <Table>
-        <TableHead>
-          <TableRow>
-            <TableCell>Tipo</TableCell>
-            <TableCell>Asunto</TableCell>
-            <TableCell>Fecha</TableCell>
-            <TableCell>Estado</TableCell>
-            <TableCell>Resultado</TableCell>
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {currentOpportunity.activities?.length > 0 ? (
-            currentOpportunity.activities.map((activity) => (
+    currentOpportunity.activities?.length === 0 ? (
+      <Paper sx={{ p: 3, textAlign: 'center' }}>
+        <Typography color="text.secondary">No hay actividades registradas</Typography>
+      </Paper>
+    ) : isMobile ? (
+      <Box>
+        {currentOpportunity.activities?.map((activity) => (
+          <Card key={activity.id} variant="outlined" sx={{ mb: 2 }}>
+            <CardContent sx={{ pb: 1 }}>
+              <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 1 }}>
+                <Box>
+                  <Typography variant="subtitle1" fontWeight="bold">
+                    {activityTypeLabels[activity.activityType] || activity.activityType}
+                  </Typography>
+                  <Typography variant="body2">{activity.subject}</Typography>
+                </Box>
+                <Chip
+                  label={activity.status === 'COMPLETED' ? 'Completada' : 'Pendiente'}
+                  color={activity.status === 'COMPLETED' ? 'success' : 'warning'}
+                  size="small"
+                />
+              </Box>
+              <Typography variant="body2" color="text.secondary">
+                {formatDateTime(activity.scheduledAt)}
+              </Typography>
+              {activity.outcome && (
+                <Typography variant="body2" sx={{ mt: 1 }}>
+                  Resultado: {activity.outcome}
+                </Typography>
+              )}
+            </CardContent>
+          </Card>
+        ))}
+      </Box>
+    ) : (
+      <TableContainer component={Paper}>
+        <Table>
+          <TableHead>
+            <TableRow>
+              <TableCell>Tipo</TableCell>
+              <TableCell>Asunto</TableCell>
+              <TableCell>Fecha</TableCell>
+              <TableCell>Estado</TableCell>
+              <TableCell>Resultado</TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {currentOpportunity.activities?.map((activity) => (
               <TableRow key={activity.id}>
                 <TableCell>{activityTypeLabels[activity.activityType] || activity.activityType}</TableCell>
                 <TableCell>{activity.subject}</TableCell>
@@ -378,17 +440,11 @@ const OpportunityDetail = () => {
                 </TableCell>
                 <TableCell>{activity.outcome || '-'}</TableCell>
               </TableRow>
-            ))
-          ) : (
-            <TableRow>
-              <TableCell colSpan={5} align="center">
-                No hay actividades registradas
-              </TableCell>
-            </TableRow>
-          )}
-        </TableBody>
-      </Table>
-    </TableContainer>
+            ))}
+          </TableBody>
+        </Table>
+      </TableContainer>
+    )
   );
 
   return (

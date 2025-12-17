@@ -10,6 +10,7 @@ import {
   Grid,
   Card,
   CardContent,
+  CardActions,
   Table,
   TableBody,
   TableCell,
@@ -21,6 +22,8 @@ import {
   Divider,
   IconButton,
   Tooltip,
+  useMediaQuery,
+  useTheme,
 } from '@mui/material';
 import {
   ArrowBack as BackIcon,
@@ -58,6 +61,8 @@ const PayrollPeriodDetail = () => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
   const { currentPeriod, loading } = useSelector((state) => state.payroll);
 
   const [entryDialogOpen, setEntryDialogOpen] = useState(false);
@@ -180,23 +185,33 @@ const PayrollPeriodDetail = () => {
   return (
     <Box>
       {/* Header */}
-      <Box sx={{ display: 'flex', alignItems: 'center', mb: 3, gap: 2 }}>
-        <IconButton onClick={() => navigate('/payroll')}>
-          <BackIcon />
-        </IconButton>
-        <Box sx={{ flexGrow: 1 }}>
-          <Typography variant="h4" fontWeight="bold">
-            {period.name}
-          </Typography>
-          <Typography variant="body2" color="text.secondary">
-            {period.code}
-          </Typography>
+      <Box sx={{ 
+        display: 'flex', 
+        flexDirection: { xs: 'column', sm: 'row' },
+        alignItems: { xs: 'stretch', sm: 'center' }, 
+        mb: 3, 
+        gap: 2 
+      }}>
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, flex: 1 }}>
+          <IconButton onClick={() => navigate('/payroll')}>
+            <BackIcon />
+          </IconButton>
+          <Box sx={{ flex: 1 }}>
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, flexWrap: 'wrap' }}>
+              <Typography variant={isMobile ? 'h5' : 'h4'} fontWeight="bold">
+                {period.name}
+              </Typography>
+              <Chip
+                label={getStatusLabel(period.status)}
+                color={statusColors[period.status]}
+                size="small"
+              />
+            </Box>
+            <Typography variant="body2" color="text.secondary">
+              {period.code}
+            </Typography>
+          </Box>
         </Box>
-        <Chip
-          label={getStatusLabel(period.status)}
-          color={statusColors[period.status]}
-          size="medium"
-        />
       </Box>
 
       {/* Summary Cards */}
@@ -252,33 +267,33 @@ const PayrollPeriodDetail = () => {
       </Grid>
 
       {/* Period Info */}
-      <Paper sx={{ p: 3, mb: 3 }}>
+      <Paper sx={{ p: { xs: 2, md: 3 }, mb: 3 }}>
         <Typography variant="h6" gutterBottom>
           {t('payroll.periodInfo')}
         </Typography>
         <Grid container spacing={2}>
-          <Grid item xs={12} sm={4}>
-            <Typography color="text.secondary">{t('payroll.periodType')}</Typography>
+          <Grid item xs={6} sm={4}>
+            <Typography variant="caption" color="text.secondary">{t('payroll.periodType')}</Typography>
             <Typography fontWeight="medium">{period.periodType}</Typography>
           </Grid>
-          <Grid item xs={12} sm={4}>
-            <Typography color="text.secondary">{t('payroll.startDate')}</Typography>
+          <Grid item xs={6} sm={4}>
+            <Typography variant="caption" color="text.secondary">{t('payroll.startDate')}</Typography>
             <Typography fontWeight="medium">{formatDate(period.startDate)}</Typography>
           </Grid>
-          <Grid item xs={12} sm={4}>
-            <Typography color="text.secondary">{t('payroll.endDate')}</Typography>
+          <Grid item xs={6} sm={4}>
+            <Typography variant="caption" color="text.secondary">{t('payroll.endDate')}</Typography>
             <Typography fontWeight="medium">{formatDate(period.endDate)}</Typography>
           </Grid>
-          <Grid item xs={12} sm={4}>
-            <Typography color="text.secondary">{t('payroll.paymentDate')}</Typography>
+          <Grid item xs={6} sm={4}>
+            <Typography variant="caption" color="text.secondary">{t('payroll.paymentDate')}</Typography>
             <Typography fontWeight="medium">{formatDate(period.paymentDate)}</Typography>
           </Grid>
-          <Grid item xs={12} sm={4}>
-            <Typography color="text.secondary">{t('payroll.currency')}</Typography>
+          <Grid item xs={6} sm={4}>
+            <Typography variant="caption" color="text.secondary">{t('payroll.currency')}</Typography>
             <Typography fontWeight="medium">{period.currency}</Typography>
           </Grid>
-          <Grid item xs={12} sm={4}>
-            <Typography color="text.secondary">{t('payroll.exchangeRate')}</Typography>
+          <Grid item xs={6} sm={4}>
+            <Typography variant="caption" color="text.secondary">{t('payroll.exchangeRate')}</Typography>
             <Typography fontWeight="medium">{period.exchangeRate}</Typography>
           </Grid>
         </Grid>
@@ -286,7 +301,12 @@ const PayrollPeriodDetail = () => {
 
       {/* Actions */}
       <Paper sx={{ p: 2, mb: 3 }}>
-        <Box sx={{ display: 'flex', gap: 2, flexWrap: 'wrap' }}>
+        <Box sx={{ 
+          display: 'flex', 
+          gap: 2, 
+          flexWrap: 'wrap',
+          flexDirection: { xs: 'column', sm: 'row' }
+        }}>
           {period.status === 'DRAFT' && (
             <Button
               variant="contained"
@@ -294,6 +314,7 @@ const PayrollPeriodDetail = () => {
               startIcon={<CalculateIcon />}
               onClick={() => setConfirmDialog({ open: true, action: 'generate' })}
               disabled={actionLoading}
+              fullWidth={isMobile}
             >
               {t('payroll.generateEntries')}
             </Button>
@@ -305,6 +326,7 @@ const PayrollPeriodDetail = () => {
               startIcon={<ApproveIcon />}
               onClick={() => setConfirmDialog({ open: true, action: 'approve' })}
               disabled={actionLoading}
+              fullWidth={isMobile}
             >
               {t('payroll.approve')}
             </Button>
@@ -316,6 +338,7 @@ const PayrollPeriodDetail = () => {
               startIcon={<PayIcon />}
               onClick={() => setConfirmDialog({ open: true, action: 'pay' })}
               disabled={actionLoading}
+              fullWidth={isMobile}
             >
               {t('payroll.markAsPaid')}
             </Button>
@@ -324,11 +347,12 @@ const PayrollPeriodDetail = () => {
             endpoint={`/reports/payroll/${id}`}
             filename={`nomina-${period.code || period.name}.pdf`}
             disabled={!period.entries?.length}
+            fullWidth={isMobile}
           />
         </Box>
       </Paper>
 
-      {/* Entries Table */}
+      {/* Entries Table / Cards */}
       <Paper>
         <Box sx={{ p: 2 }}>
           <Typography variant="h6">
@@ -336,30 +360,82 @@ const PayrollPeriodDetail = () => {
           </Typography>
         </Box>
         <Divider />
-        <TableContainer>
-          <Table size="small">
-            <TableHead>
-              <TableRow>
-                <TableCell>{t('employees.firstName')}</TableCell>
-                <TableCell>{t('employees.lastName')}</TableCell>
-                <TableCell>{t('employees.position')}</TableCell>
-                <TableCell align="right">{t('payroll.baseSalary')}</TableCell>
-                <TableCell align="right">{t('payroll.grossPay')}</TableCell>
-                <TableCell align="right">{t('payroll.deductions')}</TableCell>
-                <TableCell align="right">{t('payroll.netPay')}</TableCell>
-                <TableCell>{t('payroll.paymentStatus')}</TableCell>
-                <TableCell align="right">{t('common.actions')}</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {!period.entries?.length ? (
+        
+        {!period.entries?.length ? (
+          <Box sx={{ p: 3, textAlign: 'center' }}>
+            <Typography color="text.secondary">{t('payroll.noEntries')}</Typography>
+          </Box>
+        ) : isMobile ? (
+          // Mobile: Cards view
+          <Box sx={{ p: 2, display: 'flex', flexDirection: 'column', gap: 2 }}>
+            {period.entries.map((entry) => (
+              <Card key={entry.id} variant="outlined">
+                <CardContent sx={{ pb: 1 }}>
+                  <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 1 }}>
+                    <Box>
+                      <EntityLink
+                        type="employee"
+                        id={entry.employee?.id}
+                        label={`${entry.employee?.firstName} ${entry.employee?.lastName}`}
+                      />
+                      <Typography variant="caption" color="text.secondary" display="block">
+                        {entry.employee?.position}
+                      </Typography>
+                    </Box>
+                    <Chip
+                      label={entry.paymentStatus}
+                      color={entry.paymentStatus === 'PAID' ? 'success' : 'default'}
+                      size="small"
+                    />
+                  </Box>
+                  <Grid container spacing={1} sx={{ mt: 1 }}>
+                    <Grid item xs={6}>
+                      <Typography variant="caption" color="text.secondary">{t('payroll.baseSalary')}</Typography>
+                      <Typography variant="body2">{formatCurrency(entry.baseSalary, entry.currency)}</Typography>
+                    </Grid>
+                    <Grid item xs={6}>
+                      <Typography variant="caption" color="text.secondary">{t('payroll.grossPay')}</Typography>
+                      <Typography variant="body2">{formatCurrency(entry.grossPay, entry.currency)}</Typography>
+                    </Grid>
+                    <Grid item xs={6}>
+                      <Typography variant="caption" color="text.secondary">{t('payroll.deductions')}</Typography>
+                      <Typography variant="body2" color="error.main">{formatCurrency(entry.totalDeductions, entry.currency)}</Typography>
+                    </Grid>
+                    <Grid item xs={6}>
+                      <Typography variant="caption" color="text.secondary">{t('payroll.netPay')}</Typography>
+                      <Typography variant="body2" fontWeight="bold" color="success.main">{formatCurrency(entry.netPay, entry.currency)}</Typography>
+                    </Grid>
+                  </Grid>
+                </CardContent>
+                {period.status !== 'PAID' && (
+                  <CardActions sx={{ justifyContent: 'flex-end', pt: 0 }}>
+                    <Button size="small" onClick={() => handleEditEntry(entry)}>
+                      {t('common.edit')}
+                    </Button>
+                  </CardActions>
+                )}
+              </Card>
+            ))}
+          </Box>
+        ) : (
+          // Desktop: Table view
+          <TableContainer>
+            <Table size="small">
+              <TableHead>
                 <TableRow>
-                  <TableCell colSpan={9} align="center">
-                    {t('payroll.noEntries')}
-                  </TableCell>
+                  <TableCell>{t('employees.firstName')}</TableCell>
+                  <TableCell>{t('employees.lastName')}</TableCell>
+                  <TableCell>{t('employees.position')}</TableCell>
+                  <TableCell align="right">{t('payroll.baseSalary')}</TableCell>
+                  <TableCell align="right">{t('payroll.grossPay')}</TableCell>
+                  <TableCell align="right">{t('payroll.deductions')}</TableCell>
+                  <TableCell align="right">{t('payroll.netPay')}</TableCell>
+                  <TableCell>{t('payroll.paymentStatus')}</TableCell>
+                  <TableCell align="right">{t('common.actions')}</TableCell>
                 </TableRow>
-              ) : (
-                period.entries.map((entry) => (
+              </TableHead>
+              <TableBody>
+                {period.entries.map((entry) => (
                   <TableRow key={entry.id} hover>
                     <TableCell>
                       <EntityLink
@@ -402,11 +478,11 @@ const PayrollPeriodDetail = () => {
                       )}
                     </TableCell>
                   </TableRow>
-                ))
-              )}
-            </TableBody>
-          </Table>
-        </TableContainer>
+                ))}
+              </TableBody>
+            </Table>
+          </TableContainer>
+        )}
       </Paper>
 
       {/* Entry Edit Dialog */}

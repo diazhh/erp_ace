@@ -427,6 +427,222 @@ const seedAll = async () => {
     console.log(`   ✅ ${Object.keys(projects).length} proyectos creados`);
 
     // ========================================
+    // 6.1 MIEMBROS DE PROYECTO
+    // ========================================
+    console.log('\n👥 Creando miembros de proyecto...');
+
+    // Obtener empleados existentes
+    const allEmployees = await Employee.findAll({ where: { status: 'ACTIVE' }, limit: 10 });
+    
+    const projectMembersData = [
+      { projectCode: 'PRY-2024-001', employeeIndex: 0, role: 'PROJECT_MANAGER', allocation: 100, status: 'ACTIVE' },
+      { projectCode: 'PRY-2024-001', employeeIndex: 1, role: 'ENGINEER', allocation: 80, status: 'ACTIVE' },
+      { projectCode: 'PRY-2024-001', employeeIndex: 2, role: 'TECHNICIAN', allocation: 100, status: 'ACTIVE' },
+      { projectCode: 'PRY-2024-002', employeeIndex: 0, role: 'PROJECT_MANAGER', allocation: 50, status: 'ACTIVE' },
+      { projectCode: 'PRY-2024-002', employeeIndex: 3, role: 'SUPERVISOR', allocation: 100, status: 'ACTIVE' },
+      { projectCode: 'PRY-2024-002', employeeIndex: 4, role: 'TECHNICIAN', allocation: 100, status: 'ACTIVE' },
+      { projectCode: 'PRY-2024-003', employeeIndex: 1, role: 'PROJECT_MANAGER', allocation: 100, status: 'ACTIVE' },
+      { projectCode: 'PRY-2024-003', employeeIndex: 5, role: 'ENGINEER', allocation: 80, status: 'ACTIVE' },
+    ];
+
+    let membersCreated = 0;
+    for (const memberData of projectMembersData) {
+      const project = projects[memberData.projectCode];
+      const employee = allEmployees[memberData.employeeIndex];
+      if (project && employee) {
+        await ProjectMember.findOrCreate({
+          where: { projectId: project.id, employeeId: employee.id },
+          defaults: {
+            projectId: project.id,
+            employeeId: employee.id,
+            role: memberData.role,
+            allocation: memberData.allocation,
+            status: memberData.status,
+            startDate: project.startDate
+          }
+        });
+        membersCreated++;
+      }
+    }
+    console.log(`   ✅ ${membersCreated} miembros de proyecto creados`);
+
+    // ========================================
+    // 6.2 HITOS DE PROYECTO
+    // ========================================
+    console.log('\n🎯 Creando hitos de proyecto...');
+
+    const milestonesData = [
+      { projectCode: 'PRY-2024-001', name: 'Movilización de equipos', description: 'Traslado de equipos y personal al sitio', dueDate: '2024-01-20', status: 'COMPLETED', weight: 10 },
+      { projectCode: 'PRY-2024-001', name: 'Inspección inicial', description: 'Evaluación del estado del pozo', dueDate: '2024-02-01', status: 'COMPLETED', weight: 15 },
+      { projectCode: 'PRY-2024-001', name: 'Trabajos de workover', description: 'Ejecución de trabajos principales', dueDate: '2024-04-30', status: 'IN_PROGRESS', weight: 50 },
+      { projectCode: 'PRY-2024-001', name: 'Pruebas de producción', description: 'Verificación de resultados', dueDate: '2024-06-15', status: 'PENDING', weight: 15 },
+      { projectCode: 'PRY-2024-001', name: 'Desmovilización', description: 'Retiro de equipos y cierre', dueDate: '2024-06-30', status: 'PENDING', weight: 10 },
+      { projectCode: 'PRY-2024-002', name: 'Topografía y replanteo', description: 'Levantamiento topográfico del trazado', dueDate: '2024-03-15', status: 'COMPLETED', weight: 10 },
+      { projectCode: 'PRY-2024-002', name: 'Excavación de zanja', description: 'Apertura de zanja para tubería', dueDate: '2024-05-30', status: 'IN_PROGRESS', weight: 25 },
+      { projectCode: 'PRY-2024-002', name: 'Tendido de tubería', description: 'Instalación de línea de flujo', dueDate: '2024-07-31', status: 'PENDING', weight: 35 },
+      { projectCode: 'PRY-2024-002', name: 'Pruebas hidrostáticas', description: 'Pruebas de presión', dueDate: '2024-09-15', status: 'PENDING', weight: 20 },
+      { projectCode: 'PRY-2024-002', name: 'Entrega final', description: 'Documentación y entrega', dueDate: '2024-09-30', status: 'PENDING', weight: 10 },
+      { projectCode: 'PRY-2024-003', name: 'Obras civiles', description: 'Fundaciones y estructuras', dueDate: '2024-05-31', status: 'IN_PROGRESS', weight: 30 },
+      { projectCode: 'PRY-2024-003', name: 'Instalación mecánica', description: 'Montaje de bombas y equipos', dueDate: '2024-08-31', status: 'PENDING', weight: 35 },
+      { projectCode: 'PRY-2024-003', name: 'Instalación eléctrica', description: 'Cableado y tableros', dueDate: '2024-10-31', status: 'PENDING', weight: 20 },
+      { projectCode: 'PRY-2024-003', name: 'Comisionamiento', description: 'Pruebas y puesta en marcha', dueDate: '2024-12-15', status: 'PENDING', weight: 15 },
+    ];
+
+    let milestonesCreated = 0;
+    for (const msData of milestonesData) {
+      const project = projects[msData.projectCode];
+      if (project) {
+        await ProjectMilestone.findOrCreate({
+          where: { projectId: project.id, name: msData.name },
+          defaults: {
+            projectId: project.id,
+            name: msData.name,
+            description: msData.description,
+            dueDate: msData.dueDate,
+            status: msData.status,
+            weight: msData.weight,
+            completedDate: msData.status === 'COMPLETED' ? msData.dueDate : null,
+            createdBy: createdById
+          }
+        });
+        milestonesCreated++;
+      }
+    }
+    console.log(`   ✅ ${milestonesCreated} hitos creados`);
+
+    // ========================================
+    // 6.3 GASTOS DE PROYECTO
+    // ========================================
+    console.log('\n💸 Creando gastos de proyecto...');
+
+    const expensesData = [
+      { projectCode: 'PRY-2024-001', code: 'GAS-001-001', expenseType: 'MATERIALS', description: 'Tubería de revestimiento 7"', amount: 15000, currency: 'USD', expenseDate: '2024-02-10', status: 'APPROVED', vendor: 'Tubos de Acero CA' },
+      { projectCode: 'PRY-2024-001', code: 'GAS-001-002', expenseType: 'SERVICES', description: 'Servicio de grúa', amount: 8500, currency: 'USD', expenseDate: '2024-02-15', status: 'APPROVED', vendor: 'Grúas Oriente' },
+      { projectCode: 'PRY-2024-001', code: 'GAS-001-003', expenseType: 'LABOR', description: 'Mano de obra especializada', amount: 12000, currency: 'USD', expenseDate: '2024-03-01', status: 'APPROVED', vendor: 'Personal propio' },
+      { projectCode: 'PRY-2024-001', code: 'GAS-001-004', expenseType: 'EQUIPMENT', description: 'Alquiler de equipo de perforación', amount: 25000, currency: 'USD', expenseDate: '2024-03-15', status: 'PENDING', vendor: 'Drilling Services CA' },
+      { projectCode: 'PRY-2024-002', code: 'GAS-002-001', expenseType: 'MATERIALS', description: 'Tubería API 5L 8"', amount: 45000, currency: 'USD', expenseDate: '2024-03-20', status: 'APPROVED', vendor: 'Tubos de Acero CA' },
+      { projectCode: 'PRY-2024-002', code: 'GAS-002-002', expenseType: 'SERVICES', description: 'Excavación mecánica', amount: 18000, currency: 'USD', expenseDate: '2024-04-01', status: 'APPROVED', vendor: 'Movimientos de Tierra CA' },
+      { projectCode: 'PRY-2024-002', code: 'GAS-002-003', expenseType: 'TRAVEL', description: 'Viáticos personal técnico', amount: 3500, currency: 'USD', expenseDate: '2024-04-15', status: 'APPROVED', vendor: 'Interno' },
+      { projectCode: 'PRY-2024-003', code: 'GAS-003-001', expenseType: 'MATERIALS', description: 'Concreto premezclado', amount: 22000, currency: 'USD', expenseDate: '2024-03-01', status: 'APPROVED', vendor: 'Cemex Venezuela' },
+      { projectCode: 'PRY-2024-003', code: 'GAS-003-002', expenseType: 'MATERIALS', description: 'Acero de refuerzo', amount: 35000, currency: 'USD', expenseDate: '2024-03-15', status: 'APPROVED', vendor: 'Sidor' },
+      { projectCode: 'PRY-2024-003', code: 'GAS-003-003', expenseType: 'EQUIPMENT', description: 'Bombas centrífugas', amount: 85000, currency: 'USD', expenseDate: '2024-04-01', status: 'PENDING', vendor: 'Flowserve' },
+    ];
+
+    let expensesCreated = 0;
+    for (const expData of expensesData) {
+      const project = projects[expData.projectCode];
+      if (project) {
+        await ProjectExpense.findOrCreate({
+          where: { code: expData.code },
+          defaults: {
+            projectId: project.id,
+            code: expData.code,
+            expenseType: expData.expenseType,
+            description: expData.description,
+            amount: expData.amount,
+            currency: expData.currency,
+            expenseDate: expData.expenseDate,
+            status: expData.status,
+            vendor: expData.vendor,
+            createdBy: createdById
+          }
+        });
+        expensesCreated++;
+      }
+    }
+    console.log(`   ✅ ${expensesCreated} gastos de proyecto creados`);
+
+    // ========================================
+    // 6.4 VALUACIONES DE PROYECTO (OUTSOURCED)
+    // ========================================
+    console.log('\n📊 Creando valuaciones de proyecto...');
+
+    const valuationsData = [
+      { projectCode: 'PRY-2024-001', code: 'VAL-001-01', periodStart: '2024-01-15', periodEnd: '2024-02-15', previousPercent: 0, currentPercent: 20, status: 'APPROVED', description: 'Valuación #1 - Movilización e inspección' },
+      { projectCode: 'PRY-2024-001', code: 'VAL-001-02', periodStart: '2024-02-16', periodEnd: '2024-03-31', previousPercent: 20, currentPercent: 45, status: 'APPROVED', description: 'Valuación #2 - Inicio trabajos workover' },
+      { projectCode: 'PRY-2024-001', code: 'VAL-001-03', periodStart: '2024-04-01', periodEnd: '2024-04-30', previousPercent: 45, currentPercent: 65, status: 'SUBMITTED', description: 'Valuación #3 - Avance trabajos principales' },
+      { projectCode: 'PRY-2024-002', code: 'VAL-002-01', periodStart: '2024-03-01', periodEnd: '2024-03-31', previousPercent: 0, currentPercent: 10, status: 'APPROVED', description: 'Valuación #1 - Topografía y replanteo' },
+      { projectCode: 'PRY-2024-002', code: 'VAL-002-02', periodStart: '2024-04-01', periodEnd: '2024-05-15', previousPercent: 10, currentPercent: 35, status: 'DRAFT', description: 'Valuación #2 - Excavación de zanja' },
+      { projectCode: 'PRY-2024-003', code: 'VAL-003-01', periodStart: '2024-02-01', periodEnd: '2024-03-31', previousPercent: 0, currentPercent: 10, status: 'APPROVED', description: 'Valuación #1 - Preparación del sitio' },
+      { projectCode: 'PRY-2024-003', code: 'VAL-003-02', periodStart: '2024-04-01', periodEnd: '2024-05-15', previousPercent: 10, currentPercent: 20, status: 'UNDER_REVIEW', description: 'Valuación #2 - Obras civiles' },
+    ];
+
+    let valuationsCreated = 0;
+    for (const valData of valuationsData) {
+      const project = projects[valData.projectCode];
+      if (project && project.executionType === 'OUTSOURCED') {
+        const contractAmount = project.budget || 100000;
+        const currentAmount = (valData.currentPercent - valData.previousPercent) * contractAmount / 100;
+        const totalAccumulatedAmount = valData.currentPercent * contractAmount / 100;
+        
+        await ProjectValuation.findOrCreate({
+          where: { code: valData.code },
+          defaults: {
+            projectId: project.id,
+            code: valData.code,
+            periodStart: valData.periodStart,
+            periodEnd: valData.periodEnd,
+            previousPercent: valData.previousPercent,
+            currentPercent: valData.currentPercent,
+            totalAccumulatedPercent: valData.currentPercent,
+            currentAmount: currentAmount,
+            totalAccumulatedAmount: totalAccumulatedAmount,
+            currency: project.currency || 'USD',
+            status: valData.status,
+            description: valData.description,
+            submittedAt: ['SUBMITTED', 'UNDER_REVIEW', 'APPROVED'].includes(valData.status) ? new Date() : null,
+            approvedAt: valData.status === 'APPROVED' ? new Date() : null,
+            createdBy: createdById
+          }
+        });
+        valuationsCreated++;
+      }
+    }
+    console.log(`   ✅ ${valuationsCreated} valuaciones creadas`);
+
+    // ========================================
+    // 6.5 ACTUALIZACIONES DE PROYECTO
+    // ========================================
+    console.log('\n📝 Creando actualizaciones de proyecto...');
+
+    const updatesData = [
+      { projectCode: 'PRY-2024-001', updateType: 'PROGRESS', title: 'Inicio de movilización', description: 'Se inició la movilización de equipos al sitio. Personal técnico en camino.', progressBefore: 0, progressAfter: 5, reportedAt: '2024-01-16' },
+      { projectCode: 'PRY-2024-001', updateType: 'MILESTONE', title: 'Movilización completada', description: 'Todos los equipos y personal están en sitio. Se inicia inspección.', progressBefore: 5, progressAfter: 10, reportedAt: '2024-01-20' },
+      { projectCode: 'PRY-2024-001', updateType: 'PROGRESS', title: 'Inspección inicial completada', description: 'Se completó la evaluación del estado del pozo. Resultados favorables.', progressBefore: 10, progressAfter: 20, reportedAt: '2024-02-01' },
+      { projectCode: 'PRY-2024-001', updateType: 'ISSUE', title: 'Retraso por condiciones climáticas', description: 'Lluvias intensas causaron retraso de 3 días en las operaciones.', progressBefore: 45, progressAfter: 45, reportedAt: '2024-03-20' },
+      { projectCode: 'PRY-2024-001', updateType: 'PROGRESS', title: 'Avance en trabajos de workover', description: 'Se completó el 65% de los trabajos principales. Operaciones en curso.', progressBefore: 45, progressAfter: 65, reportedAt: '2024-04-30' },
+      { projectCode: 'PRY-2024-002', updateType: 'PROGRESS', title: 'Inicio de proyecto', description: 'Se dio inicio formal al proyecto con la llegada del equipo topográfico.', progressBefore: 0, progressAfter: 5, reportedAt: '2024-03-02' },
+      { projectCode: 'PRY-2024-002', updateType: 'MILESTONE', title: 'Topografía completada', description: 'Levantamiento topográfico finalizado. Trazado definido.', progressBefore: 5, progressAfter: 10, reportedAt: '2024-03-15' },
+      { projectCode: 'PRY-2024-002', updateType: 'PROGRESS', title: 'Avance en excavación', description: 'Se ha completado 2.5km de zanja. Avance del 50% en esta fase.', progressBefore: 10, progressAfter: 35, reportedAt: '2024-05-10' },
+      { projectCode: 'PRY-2024-003', updateType: 'PROGRESS', title: 'Inicio de obras civiles', description: 'Comenzaron los trabajos de fundaciones para la estación de bombeo.', progressBefore: 0, progressAfter: 5, reportedAt: '2024-02-05' },
+      { projectCode: 'PRY-2024-003', updateType: 'PROGRESS', title: 'Avance en fundaciones', description: 'Fundaciones principales completadas al 80%.', progressBefore: 5, progressAfter: 15, reportedAt: '2024-04-01' },
+      { projectCode: 'PRY-2024-003', updateType: 'SAFETY', title: 'Simulacro de emergencia', description: 'Se realizó simulacro de evacuación con resultados satisfactorios.', progressBefore: 15, progressAfter: 15, reportedAt: '2024-04-15' },
+      { projectCode: 'PRY-2024-003', updateType: 'PROGRESS', title: 'Estructuras metálicas', description: 'Inicio del montaje de estructuras metálicas.', progressBefore: 15, progressAfter: 20, reportedAt: '2024-05-01' },
+    ];
+
+    let updatesCreated = 0;
+    for (const updData of updatesData) {
+      const project = projects[updData.projectCode];
+      if (project) {
+        await ProjectUpdate.findOrCreate({
+          where: { projectId: project.id, title: updData.title },
+          defaults: {
+            projectId: project.id,
+            updateType: updData.updateType,
+            title: updData.title,
+            description: updData.description,
+            progressBefore: updData.progressBefore,
+            progressAfter: updData.progressAfter,
+            reportedAt: updData.reportedAt,
+            reportedBy: createdById
+          }
+        });
+        updatesCreated++;
+      }
+    }
+    console.log(`   ✅ ${updatesCreated} actualizaciones creadas`);
+
+    // ========================================
     // 7. ALMACENES E INVENTARIO
     // ========================================
     console.log('\n📦 Creando almacenes e inventario...');
@@ -661,6 +877,18 @@ const seedAll = async () => {
     // RESUMEN FINAL
     // ========================================
     console.log('\n========================================');
+    // ========================================
+    // COMPLIANCE MODULE
+    // ========================================
+    const seedCompliance = require('./seeders/compliance-seeder');
+    await seedCompliance(models);
+
+    // ========================================
+    // JIB MODULE
+    // ========================================
+    const seedJIB = require('./seeders/jib-seeder');
+    await seedJIB(models);
+
     console.log('📊 RESUMEN DE DATOS CREADOS');
     console.log('========================================');
     

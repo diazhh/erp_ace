@@ -1,7 +1,8 @@
 const express = require('express');
 const router = express.Router();
 const expenseReportController = require('../controllers/expenseReportController');
-const { authenticate, authorize } = require('../../auth/middleware/auth');
+const authenticate = require('../../auth/middleware/authenticate');
+const { authorize } = require('../../auth/middleware/authorize');
 
 // Aplicar autenticación a todas las rutas
 router.use(authenticate);

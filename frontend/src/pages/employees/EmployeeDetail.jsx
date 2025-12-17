@@ -216,46 +216,97 @@ const EmployeeDetail = () => {
   return (
     <Box>
       {/* Header */}
-      <Paper sx={{ p: 3, mb: 3 }}>
-        <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 3 }}>
-          <Button
-            startIcon={<BackIcon />}
-            onClick={() => navigate('/employees')}
-            sx={{ minWidth: 'auto' }}
-          >
-            {t('employees.back')}
-          </Button>
-
-          <Avatar
-            src={employee.photoUrl}
-            sx={{ width: 80, height: 80, fontSize: 32, bgcolor: 'primary.main' }}
-          >
-            {getInitials()}
-          </Avatar>
-
-          <Box sx={{ flex: 1 }}>
-            <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 1 }}>
-              <Typography variant="h4" fontWeight="bold">
-                {employee.firstName} {employee.lastName}
-              </Typography>
-              <Chip
-                label={getStatusLabel(employee.status)}
-                color={statusColors[employee.status]}
+      <Paper sx={{ p: { xs: 2, md: 3 }, mb: 3 }}>
+        <Box sx={{ 
+          display: 'flex', 
+          flexDirection: { xs: 'column', md: 'row' },
+          alignItems: { xs: 'stretch', md: 'flex-start' }, 
+          gap: { xs: 2, md: 3 } 
+        }}>
+          {/* Back button - mobile: top row */}
+          <Box sx={{ 
+            display: 'flex', 
+            justifyContent: 'space-between', 
+            alignItems: 'center',
+            width: { xs: '100%', md: 'auto' }
+          }}>
+            <Button
+              startIcon={<BackIcon />}
+              onClick={() => navigate('/employees')}
+              sx={{ minWidth: 'auto' }}
+            >
+              {t('employees.back')}
+            </Button>
+            {/* Mobile actions */}
+            <Box sx={{ display: { xs: 'flex', md: 'none' }, gap: 1 }}>
+              <DownloadPDFButton
+                endpoint={`/reports/employees/${id}`}
+                filename={`empleado-${employee.employeeCode}.pdf`}
                 size="small"
               />
+              <CanDo permission="employees:update">
+                <IconButton
+                  color="primary"
+                  onClick={() => navigate(`/employees/${id}/edit`)}
+                >
+                  <EditIcon />
+                </IconButton>
+              </CanDo>
             </Box>
-            <Typography variant="subtitle1" color="text.secondary">
-              {employee.position} {employee.department && `• ${employee.department}`}
-            </Typography>
-            <Typography variant="body2" color="text.secondary">
-              {t('employees.code')}: {employee.employeeCode} • {employee.idType}-{employee.idNumber}
-            </Typography>
-            <Typography variant="body2" color="text.secondary">
-              {t('employees.entry')}: {formatDate(employee.hireDate)} • {t('employees.seniority')}: {calculateSeniority(employee.hireDate)}
-            </Typography>
           </Box>
 
-          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
+          {/* Avatar and info */}
+          <Box sx={{ 
+            display: 'flex', 
+            flexDirection: { xs: 'column', sm: 'row' },
+            alignItems: { xs: 'center', sm: 'flex-start' },
+            gap: 2,
+            flex: 1,
+            textAlign: { xs: 'center', sm: 'left' }
+          }}>
+            <Avatar
+              src={employee.photoUrl}
+              sx={{ 
+                width: { xs: 64, md: 80 }, 
+                height: { xs: 64, md: 80 }, 
+                fontSize: { xs: 24, md: 32 }, 
+                bgcolor: 'primary.main' 
+              }}
+            >
+              {getInitials()}
+            </Avatar>
+
+            <Box sx={{ flex: 1 }}>
+              <Box sx={{ 
+                display: 'flex', 
+                flexDirection: { xs: 'column', sm: 'row' },
+                alignItems: { xs: 'center', sm: 'center' }, 
+                gap: 1, 
+                mb: 1 
+              }}>
+                <Typography variant={isMobile ? 'h5' : 'h4'} fontWeight="bold">
+                  {employee.firstName} {employee.lastName}
+                </Typography>
+                <Chip
+                  label={getStatusLabel(employee.status)}
+                  color={statusColors[employee.status]}
+                  size="small"
+                />
+              </Box>
+              <Typography variant="subtitle1" color="text.secondary">
+                {employee.position} {employee.department && `• ${employee.department}`}
+              </Typography>
+              <Typography variant="body2" color="text.secondary">
+                {t('employees.code')}: {employee.employeeCode} • {employee.idType}-{employee.idNumber}
+              </Typography>
+              <Typography variant="body2" color="text.secondary">
+                {t('employees.entry')}: {formatDate(employee.hireDate)} • {t('employees.seniority')}: {calculateSeniority(employee.hireDate)}
+              </Typography>
+            </Box>
+          </Box>
+
+          {/* Desktop actions */}
+          <Box sx={{ display: { xs: 'none', md: 'flex' }, flexDirection: 'column', gap: 1 }}>
             <DownloadPDFButton
               endpoint={`/reports/employees/${id}`}
               filename={`empleado-${employee.employeeCode}.pdf`}
@@ -775,48 +826,90 @@ const EmployeeDetail = () => {
           <TabPanel value={activeTab} tabId="payroll" visibleTabs={visibleTabs}>
             <Typography variant="h6" gutterBottom>{t('employees.payrollHistory.title')}</Typography>
             {employee.payrollEntries?.length > 0 ? (
-              <TableContainer component={Paper} variant="outlined">
-                <Table size="small">
-                  <TableHead>
-                    <TableRow>
-                      <TableCell>{t('employees.payrollHistory.period')}</TableCell>
-                      <TableCell>{t('employees.payrollHistory.dates')}</TableCell>
-                      <TableCell align="right">{t('employees.payrollHistory.grossSalary')}</TableCell>
-                      <TableCell align="right">{t('employees.payrollHistory.deductions')}</TableCell>
-                      <TableCell align="right">{t('employees.payrollHistory.netSalary')}</TableCell>
-                      <TableCell>{t('employees.payrollHistory.status')}</TableCell>
-                    </TableRow>
-                  </TableHead>
-                  <TableBody>
-                    {employee.payrollEntries.map((entry) => (
-                      <TableRow key={entry.id} hover>
-                        <TableCell>
+              isMobile ? (
+                // Mobile: Cards view
+                <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+                  {employee.payrollEntries.map((entry) => (
+                    <Card key={entry.id} variant="outlined">
+                      <CardContent sx={{ pb: '16px !important' }}>
+                        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 1 }}>
                           <EntityLink
                             type="period"
                             id={entry.period?.id}
                             label={entry.period?.code || '-'}
                           />
-                        </TableCell>
-                        <TableCell>
-                          {entry.period && `${formatDate(entry.period.startDate)} - ${formatDate(entry.period.endDate)}`}
-                        </TableCell>
-                        <TableCell align="right">{formatCurrency(entry.grossSalary)}</TableCell>
-                        <TableCell align="right">{formatCurrency(entry.totalDeductions)}</TableCell>
-                        <TableCell align="right" sx={{ fontWeight: 'bold' }}>
-                          {formatCurrency(entry.netSalary)}
-                        </TableCell>
-                        <TableCell>
                           <Chip
                             label={entry.period?.status || '-'}
                             size="small"
                             color={entry.period?.status === 'PAID' ? 'success' : 'default'}
                           />
-                        </TableCell>
+                        </Box>
+                        <Typography variant="caption" color="text.secondary" display="block" gutterBottom>
+                          {entry.period && `${formatDate(entry.period.startDate)} - ${formatDate(entry.period.endDate)}`}
+                        </Typography>
+                        <Grid container spacing={1} sx={{ mt: 1 }}>
+                          <Grid item xs={4}>
+                            <Typography variant="caption" color="text.secondary">{t('employees.payrollHistory.grossSalary')}</Typography>
+                            <Typography variant="body2">{formatCurrency(entry.grossSalary)}</Typography>
+                          </Grid>
+                          <Grid item xs={4}>
+                            <Typography variant="caption" color="text.secondary">{t('employees.payrollHistory.deductions')}</Typography>
+                            <Typography variant="body2" color="error.main">{formatCurrency(entry.totalDeductions)}</Typography>
+                          </Grid>
+                          <Grid item xs={4}>
+                            <Typography variant="caption" color="text.secondary">{t('employees.payrollHistory.netSalary')}</Typography>
+                            <Typography variant="body2" fontWeight="bold" color="success.main">{formatCurrency(entry.netSalary)}</Typography>
+                          </Grid>
+                        </Grid>
+                      </CardContent>
+                    </Card>
+                  ))}
+                </Box>
+              ) : (
+                // Desktop: Table view
+                <TableContainer component={Paper} variant="outlined">
+                  <Table size="small">
+                    <TableHead>
+                      <TableRow>
+                        <TableCell>{t('employees.payrollHistory.period')}</TableCell>
+                        <TableCell>{t('employees.payrollHistory.dates')}</TableCell>
+                        <TableCell align="right">{t('employees.payrollHistory.grossSalary')}</TableCell>
+                        <TableCell align="right">{t('employees.payrollHistory.deductions')}</TableCell>
+                        <TableCell align="right">{t('employees.payrollHistory.netSalary')}</TableCell>
+                        <TableCell>{t('employees.payrollHistory.status')}</TableCell>
                       </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </TableContainer>
+                    </TableHead>
+                    <TableBody>
+                      {employee.payrollEntries.map((entry) => (
+                        <TableRow key={entry.id} hover>
+                          <TableCell>
+                            <EntityLink
+                              type="period"
+                              id={entry.period?.id}
+                              label={entry.period?.code || '-'}
+                            />
+                          </TableCell>
+                          <TableCell>
+                            {entry.period && `${formatDate(entry.period.startDate)} - ${formatDate(entry.period.endDate)}`}
+                          </TableCell>
+                          <TableCell align="right">{formatCurrency(entry.grossSalary)}</TableCell>
+                          <TableCell align="right">{formatCurrency(entry.totalDeductions)}</TableCell>
+                          <TableCell align="right" sx={{ fontWeight: 'bold' }}>
+                            {formatCurrency(entry.netSalary)}
+                          </TableCell>
+                          <TableCell>
+                            <Chip
+                              label={entry.period?.status || '-'}
+                              size="small"
+                              color={entry.period?.status === 'PAID' ? 'success' : 'default'}
+                            />
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </TableContainer>
+              )
             ) : (
               <Alert severity="info">{t('employees.payrollHistory.noRecords')}</Alert>
             )}

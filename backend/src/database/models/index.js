@@ -99,6 +99,37 @@ const QualityInspection = require('../../modules/quality/models/QualityInspectio
 const NonConformance = require('../../modules/quality/models/NonConformance');
 const CorrectiveAction = require('../../modules/quality/models/CorrectiveAction');
 const QualityCertificate = require('../../modules/quality/models/QualityCertificate');
+// Production models
+const Field = require('../../modules/production/models/Field');
+const Well = require('../../modules/production/models/Well');
+const WellProduction = require('../../modules/production/models/WellProduction');
+const ProductionAllocation = require('../../modules/production/models/ProductionAllocation');
+const MorningReport = require('../../modules/production/models/MorningReport');
+const WellLog = require('../../modules/production/models/WellLog');
+// AFE models
+const AFE = require('../../modules/afe/models/AFE');
+const AFECategory = require('../../modules/afe/models/AFECategory');
+const AFEApproval = require('../../modules/afe/models/AFEApproval');
+const AFEExpense = require('../../modules/afe/models/AFEExpense');
+const AFEVariance = require('../../modules/afe/models/AFEVariance');
+// Contract models
+const OGContract = require('../../modules/contracts/models/OGContract');
+const ContractParty = require('../../modules/contracts/models/ContractParty');
+const WorkingInterest = require('../../modules/contracts/models/WorkingInterest');
+const RoyaltyPayment = require('../../modules/contracts/models/RoyaltyPayment');
+const Concession = require('../../modules/contracts/models/Concession');
+// Compliance models
+const RegulatoryReport = require('../../modules/compliance/models/RegulatoryReport');
+const EnvironmentalPermit = require('../../modules/compliance/models/EnvironmentalPermit');
+const ComplianceAudit = require('../../modules/compliance/models/ComplianceAudit');
+const Policy = require('../../modules/compliance/models/Policy');
+const Certification = require('../../modules/compliance/models/Certification');
+// JIB models
+const JointInterestBilling = require('../../modules/jib/models/JointInterestBilling');
+const JIBLineItem = require('../../modules/jib/models/JIBLineItem');
+const JIBPartnerShare = require('../../modules/jib/models/JIBPartnerShare');
+const CashCall = require('../../modules/jib/models/CashCall');
+const CashCallResponse = require('../../modules/jib/models/CashCallResponse');
 
 // Inicializar modelos
 const models = {
@@ -202,6 +233,37 @@ const models = {
   // Expense Reports
   ExpenseReport: ExpenseReport(sequelize),
   ExpenseReportItem: ExpenseReportItem(sequelize),
+  // Production
+  Field: Field(sequelize),
+  Well: Well(sequelize),
+  WellProduction: WellProduction(sequelize),
+  ProductionAllocation: ProductionAllocation(sequelize),
+  MorningReport: MorningReport(sequelize),
+  WellLog: WellLog(sequelize),
+  // AFE
+  AFE: AFE(sequelize),
+  AFECategory: AFECategory(sequelize),
+  AFEApproval: AFEApproval(sequelize),
+  AFEExpense: AFEExpense(sequelize),
+  AFEVariance: AFEVariance(sequelize),
+  // Contracts
+  OGContract: OGContract(sequelize),
+  ContractParty: ContractParty(sequelize),
+  WorkingInterest: WorkingInterest(sequelize),
+  RoyaltyPayment: RoyaltyPayment(sequelize),
+  Concession: Concession(sequelize),
+  // Compliance
+  RegulatoryReport: RegulatoryReport(sequelize),
+  EnvironmentalPermit: EnvironmentalPermit(sequelize),
+  ComplianceAudit: ComplianceAudit(sequelize),
+  Policy: Policy(sequelize),
+  Certification: Certification(sequelize),
+  // JIB
+  JointInterestBilling: JointInterestBilling(sequelize),
+  JIBLineItem: JIBLineItem(sequelize),
+  JIBPartnerShare: JIBPartnerShare(sequelize),
+  CashCall: CashCall(sequelize),
+  CashCallResponse: CashCallResponse(sequelize),
 };
 
 // Definir asociaciones
@@ -2369,5 +2431,812 @@ models.ExpenseReportItem.belongsTo(models.FuelLog, {
   foreignKey: 'fuel_log_id',
   as: 'fuelLog',
 });
+
+// ========== PRODUCTION ASSOCIATIONS ==========
+
+// Field -> Contractor (operator)
+models.Field.belongsTo(models.Contractor, {
+  foreignKey: 'operator_id',
+  as: 'operator',
+});
+models.Contractor.hasMany(models.Field, {
+  foreignKey: 'operator_id',
+  as: 'operatedFields',
+});
+
+// Field -> User (createdBy)
+models.Field.belongsTo(models.User, {
+  foreignKey: 'created_by',
+  as: 'creator',
+});
+
+// Field <-> Well
+models.Field.hasMany(models.Well, {
+  foreignKey: 'field_id',
+  as: 'wells',
+});
+models.Well.belongsTo(models.Field, {
+  foreignKey: 'field_id',
+  as: 'field',
+});
+
+// Well -> User (createdBy)
+models.Well.belongsTo(models.User, {
+  foreignKey: 'created_by',
+  as: 'creator',
+});
+
+// Well <-> WellProduction
+models.Well.hasMany(models.WellProduction, {
+  foreignKey: 'well_id',
+  as: 'productions',
+});
+models.WellProduction.belongsTo(models.Well, {
+  foreignKey: 'well_id',
+  as: 'well',
+});
+
+// WellProduction -> User (reportedBy, verifiedBy, approvedBy)
+models.WellProduction.belongsTo(models.User, {
+  foreignKey: 'reported_by',
+  as: 'reporter',
+});
+models.WellProduction.belongsTo(models.User, {
+  foreignKey: 'verified_by',
+  as: 'verifier',
+});
+models.WellProduction.belongsTo(models.User, {
+  foreignKey: 'approved_by',
+  as: 'approver',
+});
+
+// Field <-> ProductionAllocation
+models.Field.hasMany(models.ProductionAllocation, {
+  foreignKey: 'field_id',
+  as: 'allocations',
+});
+models.ProductionAllocation.belongsTo(models.Field, {
+  foreignKey: 'field_id',
+  as: 'field',
+});
+
+// ProductionAllocation -> User (calculatedBy, approvedBy, createdBy)
+models.ProductionAllocation.belongsTo(models.User, {
+  foreignKey: 'calculated_by',
+  as: 'calculator',
+});
+models.ProductionAllocation.belongsTo(models.User, {
+  foreignKey: 'approved_by',
+  as: 'approver',
+});
+models.ProductionAllocation.belongsTo(models.User, {
+  foreignKey: 'created_by',
+  as: 'creator',
+});
+
+// Field <-> MorningReport
+models.Field.hasMany(models.MorningReport, {
+  foreignKey: 'field_id',
+  as: 'morningReports',
+});
+models.MorningReport.belongsTo(models.Field, {
+  foreignKey: 'field_id',
+  as: 'field',
+});
+
+// MorningReport -> User (createdBy, submittedBy, approvedBy)
+models.MorningReport.belongsTo(models.User, {
+  foreignKey: 'created_by',
+  as: 'creator',
+});
+models.MorningReport.belongsTo(models.User, {
+  foreignKey: 'submitted_by',
+  as: 'submitter',
+});
+models.MorningReport.belongsTo(models.User, {
+  foreignKey: 'approved_by',
+  as: 'approver',
+});
+
+// Well <-> WellLog (Bitácoras)
+models.Well.hasMany(models.WellLog, {
+  foreignKey: 'well_id',
+  as: 'logs',
+});
+models.WellLog.belongsTo(models.Well, {
+  foreignKey: 'well_id',
+  as: 'well',
+});
+
+// WellLog -> Contractor
+models.WellLog.belongsTo(models.Contractor, {
+  foreignKey: 'contractor_id',
+  as: 'contractor',
+});
+models.Contractor.hasMany(models.WellLog, {
+  foreignKey: 'contractor_id',
+  as: 'wellLogs',
+});
+
+// WellLog -> Project
+models.WellLog.belongsTo(models.Project, {
+  foreignKey: 'project_id',
+  as: 'project',
+});
+models.Project.hasMany(models.WellLog, {
+  foreignKey: 'project_id',
+  as: 'wellLogs',
+});
+
+// WellLog -> PurchaseOrder
+models.WellLog.belongsTo(models.PurchaseOrder, {
+  foreignKey: 'purchase_order_id',
+  as: 'purchaseOrder',
+});
+models.PurchaseOrder.hasMany(models.WellLog, {
+  foreignKey: 'purchase_order_id',
+  as: 'wellLogs',
+});
+
+// WellLog -> User (responsible, createdBy)
+models.WellLog.belongsTo(models.User, {
+  foreignKey: 'responsible_id',
+  as: 'responsible',
+});
+models.WellLog.belongsTo(models.User, {
+  foreignKey: 'created_by',
+  as: 'creator',
+});
+
+// Project -> Field (vincular proyectos a campos)
+models.Project.belongsTo(models.Field, {
+  foreignKey: 'field_id',
+  as: 'field',
+});
+models.Field.hasMany(models.Project, {
+  foreignKey: 'field_id',
+  as: 'projects',
+});
+
+// Project -> Well (vincular proyectos a pozos)
+models.Project.belongsTo(models.Well, {
+  foreignKey: 'well_id',
+  as: 'well',
+});
+models.Well.hasMany(models.Project, {
+  foreignKey: 'well_id',
+  as: 'projects',
+});
+
+// PurchaseOrder -> Field
+models.PurchaseOrder.belongsTo(models.Field, {
+  foreignKey: 'field_id',
+  as: 'field',
+});
+models.Field.hasMany(models.PurchaseOrder, {
+  foreignKey: 'field_id',
+  as: 'purchaseOrders',
+});
+
+// PurchaseOrder -> Well
+models.PurchaseOrder.belongsTo(models.Well, {
+  foreignKey: 'well_id',
+  as: 'well',
+});
+models.Well.hasMany(models.PurchaseOrder, {
+  foreignKey: 'well_id',
+  as: 'purchaseOrders',
+});
+
+// ========== AFE ASSOCIATIONS ==========
+
+// AFE -> User (creator, approverFinal)
+models.AFE.belongsTo(models.User, {
+  foreignKey: 'created_by',
+  as: 'creator',
+});
+models.AFE.belongsTo(models.User, {
+  foreignKey: 'approved_by',
+  as: 'approverFinal',
+});
+
+// AFE -> Project
+models.AFE.belongsTo(models.Project, {
+  foreignKey: 'project_id',
+  as: 'project',
+});
+models.Project.hasMany(models.AFE, {
+  foreignKey: 'project_id',
+  as: 'afes',
+});
+
+// AFE -> Field
+models.AFE.belongsTo(models.Field, {
+  foreignKey: 'field_id',
+  as: 'field',
+});
+models.Field.hasMany(models.AFE, {
+  foreignKey: 'field_id',
+  as: 'afes',
+});
+
+// AFE -> Well
+models.AFE.belongsTo(models.Well, {
+  foreignKey: 'well_id',
+  as: 'well',
+});
+models.Well.hasMany(models.AFE, {
+  foreignKey: 'well_id',
+  as: 'afes',
+});
+
+// AFE <-> AFECategory
+models.AFE.hasMany(models.AFECategory, {
+  foreignKey: 'afe_id',
+  as: 'categories',
+});
+models.AFECategory.belongsTo(models.AFE, {
+  foreignKey: 'afe_id',
+  as: 'afe',
+});
+
+// AFE <-> AFEApproval
+models.AFE.hasMany(models.AFEApproval, {
+  foreignKey: 'afe_id',
+  as: 'approvals',
+});
+models.AFEApproval.belongsTo(models.AFE, {
+  foreignKey: 'afe_id',
+  as: 'afe',
+});
+
+// AFEApproval -> User (approver)
+models.AFEApproval.belongsTo(models.User, {
+  foreignKey: 'approver_id',
+  as: 'approver',
+});
+
+// AFE <-> AFEExpense
+models.AFE.hasMany(models.AFEExpense, {
+  foreignKey: 'afe_id',
+  as: 'expenses',
+});
+models.AFEExpense.belongsTo(models.AFE, {
+  foreignKey: 'afe_id',
+  as: 'afe',
+});
+
+// AFEExpense -> AFECategory
+models.AFEExpense.belongsTo(models.AFECategory, {
+  foreignKey: 'category_id',
+  as: 'category',
+});
+models.AFECategory.hasMany(models.AFEExpense, {
+  foreignKey: 'category_id',
+  as: 'expenses',
+});
+
+// AFEExpense -> Contractor
+models.AFEExpense.belongsTo(models.Contractor, {
+  foreignKey: 'contractor_id',
+  as: 'contractor',
+});
+models.Contractor.hasMany(models.AFEExpense, {
+  foreignKey: 'contractor_id',
+  as: 'afeExpenses',
+});
+
+// AFEExpense -> Transaction
+models.AFEExpense.belongsTo(models.Transaction, {
+  foreignKey: 'transaction_id',
+  as: 'transaction',
+});
+
+// AFEExpense -> PurchaseOrder
+models.AFEExpense.belongsTo(models.PurchaseOrder, {
+  foreignKey: 'purchase_order_id',
+  as: 'purchaseOrder',
+});
+
+// AFEExpense -> User (creator, approverUser)
+models.AFEExpense.belongsTo(models.User, {
+  foreignKey: 'created_by',
+  as: 'creator',
+});
+models.AFEExpense.belongsTo(models.User, {
+  foreignKey: 'approved_by',
+  as: 'approverUser',
+});
+
+// AFE <-> AFEVariance
+models.AFE.hasMany(models.AFEVariance, {
+  foreignKey: 'afe_id',
+  as: 'variances',
+});
+models.AFEVariance.belongsTo(models.AFE, {
+  foreignKey: 'afe_id',
+  as: 'afe',
+});
+
+// AFEVariance -> User (requester, approverUser)
+models.AFEVariance.belongsTo(models.User, {
+  foreignKey: 'requested_by',
+  as: 'requester',
+});
+models.AFEVariance.belongsTo(models.User, {
+  foreignKey: 'approved_by',
+  as: 'approverUser',
+});
+
+// ========== CONTRACT ASSOCIATIONS ==========
+
+// OGContract -> User (creator)
+models.OGContract.belongsTo(models.User, {
+  foreignKey: 'created_by',
+  as: 'creator',
+});
+
+// OGContract -> Client (operator)
+models.OGContract.belongsTo(models.Client, {
+  foreignKey: 'operator_id',
+  as: 'operator',
+});
+models.Client.hasMany(models.OGContract, {
+  foreignKey: 'operator_id',
+  as: 'operatedContracts',
+});
+
+// OGContract <-> ContractParty
+models.OGContract.hasMany(models.ContractParty, {
+  foreignKey: 'contract_id',
+  as: 'parties',
+});
+models.ContractParty.belongsTo(models.OGContract, {
+  foreignKey: 'contract_id',
+  as: 'contract',
+});
+
+// ContractParty -> Client
+models.ContractParty.belongsTo(models.Client, {
+  foreignKey: 'client_id',
+  as: 'client',
+});
+models.Client.hasMany(models.ContractParty, {
+  foreignKey: 'client_id',
+  as: 'contractParties',
+});
+
+// ContractParty -> Contractor
+models.ContractParty.belongsTo(models.Contractor, {
+  foreignKey: 'contractor_id',
+  as: 'contractor',
+});
+models.Contractor.hasMany(models.ContractParty, {
+  foreignKey: 'contractor_id',
+  as: 'contractParties',
+});
+
+// OGContract <-> WorkingInterest
+models.OGContract.hasMany(models.WorkingInterest, {
+  foreignKey: 'contract_id',
+  as: 'workingInterests',
+});
+models.WorkingInterest.belongsTo(models.OGContract, {
+  foreignKey: 'contract_id',
+  as: 'contract',
+});
+
+// WorkingInterest -> ContractParty
+models.WorkingInterest.belongsTo(models.ContractParty, {
+  foreignKey: 'party_id',
+  as: 'party',
+});
+models.ContractParty.hasMany(models.WorkingInterest, {
+  foreignKey: 'party_id',
+  as: 'workingInterests',
+});
+
+// WorkingInterest -> Field
+models.WorkingInterest.belongsTo(models.Field, {
+  foreignKey: 'field_id',
+  as: 'field',
+});
+models.Field.hasMany(models.WorkingInterest, {
+  foreignKey: 'field_id',
+  as: 'workingInterests',
+});
+
+// WorkingInterest -> Well
+models.WorkingInterest.belongsTo(models.Well, {
+  foreignKey: 'well_id',
+  as: 'well',
+});
+models.Well.hasMany(models.WorkingInterest, {
+  foreignKey: 'well_id',
+  as: 'workingInterests',
+});
+
+// WorkingInterest -> Concession
+models.WorkingInterest.belongsTo(models.Concession, {
+  foreignKey: 'concession_id',
+  as: 'concession',
+});
+models.Concession.hasMany(models.WorkingInterest, {
+  foreignKey: 'concession_id',
+  as: 'workingInterests',
+});
+
+// WorkingInterest -> User (creator)
+models.WorkingInterest.belongsTo(models.User, {
+  foreignKey: 'created_by',
+  as: 'creator',
+});
+
+// OGContract <-> RoyaltyPayment
+models.OGContract.hasMany(models.RoyaltyPayment, {
+  foreignKey: 'contract_id',
+  as: 'royalties',
+});
+models.RoyaltyPayment.belongsTo(models.OGContract, {
+  foreignKey: 'contract_id',
+  as: 'contract',
+});
+
+// RoyaltyPayment -> Field
+models.RoyaltyPayment.belongsTo(models.Field, {
+  foreignKey: 'field_id',
+  as: 'field',
+});
+models.Field.hasMany(models.RoyaltyPayment, {
+  foreignKey: 'field_id',
+  as: 'royalties',
+});
+
+// RoyaltyPayment -> Transaction
+models.RoyaltyPayment.belongsTo(models.Transaction, {
+  foreignKey: 'transaction_id',
+  as: 'transaction',
+});
+
+// RoyaltyPayment -> User (calculator, payer)
+models.RoyaltyPayment.belongsTo(models.User, {
+  foreignKey: 'calculated_by',
+  as: 'calculator',
+});
+models.RoyaltyPayment.belongsTo(models.User, {
+  foreignKey: 'paid_by',
+  as: 'payer',
+});
+
+// OGContract <-> Concession
+models.OGContract.hasMany(models.Concession, {
+  foreignKey: 'contract_id',
+  as: 'concessions',
+});
+models.Concession.belongsTo(models.OGContract, {
+  foreignKey: 'contract_id',
+  as: 'contract',
+});
+
+// Concession -> User (creator)
+models.Concession.belongsTo(models.User, {
+  foreignKey: 'created_by',
+  as: 'creator',
+});
+
+// Concession <-> Field
+models.Concession.hasMany(models.Field, {
+  foreignKey: 'concession_id',
+  as: 'fields',
+});
+models.Field.belongsTo(models.Concession, {
+  foreignKey: 'concession_id',
+  as: 'concession',
+});
+
+// ========== COMPLIANCE ASSOCIATIONS ==========
+
+// RegulatoryReport -> Field
+models.RegulatoryReport.belongsTo(models.Field, {
+  foreignKey: 'field_id',
+  as: 'field',
+});
+models.Field.hasMany(models.RegulatoryReport, {
+  foreignKey: 'field_id',
+  as: 'regulatoryReports',
+});
+
+// RegulatoryReport -> Project
+models.RegulatoryReport.belongsTo(models.Project, {
+  foreignKey: 'project_id',
+  as: 'project',
+});
+models.Project.hasMany(models.RegulatoryReport, {
+  foreignKey: 'project_id',
+  as: 'regulatoryReports',
+});
+
+// RegulatoryReport -> User (submittedBy, createdBy)
+models.RegulatoryReport.belongsTo(models.User, {
+  foreignKey: 'submitted_by',
+  as: 'submitter',
+});
+models.RegulatoryReport.belongsTo(models.User, {
+  foreignKey: 'created_by',
+  as: 'creator',
+});
+
+// EnvironmentalPermit -> Field
+models.EnvironmentalPermit.belongsTo(models.Field, {
+  foreignKey: 'field_id',
+  as: 'field',
+});
+models.Field.hasMany(models.EnvironmentalPermit, {
+  foreignKey: 'field_id',
+  as: 'environmentalPermits',
+});
+
+// EnvironmentalPermit -> Project
+models.EnvironmentalPermit.belongsTo(models.Project, {
+  foreignKey: 'project_id',
+  as: 'project',
+});
+models.Project.hasMany(models.EnvironmentalPermit, {
+  foreignKey: 'project_id',
+  as: 'environmentalPermits',
+});
+
+// EnvironmentalPermit -> Well
+models.EnvironmentalPermit.belongsTo(models.Well, {
+  foreignKey: 'well_id',
+  as: 'well',
+});
+models.Well.hasMany(models.EnvironmentalPermit, {
+  foreignKey: 'well_id',
+  as: 'environmentalPermits',
+});
+
+// EnvironmentalPermit -> User (createdBy)
+models.EnvironmentalPermit.belongsTo(models.User, {
+  foreignKey: 'created_by',
+  as: 'creator',
+});
+
+// ComplianceAudit -> Field
+models.ComplianceAudit.belongsTo(models.Field, {
+  foreignKey: 'field_id',
+  as: 'field',
+});
+models.Field.hasMany(models.ComplianceAudit, {
+  foreignKey: 'field_id',
+  as: 'complianceAudits',
+});
+
+// ComplianceAudit -> Project
+models.ComplianceAudit.belongsTo(models.Project, {
+  foreignKey: 'project_id',
+  as: 'project',
+});
+models.Project.hasMany(models.ComplianceAudit, {
+  foreignKey: 'project_id',
+  as: 'complianceAudits',
+});
+
+// ComplianceAudit -> Department
+models.ComplianceAudit.belongsTo(models.Department, {
+  foreignKey: 'department_id',
+  as: 'department',
+});
+models.Department.hasMany(models.ComplianceAudit, {
+  foreignKey: 'department_id',
+  as: 'complianceAudits',
+});
+
+// ComplianceAudit -> Employee (leadAuditor)
+models.ComplianceAudit.belongsTo(models.Employee, {
+  foreignKey: 'lead_auditor_id',
+  as: 'leadAuditor',
+});
+models.Employee.hasMany(models.ComplianceAudit, {
+  foreignKey: 'lead_auditor_id',
+  as: 'ledAudits',
+});
+
+// ComplianceAudit -> User (createdBy)
+models.ComplianceAudit.belongsTo(models.User, {
+  foreignKey: 'created_by',
+  as: 'creator',
+});
+
+// Policy -> Department
+models.Policy.belongsTo(models.Department, {
+  foreignKey: 'department_id',
+  as: 'department',
+});
+models.Department.hasMany(models.Policy, {
+  foreignKey: 'department_id',
+  as: 'policies',
+});
+
+// Policy -> Employee (owner)
+models.Policy.belongsTo(models.Employee, {
+  foreignKey: 'owner_id',
+  as: 'owner',
+});
+models.Employee.hasMany(models.Policy, {
+  foreignKey: 'owner_id',
+  as: 'ownedPolicies',
+});
+
+// Policy -> User (approvedBy, createdBy)
+models.Policy.belongsTo(models.User, {
+  foreignKey: 'approved_by',
+  as: 'approver',
+});
+models.Policy.belongsTo(models.User, {
+  foreignKey: 'created_by',
+  as: 'creator',
+});
+
+// Policy self-reference (supersedes)
+models.Policy.belongsTo(models.Policy, {
+  foreignKey: 'supersedes_id',
+  as: 'supersedes',
+});
+models.Policy.hasOne(models.Policy, {
+  foreignKey: 'supersedes_id',
+  as: 'supersededBy',
+});
+
+// Certification -> Department
+models.Certification.belongsTo(models.Department, {
+  foreignKey: 'department_id',
+  as: 'department',
+});
+models.Department.hasMany(models.Certification, {
+  foreignKey: 'department_id',
+  as: 'certifications',
+});
+
+// Certification -> Employee (responsible)
+models.Certification.belongsTo(models.Employee, {
+  foreignKey: 'responsible_id',
+  as: 'responsible',
+});
+models.Employee.hasMany(models.Certification, {
+  foreignKey: 'responsible_id',
+  as: 'certificationResponsibilities',
+});
+
+// Certification -> User (createdBy)
+models.Certification.belongsTo(models.User, {
+  foreignKey: 'created_by',
+  as: 'creator',
+});
+
+// ========== JIB ASSOCIATIONS ==========
+
+// JointInterestBilling -> OGContract
+models.JointInterestBilling.belongsTo(models.OGContract, {
+  foreignKey: 'contract_id',
+  as: 'contract',
+});
+models.OGContract.hasMany(models.JointInterestBilling, {
+  foreignKey: 'contract_id',
+  as: 'jibs',
+});
+
+// JointInterestBilling -> User (creator, approver)
+models.JointInterestBilling.belongsTo(models.User, {
+  foreignKey: 'created_by',
+  as: 'creator',
+});
+models.JointInterestBilling.belongsTo(models.User, {
+  foreignKey: 'approved_by',
+  as: 'approver',
+});
+
+// JointInterestBilling <-> JIBLineItem
+models.JointInterestBilling.hasMany(models.JIBLineItem, {
+  foreignKey: 'jib_id',
+  as: 'lineItems',
+});
+models.JIBLineItem.belongsTo(models.JointInterestBilling, {
+  foreignKey: 'jib_id',
+  as: 'jib',
+});
+
+// JIBLineItem -> AFE
+models.JIBLineItem.belongsTo(models.AFE, {
+  foreignKey: 'afe_id',
+  as: 'afe',
+});
+models.AFE.hasMany(models.JIBLineItem, {
+  foreignKey: 'afe_id',
+  as: 'jibLineItems',
+});
+
+// JIBLineItem -> AFEExpense
+models.JIBLineItem.belongsTo(models.AFEExpense, {
+  foreignKey: 'expense_id',
+  as: 'expense',
+});
+models.AFEExpense.hasMany(models.JIBLineItem, {
+  foreignKey: 'expense_id',
+  as: 'jibLineItems',
+});
+
+// JointInterestBilling <-> JIBPartnerShare
+models.JointInterestBilling.hasMany(models.JIBPartnerShare, {
+  foreignKey: 'jib_id',
+  as: 'partnerShares',
+});
+models.JIBPartnerShare.belongsTo(models.JointInterestBilling, {
+  foreignKey: 'jib_id',
+  as: 'jib',
+});
+
+// JIBPartnerShare -> ContractParty
+models.JIBPartnerShare.belongsTo(models.ContractParty, {
+  foreignKey: 'party_id',
+  as: 'party',
+});
+models.ContractParty.hasMany(models.JIBPartnerShare, {
+  foreignKey: 'party_id',
+  as: 'jibShares',
+});
+
+// CashCall -> OGContract
+models.CashCall.belongsTo(models.OGContract, {
+  foreignKey: 'contract_id',
+  as: 'contract',
+});
+models.OGContract.hasMany(models.CashCall, {
+  foreignKey: 'contract_id',
+  as: 'cashCalls',
+});
+
+// CashCall -> AFE
+models.CashCall.belongsTo(models.AFE, {
+  foreignKey: 'afe_id',
+  as: 'afe',
+});
+models.AFE.hasMany(models.CashCall, {
+  foreignKey: 'afe_id',
+  as: 'cashCalls',
+});
+
+// CashCall -> User (creator, approver)
+models.CashCall.belongsTo(models.User, {
+  foreignKey: 'created_by',
+  as: 'creator',
+});
+models.CashCall.belongsTo(models.User, {
+  foreignKey: 'approved_by',
+  as: 'approver',
+});
+
+// CashCall <-> CashCallResponse
+models.CashCall.hasMany(models.CashCallResponse, {
+  foreignKey: 'cash_call_id',
+  as: 'responses',
+});
+models.CashCallResponse.belongsTo(models.CashCall, {
+  foreignKey: 'cash_call_id',
+  as: 'cashCall',
+});
+
+// CashCallResponse -> ContractParty
+models.CashCallResponse.belongsTo(models.ContractParty, {
+  foreignKey: 'party_id',
+  as: 'party',
+});
+models.ContractParty.hasMany(models.CashCallResponse, {
+  foreignKey: 'party_id',
+  as: 'cashCallResponses',
+});
+
+// Export sequelize instance for service access
+models.sequelize = sequelize;
 
 module.exports = models;

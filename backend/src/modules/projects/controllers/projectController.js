@@ -36,6 +36,8 @@ class ProjectController {
         pettyCashId,
         contractorId,
         contractAmount,
+        fieldId,
+        wellId,
         notes,
       } = req.body;
       
@@ -65,6 +67,8 @@ class ProjectController {
         pettyCashId,
         contractorId,
         contractAmount,
+        fieldId,
+        wellId,
         createdBy: req.user.id,
         notes,
       }, { transaction: t });
@@ -87,8 +91,8 @@ class ProjectController {
    */
   async list(req, res, next) {
     try {
-      const { Project, Employee, Department, Contractor } = require('../../../database/models');
-      const { executionType, status, priority, managerId, departmentId, contractorId, search, page = 1, limit = 20 } = req.query;
+      const { Project, Employee, Department, Contractor, Field, Well } = require('../../../database/models');
+      const { executionType, status, priority, managerId, departmentId, contractorId, fieldId, wellId, search, page = 1, limit = 20 } = req.query;
       
       const whereClause = {};
       if (executionType) whereClause.executionType = executionType;
@@ -97,6 +101,8 @@ class ProjectController {
       if (managerId) whereClause.managerId = managerId;
       if (departmentId) whereClause.departmentId = departmentId;
       if (contractorId) whereClause.contractorId = contractorId;
+      if (fieldId) whereClause.fieldId = fieldId;
+      if (wellId) whereClause.wellId = wellId;
       if (search) {
         whereClause[Op.or] = [
           { name: { [Op.iLike]: `%${search}%` } },

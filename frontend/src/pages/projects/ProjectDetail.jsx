@@ -544,40 +544,56 @@ const ProjectDetail = () => {
   return (
     <Box>
       {/* Header */}
-      <Box sx={{ display: 'flex', alignItems: 'center', mb: 3, gap: 2, flexWrap: 'wrap' }}>
-        <IconButton onClick={() => navigate('/projects')}>
-          <BackIcon />
-        </IconButton>
-        <Box sx={{ flexGrow: 1 }}>
-          <Typography variant="h5" fontWeight="bold">
-            {project.name}
-          </Typography>
-          <Typography variant="body2" color="text.secondary">
-            {project.code}
-          </Typography>
+      <Box sx={{ mb: 3 }}>
+        <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 1, mb: { xs: 2, sm: 0 } }}>
+          <IconButton onClick={() => navigate('/projects')} sx={{ mt: 0.5 }}>
+            <BackIcon />
+          </IconButton>
+          <Box sx={{ flexGrow: 1, minWidth: 0 }}>
+            <Typography variant={isMobile ? 'h6' : 'h5'} fontWeight="bold" noWrap>
+              {project.name}
+            </Typography>
+            <Typography variant="body2" color="text.secondary">
+              {project.code}
+            </Typography>
+          </Box>
         </Box>
-        <Chip label={statusLabels[project.status]} color={statusColors[project.status]} />
-        <Chip label={priorityLabels[project.priority]} color={priorityColors[project.priority]} variant="outlined" />
-        <DownloadPDFButton
-          endpoint={`/reports/projects/${id}`}
-          filename={`proyecto-${project.code}.pdf`}
-        />
-        <Button
-          variant="outlined"
-          startIcon={<EditIcon />}
-          onClick={() => navigate(`/projects/${id}/edit`)}
-        >
-          Editar
-        </Button>
+        <Box sx={{ 
+          display: 'flex', 
+          flexDirection: { xs: 'column', sm: 'row' },
+          alignItems: { xs: 'stretch', sm: 'center' }, 
+          gap: 1, 
+          mt: 2,
+          pl: { xs: 0, sm: 6 }
+        }}>
+          <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap', flexGrow: 1 }}>
+            <Chip label={statusLabels[project.status]} color={statusColors[project.status]} />
+            <Chip label={priorityLabels[project.priority]} color={priorityColors[project.priority]} variant="outlined" />
+          </Box>
+          <Box sx={{ display: 'flex', gap: 1, flexDirection: { xs: 'column', sm: 'row' } }}>
+            <DownloadPDFButton
+              endpoint={`/reports/projects/${id}`}
+              filename={`proyecto-${project.code}.pdf`}
+            />
+            <Button
+              variant="outlined"
+              startIcon={<EditIcon />}
+              onClick={() => navigate(`/projects/${id}/edit`)}
+              fullWidth={isMobile}
+            >
+              Editar
+            </Button>
+          </Box>
+        </Box>
       </Box>
 
       {/* Stats Cards */}
-      <Grid container spacing={2} sx={{ mb: 3 }}>
+      <Grid container spacing={1} sx={{ mb: 3 }}>
         <Grid item xs={6} sm={4} md={2}>
           <Card>
-            <CardContent sx={{ textAlign: 'center', py: 1.5 }}>
-              <Typography variant="caption" color="text.secondary">Progreso</Typography>
-              <Typography variant="h5" fontWeight="bold" color={`${getProgressColor(project.progress)}.main`}>
+            <CardContent sx={{ textAlign: 'center', py: 1.5, px: 1 }}>
+              <Typography variant="caption" color="text.secondary" noWrap>Progreso</Typography>
+              <Typography variant={isMobile ? 'h6' : 'h5'} fontWeight="bold" color={`${getProgressColor(project.progress)}.main`}>
                 {project.progress}%
               </Typography>
             </CardContent>
@@ -585,9 +601,9 @@ const ProjectDetail = () => {
         </Grid>
         <Grid item xs={6} sm={4} md={2}>
           <Card>
-            <CardContent sx={{ textAlign: 'center', py: 1.5 }}>
-              <Typography variant="caption" color="text.secondary">Equipo</Typography>
-              <Typography variant="h5" fontWeight="bold" color="primary">
+            <CardContent sx={{ textAlign: 'center', py: 1.5, px: 1 }}>
+              <Typography variant="caption" color="text.secondary" noWrap>Equipo</Typography>
+              <Typography variant={isMobile ? 'h6' : 'h5'} fontWeight="bold" color="primary">
                 {stats.team?.activeMembers || members.length}
               </Typography>
             </CardContent>
@@ -595,9 +611,9 @@ const ProjectDetail = () => {
         </Grid>
         <Grid item xs={6} sm={4} md={2}>
           <Card>
-            <CardContent sx={{ textAlign: 'center', py: 1.5 }}>
-              <Typography variant="caption" color="text.secondary">Hitos</Typography>
-              <Typography variant="h5" fontWeight="bold">
+            <CardContent sx={{ textAlign: 'center', py: 1.5, px: 1 }}>
+              <Typography variant="caption" color="text.secondary" noWrap>Hitos</Typography>
+              <Typography variant={isMobile ? 'h6' : 'h5'} fontWeight="bold">
                 {stats.milestones?.total || milestones.length}
               </Typography>
             </CardContent>
@@ -605,9 +621,9 @@ const ProjectDetail = () => {
         </Grid>
         <Grid item xs={6} sm={4} md={2}>
           <Card>
-            <CardContent sx={{ textAlign: 'center', py: 1.5 }}>
-              <Typography variant="caption" color="text.secondary">Presupuesto</Typography>
-              <Typography variant="h6" fontWeight="bold" color="info.main">
+            <CardContent sx={{ textAlign: 'center', py: 1.5, px: 1 }}>
+              <Typography variant="caption" color="text.secondary" noWrap>Presupuesto</Typography>
+              <Typography variant="body1" fontWeight="bold" color="info.main" noWrap sx={{ fontSize: { xs: '0.85rem', sm: '1rem' } }}>
                 {formatCurrency(project.budget, project.currency)}
               </Typography>
             </CardContent>
@@ -615,9 +631,9 @@ const ProjectDetail = () => {
         </Grid>
         <Grid item xs={6} sm={4} md={2}>
           <Card>
-            <CardContent sx={{ textAlign: 'center', py: 1.5 }}>
-              <Typography variant="caption" color="text.secondary">Costo Real</Typography>
-              <Typography variant="h6" fontWeight="bold" color="warning.main">
+            <CardContent sx={{ textAlign: 'center', py: 1.5, px: 1 }}>
+              <Typography variant="caption" color="text.secondary" noWrap>Costo Real</Typography>
+              <Typography variant="body1" fontWeight="bold" color="warning.main" noWrap sx={{ fontSize: { xs: '0.85rem', sm: '1rem' } }}>
                 {formatCurrency(project.actualCost, project.currency)}
               </Typography>
             </CardContent>
@@ -625,9 +641,9 @@ const ProjectDetail = () => {
         </Grid>
         <Grid item xs={6} sm={4} md={2}>
           <Card>
-            <CardContent sx={{ textAlign: 'center', py: 1.5 }}>
-              <Typography variant="caption" color="text.secondary">Uso Presup.</Typography>
-              <Typography variant="h6" fontWeight="bold" color={stats.financial?.budgetUsage > 100 ? 'error.main' : 'success.main'}>
+            <CardContent sx={{ textAlign: 'center', py: 1.5, px: 1 }}>
+              <Typography variant="caption" color="text.secondary" noWrap>Uso Presup.</Typography>
+              <Typography variant={isMobile ? 'h6' : 'h5'} fontWeight="bold" color={stats.financial?.budgetUsage > 100 ? 'error.main' : 'success.main'}>
                 {(stats.financial?.budgetUsage || 0).toFixed(0)}%
               </Typography>
             </CardContent>
@@ -821,63 +837,99 @@ const ProjectDetail = () => {
 
       {/* Tab: Equipo */}
       <TabPanel value={tabValue} index={1}>
-        <Box sx={{ display: 'flex', justifyContent: 'flex-end', mb: 2 }}>
-          <Button startIcon={<AddIcon />} variant="contained" onClick={() => setMemberDialog(true)}>
-            Agregar Miembro
+        <Box sx={{ display: 'flex', flexDirection: { xs: 'column', sm: 'row' }, justifyContent: 'flex-end', mb: 2 }}>
+          <Button startIcon={<AddIcon />} variant="contained" onClick={() => setMemberDialog(true)} fullWidth={isMobile}>
+            {t('projects.addMember', 'Agregar Miembro')}
           </Button>
         </Box>
-        <TableContainer component={Paper}>
-          <Table>
-            <TableHead>
-              <TableRow>
-                <TableCell>Empleado</TableCell>
-                <TableCell>Rol</TableCell>
-                <TableCell>Dedicación</TableCell>
-                <TableCell>Desde</TableCell>
-                <TableCell>Estado</TableCell>
-                <TableCell align="right">Acciones</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {members.map((member) => (
-                <TableRow key={member.id}>
-                  <TableCell>
-                    {member.employee?.firstName} {member.employee?.lastName}
-                  </TableCell>
-                  <TableCell>{member.role}</TableCell>
-                  <TableCell>{member.allocation}%</TableCell>
-                  <TableCell>{formatDate(member.startDate)}</TableCell>
-                  <TableCell>
-                    <Chip 
-                      label={member.status === 'ACTIVE' ? 'Activo' : 'Inactivo'} 
-                      color={member.status === 'ACTIVE' ? 'success' : 'default'}
-                      size="small"
-                    />
-                  </TableCell>
-                  <TableCell align="right">
-                    <IconButton size="small" color="error" onClick={() => handleRemoveMember(member.id)}>
-                      <DeleteIcon />
-                    </IconButton>
-                  </TableCell>
-                </TableRow>
-              ))}
-              {members.length === 0 && (
+        {members.length === 0 ? (
+          <Paper sx={{ p: 3, textAlign: 'center' }}>
+            <Typography color="text.secondary">{t('projects.noMembers', 'No hay miembros asignados')}</Typography>
+          </Paper>
+        ) : isMobile ? (
+          <Box>
+            {members.map((member) => (
+              <Card key={member.id} variant="outlined" sx={{ mb: 2 }}>
+                <CardContent sx={{ pb: 1 }}>
+                  <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 1 }}>
+                    <Box>
+                      <Typography variant="subtitle1" fontWeight="bold">
+                        {member.employee?.firstName} {member.employee?.lastName}
+                      </Typography>
+                      <Typography variant="body2" color="text.secondary">
+                        {member.role}
+                      </Typography>
+                    </Box>
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                      <Chip 
+                        label={member.status === 'ACTIVE' ? t('common.active', 'Activo') : t('common.inactive', 'Inactivo')} 
+                        color={member.status === 'ACTIVE' ? 'success' : 'default'}
+                        size="small"
+                      />
+                      <IconButton size="small" color="error" onClick={() => handleRemoveMember(member.id)}>
+                        <DeleteIcon fontSize="small" />
+                      </IconButton>
+                    </Box>
+                  </Box>
+                  <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
+                    <Typography variant="body2" color="text.secondary">
+                      {t('projects.allocation', 'Dedicación')}: {member.allocation}%
+                    </Typography>
+                    <Typography variant="body2" color="text.secondary">
+                      {t('common.since', 'Desde')}: {formatDate(member.startDate)}
+                    </Typography>
+                  </Box>
+                </CardContent>
+              </Card>
+            ))}
+          </Box>
+        ) : (
+          <TableContainer component={Paper}>
+            <Table>
+              <TableHead>
                 <TableRow>
-                  <TableCell colSpan={6} align="center">
-                    <Typography color="text.secondary">No hay miembros asignados</Typography>
-                  </TableCell>
+                  <TableCell>{t('common.employee', 'Empleado')}</TableCell>
+                  <TableCell>{t('projects.role', 'Rol')}</TableCell>
+                  <TableCell>{t('projects.allocation', 'Dedicación')}</TableCell>
+                  <TableCell>{t('common.since', 'Desde')}</TableCell>
+                  <TableCell>{t('common.status', 'Estado')}</TableCell>
+                  <TableCell align="right">{t('common.actions', 'Acciones')}</TableCell>
                 </TableRow>
-              )}
-            </TableBody>
-          </Table>
-        </TableContainer>
+              </TableHead>
+              <TableBody>
+                {members.map((member) => (
+                  <TableRow key={member.id}>
+                    <TableCell>
+                      {member.employee?.firstName} {member.employee?.lastName}
+                    </TableCell>
+                    <TableCell>{member.role}</TableCell>
+                    <TableCell>{member.allocation}%</TableCell>
+                    <TableCell>{formatDate(member.startDate)}</TableCell>
+                    <TableCell>
+                      <Chip 
+                        label={member.status === 'ACTIVE' ? t('common.active', 'Activo') : t('common.inactive', 'Inactivo')} 
+                        color={member.status === 'ACTIVE' ? 'success' : 'default'}
+                        size="small"
+                      />
+                    </TableCell>
+                    <TableCell align="right">
+                      <IconButton size="small" color="error" onClick={() => handleRemoveMember(member.id)}>
+                        <DeleteIcon />
+                      </IconButton>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </TableContainer>
+        )}
       </TabPanel>
 
       {/* Tab: Hitos */}
       <TabPanel value={tabValue} index={2}>
-        <Box sx={{ display: 'flex', justifyContent: 'flex-end', mb: 2 }}>
-          <Button startIcon={<AddIcon />} variant="contained" onClick={() => setMilestoneDialog(true)}>
-            Nuevo Hito
+        <Box sx={{ display: 'flex', flexDirection: { xs: 'column', sm: 'row' }, justifyContent: 'flex-end', mb: 2 }}>
+          <Button startIcon={<AddIcon />} variant="contained" onClick={() => setMilestoneDialog(true)} fullWidth={isMobile}>
+            {t('projects.newMilestone', 'Nuevo Hito')}
           </Button>
         </Box>
         <Grid container spacing={2}>
@@ -929,190 +981,294 @@ const ProjectDetail = () => {
 
       {/* Tab: Gastos */}
       <TabPanel value={tabValue} index={3}>
-        <Box sx={{ display: 'flex', justifyContent: 'flex-end', mb: 2 }}>
-          <Button startIcon={<AddIcon />} variant="contained" onClick={() => setExpenseDialog(true)}>
-            Registrar Gasto
+        <Box sx={{ display: 'flex', flexDirection: { xs: 'column', sm: 'row' }, justifyContent: 'flex-end', mb: 2 }}>
+          <Button startIcon={<AddIcon />} variant="contained" onClick={() => setExpenseDialog(true)} fullWidth={isMobile}>
+            {t('projects.registerExpense', 'Registrar Gasto')}
           </Button>
         </Box>
-        <TableContainer component={Paper}>
-          <Table>
-            <TableHead>
-              <TableRow>
-                <TableCell>Código</TableCell>
-                <TableCell>Tipo</TableCell>
-                <TableCell>Descripción</TableCell>
-                <TableCell>Monto</TableCell>
-                <TableCell>Fecha</TableCell>
-                <TableCell>Estado</TableCell>
-                <TableCell align="right">Acciones</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {expenses.map((expense) => (
-                <TableRow key={expense.id}>
-                  <TableCell>{expense.code}</TableCell>
-                  <TableCell>{expense.expenseType}</TableCell>
-                  <TableCell>{expense.description}</TableCell>
-                  <TableCell>{formatCurrency(expense.amount, expense.currency)}</TableCell>
-                  <TableCell>{formatDate(expense.expenseDate)}</TableCell>
-                  <TableCell>
+        {expenses.length === 0 ? (
+          <Paper sx={{ p: 3, textAlign: 'center' }}>
+            <Typography color="text.secondary">{t('projects.noExpenses', 'No hay gastos registrados')}</Typography>
+          </Paper>
+        ) : isMobile ? (
+          <Box>
+            {expenses.map((expense) => (
+              <Card key={expense.id} variant="outlined" sx={{ mb: 2 }}>
+                <CardContent sx={{ pb: 1 }}>
+                  <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 1 }}>
+                    <Box>
+                      <Typography variant="subtitle1" fontWeight="bold">{expense.code}</Typography>
+                      <Typography variant="body2" color="text.secondary">{expense.expenseType}</Typography>
+                    </Box>
                     <Chip 
                       label={expenseStatusLabels[expense.status]} 
                       color={expenseStatusColors[expense.status]}
                       size="small"
                     />
-                  </TableCell>
-                  <TableCell align="right">
-                    {expense.status === 'PENDING' && (
-                      <>
-                        <Tooltip title="Aprobar">
-                          <IconButton size="small" color="success" onClick={() => handleApproveExpense(expense.id)}>
-                            <CheckIcon />
-                          </IconButton>
-                        </Tooltip>
-                        <Tooltip title="Rechazar">
-                          <IconButton size="small" color="error" onClick={() => handleRejectExpense(expense.id)}>
-                            <CancelIcon />
-                          </IconButton>
-                        </Tooltip>
-                      </>
-                    )}
-                  </TableCell>
-                </TableRow>
-              ))}
-              {expenses.length === 0 && (
+                  </Box>
+                  <Typography variant="body2" sx={{ mb: 1 }}>{expense.description}</Typography>
+                  <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <Typography variant="body2" color="text.secondary">
+                      {formatDate(expense.expenseDate)}
+                    </Typography>
+                    <Typography variant="h6" fontWeight="bold" color="primary">
+                      {formatCurrency(expense.amount, expense.currency)}
+                    </Typography>
+                  </Box>
+                  {expense.status === 'PENDING' && (
+                    <Box sx={{ display: 'flex', gap: 1, mt: 2, justifyContent: 'flex-end' }}>
+                      <Button size="small" color="success" startIcon={<CheckIcon />} onClick={() => handleApproveExpense(expense.id)}>
+                        {t('common.approve', 'Aprobar')}
+                      </Button>
+                      <Button size="small" color="error" startIcon={<CancelIcon />} onClick={() => handleRejectExpense(expense.id)}>
+                        {t('common.reject', 'Rechazar')}
+                      </Button>
+                    </Box>
+                  )}
+                </CardContent>
+              </Card>
+            ))}
+          </Box>
+        ) : (
+          <TableContainer component={Paper}>
+            <Table>
+              <TableHead>
                 <TableRow>
-                  <TableCell colSpan={7} align="center">
-                    <Typography color="text.secondary">No hay gastos registrados</Typography>
-                  </TableCell>
+                  <TableCell>{t('common.code', 'Código')}</TableCell>
+                  <TableCell>{t('common.type', 'Tipo')}</TableCell>
+                  <TableCell>{t('common.description', 'Descripción')}</TableCell>
+                  <TableCell>{t('common.amount', 'Monto')}</TableCell>
+                  <TableCell>{t('common.date', 'Fecha')}</TableCell>
+                  <TableCell>{t('common.status', 'Estado')}</TableCell>
+                  <TableCell align="right">{t('common.actions', 'Acciones')}</TableCell>
                 </TableRow>
-              )}
-            </TableBody>
-          </Table>
-        </TableContainer>
+              </TableHead>
+              <TableBody>
+                {expenses.map((expense) => (
+                  <TableRow key={expense.id}>
+                    <TableCell>{expense.code}</TableCell>
+                    <TableCell>{expense.expenseType}</TableCell>
+                    <TableCell>{expense.description}</TableCell>
+                    <TableCell>{formatCurrency(expense.amount, expense.currency)}</TableCell>
+                    <TableCell>{formatDate(expense.expenseDate)}</TableCell>
+                    <TableCell>
+                      <Chip 
+                        label={expenseStatusLabels[expense.status]} 
+                        color={expenseStatusColors[expense.status]}
+                        size="small"
+                      />
+                    </TableCell>
+                    <TableCell align="right">
+                      {expense.status === 'PENDING' && (
+                        <>
+                          <Tooltip title={t('common.approve', 'Aprobar')}>
+                            <IconButton size="small" color="success" onClick={() => handleApproveExpense(expense.id)}>
+                              <CheckIcon />
+                            </IconButton>
+                          </Tooltip>
+                          <Tooltip title={t('common.reject', 'Rechazar')}>
+                            <IconButton size="small" color="error" onClick={() => handleRejectExpense(expense.id)}>
+                              <CancelIcon />
+                            </IconButton>
+                          </Tooltip>
+                        </>
+                      )}
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </TableContainer>
+        )}
       </TabPanel>
 
       {/* Tab: Valuaciones (solo OUTSOURCED) */}
       {isOutsourced && (
         <TabPanel value={tabValue} index={4}>
-          <Box sx={{ display: 'flex', justifyContent: 'flex-end', mb: 2 }}>
-            <Button startIcon={<AddIcon />} variant="contained" onClick={() => setValuationDialog(true)}>
-              Nueva Valuación
+          <Box sx={{ display: 'flex', flexDirection: { xs: 'column', sm: 'row' }, justifyContent: 'flex-end', mb: 2 }}>
+            <Button startIcon={<AddIcon />} variant="contained" onClick={() => setValuationDialog(true)} fullWidth={isMobile}>
+              {t('projects.newValuation', 'Nueva Valuación')}
             </Button>
           </Box>
-          <TableContainer component={Paper}>
-            <Table size="small">
-              <TableHead>
-                <TableRow>
-                  <TableCell>Código</TableCell>
-                  <TableCell>Período</TableCell>
-                  <TableCell align="right">% Avance</TableCell>
-                  <TableCell align="right">Monto</TableCell>
-                  <TableCell align="right">Acumulado</TableCell>
-                  <TableCell>Estado</TableCell>
-                  <TableCell align="center">Acciones</TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {valuations?.map((val) => (
-                  <TableRow key={val.id}>
-                    <TableCell>
-                      <Typography variant="body2" fontWeight="bold">{val.code}</Typography>
-                    </TableCell>
-                    <TableCell>
-                      <Typography variant="body2">
-                        {formatDate(val.periodStart)} - {formatDate(val.periodEnd)}
-                      </Typography>
-                    </TableCell>
-                    <TableCell align="right">
-                      <Typography variant="body2" fontWeight="bold" color="primary">
-                        {val.currentPercent}%
-                      </Typography>
-                    </TableCell>
-                    <TableCell align="right">
-                      {formatCurrency(val.currentAmount, val.currency)}
-                    </TableCell>
-                    <TableCell align="right">
+          {(!valuations || valuations.length === 0) ? (
+            <Paper sx={{ p: 3, textAlign: 'center' }}>
+              <Typography color="text.secondary">{t('projects.noValuations', 'No hay valuaciones registradas')}</Typography>
+            </Paper>
+          ) : isMobile ? (
+            <Box>
+              {valuations.map((val) => (
+                <Card key={val.id} variant="outlined" sx={{ mb: 2 }}>
+                  <CardContent sx={{ pb: 1 }}>
+                    <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 1 }}>
                       <Box>
-                        <Typography variant="body2" fontWeight="bold">
-                          {val.totalAccumulatedPercent}%
-                        </Typography>
-                        <Typography variant="caption" color="text.secondary">
-                          {formatCurrency(val.totalAccumulatedAmount, val.currency)}
+                        <Typography variant="subtitle1" fontWeight="bold">{val.code}</Typography>
+                        <Typography variant="body2" color="text.secondary">
+                          {formatDate(val.periodStart)} - {formatDate(val.periodEnd)}
                         </Typography>
                       </Box>
-                    </TableCell>
-                    <TableCell>
                       <Chip 
                         label={valuationStatusLabels[val.status] || val.status} 
                         color={valuationStatusColors[val.status] || 'default'}
                         size="small"
                       />
-                    </TableCell>
-                    <TableCell align="center">
-                      <Box sx={{ display: 'flex', gap: 0.5, justifyContent: 'center' }}>
-                        {val.status === 'DRAFT' && (
-                          <>
-                            <Tooltip title="Enviar para revisión">
-                              <IconButton size="small" color="info" onClick={() => handleSubmitValuation(val.id)}>
-                                <UpdateIcon fontSize="small" />
-                              </IconButton>
-                            </Tooltip>
-                            <Tooltip title="Eliminar">
-                              <IconButton size="small" color="error" onClick={() => handleDeleteValuation(val.id)}>
-                                <DeleteIcon fontSize="small" />
-                              </IconButton>
-                            </Tooltip>
-                          </>
-                        )}
-                        {(val.status === 'SUBMITTED' || val.status === 'UNDER_REVIEW') && (
-                          <>
-                            <Tooltip title="Aprobar">
-                              <IconButton size="small" color="success" onClick={() => handleApproveValuation(val.id)}>
-                                <CheckIcon fontSize="small" />
-                              </IconButton>
-                            </Tooltip>
-                            <Tooltip title="Rechazar">
-                              <IconButton size="small" color="error" onClick={() => handleRejectValuation(val.id)}>
-                                <CancelIcon fontSize="small" />
-                              </IconButton>
-                            </Tooltip>
-                          </>
-                        )}
-                        {val.status === 'APPROVED' && (
-                          <Tooltip title="Generar Factura">
-                            <IconButton size="small" color="primary" onClick={() => openInvoiceDialog(val)}>
-                              <ExpenseIcon fontSize="small" />
-                            </IconButton>
-                          </Tooltip>
-                        )}
-                        {val.invoice && (
-                          <Tooltip title={`Factura: ${val.invoice.code}`}>
-                            <Chip label={val.invoice.invoiceNumber} size="small" variant="outlined" />
-                          </Tooltip>
-                        )}
+                    </Box>
+                    <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
+                      <Box>
+                        <Typography variant="caption" color="text.secondary">{t('projects.progress', 'Avance')}</Typography>
+                        <Typography variant="h6" fontWeight="bold" color="primary">{val.currentPercent}%</Typography>
                       </Box>
-                    </TableCell>
-                  </TableRow>
-                ))}
-                {(!valuations || valuations.length === 0) && (
+                      <Box sx={{ textAlign: 'right' }}>
+                        <Typography variant="caption" color="text.secondary">{t('common.amount', 'Monto')}</Typography>
+                        <Typography variant="h6" fontWeight="bold">{formatCurrency(val.currentAmount, val.currency)}</Typography>
+                      </Box>
+                    </Box>
+                    <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 1 }}>
+                      <Typography variant="body2" color="text.secondary">
+                        {t('projects.accumulated', 'Acumulado')}: {val.totalAccumulatedPercent}% ({formatCurrency(val.totalAccumulatedAmount, val.currency)})
+                      </Typography>
+                    </Box>
+                    {val.invoice && (
+                      <Chip label={`Factura: ${val.invoice.invoiceNumber}`} size="small" variant="outlined" sx={{ mb: 1 }} />
+                    )}
+                    <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap', justifyContent: 'flex-end' }}>
+                      {val.status === 'DRAFT' && (
+                        <>
+                          <Button size="small" color="info" startIcon={<UpdateIcon />} onClick={() => handleSubmitValuation(val.id)}>
+                            {t('common.submit', 'Enviar')}
+                          </Button>
+                          <IconButton size="small" color="error" onClick={() => handleDeleteValuation(val.id)}>
+                            <DeleteIcon fontSize="small" />
+                          </IconButton>
+                        </>
+                      )}
+                      {(val.status === 'SUBMITTED' || val.status === 'UNDER_REVIEW') && (
+                        <>
+                          <Button size="small" color="success" startIcon={<CheckIcon />} onClick={() => handleApproveValuation(val.id)}>
+                            {t('common.approve', 'Aprobar')}
+                          </Button>
+                          <Button size="small" color="error" startIcon={<CancelIcon />} onClick={() => handleRejectValuation(val.id)}>
+                            {t('common.reject', 'Rechazar')}
+                          </Button>
+                        </>
+                      )}
+                      {val.status === 'APPROVED' && (
+                        <Button size="small" color="primary" startIcon={<ExpenseIcon />} onClick={() => openInvoiceDialog(val)}>
+                          {t('projects.generateInvoice', 'Generar Factura')}
+                        </Button>
+                      )}
+                    </Box>
+                  </CardContent>
+                </Card>
+              ))}
+            </Box>
+          ) : (
+            <TableContainer component={Paper}>
+              <Table size="small">
+                <TableHead>
                   <TableRow>
-                    <TableCell colSpan={7} align="center">
-                      <Typography color="text.secondary">No hay valuaciones registradas</Typography>
-                    </TableCell>
+                    <TableCell>{t('common.code', 'Código')}</TableCell>
+                    <TableCell>{t('projects.period', 'Período')}</TableCell>
+                    <TableCell align="right">{t('projects.progressPercent', '% Avance')}</TableCell>
+                    <TableCell align="right">{t('common.amount', 'Monto')}</TableCell>
+                    <TableCell align="right">{t('projects.accumulated', 'Acumulado')}</TableCell>
+                    <TableCell>{t('common.status', 'Estado')}</TableCell>
+                    <TableCell align="center">{t('common.actions', 'Acciones')}</TableCell>
                   </TableRow>
-                )}
-              </TableBody>
-            </Table>
-          </TableContainer>
+                </TableHead>
+                <TableBody>
+                  {valuations.map((val) => (
+                    <TableRow key={val.id}>
+                      <TableCell>
+                        <Typography variant="body2" fontWeight="bold">{val.code}</Typography>
+                      </TableCell>
+                      <TableCell>
+                        <Typography variant="body2">
+                          {formatDate(val.periodStart)} - {formatDate(val.periodEnd)}
+                        </Typography>
+                      </TableCell>
+                      <TableCell align="right">
+                        <Typography variant="body2" fontWeight="bold" color="primary">
+                          {val.currentPercent}%
+                        </Typography>
+                      </TableCell>
+                      <TableCell align="right">
+                        {formatCurrency(val.currentAmount, val.currency)}
+                      </TableCell>
+                      <TableCell align="right">
+                        <Box>
+                          <Typography variant="body2" fontWeight="bold">
+                            {val.totalAccumulatedPercent}%
+                          </Typography>
+                          <Typography variant="caption" color="text.secondary">
+                            {formatCurrency(val.totalAccumulatedAmount, val.currency)}
+                          </Typography>
+                        </Box>
+                      </TableCell>
+                      <TableCell>
+                        <Chip 
+                          label={valuationStatusLabels[val.status] || val.status} 
+                          color={valuationStatusColors[val.status] || 'default'}
+                          size="small"
+                        />
+                      </TableCell>
+                      <TableCell align="center">
+                        <Box sx={{ display: 'flex', gap: 0.5, justifyContent: 'center' }}>
+                          {val.status === 'DRAFT' && (
+                            <>
+                              <Tooltip title={t('common.submit', 'Enviar para revisión')}>
+                                <IconButton size="small" color="info" onClick={() => handleSubmitValuation(val.id)}>
+                                  <UpdateIcon fontSize="small" />
+                                </IconButton>
+                              </Tooltip>
+                              <Tooltip title={t('common.delete', 'Eliminar')}>
+                                <IconButton size="small" color="error" onClick={() => handleDeleteValuation(val.id)}>
+                                  <DeleteIcon fontSize="small" />
+                                </IconButton>
+                              </Tooltip>
+                            </>
+                          )}
+                          {(val.status === 'SUBMITTED' || val.status === 'UNDER_REVIEW') && (
+                            <>
+                              <Tooltip title={t('common.approve', 'Aprobar')}>
+                                <IconButton size="small" color="success" onClick={() => handleApproveValuation(val.id)}>
+                                  <CheckIcon fontSize="small" />
+                                </IconButton>
+                              </Tooltip>
+                              <Tooltip title={t('common.reject', 'Rechazar')}>
+                                <IconButton size="small" color="error" onClick={() => handleRejectValuation(val.id)}>
+                                  <CancelIcon fontSize="small" />
+                                </IconButton>
+                              </Tooltip>
+                            </>
+                          )}
+                          {val.status === 'APPROVED' && (
+                            <Tooltip title={t('projects.generateInvoice', 'Generar Factura')}>
+                              <IconButton size="small" color="primary" onClick={() => openInvoiceDialog(val)}>
+                                <ExpenseIcon fontSize="small" />
+                              </IconButton>
+                            </Tooltip>
+                          )}
+                          {val.invoice && (
+                            <Tooltip title={`Factura: ${val.invoice.code}`}>
+                              <Chip label={val.invoice.invoiceNumber} size="small" variant="outlined" />
+                            </Tooltip>
+                          )}
+                        </Box>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </TableContainer>
+          )}
         </TabPanel>
       )}
 
       {/* Tab: Seguimiento */}
       <TabPanel value={tabValue} index={4 + tabOffset}>
-        <Box sx={{ display: 'flex', justifyContent: 'flex-end', mb: 2 }}>
-          <Button startIcon={<AddIcon />} variant="contained" onClick={() => setUpdateDialog(true)}>
-            Nueva Actualización
+        <Box sx={{ display: 'flex', flexDirection: { xs: 'column', sm: 'row' }, justifyContent: 'flex-end', mb: 2 }}>
+          <Button startIcon={<AddIcon />} variant="contained" onClick={() => setUpdateDialog(true)} fullWidth={isMobile}>
+            {t('projects.newUpdate', 'Nueva Actualización')}
           </Button>
         </Box>
         <Grid container spacing={2}>
@@ -1186,9 +1342,9 @@ const ProjectDetail = () => {
 
       {/* Tab: Fotos */}
       <TabPanel value={tabValue} index={5 + tabOffset}>
-        <Box sx={{ display: 'flex', justifyContent: 'flex-end', mb: 2 }}>
-          <Button startIcon={<AddIcon />} variant="contained" onClick={() => setPhotoDialog(true)}>
-            Agregar Foto
+        <Box sx={{ display: 'flex', flexDirection: { xs: 'column', sm: 'row' }, justifyContent: 'flex-end', mb: 2 }}>
+          <Button startIcon={<AddIcon />} variant="contained" onClick={() => setPhotoDialog(true)} fullWidth={isMobile}>
+            {t('projects.addPhoto', 'Agregar Foto')}
           </Button>
         </Box>
         <Grid container spacing={2}>
@@ -1542,7 +1698,7 @@ const ProjectDetail = () => {
         <DialogTitle>Nueva Valuación</DialogTitle>
         <DialogContent>
           <Grid container spacing={2} sx={{ mt: 1 }}>
-            <Grid item xs={12} md={6}>
+            <Grid item xs={12} sm={6}>
               <TextField
                 fullWidth
                 label="Fecha Inicio Período"
@@ -1553,7 +1709,7 @@ const ProjectDetail = () => {
                 required
               />
             </Grid>
-            <Grid item xs={12} md={6}>
+            <Grid item xs={12} sm={6}>
               <TextField
                 fullWidth
                 label="Fecha Fin Período"
@@ -1615,7 +1771,7 @@ const ProjectDetail = () => {
             </Alert>
           )}
           <Grid container spacing={2} sx={{ mt: 1 }}>
-            <Grid item xs={12} md={6}>
+            <Grid item xs={12} sm={6}>
               <TextField
                 fullWidth
                 label="Número de Factura"
@@ -1625,7 +1781,7 @@ const ProjectDetail = () => {
                 helperText="Número de factura del contratista"
               />
             </Grid>
-            <Grid item xs={12} md={6}>
+            <Grid item xs={12} sm={6}>
               <TextField
                 fullWidth
                 label="Número de Control"
@@ -1633,7 +1789,7 @@ const ProjectDetail = () => {
                 onChange={(e) => setInvoiceForm({ ...invoiceForm, controlNumber: e.target.value })}
               />
             </Grid>
-            <Grid item xs={12} md={6}>
+            <Grid item xs={12} sm={6}>
               <TextField
                 fullWidth
                 label="Fecha de Factura"
@@ -1644,7 +1800,7 @@ const ProjectDetail = () => {
                 required
               />
             </Grid>
-            <Grid item xs={12} md={6}>
+            <Grid item xs={12} sm={6}>
               <TextField
                 fullWidth
                 label="Fecha de Vencimiento"
@@ -1654,7 +1810,7 @@ const ProjectDetail = () => {
                 InputLabelProps={{ shrink: true }}
               />
             </Grid>
-            <Grid item xs={12} md={4}>
+            <Grid item xs={12} sm={4}>
               <TextField
                 fullWidth
                 label="IVA (%)"
@@ -1664,7 +1820,7 @@ const ProjectDetail = () => {
                 inputProps={{ min: 0, max: 100 }}
               />
             </Grid>
-            <Grid item xs={12} md={4}>
+            <Grid item xs={12} sm={4}>
               <TextField
                 fullWidth
                 label="Retención ISLR (%)"
@@ -1674,7 +1830,7 @@ const ProjectDetail = () => {
                 inputProps={{ min: 0, max: 100 }}
               />
             </Grid>
-            <Grid item xs={12} md={4}>
+            <Grid item xs={12} sm={4}>
               <TextField
                 fullWidth
                 label="Retención IVA (%)"

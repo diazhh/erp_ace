@@ -123,6 +123,47 @@ import NonConformanceDetail from './pages/quality/NonConformanceDetail';
 import NonConformanceForm from './pages/quality/NonConformanceForm';
 // Expense Reports
 import { ExpenseReportList, ExpenseReportDetail, ExpenseReportForm } from './pages/petty-cash/expense-reports';
+// Reports
+import { ReportsDashboard } from './pages/reports';
+// Production
+import { 
+  ProductionDashboard, 
+  FieldList, 
+  FieldForm, 
+  FieldDetail, 
+  WellList, 
+  WellForm, 
+  WellDetail, 
+  WellLogForm,
+  DailyProductionList,
+  DailyProductionForm,
+  DailyProductionDetail,
+  AllocationList,
+  AllocationDetail,
+} from './pages/production';
+// AFE
+import { AFEDashboard, AFEList, AFEForm, AFEDetail } from './pages/afe';
+// Contracts
+import { ContractDashboard, ContractList, ContractForm, ContractDetail, ConcessionList } from './pages/contracts';
+// Compliance
+import ComplianceDashboard from './pages/compliance/ComplianceDashboard';
+import ReportList from './pages/compliance/ReportList';
+import ReportDetail from './pages/compliance/ReportDetail';
+import ReportForm from './pages/compliance/ReportForm';
+import PermitList from './pages/compliance/PermitList';
+import PermitDetail from './pages/compliance/PermitDetail';
+import PermitForm from './pages/compliance/PermitForm';
+import AuditList from './pages/compliance/AuditList';
+import AuditDetail from './pages/compliance/AuditDetail';
+import AuditForm from './pages/compliance/AuditForm';
+import PolicyList from './pages/compliance/PolicyList';
+import PolicyDetail from './pages/compliance/PolicyDetail';
+import PolicyForm from './pages/compliance/PolicyForm';
+import CertificationList from './pages/compliance/CertificationList';
+import CertificationDetail from './pages/compliance/CertificationDetail';
+import CertificationForm from './pages/compliance/CertificationForm';
+// JIB
+import { JIBDashboard, JIBList, JIBForm, JIBDetail, CashCallList, CashCallForm, CashCallDetail } from './pages/jib';
 
 function App() {
   const dispatch = useDispatch();
@@ -314,6 +355,74 @@ function App() {
         <Route path="admin/email" element={<EmailConfig />} />
         {/* Settings */}
         <Route path="settings" element={<Settings />} />
+        {/* Reports */}
+        <Route path="reports" element={<ReportsDashboard />} />
+        {/* Production */}
+        <Route path="production" element={<ProductionDashboard />} />
+        <Route path="production/fields" element={<FieldList />} />
+        <Route path="production/fields/new" element={<FieldForm />} />
+        <Route path="production/fields/:id" element={<FieldDetail />} />
+        <Route path="production/fields/:id/edit" element={<FieldForm />} />
+        <Route path="production/wells" element={<WellList />} />
+        <Route path="production/wells/new" element={<WellForm />} />
+        <Route path="production/wells/:id" element={<WellDetail />} />
+        <Route path="production/wells/:id/edit" element={<WellForm />} />
+        <Route path="production/logs/new" element={<WellLogForm />} />
+        <Route path="production/logs/:id" element={<WellLogForm />} />
+        <Route path="production/logs/:id/edit" element={<WellLogForm />} />
+        {/* Daily Production */}
+        <Route path="production/daily" element={<DailyProductionList />} />
+        <Route path="production/daily/new" element={<DailyProductionForm />} />
+        <Route path="production/daily/:id" element={<DailyProductionDetail />} />
+        <Route path="production/daily/:id/edit" element={<DailyProductionForm />} />
+        {/* Allocations */}
+        <Route path="production/allocations" element={<AllocationList />} />
+        <Route path="production/allocations/:id" element={<AllocationDetail />} />
+        {/* AFE */}
+        <Route path="afe" element={<AFEDashboard />} />
+        <Route path="afe/list" element={<AFEList />} />
+        <Route path="afe/new" element={<AFEForm />} />
+        <Route path="afe/:id" element={<AFEDetail />} />
+        <Route path="afe/:id/edit" element={<AFEForm />} />
+        {/* Contracts */}
+        <Route path="contracts" element={<ContractDashboard />} />
+        <Route path="contracts/list" element={<ContractList />} />
+        <Route path="contracts/new" element={<ContractForm />} />
+        <Route path="contracts/:id" element={<ContractDetail />} />
+        <Route path="contracts/:id/edit" element={<ContractForm />} />
+        <Route path="contracts/concessions" element={<ConcessionList />} />
+        {/* Compliance */}
+        <Route path="compliance" element={<ComplianceDashboard />} />
+        <Route path="compliance/reports" element={<ReportList />} />
+        <Route path="compliance/reports/new" element={<ReportForm />} />
+        <Route path="compliance/reports/:id" element={<ReportDetail />} />
+        <Route path="compliance/reports/:id/edit" element={<ReportForm />} />
+        <Route path="compliance/permits" element={<PermitList />} />
+        <Route path="compliance/permits/new" element={<PermitForm />} />
+        <Route path="compliance/permits/:id" element={<PermitDetail />} />
+        <Route path="compliance/permits/:id/edit" element={<PermitForm />} />
+        <Route path="compliance/audits" element={<AuditList />} />
+        <Route path="compliance/audits/new" element={<AuditForm />} />
+        <Route path="compliance/audits/:id" element={<AuditDetail />} />
+        <Route path="compliance/audits/:id/edit" element={<AuditForm />} />
+        <Route path="compliance/policies" element={<PolicyList />} />
+        <Route path="compliance/policies/new" element={<PolicyForm />} />
+        <Route path="compliance/policies/:id" element={<PolicyDetail />} />
+        <Route path="compliance/policies/:id/edit" element={<PolicyForm />} />
+        <Route path="compliance/certifications" element={<CertificationList />} />
+        <Route path="compliance/certifications/new" element={<CertificationForm />} />
+        <Route path="compliance/certifications/:id" element={<CertificationDetail />} />
+        <Route path="compliance/certifications/:id/edit" element={<CertificationForm />} />
+        {/* JIB */}
+        <Route path="jib" element={<JIBDashboard />} />
+        <Route path="jib/billings" element={<JIBList />} />
+        <Route path="jib/billings/new" element={<JIBForm />} />
+        <Route path="jib/billings/:id" element={<JIBDetail />} />
+        <Route path="jib/billings/:id/edit" element={<JIBForm />} />
+        <Route path="jib/cash-calls" element={<CashCallList />} />
+        <Route path="jib/cash-calls/new" element={<CashCallForm />} />
+        <Route path="jib/cash-calls/:id" element={<CashCallDetail />} />
+        <Route path="jib/cash-calls/:id/edit" element={<CashCallForm />} />
       </Route>
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>

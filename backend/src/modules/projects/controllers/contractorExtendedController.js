@@ -639,12 +639,14 @@ class ContractorExtendedController {
 
   async listPurchaseOrders(req, res, next) {
     try {
-      const { PurchaseOrder, Contractor, Project, User } = require('../../../database/models');
-      const { contractorId, projectId, orderType, status, page = 1, limit = 20 } = req.query;
+      const { PurchaseOrder, Contractor, Project, User, Field, Well } = require('../../../database/models');
+      const { contractorId, projectId, fieldId, wellId, orderType, status, page = 1, limit = 20 } = req.query;
       
       const whereClause = {};
       if (contractorId) whereClause.contractorId = contractorId;
       if (projectId) whereClause.projectId = projectId;
+      if (fieldId) whereClause.fieldId = fieldId;
+      if (wellId) whereClause.wellId = wellId;
       if (orderType) whereClause.orderType = orderType;
       if (status) whereClause.status = status;
       
@@ -681,13 +683,13 @@ class ContractorExtendedController {
       
       const code = await generatePurchaseOrderCode();
       const {
-        contractorId, projectId, orderType, title, description,
+        contractorId, projectId, fieldId, wellId, orderType, title, description,
         orderDate, deliveryDate, currency, subtotal, taxRate, taxAmount, total,
         paymentTerms, deliveryTerms, warranty, deliveryAddress, fileUrl, notes, items,
       } = req.body;
       
       const order = await PurchaseOrder.create({
-        code, contractorId, projectId, orderType: orderType || 'SERVICE',
+        code, contractorId, projectId, fieldId, wellId, orderType: orderType || 'SERVICE',
         title, description, orderDate, deliveryDate,
         currency: currency || 'USD', subtotal, taxRate: taxRate || 16, taxAmount, total,
         paymentTerms, deliveryTerms, warranty, deliveryAddress, fileUrl,

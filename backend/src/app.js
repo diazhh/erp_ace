@@ -33,6 +33,11 @@ const emailRoutes = require('./modules/email/routes/emailRoutes');
 const assetRoutes = require('./modules/assets/routes/assetRoutes');
 const crmRoutes = require('./modules/crm/routes/crmRoutes');
 const qualityRoutes = require('./modules/quality/routes/qualityRoutes');
+const productionRoutes = require('./modules/production/routes/productionRoutes');
+const afeRoutes = require('./modules/afe/routes/afeRoutes');
+const contractRoutes = require('./modules/contracts/routes/contractRoutes');
+const complianceRoutes = require('./modules/compliance/routes/complianceRoutes');
+const jibRoutes = require('./modules/jib/routes/jibRoutes');
 
 const app = express();
 
@@ -110,6 +115,11 @@ app.use('/api/email', emailRoutes);
 app.use('/api/assets', assetRoutes);
 app.use('/api/crm', crmRoutes);
 app.use('/api/quality', qualityRoutes);
+app.use('/api/production', productionRoutes);
+app.use('/api/afe', afeRoutes);
+app.use('/api/contracts', contractRoutes);
+app.use('/api/compliance', complianceRoutes);
+app.use('/api/jib', jibRoutes);
 
 // Servir archivos estáticos de uploads
 app.use('/uploads', express.static('uploads'));

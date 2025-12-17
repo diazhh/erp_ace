@@ -264,6 +264,56 @@ const PERMISSIONS = {
     { code: 'expense_reports:update', name: 'Editar Reporte de Gastos', description: 'Editar reportes de gastos en borrador', action: 'update', permissionType: 'action' },
     { code: 'expense_reports:approve', name: 'Aprobar Reporte de Gastos', description: 'Aprobar o rechazar reportes de gastos', action: 'approve', permissionType: 'action' },
   ],
+
+  // ========== PRODUCCIÓN Y POZOS ==========
+  production: [
+    { code: 'production:*', name: 'Producción - Acceso Completo', description: 'Acceso completo al módulo de producción', action: '*', permissionType: 'module' },
+    { code: 'production:read', name: 'Ver Producción', description: 'Ver campos, pozos y producción diaria', action: 'read', permissionType: 'action' },
+    { code: 'production:create', name: 'Registrar Producción', description: 'Crear campos, pozos y registrar producción', action: 'create', permissionType: 'action' },
+    { code: 'production:update', name: 'Editar Producción', description: 'Editar registros de producción', action: 'update', permissionType: 'action' },
+    { code: 'production:delete', name: 'Eliminar Producción', description: 'Eliminar registros de producción', action: 'delete', permissionType: 'action' },
+    { code: 'production:approve', name: 'Aprobar Producción', description: 'Verificar y aprobar registros de producción y allocations', action: 'approve', permissionType: 'action' },
+  ],
+
+  // ========== AFE (Authorization for Expenditure) ==========
+  afe: [
+    { code: 'afe:*', name: 'AFE - Acceso Completo', description: 'Acceso completo al módulo de AFE', action: '*', permissionType: 'module' },
+    { code: 'afe:read', name: 'Ver AFE', description: 'Ver autorizaciones de gasto', action: 'read', permissionType: 'action' },
+    { code: 'afe:create', name: 'Crear AFE', description: 'Crear nuevas autorizaciones de gasto', action: 'create', permissionType: 'action' },
+    { code: 'afe:update', name: 'Editar AFE', description: 'Editar autorizaciones de gasto', action: 'update', permissionType: 'action' },
+    { code: 'afe:delete', name: 'Eliminar AFE', description: 'Eliminar autorizaciones de gasto en borrador', action: 'delete', permissionType: 'action' },
+    { code: 'afe:approve', name: 'Aprobar AFE', description: 'Aprobar o rechazar autorizaciones de gasto', action: 'approve', permissionType: 'action' },
+  ],
+
+  // ========== Contratos O&G ==========
+  contracts: [
+    { code: 'contracts:*', name: 'Contratos - Acceso Completo', description: 'Acceso completo al módulo de contratos O&G', action: '*', permissionType: 'module' },
+    { code: 'contracts:read', name: 'Ver Contratos', description: 'Ver contratos, concesiones y participaciones', action: 'read', permissionType: 'action' },
+    { code: 'contracts:create', name: 'Crear Contratos', description: 'Crear nuevos contratos y concesiones', action: 'create', permissionType: 'action' },
+    { code: 'contracts:update', name: 'Editar Contratos', description: 'Editar contratos y participaciones', action: 'update', permissionType: 'action' },
+    { code: 'contracts:delete', name: 'Eliminar Contratos', description: 'Eliminar contratos en borrador', action: 'delete', permissionType: 'action' },
+    { code: 'contracts:approve', name: 'Aprobar Contratos', description: 'Activar, terminar contratos y aprobar regalías', action: 'approve', permissionType: 'action' },
+  ],
+
+  // ========== COMPLIANCE REGULATORIO ==========
+  compliance: [
+    { code: 'compliance:*', name: 'Compliance - Acceso Completo', description: 'Acceso completo al módulo de compliance regulatorio', action: '*', permissionType: 'module' },
+    { code: 'compliance:read', name: 'Ver Compliance', description: 'Ver reportes, permisos, auditorías, políticas y certificaciones', action: 'read', permissionType: 'action' },
+    { code: 'compliance:create', name: 'Crear en Compliance', description: 'Crear reportes, permisos, auditorías, políticas y certificaciones', action: 'create', permissionType: 'action' },
+    { code: 'compliance:update', name: 'Editar en Compliance', description: 'Editar registros de compliance', action: 'update', permissionType: 'action' },
+    { code: 'compliance:delete', name: 'Eliminar en Compliance', description: 'Eliminar registros de compliance en borrador', action: 'delete', permissionType: 'action' },
+    { code: 'compliance:approve', name: 'Aprobar en Compliance', description: 'Aprobar políticas, cerrar auditorías y validar reportes', action: 'approve', permissionType: 'action' },
+  ],
+
+  // ========== JIB (JOINT INTEREST BILLING) ==========
+  jib: [
+    { code: 'jib:*', name: 'JIB - Acceso Completo', description: 'Acceso completo al módulo de facturación JIB y Cash Calls', action: '*', permissionType: 'module' },
+    { code: 'jib:read', name: 'Ver JIB', description: 'Ver JIBs, Cash Calls, distribuciones y estados de cuenta', action: 'read', permissionType: 'action' },
+    { code: 'jib:create', name: 'Crear JIB', description: 'Crear nuevos JIBs y Cash Calls', action: 'create', permissionType: 'action' },
+    { code: 'jib:update', name: 'Editar JIB', description: 'Editar JIBs, registrar pagos y fondeos', action: 'update', permissionType: 'action' },
+    { code: 'jib:delete', name: 'Eliminar JIB', description: 'Eliminar JIBs y Cash Calls en borrador', action: 'delete', permissionType: 'action' },
+    { code: 'jib:approve', name: 'Aprobar JIB', description: 'Aprobar y enviar JIBs y Cash Calls', action: 'approve', permissionType: 'action' },
+  ],
 };
 
 // Roles predefinidos con sus permisos
@@ -296,6 +346,10 @@ const ROLES = {
       'audit:read',
       'assets:read', 'assets:read:maintenances', 'assets:read:transfers', 'assets:read:depreciation',
       'assets:dispose', 'assets:transfer_approve', 'assets:depreciation',
+      'afe:read', 'afe:approve',
+      'contracts:read', 'contracts:approve',
+      'compliance:read', 'compliance:approve',
+      'jib:read', 'jib:approve',
     ],
   },
   'Gerente Administrativo': {
@@ -329,6 +383,10 @@ const ROLES = {
       'reports:projects', 'reports:inventory', 'reports:fleet',
       'assets:read', 'assets:create', 'assets:update', 'assets:maintenance', 'assets:transfer',
       'assets:read:maintenances', 'assets:read:transfers',
+      'production:*',
+      'afe:*',
+      'contracts:*',
+      'compliance:*',
     ],
   },
   'Contador': {

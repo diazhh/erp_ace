@@ -34,7 +34,7 @@ import {
   FilterList as FilterIcon,
 } from '@mui/icons-material';
 import { fetchExpenseReports, clearError, clearSuccess } from '../../../store/slices/expenseReportSlice';
-import { usePermissions } from '../../../hooks/usePermissions';
+import { useAnyPermission } from "../../../hooks/usePermission";
 
 const statusColors = {
   DRAFT: 'default',
@@ -58,7 +58,6 @@ export default function ExpenseReportList() {
   const navigate = useNavigate();
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
-  const { hasPermission } = usePermissions();
 
   const { reports, pagination, loading } = useSelector((state) => state.expenseReports);
 
@@ -98,8 +97,8 @@ export default function ExpenseReportList() {
     return new Date(date).toLocaleDateString('es-VE');
   };
 
-  const canCreate = hasPermission(['expense_reports:create', 'expense_reports:*', 'petty_cash:expense', 'petty_cash:*']);
-  const canApprove = hasPermission(['expense_reports:approve', 'expense_reports:*', 'petty_cash:approve', 'petty_cash:*']);
+  const canCreate = useAnyPermission(['expense_reports:create', 'expense_reports:*', 'petty_cash:expense', 'petty_cash:*']);
+  const canApprove = useAnyPermission(['expense_reports:approve', 'expense_reports:*', 'petty_cash:approve', 'petty_cash:*']);
 
   // Mobile card view
   const renderMobileCard = (report) => (

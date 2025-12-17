@@ -166,6 +166,20 @@ module.exports = (sequelize) => {
       field: 'contractor_id',
       comment: 'Contratista que ejecuta el proyecto',
     },
+    // Campo petrolero asociado
+    fieldId: {
+      type: DataTypes.UUID,
+      allowNull: true,
+      field: 'field_id',
+      comment: 'Campo petrolero asociado al proyecto',
+    },
+    // Pozo asociado
+    wellId: {
+      type: DataTypes.UUID,
+      allowNull: true,
+      field: 'well_id',
+      comment: 'Pozo asociado al proyecto',
+    },
     // Monto acordado con el contratista
     contractAmount: {
       type: DataTypes.DECIMAL(15, 2),

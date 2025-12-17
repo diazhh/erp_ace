@@ -45,7 +45,7 @@ import {
   clearError,
   clearSuccess,
 } from '../../../store/slices/expenseReportSlice';
-import { usePermissions } from '../../../hooks/usePermissions';
+import { usePermission } from "../../../hooks/usePermission";
 
 const statusColors = {
   DRAFT: 'default',
@@ -78,7 +78,7 @@ export default function ExpenseReportDetail() {
   const navigate = useNavigate();
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
-  const { hasPermission } = usePermissions();
+  const { hasPermission } = usePermission();
 
   const { currentReport: report, loading, error, success } = useSelector((state) => state.expenseReports);
 

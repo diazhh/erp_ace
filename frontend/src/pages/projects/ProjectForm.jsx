@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, useSearchParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { useTranslation } from 'react-i18next';
 import {
@@ -31,6 +31,7 @@ import {
 } from '../../store/slices/projectSlice';
 import { fetchEmployees } from '../../store/slices/employeeSlice';
 import { fetchContractors } from '../../store/slices/contractorSlice';
+import api from '../../services/api';
 
 const currencies = [
   { value: 'USD', label: 'Dólar (USD)' },
@@ -78,22 +79,32 @@ const initialFormData = {
   contractorId: '',
   contractAmount: '',
   status: 'PLANNING',
+  fieldId: '',
+  wellId: '',
   notes: '',
 };
 
 const ProjectForm = () => {
   const { id } = useParams();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const dispatch = useDispatch();
   const { t } = useTranslation();
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+  
+  // Obtener wellId y fieldId de los query params (para crear desde detalle de pozo)
+  const wellIdFromUrl = searchParams.get('wellId');
+  const fieldIdFromUrl = searchParams.get('fieldId');
   
   const { currentProject, projectTypes, loading } = useSelector((state) => state.projects);
   const { employees } = useSelector((state) => state.employees);
   const { contractors } = useSelector((state) => state.contractors);
   
   const [formData, setFormData] = useState(initialFormData);
+  const [fields, setFields] = useState([]);
+  const [wells, setWells] = useState([]);
+  const [filteredWells, setFilteredWells] = useState([]);
   const [selectedManager, setSelectedManager] = useState(null);
   const [selectedContractor, setSelectedContractor] = useState(null);
   const [saving, setSaving] = useState(false);
@@ -105,10 +116,42 @@ const ProjectForm = () => {
     dispatch(fetchEmployees({ limit: 200, status: 'ACTIVE' }));
     dispatch(fetchProjectTypes());
     dispatch(fetchContractors({ limit: 200, status: 'ACTIVE' }));
+    loadFieldsAndWells();
     if (isEdit) {
       dispatch(fetchProjectById(id));
+    } else {
+      // Si viene desde detalle de pozo, precargar wellId y fieldId
+      if (wellIdFromUrl || fieldIdFromUrl) {
+        setFormData((prev) => ({
+          ...prev,
+          wellId: wellIdFromUrl || '',
+          fieldId: fieldIdFromUrl || '',
+        }));
+      }
     }
-  }, [dispatch, id, isEdit]);
+  }, [dispatch, id, isEdit, wellIdFromUrl, fieldIdFromUrl]);
+
+  // Filtrar pozos cuando cambia el campo seleccionado
+  useEffect(() => {
+    if (formData.fieldId) {
+      setFilteredWells(wells.filter(w => w.field_id === formData.fieldId));
+    } else {
+      setFilteredWells(wells);
+    }
+  }, [formData.fieldId, wells]);
+
+  const loadFieldsAndWells = async () => {
+    try {
+      const [fieldsRes, wellsRes] = await Promise.all([
+        api.get('/production/fields', { params: { limit: 100 } }),
+        api.get('/production/wells', { params: { limit: 200 } }),
+      ]);
+      setFields(fieldsRes.data.data || []);
+      setWells(wellsRes.data.data || []);
+    } catch (error) {
+      console.error('Error loading fields/wells:', error);
+    }
+  };
 
   useEffect(() => {
     if (currentProject && isEdit) {
@@ -186,7 +229,12 @@ const ProjectForm = () => {
         await dispatch(createProject(dataToSend)).unwrap();
         toast.success('Proyecto creado exitosamente');
       }
-      navigate('/projects');
+      // Navegar de vuelta al pozo si viene desde allí
+      if (wellIdFromUrl) {
+        navigate(`/production/wells/${wellIdFromUrl}`);
+      } else {
+        navigate('/projects');
+      }
     } catch (error) {
       toast.error(error);
     } finally {
@@ -195,7 +243,12 @@ const ProjectForm = () => {
   };
 
   const handleBack = () => {
-    navigate('/projects');
+    // Volver al pozo si viene desde allí
+    if (wellIdFromUrl) {
+      navigate(`/production/wells/${wellIdFromUrl}`);
+    } else {
+      navigate('/projects');
+    }
   };
 
   if (loading && isEdit) {
@@ -508,6 +561,42 @@ const ProjectForm = () => {
                 value={formData.address}
                 onChange={handleChange}
               />
+            </Grid>
+            <Grid item xs={12} md={6}>
+              <TextField
+                select
+                fullWidth
+                label={t('production.field')}
+                name="fieldId"
+                value={formData.fieldId}
+                onChange={handleChange}
+                disabled={!!wellIdFromUrl}
+              >
+                <MenuItem value="">{t('common.none')}</MenuItem>
+                {fields.map((field) => (
+                  <MenuItem key={field.id} value={field.id}>
+                    {field.code} - {field.name}
+                  </MenuItem>
+                ))}
+              </TextField>
+            </Grid>
+            <Grid item xs={12} md={6}>
+              <TextField
+                select
+                fullWidth
+                label={t('production.well')}
+                name="wellId"
+                value={formData.wellId}
+                onChange={handleChange}
+                disabled={!!wellIdFromUrl}
+              >
+                <MenuItem value="">{t('common.none')}</MenuItem>
+                {filteredWells.map((well) => (
+                  <MenuItem key={well.id} value={well.id}>
+                    {well.code} - {well.name}
+                  </MenuItem>
+                ))}
+              </TextField>
             </Grid>
           </Grid>
 

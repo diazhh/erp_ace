@@ -31,6 +31,8 @@ import {
   InputLabel,
   Select,
   MenuItem,
+  useMediaQuery,
+  useTheme,
 } from '@mui/material';
 import {
   ArrowBack as BackIcon,
@@ -112,6 +114,8 @@ const AssetDetail = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { id } = useParams();
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
   const { currentAsset, catalogs, loading, error } = useSelector((state) => state.assets);
 
@@ -308,40 +312,70 @@ const AssetDetail = () => {
 
   const renderMaintenancesTab = () => (
     <Box>
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 2 }}>
+      <Box sx={{ display: 'flex', flexDirection: { xs: 'column', sm: 'row' }, justifyContent: 'space-between', gap: 2, mb: 2 }}>
         <Typography variant="h6">Historial de Mantenimientos</Typography>
         <Button
           variant="contained"
           startIcon={<MaintenanceIcon />}
           onClick={() => navigate(`/assets/maintenances/new?assetId=${id}`)}
           disabled={['DISPOSED', 'SOLD'].includes(currentAsset.status)}
+          fullWidth={isMobile}
         >
           Nuevo Mantenimiento
         </Button>
       </Box>
-      <TableContainer component={Paper}>
-        <Table>
-          <TableHead>
-            <TableRow>
-              <TableCell>Fecha</TableCell>
-              <TableCell>Tipo</TableCell>
-              <TableCell>Descripción</TableCell>
-              <TableCell>Estado</TableCell>
-              <TableCell align="right">Costo</TableCell>
-              <TableCell>Proveedor</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {currentAsset.maintenances?.length === 0 ? (
-              <TableRow>
-                <TableCell colSpan={6} align="center">
-                  <Typography color="text.secondary" sx={{ py: 2 }}>
-                    No hay mantenimientos registrados
+      {currentAsset.maintenances?.length === 0 ? (
+        <Paper sx={{ p: 3, textAlign: 'center' }}>
+          <Typography color="text.secondary">No hay mantenimientos registrados</Typography>
+        </Paper>
+      ) : isMobile ? (
+        <Box>
+          {currentAsset.maintenances?.map((m) => (
+            <Card key={m.id} variant="outlined" sx={{ mb: 2 }}>
+              <CardContent sx={{ pb: 1 }}>
+                <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 1 }}>
+                  <Box>
+                    <Typography variant="subtitle1" fontWeight="bold">
+                      {maintenanceTypeLabels[m.maintenanceType]}
+                    </Typography>
+                    <Typography variant="body2" color="text.secondary">
+                      {formatDate(m.scheduledDate || m.completedDate)}
+                    </Typography>
+                  </Box>
+                  <Chip 
+                    label={maintenanceStatusLabels[m.status]} 
+                    size="small"
+                    color={m.status === 'COMPLETED' ? 'success' : m.status === 'IN_PROGRESS' ? 'warning' : 'default'}
+                  />
+                </Box>
+                <Typography variant="body2" sx={{ mb: 1 }}>{m.description?.substring(0, 80)}...</Typography>
+                <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <Typography variant="body2" color="text.secondary">
+                    {m.serviceProvider?.name || m.serviceProviderName || '-'}
                   </Typography>
-                </TableCell>
+                  <Typography variant="subtitle1" fontWeight="bold" color="primary">
+                    {formatCurrency(m.totalCost)}
+                  </Typography>
+                </Box>
+              </CardContent>
+            </Card>
+          ))}
+        </Box>
+      ) : (
+        <TableContainer component={Paper}>
+          <Table>
+            <TableHead>
+              <TableRow>
+                <TableCell>Fecha</TableCell>
+                <TableCell>Tipo</TableCell>
+                <TableCell>Descripción</TableCell>
+                <TableCell>Estado</TableCell>
+                <TableCell align="right">Costo</TableCell>
+                <TableCell>Proveedor</TableCell>
               </TableRow>
-            ) : (
-              currentAsset.maintenances?.map((m) => (
+            </TableHead>
+            <TableBody>
+              {currentAsset.maintenances?.map((m) => (
                 <TableRow key={m.id} hover>
                   <TableCell>{formatDate(m.scheduledDate || m.completedDate)}</TableCell>
                   <TableCell>{maintenanceTypeLabels[m.maintenanceType]}</TableCell>
@@ -356,50 +390,87 @@ const AssetDetail = () => {
                   <TableCell align="right">{formatCurrency(m.totalCost)}</TableCell>
                   <TableCell>{m.serviceProvider?.name || m.serviceProviderName || '-'}</TableCell>
                 </TableRow>
-              ))
-            )}
-          </TableBody>
-        </Table>
-      </TableContainer>
+              ))}
+            </TableBody>
+          </Table>
+        </TableContainer>
+      )}
     </Box>
   );
 
   const renderTransfersTab = () => (
     <Box>
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 2 }}>
+      <Box sx={{ display: 'flex', flexDirection: { xs: 'column', sm: 'row' }, justifyContent: 'space-between', gap: 2, mb: 2 }}>
         <Typography variant="h6">Historial de Transferencias</Typography>
         <Button
           variant="contained"
           startIcon={<TransferIcon />}
           onClick={() => navigate(`/assets/transfers/new?assetId=${id}`)}
           disabled={['DISPOSED', 'SOLD'].includes(currentAsset.status)}
+          fullWidth={isMobile}
         >
           Nueva Transferencia
         </Button>
       </Box>
-      <TableContainer component={Paper}>
-        <Table>
-          <TableHead>
-            <TableRow>
-              <TableCell>Fecha</TableCell>
-              <TableCell>Tipo</TableCell>
-              <TableCell>Desde</TableCell>
-              <TableCell>Hacia</TableCell>
-              <TableCell>Estado</TableCell>
-              <TableCell>Motivo</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {currentAsset.transfers?.length === 0 ? (
-              <TableRow>
-                <TableCell colSpan={6} align="center">
-                  <Typography color="text.secondary" sx={{ py: 2 }}>
-                    No hay transferencias registradas
+      {currentAsset.transfers?.length === 0 ? (
+        <Paper sx={{ p: 3, textAlign: 'center' }}>
+          <Typography color="text.secondary">No hay transferencias registradas</Typography>
+        </Paper>
+      ) : isMobile ? (
+        <Box>
+          {currentAsset.transfers?.map((t) => (
+            <Card key={t.id} variant="outlined" sx={{ mb: 2 }}>
+              <CardContent sx={{ pb: 1 }}>
+                <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 1 }}>
+                  <Box>
+                    <Typography variant="subtitle1" fontWeight="bold">
+                      {transferTypeLabels[t.transferType]}
+                    </Typography>
+                    <Typography variant="body2" color="text.secondary">
+                      {formatDate(t.transferDate)}
+                    </Typography>
+                  </Box>
+                  <Chip 
+                    label={transferStatusLabels[t.status]} 
+                    size="small"
+                    color={t.status === 'COMPLETED' ? 'success' : t.status === 'PENDING' ? 'warning' : 'default'}
+                  />
+                </Box>
+                <Box sx={{ display: 'flex', gap: 1, alignItems: 'center', mb: 1 }}>
+                  <Typography variant="body2">
+                    {t.fromEmployee ? `${t.fromEmployee.firstName} ${t.fromEmployee.lastName}` :
+                     t.fromProject?.name || t.fromLocation?.name || '-'}
                   </Typography>
-                </TableCell>
+                  <TransferIcon fontSize="small" color="action" />
+                  <Typography variant="body2">
+                    {t.toEmployee ? `${t.toEmployee.firstName} ${t.toEmployee.lastName}` :
+                     t.toProject?.name || t.toLocation?.name || '-'}
+                  </Typography>
+                </Box>
+                {t.reason && (
+                  <Typography variant="body2" color="text.secondary">
+                    {t.reason?.substring(0, 60)}...
+                  </Typography>
+                )}
+              </CardContent>
+            </Card>
+          ))}
+        </Box>
+      ) : (
+        <TableContainer component={Paper}>
+          <Table>
+            <TableHead>
+              <TableRow>
+                <TableCell>Fecha</TableCell>
+                <TableCell>Tipo</TableCell>
+                <TableCell>Desde</TableCell>
+                <TableCell>Hacia</TableCell>
+                <TableCell>Estado</TableCell>
+                <TableCell>Motivo</TableCell>
               </TableRow>
-            ) : (
-              currentAsset.transfers?.map((t) => (
+            </TableHead>
+            <TableBody>
+              {currentAsset.transfers?.map((t) => (
                 <TableRow key={t.id} hover>
                   <TableCell>{formatDate(t.transferDate)}</TableCell>
                   <TableCell>{transferTypeLabels[t.transferType]}</TableCell>
@@ -420,11 +491,11 @@ const AssetDetail = () => {
                   </TableCell>
                   <TableCell>{t.reason?.substring(0, 30) || '-'}</TableCell>
                 </TableRow>
-              ))
-            )}
-          </TableBody>
-        </Table>
-      </TableContainer>
+              ))}
+            </TableBody>
+          </Table>
+        </TableContainer>
+      )}
     </Box>
   );
 

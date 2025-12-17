@@ -70,6 +70,16 @@ import {
   VerifiedUser as QualityIcon,
   FindInPage as QualityInspectionIcon,
   ReportProblem as NCIcon,
+  Assessment as ReportsIcon,
+  OilBarrel as ProductionIcon,
+  Terrain as FieldIcon,
+  Description as DescriptionIcon,
+  Map as MapIcon,
+  Gavel as ComplianceIcon,
+  Policy as PolicyIcon,
+  FactCheck as AuditIcon,
+  Receipt as ReceiptIcon,
+  AccountBalance as AccountBalanceIcon,
 } from '@mui/icons-material';
 
 import { logout } from '../store/slices/authSlice';
@@ -315,6 +325,64 @@ const Layout = () => {
         { text: 'No Conformidades', icon: <NCIcon />, path: '/quality/non-conformances' },
       ],
     },
+    { 
+      id: 'production', 
+      text: t('production.title'), 
+      icon: <ProductionIcon />,
+      permissions: ['production:read', 'production:*'],
+      children: [
+        { text: 'Dashboard', icon: <DashboardIcon />, path: '/production' },
+        { text: t('production.fields.title'), icon: <FieldIcon />, path: '/production/fields' },
+        { text: t('production.wells.title'), icon: <ProductionIcon />, path: '/production/wells' },
+      ],
+    },
+    { 
+      id: 'afe', 
+      text: t('afe.title'), 
+      icon: <FinanceIcon />,
+      permissions: ['afe:read', 'afe:*'],
+      children: [
+        { text: 'Dashboard', icon: <DashboardIcon />, path: '/afe' },
+        { text: t('common.list'), icon: <ListIcon />, path: '/afe/list' },
+      ],
+    },
+    { 
+      id: 'contracts', 
+      text: t('contracts.title'), 
+      icon: <DescriptionIcon />,
+      permissions: ['contracts:read', 'contracts:*'],
+      children: [
+        { text: 'Dashboard', icon: <DashboardIcon />, path: '/contracts' },
+        { text: t('common.list'), icon: <ListIcon />, path: '/contracts/list' },
+        { text: t('contracts.concessions.title'), icon: <MapIcon />, path: '/contracts/concessions' },
+      ],
+    },
+    { 
+      id: 'compliance', 
+      text: t('compliance.moduleTitle'), 
+      icon: <ComplianceIcon />,
+      permissions: ['compliance:read', 'compliance:*'],
+      children: [
+        { text: 'Dashboard', icon: <DashboardIcon />, path: '/compliance' },
+        { text: t('compliance.regulatoryReports'), icon: <DescriptionIcon />, path: '/compliance/reports' },
+        { text: t('compliance.environmentalPermits'), icon: <ComplianceIcon />, path: '/compliance/permits' },
+        { text: t('compliance.complianceAudits'), icon: <AuditIcon />, path: '/compliance/audits' },
+        { text: t('compliance.policies'), icon: <PolicyIcon />, path: '/compliance/policies' },
+        { text: t('compliance.certifications'), icon: <QualityIcon />, path: '/compliance/certifications' },
+      ],
+    },
+    { 
+      id: 'jib', 
+      text: t('jib.title', 'JIB'), 
+      icon: <ReceiptIcon />,
+      permissions: ['jib:read', 'jib:*'],
+      children: [
+        { text: 'Dashboard', icon: <DashboardIcon />, path: '/jib' },
+        { text: t('jib.billings.title', 'Facturación JIB'), icon: <ReceiptIcon />, path: '/jib/billings' },
+        { text: t('jib.cashCalls.title', 'Cash Calls'), icon: <AccountBalanceIcon />, path: '/jib/cash-calls' },
+      ],
+    },
+    { id: 'reports', text: t('menu.reports'), icon: <ReportsIcon />, path: '/reports', permissions: ['reports:read', 'reports:*'] },
     { 
       id: 'admin', 
       text: 'Administración', 

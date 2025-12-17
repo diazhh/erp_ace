@@ -78,11 +78,14 @@ const statusColors = {
   PENDING: 'warning',
 };
 
-const statusLabels = {
-  ACTIVE: 'Activo',
-  INACTIVE: 'Inactivo',
-  SUSPENDED: 'Suspendido',
-  PENDING: 'Pendiente',
+const getStatusLabel = (status, t) => {
+  const labels = {
+    ACTIVE: t('common.active'),
+    INACTIVE: t('common.inactive'),
+    SUSPENDED: t('contractors.suspended', 'Suspendido'),
+    PENDING: t('contractors.pending', 'Pendiente'),
+  };
+  return labels[status] || status;
 };
 
 // TabPanel component
@@ -171,36 +174,85 @@ const ContractorDetail = () => {
   return (
     <Box>
       {/* Header */}
-      <Box sx={{ display: 'flex', alignItems: 'center', mb: 3, gap: 2, flexWrap: 'wrap' }}>
-        <IconButton onClick={() => navigate('/contractors')}>
-          <BackIcon />
-        </IconButton>
-        <Avatar sx={{ bgcolor: 'primary.main', width: 56, height: 56 }}>
-          <ContractorIcon fontSize="large" />
-        </Avatar>
-        <Box sx={{ flexGrow: 1 }}>
-          <Typography variant="h5" fontWeight="bold">
-            {contractor.companyName}
-          </Typography>
-          <Typography variant="body2" color="text.secondary">
-            {contractor.code} {contractor.rif && `• RIF: ${contractor.rif}`}
-          </Typography>
+      <Box sx={{ 
+        display: 'flex', 
+        flexDirection: { xs: 'column', md: 'row' },
+        alignItems: { xs: 'stretch', md: 'center' }, 
+        mb: 3, 
+        gap: 2 
+      }}>
+        {/* Back button row */}
+        <Box sx={{ 
+          display: 'flex', 
+          justifyContent: 'space-between', 
+          alignItems: 'center',
+          width: { xs: '100%', md: 'auto' }
+        }}>
+          <IconButton onClick={() => navigate('/contractors')}>
+            <BackIcon />
+          </IconButton>
+          {/* Mobile edit button */}
+          <Button
+            variant="outlined"
+            startIcon={<EditIcon />}
+            onClick={() => navigate(`/contractors/${id}/edit`)}
+            sx={{ display: { xs: 'flex', md: 'none' } }}
+            size="small"
+          >
+            {t('common.edit')}
+          </Button>
         </Box>
-        <Chip label={statusLabels[contractor.status]} color={statusColors[contractor.status]} />
-        {contractor.rating && (
-          <Chip 
-            icon={<StarIcon />} 
-            label={contractor.rating.toFixed(1)} 
-            variant="outlined" 
-            color="warning"
-          />
-        )}
+        
+        {/* Avatar and info */}
+        <Box sx={{ 
+          display: 'flex', 
+          flexDirection: { xs: 'column', sm: 'row' },
+          alignItems: { xs: 'center', sm: 'flex-start' },
+          gap: 2,
+          flex: 1,
+          textAlign: { xs: 'center', sm: 'left' }
+        }}>
+          <Avatar sx={{ bgcolor: 'primary.main', width: { xs: 48, md: 56 }, height: { xs: 48, md: 56 } }}>
+            <ContractorIcon fontSize={isMobile ? 'medium' : 'large'} />
+          </Avatar>
+          <Box sx={{ flex: 1 }}>
+            <Box sx={{ 
+              display: 'flex', 
+              flexDirection: { xs: 'column', sm: 'row' },
+              alignItems: { xs: 'center', sm: 'center' }, 
+              gap: 1, 
+              flexWrap: 'wrap'
+            }}>
+              <Typography variant={isMobile ? 'h6' : 'h5'} fontWeight="bold">
+                {contractor.companyName}
+              </Typography>
+              <Box sx={{ display: 'flex', gap: 0.5 }}>
+                <Chip label={getStatusLabel(contractor.status, t)} color={statusColors[contractor.status]} size="small" />
+                {contractor.rating && (
+                  <Chip 
+                    icon={<StarIcon />} 
+                    label={contractor.rating.toFixed(1)} 
+                    variant="outlined" 
+                    color="warning"
+                    size="small"
+                  />
+                )}
+              </Box>
+            </Box>
+            <Typography variant="body2" color="text.secondary">
+              {contractor.code} {contractor.rif && `• RIF: ${contractor.rif}`}
+            </Typography>
+          </Box>
+        </Box>
+        
+        {/* Desktop edit button */}
         <Button
           variant="outlined"
           startIcon={<EditIcon />}
           onClick={() => navigate(`/contractors/${id}/edit`)}
+          sx={{ display: { xs: 'none', md: 'flex' } }}
         >
-          Editar
+          {t('common.edit')}
         </Button>
       </Box>
 
@@ -208,11 +260,11 @@ const ContractorDetail = () => {
       <Grid container spacing={2} sx={{ mb: 3 }}>
         <Grid item xs={6} sm={3}>
           <Card>
-            <CardContent sx={{ textAlign: 'center', py: 2 }}>
-              <Typography color="text.secondary" variant="body2" gutterBottom>
-                Proyectos
+            <CardContent sx={{ textAlign: 'center', py: { xs: 1.5, sm: 2 } }}>
+              <Typography color="text.secondary" variant="caption" gutterBottom display="block">
+                {t('projects.title')}
               </Typography>
-              <Typography variant="h4" fontWeight="bold" color="primary">
+              <Typography variant={isMobile ? 'h5' : 'h4'} fontWeight="bold" color="primary">
                 {contractor.projects?.length || 0}
               </Typography>
             </CardContent>
@@ -220,11 +272,11 @@ const ContractorDetail = () => {
         </Grid>
         <Grid item xs={6} sm={3}>
           <Card>
-            <CardContent sx={{ textAlign: 'center', py: 2 }}>
-              <Typography color="text.secondary" variant="body2" gutterBottom>
-                Facturas
+            <CardContent sx={{ textAlign: 'center', py: { xs: 1.5, sm: 2 } }}>
+              <Typography color="text.secondary" variant="caption" gutterBottom display="block">
+                {t('procurement.invoices')}
               </Typography>
-              <Typography variant="h4" fontWeight="bold" color="info.main">
+              <Typography variant={isMobile ? 'h5' : 'h4'} fontWeight="bold" color="info.main">
                 {invoices.length}
               </Typography>
             </CardContent>
@@ -232,11 +284,11 @@ const ContractorDetail = () => {
         </Grid>
         <Grid item xs={6} sm={3}>
           <Card>
-            <CardContent sx={{ textAlign: 'center', py: 2 }}>
-              <Typography color="text.secondary" variant="body2" gutterBottom>
-                Total Pagado
+            <CardContent sx={{ textAlign: 'center', py: { xs: 1.5, sm: 2 } }}>
+              <Typography color="text.secondary" variant="caption" gutterBottom display="block">
+                {t('contractors.totalPaid', 'Total Pagado')}
               </Typography>
-              <Typography variant="h6" fontWeight="bold" color="success.main">
+              <Typography variant={isMobile ? 'body1' : 'h6'} fontWeight="bold" color="success.main">
                 {formatCurrency(contractor.totalPaid)}
               </Typography>
             </CardContent>
@@ -244,11 +296,11 @@ const ContractorDetail = () => {
         </Grid>
         <Grid item xs={6} sm={3}>
           <Card>
-            <CardContent sx={{ textAlign: 'center', py: 2 }}>
-              <Typography color="text.secondary" variant="body2" gutterBottom>
-                Pendiente
+            <CardContent sx={{ textAlign: 'center', py: { xs: 1.5, sm: 2 } }}>
+              <Typography color="text.secondary" variant="caption" gutterBottom display="block">
+                {t('contractors.pending', 'Pendiente')}
               </Typography>
-              <Typography variant="h6" fontWeight="bold" color="warning.main">
+              <Typography variant={isMobile ? 'body1' : 'h6'} fontWeight="bold" color="warning.main">
                 {formatCurrency(contractor.totalPending)}
               </Typography>
             </CardContent>
@@ -257,15 +309,15 @@ const ContractorDetail = () => {
       </Grid>
 
       {/* Tabs */}
-      <Paper sx={{ p: isMobile ? 2 : 0, mb: 3 }}>
+      <Paper sx={{ p: isMobile ? 1 : 0, mb: 3 }}>
         <ResponsiveTabs
           tabs={[
-            { label: 'Información', icon: <BusinessIcon /> },
-            { label: `Cuentas (${bankAccounts.length})`, icon: <BankIcon /> },
-            { label: `Documentos (${documents.length})`, icon: <DocumentIcon /> },
-            { label: `Facturas (${invoices.length})`, icon: <InvoiceIcon /> },
-            { label: `Pagos (${payments.length})`, icon: <PaymentIcon /> },
-            { label: 'Archivos', icon: <AttachIcon /> },
+            { label: t('contractors.info', 'Información'), icon: <BusinessIcon /> },
+            { label: `${t('contractors.accounts', 'Cuentas')} (${bankAccounts.length})`, icon: <BankIcon /> },
+            { label: `${t('contractors.documents', 'Documentos')} (${documents.length})`, icon: <DocumentIcon /> },
+            { label: `${t('procurement.invoices')} (${invoices.length})`, icon: <InvoiceIcon /> },
+            { label: `${t('procurement.payments')} (${payments.length})`, icon: <PaymentIcon /> },
+            { label: t('attachments.title'), icon: <AttachIcon /> },
           ]}
           value={tabValue}
           onChange={(e, v) => setTabValue(v)}
@@ -275,39 +327,39 @@ const ContractorDetail = () => {
 
       {/* Tab: Información */}
       <TabPanel value={tabValue} index={0}>
-        <Grid container spacing={3}>
+        <Grid container spacing={{ xs: 2, md: 3 }}>
           <Grid item xs={12} md={6}>
             <Paper sx={{ p: 2 }}>
-              <Typography variant="h6" gutterBottom>Información de la Empresa</Typography>
+              <Typography variant="h6" gutterBottom>{t('contractors.companyInfo', 'Información de la Empresa')}</Typography>
               <List dense>
                 {contractor.tradeName && (
                   <ListItem>
                     <ListItemIcon><BusinessIcon /></ListItemIcon>
-                    <ListItemText primary="Nombre Comercial" secondary={contractor.tradeName} />
+                    <ListItemText primary={t('contractors.tradeName', 'Nombre Comercial')} secondary={contractor.tradeName} />
                   </ListItem>
                 )}
                 {contractor.specialty && (
                   <ListItem>
                     <ListItemIcon><ContractorIcon /></ListItemIcon>
-                    <ListItemText primary="Especialidad" secondary={contractor.specialty} />
+                    <ListItemText primary={t('contractors.specialty', 'Especialidad')} secondary={contractor.specialty} />
                   </ListItem>
                 )}
                 {contractor.phone && (
                   <ListItem>
                     <ListItemIcon><PhoneIcon /></ListItemIcon>
-                    <ListItemText primary="Teléfono" secondary={contractor.phone} />
+                    <ListItemText primary={t('employees.phone')} secondary={contractor.phone} />
                   </ListItem>
                 )}
                 {contractor.email && (
                   <ListItem>
                     <ListItemIcon><EmailIcon /></ListItemIcon>
-                    <ListItemText primary="Email" secondary={contractor.email} />
+                    <ListItemText primary={t('auth.email')} secondary={contractor.email} />
                   </ListItem>
                 )}
                 {contractor.website && (
                   <ListItem>
                     <ListItemIcon><WebIcon /></ListItemIcon>
-                    <ListItemText primary="Sitio Web" secondary={contractor.website} />
+                    <ListItemText primary={t('contractors.website', 'Sitio Web')} secondary={contractor.website} />
                   </ListItem>
                 )}
               </List>
@@ -315,37 +367,37 @@ const ContractorDetail = () => {
           </Grid>
           <Grid item xs={12} md={6}>
             <Paper sx={{ p: 2 }}>
-              <Typography variant="h6" gutterBottom>Dirección</Typography>
+              <Typography variant="h6" gutterBottom>{t('employees.address')}</Typography>
               <List dense>
                 {contractor.address && (
                   <ListItem>
                     <ListItemIcon><LocationIcon /></ListItemIcon>
                     <ListItemText 
-                      primary="Dirección" 
+                      primary={t('employees.address')} 
                       secondary={`${contractor.address}${contractor.city ? `, ${contractor.city}` : ''}${contractor.state ? `, ${contractor.state}` : ''}`} 
                     />
                   </ListItem>
                 )}
               </List>
               <Divider sx={{ my: 2 }} />
-              <Typography variant="h6" gutterBottom>Persona de Contacto</Typography>
+              <Typography variant="h6" gutterBottom>{t('contractors.contactPerson', 'Persona de Contacto')}</Typography>
               <List dense>
                 {contractor.contactName && (
                   <ListItem>
                     <ListItemIcon><PersonIcon /></ListItemIcon>
-                    <ListItemText primary="Nombre" secondary={contractor.contactName} />
+                    <ListItemText primary={t('common.name')} secondary={contractor.contactName} />
                   </ListItem>
                 )}
                 {contractor.contactPhone && (
                   <ListItem>
                     <ListItemIcon><PhoneIcon /></ListItemIcon>
-                    <ListItemText primary="Teléfono" secondary={contractor.contactPhone} />
+                    <ListItemText primary={t('employees.phone')} secondary={contractor.contactPhone} />
                   </ListItem>
                 )}
                 {contractor.contactEmail && (
                   <ListItem>
                     <ListItemIcon><EmailIcon /></ListItemIcon>
-                    <ListItemText primary="Email" secondary={contractor.contactEmail} />
+                    <ListItemText primary={t('auth.email')} secondary={contractor.contactEmail} />
                   </ListItem>
                 )}
               </List>
@@ -354,7 +406,7 @@ const ContractorDetail = () => {
           {contractor.notes && (
             <Grid item xs={12}>
               <Paper sx={{ p: 2 }}>
-                <Typography variant="h6" gutterBottom>Notas</Typography>
+                <Typography variant="h6" gutterBottom>{t('common.notes')}</Typography>
                 <Typography variant="body2" color="text.secondary">
                   {contractor.notes}
                 </Typography>
@@ -367,49 +419,90 @@ const ContractorDetail = () => {
       {/* Tab: Cuentas Bancarias */}
       <TabPanel value={tabValue} index={1}>
         <Box sx={{ display: 'flex', justifyContent: 'flex-end', mb: 2 }}>
-          <Button startIcon={<AddIcon />} variant="contained" onClick={() => setBankDialog(true)}>
-            Agregar Cuenta
+          <Button startIcon={<AddIcon />} variant="contained" onClick={() => setBankDialog(true)} fullWidth={isMobile}>
+            {t('contractors.addAccount', 'Agregar Cuenta')}
           </Button>
         </Box>
-        <TableContainer component={Paper}>
-          <Table>
-            <TableHead>
-              <TableRow>
-                <TableCell>Banco</TableCell>
-                <TableCell>Tipo</TableCell>
-                <TableCell>Número</TableCell>
-                <TableCell>Titular</TableCell>
-                <TableCell>Moneda</TableCell>
-                <TableCell>Estado</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
+        {isMobile ? (
+          // Mobile: Cards view
+          bankAccounts.length === 0 ? (
+            <Paper sx={{ p: 3, textAlign: 'center' }}>
+              <Typography color="text.secondary">{t('finance.noAccounts')}</Typography>
+            </Paper>
+          ) : (
+            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
               {bankAccounts.map((account) => (
-                <TableRow key={account.id}>
-                  <TableCell>{account.bankName}</TableCell>
-                  <TableCell>{account.accountType}</TableCell>
-                  <TableCell>{account.accountNumber}</TableCell>
-                  <TableCell>{account.accountHolder || '-'}</TableCell>
-                  <TableCell>{account.currency}</TableCell>
-                  <TableCell>
-                    <Chip 
-                      label={account.isVerified ? 'Verificada' : 'Pendiente'} 
-                      color={account.isVerified ? 'success' : 'warning'} 
-                      size="small" 
-                    />
-                  </TableCell>
-                </TableRow>
+                <Card key={account.id} variant="outlined">
+                  <CardContent sx={{ pb: '16px !important' }}>
+                    <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 1 }}>
+                      <Typography variant="subtitle1" fontWeight="bold">{account.bankName}</Typography>
+                      <Chip 
+                        label={account.isVerified ? t('contractors.verified', 'Verificada') : t('contractors.pendingVerification', 'Pendiente')} 
+                        color={account.isVerified ? 'success' : 'warning'} 
+                        size="small" 
+                      />
+                    </Box>
+                    <Grid container spacing={1}>
+                      <Grid item xs={6}>
+                        <Typography variant="caption" color="text.secondary">{t('finance.accountType')}</Typography>
+                        <Typography variant="body2">{account.accountType}</Typography>
+                      </Grid>
+                      <Grid item xs={6}>
+                        <Typography variant="caption" color="text.secondary">{t('finance.currency')}</Typography>
+                        <Typography variant="body2">{account.currency}</Typography>
+                      </Grid>
+                      <Grid item xs={12}>
+                        <Typography variant="caption" color="text.secondary">{t('finance.accountNumber')}</Typography>
+                        <Typography variant="body2">{account.accountNumber}</Typography>
+                      </Grid>
+                    </Grid>
+                  </CardContent>
+                </Card>
               ))}
-              {bankAccounts.length === 0 && (
+            </Box>
+          )
+        ) : (
+          // Desktop: Table view
+          <TableContainer component={Paper}>
+            <Table>
+              <TableHead>
                 <TableRow>
-                  <TableCell colSpan={6} align="center">
-                    <Typography color="text.secondary">No hay cuentas bancarias registradas</Typography>
-                  </TableCell>
+                  <TableCell>{t('finance.bankName')}</TableCell>
+                  <TableCell>{t('finance.accountType')}</TableCell>
+                  <TableCell>{t('finance.accountNumber')}</TableCell>
+                  <TableCell>{t('finance.accountHolder')}</TableCell>
+                  <TableCell>{t('finance.currency')}</TableCell>
+                  <TableCell>{t('common.status')}</TableCell>
                 </TableRow>
-              )}
-            </TableBody>
-          </Table>
-        </TableContainer>
+              </TableHead>
+              <TableBody>
+                {bankAccounts.map((account) => (
+                  <TableRow key={account.id}>
+                    <TableCell>{account.bankName}</TableCell>
+                    <TableCell>{account.accountType}</TableCell>
+                    <TableCell>{account.accountNumber}</TableCell>
+                    <TableCell>{account.accountHolder || '-'}</TableCell>
+                    <TableCell>{account.currency}</TableCell>
+                    <TableCell>
+                      <Chip 
+                        label={account.isVerified ? t('contractors.verified', 'Verificada') : t('contractors.pendingVerification', 'Pendiente')} 
+                        color={account.isVerified ? 'success' : 'warning'} 
+                        size="small" 
+                      />
+                    </TableCell>
+                  </TableRow>
+                ))}
+                {bankAccounts.length === 0 && (
+                  <TableRow>
+                    <TableCell colSpan={6} align="center">
+                      <Typography color="text.secondary">{t('finance.noAccounts')}</Typography>
+                    </TableCell>
+                  </TableRow>
+                )}
+              </TableBody>
+            </Table>
+          </TableContainer>
+        )}
       </TabPanel>
 
       {/* Tab: Documentos */}
@@ -560,13 +653,13 @@ const ContractorDetail = () => {
 
       {/* Dialog: Agregar Cuenta Bancaria */}
       <Dialog open={bankDialog} onClose={() => setBankDialog(false)} maxWidth="sm" fullWidth>
-        <DialogTitle>Agregar Cuenta Bancaria</DialogTitle>
+        <DialogTitle>{t('contractors.addAccount', 'Agregar Cuenta Bancaria')}</DialogTitle>
         <DialogContent>
           <Grid container spacing={2} sx={{ mt: 1 }}>
             <Grid item xs={12}>
               <TextField
                 fullWidth
-                label="Nombre del Banco"
+                label={t('finance.bankName')}
                 value={bankForm.bankName}
                 onChange={(e) => setBankForm({ ...bankForm, bankName: e.target.value })}
                 required
@@ -576,19 +669,19 @@ const ContractorDetail = () => {
               <TextField
                 select
                 fullWidth
-                label="Tipo de Cuenta"
+                label={t('finance.accountType')}
                 value={bankForm.accountType}
                 onChange={(e) => setBankForm({ ...bankForm, accountType: e.target.value })}
               >
-                <MenuItem value="CHECKING">Corriente</MenuItem>
-                <MenuItem value="SAVINGS">Ahorro</MenuItem>
+                <MenuItem value="CHECKING">{t('finance.accountTypeChecking')}</MenuItem>
+                <MenuItem value="SAVINGS">{t('finance.accountTypeSavings')}</MenuItem>
               </TextField>
             </Grid>
             <Grid item xs={12} sm={6}>
               <TextField
                 select
                 fullWidth
-                label="Moneda"
+                label={t('finance.currency')}
                 value={bankForm.currency}
                 onChange={(e) => setBankForm({ ...bankForm, currency: e.target.value })}
               >
@@ -599,7 +692,7 @@ const ContractorDetail = () => {
             <Grid item xs={12}>
               <TextField
                 fullWidth
-                label="Número de Cuenta"
+                label={t('finance.accountNumber')}
                 value={bankForm.accountNumber}
                 onChange={(e) => setBankForm({ ...bankForm, accountNumber: e.target.value })}
                 required
@@ -608,7 +701,7 @@ const ContractorDetail = () => {
             <Grid item xs={12}>
               <TextField
                 fullWidth
-                label="Titular de la Cuenta"
+                label={t('finance.accountHolder')}
                 value={bankForm.accountHolder}
                 onChange={(e) => setBankForm({ ...bankForm, accountHolder: e.target.value })}
               />
@@ -616,8 +709,8 @@ const ContractorDetail = () => {
           </Grid>
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => setBankDialog(false)}>Cancelar</Button>
-          <Button variant="contained" onClick={handleAddBankAccount}>Agregar</Button>
+          <Button onClick={() => setBankDialog(false)}>{t('common.cancel')}</Button>
+          <Button variant="contained" onClick={handleAddBankAccount}>{t('common.save')}</Button>
         </DialogActions>
       </Dialog>
     </Box>

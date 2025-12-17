@@ -22,6 +22,11 @@ import {
   Tooltip,
   Grid,
   LinearProgress,
+  Card,
+  CardContent,
+  CardActions,
+  useMediaQuery,
+  useTheme,
 } from '@mui/material';
 import {
   Add as AddIcon,
@@ -49,6 +54,8 @@ const Loans = () => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
   const { loans, loansPagination, loading } = useSelector((state) => state.payroll);
 
   const [page, setPage] = useState(0);
@@ -124,20 +131,33 @@ const Loans = () => {
   return (
     <Box>
       {/* Header */}
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3, flexWrap: 'wrap', gap: 2 }}>
-        <Typography variant="h4" fontWeight="bold">
+      <Box sx={{ 
+        display: 'flex', 
+        flexDirection: { xs: 'column', sm: 'row' },
+        justifyContent: 'space-between', 
+        alignItems: { xs: 'stretch', sm: 'center' }, 
+        mb: 3, 
+        gap: 2 
+      }}>
+        <Typography variant={isMobile ? 'h5' : 'h4'} fontWeight="bold">
           {t('payroll.loans')}
         </Typography>
-        <Box sx={{ display: 'flex', gap: 1 }}>
+        <Box sx={{ 
+          display: 'flex', 
+          gap: 1,
+          flexDirection: { xs: 'column', sm: 'row' }
+        }}>
           <DownloadPDFButton
             endpoint={`/reports/loans?${buildPdfQueryParams()}`}
             filename={`prestamos-${new Date().toISOString().split('T')[0]}.pdf`}
             variant="outlined"
+            fullWidth={isMobile}
           />
           <Button
             variant="contained"
             startIcon={<AddIcon />}
             onClick={handleNewLoan}
+            fullWidth={isMobile}
           >
             {t('payroll.newLoan')}
           </Button>
@@ -204,95 +224,181 @@ const Loans = () => {
         </Grid>
       </Paper>
 
-      {/* Table */}
-      <TableContainer component={Paper}>
-        {loading ? (
-          <Box sx={{ display: 'flex', justifyContent: 'center', p: 4 }}>
-            <CircularProgress />
-          </Box>
-        ) : (
-          <>
-            <Table>
-              <TableHead>
-                <TableRow>
-                  <TableCell>{t('payroll.loanCode')}</TableCell>
-                  <TableCell>{t('payroll.employee')}</TableCell>
-                  <TableCell>{t('payroll.loanType')}</TableCell>
-                  <TableCell align="right">{t('payroll.amount')}</TableCell>
-                  <TableCell align="right">{t('payroll.installment')}</TableCell>
-                  <TableCell>{t('payroll.progress')}</TableCell>
-                  <TableCell align="right">{t('payroll.remaining')}</TableCell>
-                  <TableCell>{t('common.status')}</TableCell>
-                  <TableCell align="right">{t('common.actions')}</TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {loans.length === 0 ? (
-                  <TableRow>
-                    <TableCell colSpan={9} align="center">
-                      {t('common.noData')}
-                    </TableCell>
-                  </TableRow>
-                ) : (
-                  loans.map((loan) => (
-                    <TableRow key={loan.id} hover>
-                      <TableCell>
-                        <Typography variant="body2" fontWeight="medium">
-                          {loan.code}
-                        </Typography>
-                      </TableCell>
-                      <TableCell>
-                        {loan.employee?.firstName} {loan.employee?.lastName}
-                      </TableCell>
-                      <TableCell>{loanTypeLabels[loan.loanType]}</TableCell>
-                      <TableCell align="right">
-                        {formatCurrency(loan.amount, loan.currency)}
-                      </TableCell>
-                      <TableCell align="right">
-                        {formatCurrency(loan.installmentAmount, loan.currency)}
-                      </TableCell>
-                      <TableCell>
-                        {loan.paidInstallments} / {loan.totalInstallments}
-                      </TableCell>
-                      <TableCell align="right" sx={{ color: 'error.main' }}>
-                        {formatCurrency(loan.remainingAmount, loan.currency)}
-                      </TableCell>
-                      <TableCell>
+      {/* Table / Cards */}
+      {loading ? (
+        <Box sx={{ display: 'flex', justifyContent: 'center', p: 4 }}>
+          <CircularProgress />
+        </Box>
+      ) : isMobile ? (
+        // Mobile: Cards view
+        <Box>
+          {loans.length === 0 ? (
+            <Paper sx={{ p: 3, textAlign: 'center' }}>
+              <Typography color="text.secondary">{t('common.noData')}</Typography>
+            </Paper>
+          ) : (
+            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+              {loans.map((loan) => {
+                const progress = loan.amount > 0 
+                  ? ((loan.amount - loan.remainingAmount) / loan.amount) * 100 
+                  : 0;
+                return (
+                  <Card key={loan.id} variant="outlined">
+                    <CardContent sx={{ pb: 1 }}>
+                      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 1 }}>
+                        <Box>
+                          <Typography variant="subtitle1" fontWeight="bold">
+                            {loan.code}
+                          </Typography>
+                          <Typography variant="body2" color="text.secondary">
+                            {loan.employee?.firstName} {loan.employee?.lastName}
+                          </Typography>
+                        </Box>
                         <Chip
                           label={getStatusLabel(loan.status)}
                           color={statusColors[loan.status]}
                           size="small"
                         />
-                      </TableCell>
-                      <TableCell align="right">
-                        <Tooltip title={t('common.view')}>
-                          <IconButton
-                            size="small"
-                            color="primary"
-                            onClick={() => handleViewDetail(loan)}
-                          >
-                            <ViewIcon fontSize="small" />
-                          </IconButton>
-                        </Tooltip>
-                      </TableCell>
-                    </TableRow>
-                  ))
-                )}
-              </TableBody>
-            </Table>
-            <TablePagination
-              component="div"
-              count={loansPagination.total}
-              page={page}
-              onPageChange={handleChangePage}
-              rowsPerPage={rowsPerPage}
-              onRowsPerPageChange={handleChangeRowsPerPage}
-              rowsPerPageOptions={[5, 10, 25]}
-              labelRowsPerPage={t('common.rowsPerPage')}
-            />
-          </>
-        )}
-      </TableContainer>
+                      </Box>
+                      <Typography variant="caption" color="text.secondary">
+                        {loanTypeLabels[loan.loanType]}
+                      </Typography>
+                      <Grid container spacing={1} sx={{ mt: 1 }}>
+                        <Grid item xs={6}>
+                          <Typography variant="caption" color="text.secondary">{t('payroll.amount')}</Typography>
+                          <Typography variant="body2" fontWeight="medium">{formatCurrency(loan.amount, loan.currency)}</Typography>
+                        </Grid>
+                        <Grid item xs={6}>
+                          <Typography variant="caption" color="text.secondary">{t('payroll.installment')}</Typography>
+                          <Typography variant="body2">{formatCurrency(loan.installmentAmount, loan.currency)}</Typography>
+                        </Grid>
+                        <Grid item xs={6}>
+                          <Typography variant="caption" color="text.secondary">{t('payroll.progress')}</Typography>
+                          <Typography variant="body2">{loan.paidInstallments} / {loan.totalInstallments}</Typography>
+                        </Grid>
+                        <Grid item xs={6}>
+                          <Typography variant="caption" color="text.secondary">{t('payroll.remaining')}</Typography>
+                          <Typography variant="body2" color="error.main" fontWeight="medium">
+                            {formatCurrency(loan.remainingAmount, loan.currency)}
+                          </Typography>
+                        </Grid>
+                      </Grid>
+                      <Box sx={{ mt: 2 }}>
+                        <LinearProgress 
+                          variant="determinate" 
+                          value={progress} 
+                          sx={{ height: 6, borderRadius: 3 }}
+                          color={progress >= 100 ? 'success' : 'primary'}
+                        />
+                        <Typography variant="caption" color="text.secondary">
+                          {progress.toFixed(0)}% {t('payroll.loanPaid', 'pagado')}
+                        </Typography>
+                      </Box>
+                    </CardContent>
+                    <CardActions sx={{ justifyContent: 'flex-end', pt: 0 }}>
+                      <Button size="small" onClick={() => handleViewDetail(loan)}>
+                        {t('common.view')}
+                      </Button>
+                    </CardActions>
+                  </Card>
+                );
+              })}
+            </Box>
+          )}
+          <TablePagination
+            component="div"
+            count={loansPagination.total}
+            page={page}
+            onPageChange={handleChangePage}
+            rowsPerPage={rowsPerPage}
+            onRowsPerPageChange={handleChangeRowsPerPage}
+            rowsPerPageOptions={[5, 10, 25]}
+            labelRowsPerPage={t('common.rowsPerPage')}
+          />
+        </Box>
+      ) : (
+        // Desktop: Table view
+        <TableContainer component={Paper}>
+          <Table>
+            <TableHead>
+              <TableRow>
+                <TableCell>{t('payroll.loanCode')}</TableCell>
+                <TableCell>{t('payroll.employee')}</TableCell>
+                <TableCell>{t('payroll.loanType')}</TableCell>
+                <TableCell align="right">{t('payroll.amount')}</TableCell>
+                <TableCell align="right">{t('payroll.installment')}</TableCell>
+                <TableCell>{t('payroll.progress')}</TableCell>
+                <TableCell align="right">{t('payroll.remaining')}</TableCell>
+                <TableCell>{t('common.status')}</TableCell>
+                <TableCell align="right">{t('common.actions')}</TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {loans.length === 0 ? (
+                <TableRow>
+                  <TableCell colSpan={9} align="center">
+                    {t('common.noData')}
+                  </TableCell>
+                </TableRow>
+              ) : (
+                loans.map((loan) => (
+                  <TableRow key={loan.id} hover>
+                    <TableCell>
+                      <Typography variant="body2" fontWeight="medium">
+                        {loan.code}
+                      </Typography>
+                    </TableCell>
+                    <TableCell>
+                      {loan.employee?.firstName} {loan.employee?.lastName}
+                    </TableCell>
+                    <TableCell>{loanTypeLabels[loan.loanType]}</TableCell>
+                    <TableCell align="right">
+                      {formatCurrency(loan.amount, loan.currency)}
+                    </TableCell>
+                    <TableCell align="right">
+                      {formatCurrency(loan.installmentAmount, loan.currency)}
+                    </TableCell>
+                    <TableCell>
+                      {loan.paidInstallments} / {loan.totalInstallments}
+                    </TableCell>
+                    <TableCell align="right" sx={{ color: 'error.main' }}>
+                      {formatCurrency(loan.remainingAmount, loan.currency)}
+                    </TableCell>
+                    <TableCell>
+                      <Chip
+                        label={getStatusLabel(loan.status)}
+                        color={statusColors[loan.status]}
+                        size="small"
+                      />
+                    </TableCell>
+                    <TableCell align="right">
+                      <Tooltip title={t('common.view')}>
+                        <IconButton
+                          size="small"
+                          color="primary"
+                          onClick={() => handleViewDetail(loan)}
+                        >
+                          <ViewIcon fontSize="small" />
+                        </IconButton>
+                      </Tooltip>
+                    </TableCell>
+                  </TableRow>
+                ))
+              )}
+            </TableBody>
+          </Table>
+          <TablePagination
+            component="div"
+            count={loansPagination.total}
+            page={page}
+            onPageChange={handleChangePage}
+            rowsPerPage={rowsPerPage}
+            onRowsPerPageChange={handleChangeRowsPerPage}
+            rowsPerPageOptions={[5, 10, 25]}
+            labelRowsPerPage={t('common.rowsPerPage')}
+          />
+        </TableContainer>
+      )}
     </Box>
   );
 };

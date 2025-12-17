@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, useSearchParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { useTranslation } from 'react-i18next';
 import {
@@ -40,11 +40,16 @@ const units = ['UND', 'M', 'M2', 'M3', 'KG', 'LT', 'HR', 'DIA', 'SEM', 'MES', 'G
 const PurchaseOrderForm = () => {
   const { id } = useParams();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const dispatch = useDispatch();
   const { t } = useTranslation();
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const isEdit = !!id;
+
+  // Obtener wellId y fieldId de los query params (para crear desde detalle de pozo)
+  const wellIdFromUrl = searchParams.get('wellId');
+  const fieldIdFromUrl = searchParams.get('fieldId');
 
   const orderTypes = [
     { code: 'PURCHASE', name: t('procurement.orderTypePurchase') },
@@ -56,9 +61,14 @@ const PurchaseOrderForm = () => {
   const { projects } = useSelector((state) => state.projects);
 
   const [loading, setLoading] = useState(false);
+  const [fields, setFields] = useState([]);
+  const [wells, setWells] = useState([]);
+  const [filteredWells, setFilteredWells] = useState([]);
   const [formData, setFormData] = useState({
     contractorId: '',
     projectId: '',
+    fieldId: '',
+    wellId: '',
     orderType: 'SERVICE',
     title: '',
     description: '',
@@ -79,11 +89,43 @@ const PurchaseOrderForm = () => {
   useEffect(() => {
     dispatch(fetchContractors({ limit: 100 }));
     dispatch(fetchProjects({ limit: 100 }));
+    loadFieldsAndWells();
     
     if (isEdit) {
       loadOrder();
+    } else {
+      // Si viene desde detalle de pozo, precargar wellId y fieldId
+      if (wellIdFromUrl || fieldIdFromUrl) {
+        setFormData((prev) => ({
+          ...prev,
+          wellId: wellIdFromUrl || '',
+          fieldId: fieldIdFromUrl || '',
+        }));
+      }
     }
-  }, [dispatch, id]);
+  }, [dispatch, id, wellIdFromUrl, fieldIdFromUrl]);
+
+  // Filtrar pozos cuando cambia el campo seleccionado
+  useEffect(() => {
+    if (formData.fieldId) {
+      setFilteredWells(wells.filter(w => w.field_id === formData.fieldId));
+    } else {
+      setFilteredWells(wells);
+    }
+  }, [formData.fieldId, wells]);
+
+  const loadFieldsAndWells = async () => {
+    try {
+      const [fieldsRes, wellsRes] = await Promise.all([
+        api.get('/production/fields', { params: { limit: 100 } }),
+        api.get('/production/wells', { params: { limit: 200 } }),
+      ]);
+      setFields(fieldsRes.data.data || []);
+      setWells(wellsRes.data.data || []);
+    } catch (error) {
+      console.error('Error loading fields/wells:', error);
+    }
+  };
 
   const loadOrder = async () => {
     try {
@@ -93,6 +135,8 @@ const PurchaseOrderForm = () => {
       setFormData({
         contractorId: order.contractorId,
         projectId: order.projectId || '',
+        fieldId: order.fieldId || '',
+        wellId: order.wellId || '',
         orderType: order.orderType,
         title: order.title,
         description: order.description || '',
@@ -188,7 +232,12 @@ const PurchaseOrderForm = () => {
         await dispatch(createPurchaseOrder(data)).unwrap();
         toast.success(t('procurement.orderCreated'));
       }
-      navigate('/procurement/purchase-orders');
+      // Navegar de vuelta al pozo si viene desde allí
+      if (wellIdFromUrl) {
+        navigate(`/production/wells/${wellIdFromUrl}`);
+      } else {
+        navigate('/procurement/purchase-orders');
+      }
     } catch (error) {
       toast.error(error.message || t('procurement.saveError'));
     } finally {
@@ -279,9 +328,45 @@ const PurchaseOrderForm = () => {
                     onChange={handleChange}
                     required
                   >
-                    {orderTypes.map((t) => (
-                      <MenuItem key={t.code} value={t.code}>
-                        {t.name}
+                    {orderTypes.map((ot) => (
+                      <MenuItem key={ot.code} value={ot.code}>
+                        {ot.name}
+                      </MenuItem>
+                    ))}
+                  </TextField>
+                </Grid>
+                <Grid item xs={12} md={6}>
+                  <TextField
+                    fullWidth
+                    select
+                    label={`${t('production.field')} (${t('common.optional')})`}
+                    name="fieldId"
+                    value={formData.fieldId}
+                    onChange={handleChange}
+                    disabled={!!wellIdFromUrl}
+                  >
+                    <MenuItem value="">{t('common.none')}</MenuItem>
+                    {fields.map((field) => (
+                      <MenuItem key={field.id} value={field.id}>
+                        {field.code} - {field.name}
+                      </MenuItem>
+                    ))}
+                  </TextField>
+                </Grid>
+                <Grid item xs={12} md={6}>
+                  <TextField
+                    fullWidth
+                    select
+                    label={`${t('production.well')} (${t('common.optional')})`}
+                    name="wellId"
+                    value={formData.wellId}
+                    onChange={handleChange}
+                    disabled={!!wellIdFromUrl}
+                  >
+                    <MenuItem value="">{t('common.none')}</MenuItem>
+                    {filteredWells.map((well) => (
+                      <MenuItem key={well.id} value={well.id}>
+                        {well.code} - {well.name}
                       </MenuItem>
                     ))}
                   </TextField>

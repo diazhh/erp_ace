@@ -22,6 +22,8 @@ import {
   Divider,
   Card,
   CardContent,
+  useMediaQuery,
+  useTheme,
 } from '@mui/material';
 import {
   ArrowBack as BackIcon,
@@ -85,6 +87,8 @@ const ClientDetail = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { id } = useParams();
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
   const { currentClient, loading, error } = useSelector((state) => state.crm);
   const [activeTab, setActiveTab] = useState(0);
@@ -292,25 +296,62 @@ const ClientDetail = () => {
   );
 
   const renderContactsTab = () => (
-    <TableContainer component={Paper}>
-      <Table>
-        <TableHead>
-          <TableRow>
-            <TableCell>Nombre</TableCell>
-            <TableCell>Cargo</TableCell>
-            <TableCell>Email</TableCell>
-            <TableCell>Teléfono</TableCell>
-            <TableCell>Tipo</TableCell>
-            <TableCell>Principal</TableCell>
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {(!currentClient.contacts || currentClient.contacts.length === 0) ? (
+    (!currentClient.contacts || currentClient.contacts.length === 0) ? (
+      <Paper sx={{ p: 3, textAlign: 'center' }}>
+        <Typography color="text.secondary">No hay contactos registrados</Typography>
+      </Paper>
+    ) : isMobile ? (
+      <Box>
+        {currentClient.contacts.map((contact) => (
+          <Card key={contact.id} variant="outlined" sx={{ mb: 2 }}>
+            <CardContent sx={{ pb: 1 }}>
+              <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 1 }}>
+                <Box>
+                  <Typography variant="subtitle1" fontWeight="bold">
+                    {`${contact.firstName} ${contact.lastName || ''}`}
+                  </Typography>
+                  <Typography variant="body2" color="text.secondary">
+                    {contact.position || '-'}
+                  </Typography>
+                </Box>
+                <Box sx={{ display: 'flex', gap: 0.5 }}>
+                  {contact.isPrimary && <Chip label="Principal" color="primary" size="small" />}
+                  <Chip label={contact.contactType} size="small" variant="outlined" />
+                </Box>
+              </Box>
+              <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.5 }}>
+                {contact.email && (
+                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                    <EmailIcon fontSize="small" color="action" />
+                    <Typography variant="body2">{contact.email}</Typography>
+                  </Box>
+                )}
+                {(contact.phone || contact.mobile) && (
+                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                    <PhoneIcon fontSize="small" color="action" />
+                    <Typography variant="body2">{contact.phone || contact.mobile}</Typography>
+                  </Box>
+                )}
+              </Box>
+            </CardContent>
+          </Card>
+        ))}
+      </Box>
+    ) : (
+      <TableContainer component={Paper}>
+        <Table>
+          <TableHead>
             <TableRow>
-              <TableCell colSpan={6} align="center">No hay contactos registrados</TableCell>
+              <TableCell>Nombre</TableCell>
+              <TableCell>Cargo</TableCell>
+              <TableCell>Email</TableCell>
+              <TableCell>Teléfono</TableCell>
+              <TableCell>Tipo</TableCell>
+              <TableCell>Principal</TableCell>
             </TableRow>
-          ) : (
-            currentClient.contacts.map((contact) => (
+          </TableHead>
+          <TableBody>
+            {currentClient.contacts.map((contact) => (
               <TableRow key={contact.id}>
                 <TableCell>{`${contact.firstName} ${contact.lastName || ''}`}</TableCell>
                 <TableCell>{contact.position || '-'}</TableCell>
@@ -319,33 +360,57 @@ const ClientDetail = () => {
                 <TableCell>{contact.contactType}</TableCell>
                 <TableCell>{contact.isPrimary ? <Chip label="Sí" color="primary" size="small" /> : '-'}</TableCell>
               </TableRow>
-            ))
-          )}
-        </TableBody>
-      </Table>
-    </TableContainer>
+            ))}
+          </TableBody>
+        </Table>
+      </TableContainer>
+    )
   );
 
   const renderOpportunitiesTab = () => (
-    <TableContainer component={Paper}>
-      <Table>
-        <TableHead>
-          <TableRow>
-            <TableCell>Código</TableCell>
-            <TableCell>Título</TableCell>
-            <TableCell>Etapa</TableCell>
-            <TableCell align="right">Valor Estimado</TableCell>
-            <TableCell>Probabilidad</TableCell>
-            <TableCell>Fecha Cierre</TableCell>
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {(!currentClient.opportunities || currentClient.opportunities.length === 0) ? (
+    (!currentClient.opportunities || currentClient.opportunities.length === 0) ? (
+      <Paper sx={{ p: 3, textAlign: 'center' }}>
+        <Typography color="text.secondary">No hay oportunidades registradas</Typography>
+      </Paper>
+    ) : isMobile ? (
+      <Box>
+        {currentClient.opportunities.map((opp) => (
+          <Card key={opp.id} variant="outlined" sx={{ mb: 2, cursor: 'pointer' }} onClick={() => navigate(`/crm/opportunities/${opp.id}`)}>
+            <CardContent sx={{ pb: 1 }}>
+              <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 1 }}>
+                <Box>
+                  <Typography variant="subtitle1" fontWeight="bold">{opp.code}</Typography>
+                  <Typography variant="body2">{opp.title}</Typography>
+                </Box>
+                <Chip label={stageLabels[opp.stage]} color={stageColors[opp.stage]} size="small" />
+              </Box>
+              <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <Typography variant="body2" color="text.secondary">
+                  {opp.probability ? `${opp.probability}%` : '-'} • {formatDate(opp.expectedCloseDate)}
+                </Typography>
+                <Typography variant="h6" fontWeight="bold" color="primary">
+                  {formatCurrency(opp.estimatedValue, opp.currency)}
+                </Typography>
+              </Box>
+            </CardContent>
+          </Card>
+        ))}
+      </Box>
+    ) : (
+      <TableContainer component={Paper}>
+        <Table>
+          <TableHead>
             <TableRow>
-              <TableCell colSpan={6} align="center">No hay oportunidades registradas</TableCell>
+              <TableCell>Código</TableCell>
+              <TableCell>Título</TableCell>
+              <TableCell>Etapa</TableCell>
+              <TableCell align="right">Valor Estimado</TableCell>
+              <TableCell>Probabilidad</TableCell>
+              <TableCell>Fecha Cierre</TableCell>
             </TableRow>
-          ) : (
-            currentClient.opportunities.map((opp) => (
+          </TableHead>
+          <TableBody>
+            {currentClient.opportunities.map((opp) => (
               <TableRow key={opp.id} hover sx={{ cursor: 'pointer' }} onClick={() => navigate(`/crm/opportunities/${opp.id}`)}>
                 <TableCell><Typography fontWeight="bold">{opp.code}</Typography></TableCell>
                 <TableCell>{opp.title}</TableCell>
@@ -354,33 +419,57 @@ const ClientDetail = () => {
                 <TableCell>{opp.probability ? `${opp.probability}%` : '-'}</TableCell>
                 <TableCell>{formatDate(opp.expectedCloseDate)}</TableCell>
               </TableRow>
-            ))
-          )}
-        </TableBody>
-      </Table>
-    </TableContainer>
+            ))}
+          </TableBody>
+        </Table>
+      </TableContainer>
+    )
   );
 
   const renderQuotesTab = () => (
-    <TableContainer component={Paper}>
-      <Table>
-        <TableHead>
-          <TableRow>
-            <TableCell>Código</TableCell>
-            <TableCell>Título</TableCell>
-            <TableCell>Estado</TableCell>
-            <TableCell align="right">Total</TableCell>
-            <TableCell>Fecha</TableCell>
-            <TableCell>Válida Hasta</TableCell>
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {(!currentClient.quotes || currentClient.quotes.length === 0) ? (
+    (!currentClient.quotes || currentClient.quotes.length === 0) ? (
+      <Paper sx={{ p: 3, textAlign: 'center' }}>
+        <Typography color="text.secondary">No hay cotizaciones registradas</Typography>
+      </Paper>
+    ) : isMobile ? (
+      <Box>
+        {currentClient.quotes.map((quote) => (
+          <Card key={quote.id} variant="outlined" sx={{ mb: 2, cursor: 'pointer' }} onClick={() => navigate(`/crm/quotes/${quote.id}`)}>
+            <CardContent sx={{ pb: 1 }}>
+              <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 1 }}>
+                <Box>
+                  <Typography variant="subtitle1" fontWeight="bold">{quote.code}</Typography>
+                  <Typography variant="body2">{quote.title}</Typography>
+                </Box>
+                <Chip label={quoteStatusLabels[quote.status]} size="small" />
+              </Box>
+              <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <Typography variant="body2" color="text.secondary">
+                  {formatDate(quote.quoteDate)} • Válida: {formatDate(quote.validUntil)}
+                </Typography>
+                <Typography variant="h6" fontWeight="bold" color="primary">
+                  {formatCurrency(quote.total, quote.currency)}
+                </Typography>
+              </Box>
+            </CardContent>
+          </Card>
+        ))}
+      </Box>
+    ) : (
+      <TableContainer component={Paper}>
+        <Table>
+          <TableHead>
             <TableRow>
-              <TableCell colSpan={6} align="center">No hay cotizaciones registradas</TableCell>
+              <TableCell>Código</TableCell>
+              <TableCell>Título</TableCell>
+              <TableCell>Estado</TableCell>
+              <TableCell align="right">Total</TableCell>
+              <TableCell>Fecha</TableCell>
+              <TableCell>Válida Hasta</TableCell>
             </TableRow>
-          ) : (
-            currentClient.quotes.map((quote) => (
+          </TableHead>
+          <TableBody>
+            {currentClient.quotes.map((quote) => (
               <TableRow key={quote.id} hover sx={{ cursor: 'pointer' }} onClick={() => navigate(`/crm/quotes/${quote.id}`)}>
                 <TableCell><Typography fontWeight="bold">{quote.code}</Typography></TableCell>
                 <TableCell>{quote.title}</TableCell>
@@ -389,11 +478,11 @@ const ClientDetail = () => {
                 <TableCell>{formatDate(quote.quoteDate)}</TableCell>
                 <TableCell>{formatDate(quote.validUntil)}</TableCell>
               </TableRow>
-            ))
-          )}
-        </TableBody>
-      </Table>
-    </TableContainer>
+            ))}
+          </TableBody>
+        </Table>
+      </TableContainer>
+    )
   );
 
   return (

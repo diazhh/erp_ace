@@ -1,5 +1,6 @@
 const reportService = require('../services/reportService');
 const pdfService = require('../services/pdfService');
+const excelService = require('../services/excelService');
 const { NotFoundError, BadRequestError } = require('../../../shared/errors/AppError');
 const logger = require('../../../shared/utils/logger');
 
@@ -1582,6 +1583,327 @@ class ReportController {
       success: true,
       data: reports,
     });
+  }
+
+  // ==================== EXCEL EXPORTS ====================
+
+  /**
+   * Exportar empleados a Excel
+   */
+  async downloadEmployeesExcel(req, res, next) {
+    try {
+      const { Employee, Position, Department } = require('../../../database/models');
+      const { status, departmentId, positionId } = req.query;
+
+      const whereClause = {};
+      if (status) whereClause.status = status;
+      if (departmentId) whereClause.department_id = departmentId;
+      if (positionId) whereClause.position_id = positionId;
+
+      const employees = await Employee.findAll({
+        where: whereClause,
+        include: [
+          { model: Position, as: 'positionRef', attributes: ['id', 'name'] },
+          { model: Department, as: 'departmentRef', attributes: ['id', 'name'] },
+        ],
+        order: [['last_name', 'ASC'], ['first_name', 'ASC']],
+      });
+
+      const employeesData = employees.map(e => ({
+        ...e.toJSON(),
+        position: e.positionRef,
+        department: e.departmentRef,
+      }));
+
+      const excelBuffer = await excelService.generateEmployeesReport(employeesData, { status, departmentId });
+
+      const filename = `empleados-${new Date().toISOString().split('T')[0]}.xlsx`;
+      
+      res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+      res.setHeader('Content-Disposition', `attachment; filename="${filename}"`);
+      res.setHeader('Content-Length', excelBuffer.length);
+      
+      return res.send(excelBuffer);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  /**
+   * Exportar nómina a Excel
+   */
+  async downloadPayrollExcel(req, res, next) {
+    try {
+      const { id } = req.params;
+      const { PayrollPeriod, PayrollEntry, Employee } = require('../../../database/models');
+
+      const payroll = await PayrollPeriod.findByPk(id);
+
+      if (!payroll) {
+        throw new NotFoundError('Nómina no encontrada');
+      }
+
+      const details = await PayrollEntry.findAll({
+        where: { period_id: id },
+        include: [
+          { model: Employee, as: 'employee', attributes: ['id', 'firstName', 'lastName', 'employeeCode'] },
+        ],
+      });
+
+      const payrollData = {
+        ...payroll.toJSON(),
+        period: payroll.name || payroll.period_name,
+      };
+
+      const excelBuffer = await excelService.generatePayrollReport(
+        payrollData,
+        details.map(d => d.toJSON())
+      );
+
+      const filename = `nomina-${payrollData.period || id}.xlsx`;
+      
+      res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+      res.setHeader('Content-Disposition', `attachment; filename="${filename}"`);
+      res.setHeader('Content-Length', excelBuffer.length);
+      
+      return res.send(excelBuffer);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  /**
+   * Exportar proyectos a Excel
+   */
+  async downloadProjectsExcel(req, res, next) {
+    try {
+      const { Project, Employee, Department, Contractor } = require('../../../database/models');
+      const { status, priority, executionType, departmentId } = req.query;
+
+      const whereClause = {};
+      if (status) whereClause.status = status;
+      if (priority) whereClause.priority = priority;
+      if (executionType) whereClause.executionType = executionType;
+      if (departmentId) whereClause.departmentId = departmentId;
+
+      const projects = await Project.findAll({
+        where: whereClause,
+        include: [
+          { model: Employee, as: 'manager', attributes: ['id', 'firstName', 'lastName'] },
+          { model: Department, as: 'department', attributes: ['id', 'name'] },
+          { model: Contractor, as: 'contractor', attributes: ['id', 'name'] },
+        ],
+        order: [['createdAt', 'DESC']],
+      });
+
+      const excelBuffer = await excelService.generateProjectsReport(
+        projects.map(p => p.toJSON()),
+        { status, priority, executionType }
+      );
+
+      const filename = `proyectos-${new Date().toISOString().split('T')[0]}.xlsx`;
+      
+      res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+      res.setHeader('Content-Disposition', `attachment; filename="${filename}"`);
+      res.setHeader('Content-Length', excelBuffer.length);
+      
+      return res.send(excelBuffer);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  /**
+   * Exportar inventario a Excel
+   */
+  async downloadInventoryExcel(req, res, next) {
+    try {
+      const { warehouseId } = req.query;
+      const { InventoryItem, Warehouse, InventoryCategory, WarehouseStock } = require('../../../database/models');
+
+      let warehouse = null;
+      if (warehouseId) {
+        warehouse = await Warehouse.findByPk(warehouseId);
+      }
+
+      let items;
+      if (warehouseId) {
+        const stocks = await WarehouseStock.findAll({
+          where: { warehouse_id: warehouseId },
+          include: [
+            { 
+              model: InventoryItem, 
+              as: 'item',
+              include: [
+                { model: InventoryCategory, as: 'category', attributes: ['id', 'name'], required: false },
+              ],
+            },
+          ],
+        });
+        
+        items = stocks.map(s => ({
+          ...s.item?.toJSON(),
+          quantity: s.quantity,
+          minStock: s.min_stock,
+        }));
+      } else {
+        items = await InventoryItem.findAll({
+          include: [
+            { model: InventoryCategory, as: 'category', attributes: ['id', 'name'], required: false },
+          ],
+          order: [['name', 'ASC']],
+        });
+        items = items.map(i => i.toJSON());
+      }
+
+      const excelBuffer = await excelService.generateInventoryReport(items, warehouse?.toJSON());
+
+      const filename = warehouse 
+        ? `inventario-${warehouse.name.toLowerCase().replace(/\s+/g, '-')}.xlsx`
+        : `inventario-general-${new Date().toISOString().split('T')[0]}.xlsx`;
+      
+      res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+      res.setHeader('Content-Disposition', `attachment; filename="${filename}"`);
+      res.setHeader('Content-Length', excelBuffer.length);
+      
+      return res.send(excelBuffer);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  /**
+   * Exportar transacciones a Excel
+   */
+  async downloadTransactionsExcel(req, res, next) {
+    try {
+      const { Op } = require('sequelize');
+      const { Transaction, BankAccount, TransactionCategory } = require('../../../database/models');
+      const { startDate, endDate, type, accountId } = req.query;
+
+      const whereClause = {};
+      if (type) whereClause.transaction_type = type;
+      if (accountId) whereClause.account_id = accountId;
+      if (startDate && endDate) {
+        whereClause.transaction_date = { [Op.between]: [new Date(startDate), new Date(endDate)] };
+      }
+
+      const transactions = await Transaction.findAll({
+        where: whereClause,
+        include: [
+          { model: BankAccount, as: 'account', required: false },
+          { model: TransactionCategory, as: 'category', required: false },
+        ],
+        order: [['transaction_date', 'DESC']],
+        limit: 1000,
+      });
+
+      const excelBuffer = await excelService.generateTransactionsReport(
+        transactions.map(t => t.toJSON()),
+        { startDate, endDate, type }
+      );
+
+      const filename = `transacciones-${new Date().toISOString().split('T')[0]}.xlsx`;
+      
+      res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+      res.setHeader('Content-Disposition', `attachment; filename="${filename}"`);
+      res.setHeader('Content-Length', excelBuffer.length);
+      
+      return res.send(excelBuffer);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  /**
+   * Exportar flota a Excel
+   */
+  async downloadFleetExcel(req, res, next) {
+    try {
+      const { status } = req.query;
+      const { Vehicle, Employee } = require('../../../database/models');
+
+      const whereClause = {};
+      if (status) whereClause.status = status;
+
+      const vehicles = await Vehicle.findAll({
+        where: whereClause,
+        include: [
+          { model: Employee, as: 'driver', attributes: ['id', 'firstName', 'lastName'], required: false },
+        ],
+        order: [['plate', 'ASC']],
+      });
+
+      const excelBuffer = await excelService.generateFleetReport(vehicles.map(v => v.toJSON()));
+
+      const filename = `flota-${new Date().toISOString().split('T')[0]}.xlsx`;
+      
+      res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+      res.setHeader('Content-Disposition', `attachment; filename="${filename}"`);
+      res.setHeader('Content-Length', excelBuffer.length);
+      
+      return res.send(excelBuffer);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  /**
+   * Exportar HSE a Excel
+   */
+  async downloadHSEExcel(req, res, next) {
+    try {
+      const { startDate, endDate, severity } = req.query;
+      const { Op } = require('sequelize');
+      
+      let HSEIncident;
+      try {
+        const models = require('../../../database/models');
+        HSEIncident = models.HSEIncident || models.Incident;
+      } catch (e) {
+        logger.warn('Modelo HSEIncident no encontrado');
+      }
+
+      let incidents = [];
+      
+      if (HSEIncident) {
+        const whereClause = {};
+        
+        if (startDate && endDate) {
+          whereClause.incidentDate = {
+            [Op.between]: [new Date(startDate), new Date(endDate)],
+          };
+        }
+        
+        if (severity) {
+          whereClause.severity = severity;
+        }
+
+        incidents = await HSEIncident.findAll({
+          where: whereClause,
+          order: [['incidentDate', 'DESC']],
+        });
+      }
+
+      const period = startDate && endDate 
+        ? `${new Date(startDate).toLocaleDateString('es-ES')} - ${new Date(endDate).toLocaleDateString('es-ES')}`
+        : new Date().toLocaleDateString('es-ES', { month: 'long', year: 'numeric' });
+
+      const excelBuffer = await excelService.generateHSEReport(
+        incidents.map(i => i.toJSON ? i.toJSON() : i),
+        period
+      );
+
+      const filename = `hse-${new Date().toISOString().split('T')[0]}.xlsx`;
+      
+      res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+      res.setHeader('Content-Disposition', `attachment; filename="${filename}"`);
+      res.setHeader('Content-Length', excelBuffer.length);
+      
+      return res.send(excelBuffer);
+    } catch (error) {
+      next(error);
+    }
   }
 }
 

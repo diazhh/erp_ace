@@ -32,6 +32,18 @@ module.exports = (sequelize) => {
       allowNull: true,
       field: 'project_id',
     },
+    // Campo petrolero asociado
+    fieldId: {
+      type: DataTypes.UUID,
+      allowNull: true,
+      field: 'field_id',
+    },
+    // Pozo asociado
+    wellId: {
+      type: DataTypes.UUID,
+      allowNull: true,
+      field: 'well_id',
+    },
     // Información de la orden
     title: {
       type: DataTypes.STRING(200),

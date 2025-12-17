@@ -239,13 +239,13 @@ const TransactionDetail = () => {
             <BackIcon />
           </IconButton>
           <Box>
-            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, flexWrap: 'wrap' }}>
               {typeIcons[transaction.transactionType]}
               <Typography variant={isMobile ? 'h5' : 'h4'} fontWeight="bold">
                 {transaction.code}
               </Typography>
             </Box>
-            <Box sx={{ display: 'flex', gap: 1, mt: 0.5 }}>
+            <Box sx={{ display: 'flex', gap: 1, mt: 0.5, flexWrap: 'wrap' }}>
               <Chip
                 label={getTypeLabel(transaction.transactionType)}
                 color={typeColors[transaction.transactionType]}
@@ -260,42 +260,38 @@ const TransactionDetail = () => {
           </Box>
         </Box>
         
-        <Box sx={{ 
-          display: 'flex', 
-          gap: 1,
-          flexDirection: { xs: 'column', sm: 'row' },
-          width: { xs: '100%', sm: 'auto' },
-        }}>
-          <Button
-            variant="outlined"
-            startIcon={<PdfIcon />}
-            onClick={handleDownloadPDF}
-            fullWidth={isMobile}
-          >
-            {t('common.downloadPDF', 'Descargar PDF')}
-          </Button>
+        {/* Actions */}
+        <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
           {canModify && (
             <>
               <Button
                 variant="contained"
                 color="success"
+                size={isMobile ? 'small' : 'medium'}
                 startIcon={<ReconcileIcon />}
                 onClick={handleReconcileClick}
-                fullWidth={isMobile}
               >
                 {t('finance.reconcile')}
               </Button>
               <Button
                 variant="outlined"
                 color="error"
+                size={isMobile ? 'small' : 'medium'}
                 startIcon={<CancelIcon />}
                 onClick={handleCancelClick}
-                fullWidth={isMobile}
               >
                 {t('common.cancel')}
               </Button>
             </>
           )}
+          <Button
+            variant="outlined"
+            size={isMobile ? 'small' : 'medium'}
+            startIcon={<PdfIcon />}
+            onClick={handleDownloadPDF}
+          >
+            PDF
+          </Button>
         </Box>
       </Box>
 

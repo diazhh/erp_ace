@@ -294,4 +294,61 @@ router.get('/inventory/items/:id', reportController.downloadInventoryItemReport)
  */
 router.get('/inventory/warehouses/:id', reportController.downloadWarehouseReport);
 
+// ==================== EXCEL EXPORTS ====================
+
+/**
+ * @route   GET /api/reports/excel/employees
+ * @desc    Exportar listado de empleados a Excel
+ * @access  Private
+ * @query   status, departmentId, positionId
+ */
+router.get('/excel/employees', reportController.downloadEmployeesExcel);
+
+/**
+ * @route   GET /api/reports/excel/payroll/:id
+ * @desc    Exportar nómina a Excel
+ * @access  Private
+ */
+router.get('/excel/payroll/:id', reportController.downloadPayrollExcel);
+
+/**
+ * @route   GET /api/reports/excel/projects
+ * @desc    Exportar listado de proyectos a Excel
+ * @access  Private
+ * @query   status, priority, executionType, departmentId
+ */
+router.get('/excel/projects', reportController.downloadProjectsExcel);
+
+/**
+ * @route   GET /api/reports/excel/inventory
+ * @desc    Exportar inventario a Excel
+ * @access  Private
+ * @query   warehouseId
+ */
+router.get('/excel/inventory', reportController.downloadInventoryExcel);
+
+/**
+ * @route   GET /api/reports/excel/transactions
+ * @desc    Exportar transacciones a Excel
+ * @access  Private
+ * @query   startDate, endDate, type, accountId
+ */
+router.get('/excel/transactions', reportController.downloadTransactionsExcel);
+
+/**
+ * @route   GET /api/reports/excel/fleet
+ * @desc    Exportar flota vehicular a Excel
+ * @access  Private
+ * @query   status
+ */
+router.get('/excel/fleet', reportController.downloadFleetExcel);
+
+/**
+ * @route   GET /api/reports/excel/hse
+ * @desc    Exportar reporte HSE a Excel
+ * @access  Private
+ * @query   startDate, endDate, severity
+ */
+router.get('/excel/hse', reportController.downloadHSEExcel);
+
 module.exports = router;

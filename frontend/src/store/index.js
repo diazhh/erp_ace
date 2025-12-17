@@ -20,6 +20,11 @@ import assetReducer from './slices/assetSlice';
 import crmReducer from './slices/crmSlice';
 import qualityReducer from './slices/qualitySlice';
 import expenseReportReducer from './slices/expenseReportSlice';
+import productionReducer from './slices/productionSlice';
+import afeReducer from './slices/afeSlice';
+import contractReducer from './slices/contractSlice';
+import complianceReducer from './slices/complianceSlice';
+import jibReducer from './slices/jibSlice';
 
 export const store = configureStore({
   reducer: {
@@ -44,6 +49,11 @@ export const store = configureStore({
     crm: crmReducer,
     quality: qualityReducer,
     expenseReports: expenseReportReducer,
+    production: productionReducer,
+    afe: afeReducer,
+    contracts: contractReducer,
+    compliance: complianceReducer,
+    jib: jibReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({

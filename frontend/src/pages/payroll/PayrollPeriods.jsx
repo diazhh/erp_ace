@@ -23,6 +23,9 @@ import {
   Grid,
   Card,
   CardContent,
+  CardActions,
+  useMediaQuery,
+  useTheme,
 } from '@mui/material';
 import {
   Add as AddIcon,
@@ -52,6 +55,8 @@ const PayrollPeriods = () => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
   const { periods, periodsPagination, stats, loading } = useSelector((state) => state.payroll);
 
   const [page, setPage] = useState(0);
@@ -145,14 +150,22 @@ const PayrollPeriods = () => {
   return (
     <Box>
       {/* Header */}
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
-        <Typography variant="h4" fontWeight="bold">
+      <Box sx={{ 
+        display: 'flex', 
+        flexDirection: { xs: 'column', sm: 'row' },
+        justifyContent: 'space-between', 
+        alignItems: { xs: 'stretch', sm: 'center' }, 
+        mb: 3,
+        gap: 2
+      }}>
+        <Typography variant={isMobile ? 'h5' : 'h4'} fontWeight="bold">
           {t('payroll.periods')}
         </Typography>
         <Button
           variant="contained"
           startIcon={<AddIcon />}
           onClick={() => handleOpenForm()}
+          fullWidth={isMobile}
         >
           {t('payroll.newPeriod')}
         </Button>
@@ -213,7 +226,7 @@ const PayrollPeriods = () => {
       {/* Filters */}
       <Paper sx={{ mb: 2, p: 2 }}>
         <Grid container spacing={2}>
-          <Grid item xs={12} sm={4}>
+          <Grid item xs={6} sm={4} md={3}>
             <TextField
               select
               label={t('common.status')}
@@ -230,7 +243,7 @@ const PayrollPeriods = () => {
               <MenuItem value="PAID">{t('payroll.statusPaid')}</MenuItem>
             </TextField>
           </Grid>
-          <Grid item xs={12} sm={4}>
+          <Grid item xs={6} sm={4} md={3}>
             <TextField
               select
               label={t('common.year')}
@@ -247,109 +260,186 @@ const PayrollPeriods = () => {
         </Grid>
       </Paper>
 
-      {/* Table */}
-      <TableContainer component={Paper}>
-        {loading ? (
-          <Box sx={{ display: 'flex', justifyContent: 'center', p: 4 }}>
-            <CircularProgress />
-          </Box>
-        ) : (
-          <>
-            <Table>
-              <TableHead>
-                <TableRow>
-                  <TableCell>{t('payroll.code')}</TableCell>
-                  <TableCell>{t('payroll.periodName')}</TableCell>
-                  <TableCell>{t('payroll.startDate')}</TableCell>
-                  <TableCell>{t('payroll.endDate')}</TableCell>
-                  <TableCell>{t('payroll.paymentDate')}</TableCell>
-                  <TableCell align="right">{t('payroll.totalNet')}</TableCell>
-                  <TableCell>{t('payroll.employees')}</TableCell>
-                  <TableCell>{t('common.status')}</TableCell>
-                  <TableCell align="right">{t('common.actions')}</TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {periods.length === 0 ? (
-                  <TableRow>
-                    <TableCell colSpan={9} align="center">
-                      {t('common.noData')}
-                    </TableCell>
-                  </TableRow>
-                ) : (
-                  periods.map((period) => (
-                    <TableRow key={period.id} hover>
-                      <TableCell>
-                        <Typography variant="body2" fontWeight="medium">
+      {/* Table / Cards */}
+      {loading ? (
+        <Box sx={{ display: 'flex', justifyContent: 'center', p: 4 }}>
+          <CircularProgress />
+        </Box>
+      ) : isMobile ? (
+        // Mobile: Cards view
+        <Box>
+          {periods.length === 0 ? (
+            <Paper sx={{ p: 3, textAlign: 'center' }}>
+              <Typography color="text.secondary">{t('common.noData')}</Typography>
+            </Paper>
+          ) : (
+            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+              {periods.map((period) => (
+                <Card key={period.id} variant="outlined">
+                  <CardContent sx={{ pb: 1 }}>
+                    <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 1 }}>
+                      <Box>
+                        <Typography variant="subtitle1" fontWeight="bold">
                           {period.code}
                         </Typography>
-                      </TableCell>
-                      <TableCell>{period.name}</TableCell>
-                      <TableCell>{formatDate(period.startDate)}</TableCell>
-                      <TableCell>{formatDate(period.endDate)}</TableCell>
-                      <TableCell>{formatDate(period.paymentDate)}</TableCell>
-                      <TableCell align="right">
-                        <Typography fontWeight="medium">
+                        <Typography variant="body2" color="text.secondary">
+                          {period.name}
+                        </Typography>
+                      </Box>
+                      <Chip
+                        label={getStatusLabel(period.status)}
+                        color={statusColors[period.status]}
+                        size="small"
+                      />
+                    </Box>
+                    <Grid container spacing={1} sx={{ mt: 1 }}>
+                      <Grid item xs={6}>
+                        <Typography variant="caption" color="text.secondary">{t('payroll.startDate')}</Typography>
+                        <Typography variant="body2">{formatDate(period.startDate)}</Typography>
+                      </Grid>
+                      <Grid item xs={6}>
+                        <Typography variant="caption" color="text.secondary">{t('payroll.endDate')}</Typography>
+                        <Typography variant="body2">{formatDate(period.endDate)}</Typography>
+                      </Grid>
+                      <Grid item xs={6}>
+                        <Typography variant="caption" color="text.secondary">{t('payroll.totalNet')}</Typography>
+                        <Typography variant="body2" fontWeight="bold" color="success.main">
                           {formatCurrency(period.totalNet, period.currency)}
                         </Typography>
-                      </TableCell>
-                      <TableCell>{period.totalEmployees}</TableCell>
-                      <TableCell>
-                        <Chip
-                          label={getStatusLabel(period.status)}
-                          color={statusColors[period.status]}
+                      </Grid>
+                      <Grid item xs={6}>
+                        <Typography variant="caption" color="text.secondary">{t('payroll.employees')}</Typography>
+                        <Typography variant="body2">{period.totalEmployees}</Typography>
+                      </Grid>
+                    </Grid>
+                  </CardContent>
+                  <CardActions sx={{ justifyContent: 'flex-end', pt: 0 }}>
+                    <Button size="small" onClick={() => navigate(`/payroll/periods/${period.id}`)}>
+                      {t('common.view')}
+                    </Button>
+                    {period.status === 'DRAFT' && (
+                      <>
+                        <Button size="small" onClick={() => handleOpenForm(period)}>
+                          {t('common.edit')}
+                        </Button>
+                        <Button size="small" color="error" onClick={() => handleDeleteClick(period)}>
+                          {t('common.delete')}
+                        </Button>
+                      </>
+                    )}
+                  </CardActions>
+                </Card>
+              ))}
+            </Box>
+          )}
+          <TablePagination
+            component="div"
+            count={periodsPagination.total}
+            page={page}
+            onPageChange={handleChangePage}
+            rowsPerPage={rowsPerPage}
+            onRowsPerPageChange={handleChangeRowsPerPage}
+            rowsPerPageOptions={[5, 10, 25]}
+            labelRowsPerPage={t('common.rowsPerPage')}
+          />
+        </Box>
+      ) : (
+        // Desktop: Table view
+        <TableContainer component={Paper}>
+          <Table>
+            <TableHead>
+              <TableRow>
+                <TableCell>{t('payroll.code')}</TableCell>
+                <TableCell>{t('payroll.periodName')}</TableCell>
+                <TableCell>{t('payroll.startDate')}</TableCell>
+                <TableCell>{t('payroll.endDate')}</TableCell>
+                <TableCell>{t('payroll.paymentDate')}</TableCell>
+                <TableCell align="right">{t('payroll.totalNet')}</TableCell>
+                <TableCell>{t('payroll.employees')}</TableCell>
+                <TableCell>{t('common.status')}</TableCell>
+                <TableCell align="right">{t('common.actions')}</TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {periods.length === 0 ? (
+                <TableRow>
+                  <TableCell colSpan={9} align="center">
+                    {t('common.noData')}
+                  </TableCell>
+                </TableRow>
+              ) : (
+                periods.map((period) => (
+                  <TableRow key={period.id} hover>
+                    <TableCell>
+                      <Typography variant="body2" fontWeight="medium">
+                        {period.code}
+                      </Typography>
+                    </TableCell>
+                    <TableCell>{period.name}</TableCell>
+                    <TableCell>{formatDate(period.startDate)}</TableCell>
+                    <TableCell>{formatDate(period.endDate)}</TableCell>
+                    <TableCell>{formatDate(period.paymentDate)}</TableCell>
+                    <TableCell align="right">
+                      <Typography fontWeight="medium">
+                        {formatCurrency(period.totalNet, period.currency)}
+                      </Typography>
+                    </TableCell>
+                    <TableCell>{period.totalEmployees}</TableCell>
+                    <TableCell>
+                      <Chip
+                        label={getStatusLabel(period.status)}
+                        color={statusColors[period.status]}
+                        size="small"
+                      />
+                    </TableCell>
+                    <TableCell align="right">
+                      <Tooltip title={t('common.view')}>
+                        <IconButton
                           size="small"
-                        />
-                      </TableCell>
-                      <TableCell align="right">
-                        <Tooltip title={t('common.view')}>
-                          <IconButton
-                            size="small"
-                            onClick={() => navigate(`/payroll/periods/${period.id}`)}
-                          >
-                            <ViewIcon fontSize="small" />
-                          </IconButton>
-                        </Tooltip>
-                        {period.status === 'DRAFT' && (
-                          <>
-                            <Tooltip title={t('common.edit')}>
-                              <IconButton
-                                size="small"
-                                onClick={() => handleOpenForm(period)}
-                              >
-                                <EditIcon fontSize="small" />
-                              </IconButton>
-                            </Tooltip>
-                            <Tooltip title={t('common.delete')}>
-                              <IconButton
-                                size="small"
-                                color="error"
-                                onClick={() => handleDeleteClick(period)}
-                              >
-                                <DeleteIcon fontSize="small" />
-                              </IconButton>
-                            </Tooltip>
-                          </>
-                        )}
-                      </TableCell>
-                    </TableRow>
-                  ))
-                )}
-              </TableBody>
-            </Table>
-            <TablePagination
-              component="div"
-              count={periodsPagination.total}
-              page={page}
-              onPageChange={handleChangePage}
-              rowsPerPage={rowsPerPage}
-              onRowsPerPageChange={handleChangeRowsPerPage}
-              rowsPerPageOptions={[5, 10, 25]}
-              labelRowsPerPage={t('common.rowsPerPage')}
-            />
-          </>
-        )}
-      </TableContainer>
+                          onClick={() => navigate(`/payroll/periods/${period.id}`)}
+                        >
+                          <ViewIcon fontSize="small" />
+                        </IconButton>
+                      </Tooltip>
+                      {period.status === 'DRAFT' && (
+                        <>
+                          <Tooltip title={t('common.edit')}>
+                            <IconButton
+                              size="small"
+                              onClick={() => handleOpenForm(period)}
+                            >
+                              <EditIcon fontSize="small" />
+                            </IconButton>
+                          </Tooltip>
+                          <Tooltip title={t('common.delete')}>
+                            <IconButton
+                              size="small"
+                              color="error"
+                              onClick={() => handleDeleteClick(period)}
+                            >
+                              <DeleteIcon fontSize="small" />
+                            </IconButton>
+                          </Tooltip>
+                        </>
+                      )}
+                    </TableCell>
+                  </TableRow>
+                ))
+              )}
+            </TableBody>
+          </Table>
+          <TablePagination
+            component="div"
+            count={periodsPagination.total}
+            page={page}
+            onPageChange={handleChangePage}
+            rowsPerPage={rowsPerPage}
+            onRowsPerPageChange={handleChangeRowsPerPage}
+            rowsPerPageOptions={[5, 10, 25]}
+            labelRowsPerPage={t('common.rowsPerPage')}
+          />
+        </TableContainer>
+      )}
 
       {/* Form Dialog */}
       <PayrollPeriodFormDialog

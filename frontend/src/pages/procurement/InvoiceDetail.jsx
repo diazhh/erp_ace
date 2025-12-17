@@ -8,6 +8,7 @@ import {
   Grid,
   Card,
   CardContent,
+  CardActions,
   Chip,
   CircularProgress,
   IconButton,
@@ -577,49 +578,82 @@ const InvoiceDetail = () => {
       )}
 
       {activeTab === 1 && (
-        <Paper sx={{ p: 3 }}>
+        <Paper sx={{ p: { xs: 2, md: 3 } }}>
           <Typography variant="h6" gutterBottom>
             Items de la Factura
           </Typography>
-          <TableContainer>
-            <Table>
-              <TableHead>
-                <TableRow>
-                  <TableCell>#</TableCell>
-                  <TableCell>Descripción</TableCell>
-                  <TableCell>Unidad</TableCell>
-                  <TableCell align="right">Cantidad</TableCell>
-                  <TableCell align="right">Precio Unit.</TableCell>
-                  <TableCell align="right">Subtotal</TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {invoice.items?.map((item, idx) => (
-                  <TableRow key={item.id || idx}>
-                    <TableCell>{idx + 1}</TableCell>
-                    <TableCell>{item.description}</TableCell>
-                    <TableCell>{item.unit || '-'}</TableCell>
-                    <TableCell align="right">{item.quantity}</TableCell>
-                    <TableCell align="right">{formatCurrency(item.unitPrice, invoice.currency)}</TableCell>
-                    <TableCell align="right">{formatCurrency(item.subtotal, invoice.currency)}</TableCell>
-                  </TableRow>
-                ))}
-                {(!invoice.items || invoice.items.length === 0) && (
+          {isMobile ? (
+            // Mobile: Cards
+            <Box>
+              {invoice.items?.map((item, idx) => (
+                <Card key={item.id || idx} variant="outlined" sx={{ mb: 2 }}>
+                  <CardContent sx={{ pb: 1 }}>
+                    <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
+                      <Typography variant="subtitle2" color="text.secondary">#{idx + 1}</Typography>
+                      <Typography variant="subtitle1" fontWeight="bold" color="primary">
+                        {formatCurrency(item.subtotal, invoice.currency)}
+                      </Typography>
+                    </Box>
+                    <Typography variant="body1" sx={{ mb: 1 }}>{item.description}</Typography>
+                    <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
+                      <Typography variant="body2" color="text.secondary">
+                        {item.quantity} {item.unit || 'und'}
+                      </Typography>
+                      <Typography variant="body2" color="text.secondary">
+                        @ {formatCurrency(item.unitPrice, invoice.currency)}
+                      </Typography>
+                    </Box>
+                  </CardContent>
+                </Card>
+              ))}
+              {(!invoice.items || invoice.items.length === 0) && (
+                <Typography color="text.secondary" textAlign="center" sx={{ py: 3 }}>
+                  No hay items registrados
+                </Typography>
+              )}
+            </Box>
+          ) : (
+            // Desktop: Table
+            <TableContainer>
+              <Table>
+                <TableHead>
                   <TableRow>
-                    <TableCell colSpan={6} align="center">
-                      <Typography color="text.secondary">No hay items registrados</Typography>
-                    </TableCell>
+                    <TableCell>#</TableCell>
+                    <TableCell>Descripción</TableCell>
+                    <TableCell>Unidad</TableCell>
+                    <TableCell align="right">Cantidad</TableCell>
+                    <TableCell align="right">Precio Unit.</TableCell>
+                    <TableCell align="right">Subtotal</TableCell>
                   </TableRow>
-                )}
-              </TableBody>
-            </Table>
-          </TableContainer>
+                </TableHead>
+                <TableBody>
+                  {invoice.items?.map((item, idx) => (
+                    <TableRow key={item.id || idx}>
+                      <TableCell>{idx + 1}</TableCell>
+                      <TableCell>{item.description}</TableCell>
+                      <TableCell>{item.unit || '-'}</TableCell>
+                      <TableCell align="right">{item.quantity}</TableCell>
+                      <TableCell align="right">{formatCurrency(item.unitPrice, invoice.currency)}</TableCell>
+                      <TableCell align="right">{formatCurrency(item.subtotal, invoice.currency)}</TableCell>
+                    </TableRow>
+                  ))}
+                  {(!invoice.items || invoice.items.length === 0) && (
+                    <TableRow>
+                      <TableCell colSpan={6} align="center">
+                        <Typography color="text.secondary">No hay items registrados</Typography>
+                      </TableCell>
+                    </TableRow>
+                  )}
+                </TableBody>
+              </Table>
+            </TableContainer>
+          )}
         </Paper>
       )}
 
       {activeTab === 2 && (
-        <Paper sx={{ p: 3 }}>
-          <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
+        <Paper sx={{ p: { xs: 2, md: 3 } }}>
+          <Box sx={{ display: 'flex', flexDirection: { xs: 'column', sm: 'row' }, justifyContent: 'space-between', alignItems: { xs: 'stretch', sm: 'center' }, gap: 2, mb: 2 }}>
             <Typography variant="h6">
               Pagos Asociados
             </Typography>
@@ -629,51 +663,92 @@ const InvoiceDetail = () => {
                 size="small"
                 startIcon={<PaymentIcon />}
                 onClick={() => navigate('/procurement/payments/new', { state: { invoiceId: invoice.id } })}
+                fullWidth={isMobile}
               >
                 Registrar Pago
               </Button>
             )}
           </Box>
-          <TableContainer>
-            <Table>
-              <TableHead>
-                <TableRow>
-                  <TableCell>Código</TableCell>
-                  <TableCell>Fecha</TableCell>
-                  <TableCell>Método</TableCell>
-                  <TableCell>Referencia</TableCell>
-                  <TableCell align="right">Monto</TableCell>
-                  <TableCell>Estado</TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {invoice.payments?.map((payment) => (
-                  <TableRow 
-                    key={payment.id} 
-                    hover 
-                    sx={{ cursor: 'pointer' }} 
-                    onClick={() => navigate(`/procurement/payments/${payment.id}`)}
-                  >
-                    <TableCell>{payment.code}</TableCell>
-                    <TableCell>{formatDate(payment.paymentDate)}</TableCell>
-                    <TableCell>{payment.paymentMethod}</TableCell>
-                    <TableCell>{payment.referenceNumber || '-'}</TableCell>
-                    <TableCell align="right">{formatCurrency(payment.amount, payment.currency)}</TableCell>
-                    <TableCell>
+          {isMobile ? (
+            // Mobile: Cards
+            <Box>
+              {invoice.payments?.map((payment) => (
+                <Card 
+                  key={payment.id} 
+                  variant="outlined" 
+                  sx={{ mb: 2, cursor: 'pointer' }}
+                  onClick={() => navigate(`/procurement/payments/${payment.id}`)}
+                >
+                  <CardContent sx={{ pb: 1 }}>
+                    <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 1 }}>
+                      <Box>
+                        <Typography variant="subtitle1" fontWeight="bold">{payment.code}</Typography>
+                        <Typography variant="body2" color="text.secondary">
+                          {formatDate(payment.paymentDate)}
+                        </Typography>
+                      </Box>
                       <Chip label={payment.status} size="small" />
-                    </TableCell>
-                  </TableRow>
-                ))}
-                {(!invoice.payments || invoice.payments.length === 0) && (
+                    </Box>
+                    <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                      <Typography variant="body2" color="text.secondary">
+                        {payment.paymentMethod} {payment.referenceNumber && `• ${payment.referenceNumber}`}
+                      </Typography>
+                      <Typography variant="h6" fontWeight="bold" color="success.main">
+                        {formatCurrency(payment.amount, payment.currency)}
+                      </Typography>
+                    </Box>
+                  </CardContent>
+                </Card>
+              ))}
+              {(!invoice.payments || invoice.payments.length === 0) && (
+                <Typography color="text.secondary" textAlign="center" sx={{ py: 3 }}>
+                  No hay pagos asociados
+                </Typography>
+              )}
+            </Box>
+          ) : (
+            // Desktop: Table
+            <TableContainer>
+              <Table>
+                <TableHead>
                   <TableRow>
-                    <TableCell colSpan={6} align="center">
-                      <Typography color="text.secondary">No hay pagos asociados</Typography>
-                    </TableCell>
+                    <TableCell>Código</TableCell>
+                    <TableCell>Fecha</TableCell>
+                    <TableCell>Método</TableCell>
+                    <TableCell>Referencia</TableCell>
+                    <TableCell align="right">Monto</TableCell>
+                    <TableCell>Estado</TableCell>
                   </TableRow>
-                )}
-              </TableBody>
-            </Table>
-          </TableContainer>
+                </TableHead>
+                <TableBody>
+                  {invoice.payments?.map((payment) => (
+                    <TableRow 
+                      key={payment.id} 
+                      hover 
+                      sx={{ cursor: 'pointer' }} 
+                      onClick={() => navigate(`/procurement/payments/${payment.id}`)}
+                    >
+                      <TableCell>{payment.code}</TableCell>
+                      <TableCell>{formatDate(payment.paymentDate)}</TableCell>
+                      <TableCell>{payment.paymentMethod}</TableCell>
+                      <TableCell>{payment.referenceNumber || '-'}</TableCell>
+                      <TableCell align="right">{formatCurrency(payment.amount, payment.currency)}</TableCell>
+                      <TableCell>
+                        <Chip label={payment.status} size="small" />
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                  {(!invoice.payments || invoice.payments.length === 0) && (
+                    <TableRow>
+                      <TableCell colSpan={6} align="center">
+                        <Typography color="text.secondary">No hay pagos asociados</Typography>
+                      </TableCell>
+                    </TableRow>
+                  )}
+                </TableBody>
+              </Table>
+            </TableContainer>
+          )}
         </Paper>
       )}
 

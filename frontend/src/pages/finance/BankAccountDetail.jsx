@@ -13,6 +13,7 @@ import {
   Grid,
   Card,
   CardContent,
+  CardActions,
   Table,
   TableBody,
   TableCell,
@@ -25,6 +26,8 @@ import {
   Alert,
   IconButton,
   Tooltip,
+  useMediaQuery,
+  useTheme,
 } from '@mui/material';
 import {
   ArrowBack as BackIcon,
@@ -74,6 +77,8 @@ const BankAccountDetail = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { t } = useTranslation();
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
   const { currentAccount: account, loading, error } = useSelector((state) => state.finance);
 
   const [activeTab, setActiveTab] = useState(0);
@@ -140,7 +145,7 @@ const BankAccountDetail = () => {
       <Box sx={{ p: 3 }}>
         <Alert severity="error">{error}</Alert>
         <Button startIcon={<BackIcon />} onClick={() => navigate('/finance/accounts')} sx={{ mt: 2 }}>
-          Volver a Cuentas
+          {t('common.back')}
         </Button>
       </Box>
     );
@@ -153,58 +158,100 @@ const BankAccountDetail = () => {
   return (
     <Box>
       {/* Header */}
-      <Paper sx={{ p: 3, mb: 3 }}>
-        <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 3 }}>
-          <Button
-            startIcon={<BackIcon />}
-            onClick={() => navigate('/finance/accounts')}
-            sx={{ minWidth: 'auto' }}
-          >
-            Volver
-          </Button>
-
-          <Box
-            sx={{
-              width: 64,
-              height: 64,
-              borderRadius: 2,
-              bgcolor: `${accountTypeColors[account.accountType]}.light`,
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-            }}
-          >
-            <BankIcon sx={{ fontSize: 32, color: `${accountTypeColors[account.accountType]}.main` }} />
-          </Box>
-
-          <Box sx={{ flex: 1 }}>
-            <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 1 }}>
-              <Typography variant="h4" fontWeight="bold">
-                {account.name}
+      <Paper sx={{ p: { xs: 2, md: 3 }, mb: 3 }}>
+        <Box sx={{ 
+          display: 'flex', 
+          flexDirection: { xs: 'column', md: 'row' },
+          alignItems: { xs: 'stretch', md: 'flex-start' }, 
+          gap: { xs: 2, md: 3 } 
+        }}>
+          {/* Back button row for mobile */}
+          <Box sx={{ 
+            display: 'flex', 
+            justifyContent: 'space-between', 
+            alignItems: 'center',
+            width: { xs: '100%', md: 'auto' }
+          }}>
+            <Button
+              startIcon={<BackIcon />}
+              onClick={() => navigate('/finance/accounts')}
+              sx={{ minWidth: 'auto' }}
+            >
+              {t('common.back')}
+            </Button>
+            {/* Mobile balance */}
+            <Box sx={{ display: { xs: 'block', md: 'none' }, textAlign: 'right' }}>
+              <Typography variant="caption" color="text.secondary">
+                {t('finance.currentBalance')}
               </Typography>
-              <Chip
-                label={accountTypeLabels[account.accountType] || account.accountType}
-                color={accountTypeColors[account.accountType]}
-                size="small"
-              />
-              <Chip
-                label={account.isActive ? 'Activa' : 'Inactiva'}
-                color={account.isActive ? 'success' : 'default'}
-                size="small"
-                variant="outlined"
-              />
+              <Typography variant="h6" fontWeight="bold" color="primary.main">
+                {formatCurrency(account.currentBalance, account.currency)}
+              </Typography>
             </Box>
-            <Typography variant="subtitle1" color="text.secondary">
-              {account.bankName || 'Sin banco'} {account.accountNumber && `• ${account.accountNumber}`}
-            </Typography>
-            <Typography variant="body2" color="text.secondary">
-              Titular: {account.accountHolder || '-'} • Moneda: {account.currency}
-            </Typography>
           </Box>
 
-          <Box sx={{ textAlign: 'right' }}>
+          {/* Icon and info */}
+          <Box sx={{ 
+            display: 'flex', 
+            flexDirection: { xs: 'column', sm: 'row' },
+            alignItems: { xs: 'center', sm: 'flex-start' },
+            gap: 2,
+            flex: 1,
+            textAlign: { xs: 'center', sm: 'left' }
+          }}>
+            <Box
+              sx={{
+                width: { xs: 48, md: 64 },
+                height: { xs: 48, md: 64 },
+                borderRadius: 2,
+                bgcolor: `${accountTypeColors[account.accountType]}.light`,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}
+            >
+              <BankIcon sx={{ fontSize: { xs: 24, md: 32 }, color: `${accountTypeColors[account.accountType]}.main` }} />
+            </Box>
+
+            <Box sx={{ flex: 1 }}>
+              <Box sx={{ 
+                display: 'flex', 
+                flexDirection: { xs: 'column', sm: 'row' },
+                alignItems: { xs: 'center', sm: 'center' }, 
+                gap: 1, 
+                mb: 1,
+                flexWrap: 'wrap'
+              }}>
+                <Typography variant={isMobile ? 'h5' : 'h4'} fontWeight="bold">
+                  {account.name}
+                </Typography>
+                <Box sx={{ display: 'flex', gap: 0.5 }}>
+                  <Chip
+                    label={accountTypeLabels[account.accountType] || account.accountType}
+                    color={accountTypeColors[account.accountType]}
+                    size="small"
+                  />
+                  <Chip
+                    label={account.isActive ? t('finance.isActive') : t('finance.isInactive')}
+                    color={account.isActive ? 'success' : 'default'}
+                    size="small"
+                    variant="outlined"
+                  />
+                </Box>
+              </Box>
+              <Typography variant="subtitle1" color="text.secondary">
+                {account.bankName || t('finance.noBank', 'Sin banco')} {account.accountNumber && `• ${account.accountNumber}`}
+              </Typography>
+              <Typography variant="body2" color="text.secondary">
+                {t('finance.accountHolder')}: {account.accountHolder || '-'} • {t('finance.currency')}: {account.currency}
+              </Typography>
+            </Box>
+          </Box>
+
+          {/* Desktop balance */}
+          <Box sx={{ display: { xs: 'none', md: 'block' }, textAlign: 'right' }}>
             <Typography variant="overline" color="text.secondary">
-              Saldo Actual
+              {t('finance.currentBalance')}
             </Typography>
             <Typography variant="h4" fontWeight="bold" color="primary.main">
               {formatCurrency(account.currentBalance, account.currency)}
@@ -261,60 +308,61 @@ const BankAccountDetail = () => {
           onChange={handleTabChange}
           variant="scrollable"
           scrollButtons="auto"
+          allowScrollButtonsMobile
         >
-          <Tab icon={<BankIcon />} label="Información" iconPosition="start" />
-          <Tab icon={<TransactionIcon />} label="Transacciones" iconPosition="start" />
-          <Tab icon={<TransferIcon />} label="Transferencias" iconPosition="start" />
-          <Tab icon={<AuditIcon />} label="Auditoría" iconPosition="start" />
+          <Tab icon={<BankIcon />} label={t('finance.accountInfo')} iconPosition="start" />
+          <Tab icon={<TransactionIcon />} label={t('finance.transactions')} iconPosition="start" />
+          <Tab icon={<TransferIcon />} label={t('finance.transfer')} iconPosition="start" />
+          <Tab icon={<AuditIcon />} label={t('finance.auditInfo')} iconPosition="start" />
         </Tabs>
         <Divider />
 
-        <Box sx={{ p: 2 }}>
+        <Box sx={{ p: { xs: 1, md: 2 } }}>
           {/* Tab: Información */}
           <TabPanel value={activeTab} index={0}>
             <Grid container spacing={3}>
               <Grid item xs={12} md={6}>
-                <Typography variant="h6" gutterBottom>Datos de la Cuenta</Typography>
+                <Typography variant="h6" gutterBottom>{t('finance.accountInfo')}</Typography>
                 <TableContainer>
                   <Table size="small">
                     <TableBody>
                       <TableRow>
-                        <TableCell sx={{ fontWeight: 'bold', width: '40%' }}>Nombre</TableCell>
+                        <TableCell sx={{ fontWeight: 'bold', width: '40%' }}>{t('common.name')}</TableCell>
                         <TableCell>{account.name}</TableCell>
                       </TableRow>
                       <TableRow>
-                        <TableCell sx={{ fontWeight: 'bold' }}>Tipo</TableCell>
+                        <TableCell sx={{ fontWeight: 'bold' }}>{t('finance.accountType')}</TableCell>
                         <TableCell>{accountTypeLabels[account.accountType] || account.accountType}</TableCell>
                       </TableRow>
                       <TableRow>
-                        <TableCell sx={{ fontWeight: 'bold' }}>Banco/Plataforma</TableCell>
+                        <TableCell sx={{ fontWeight: 'bold' }}>{t('finance.bankName')}</TableCell>
                         <TableCell>{account.bankName || '-'}</TableCell>
                       </TableRow>
                       <TableRow>
-                        <TableCell sx={{ fontWeight: 'bold' }}>Número de Cuenta</TableCell>
+                        <TableCell sx={{ fontWeight: 'bold' }}>{t('finance.accountNumber')}</TableCell>
                         <TableCell>{account.accountNumber || '-'}</TableCell>
                       </TableRow>
                       <TableRow>
-                        <TableCell sx={{ fontWeight: 'bold' }}>Titular</TableCell>
+                        <TableCell sx={{ fontWeight: 'bold' }}>{t('finance.accountHolder')}</TableCell>
                         <TableCell>{account.accountHolder || '-'}</TableCell>
                       </TableRow>
                       <TableRow>
-                        <TableCell sx={{ fontWeight: 'bold' }}>Moneda</TableCell>
+                        <TableCell sx={{ fontWeight: 'bold' }}>{t('finance.currency')}</TableCell>
                         <TableCell>{account.currency}</TableCell>
                       </TableRow>
                       <TableRow>
-                        <TableCell sx={{ fontWeight: 'bold' }}>Estado</TableCell>
+                        <TableCell sx={{ fontWeight: 'bold' }}>{t('common.status')}</TableCell>
                         <TableCell>
                           <Chip
-                            label={account.isActive ? 'Activa' : 'Inactiva'}
+                            label={account.isActive ? t('finance.isActive') : t('finance.isInactive')}
                             color={account.isActive ? 'success' : 'default'}
                             size="small"
                           />
                         </TableCell>
                       </TableRow>
                       <TableRow>
-                        <TableCell sx={{ fontWeight: 'bold' }}>Cuenta por Defecto</TableCell>
-                        <TableCell>{account.isDefault ? 'Sí' : 'No'}</TableCell>
+                        <TableCell sx={{ fontWeight: 'bold' }}>{t('finance.defaultAccount')}</TableCell>
+                        <TableCell>{account.isDefault ? t('common.yes') : t('common.no')}</TableCell>
                       </TableRow>
                     </TableBody>
                   </Table>
@@ -324,16 +372,16 @@ const BankAccountDetail = () => {
               <Grid item xs={12} md={6}>
                 {account.accountType === 'PAGO_MOVIL' && (
                   <>
-                    <Typography variant="h6" gutterBottom>Datos Pago Móvil</Typography>
+                    <Typography variant="h6" gutterBottom>{t('finance.accountTypePagoMovil')}</Typography>
                     <TableContainer>
                       <Table size="small">
                         <TableBody>
                           <TableRow>
-                            <TableCell sx={{ fontWeight: 'bold', width: '40%' }}>RIF</TableCell>
+                            <TableCell sx={{ fontWeight: 'bold', width: '40%' }}>{t('finance.rif')}</TableCell>
                             <TableCell>{account.rif || '-'}</TableCell>
                           </TableRow>
                           <TableRow>
-                            <TableCell sx={{ fontWeight: 'bold' }}>Teléfono</TableCell>
+                            <TableCell sx={{ fontWeight: 'bold' }}>{t('finance.phone')}</TableCell>
                             <TableCell>{account.phone || '-'}</TableCell>
                           </TableRow>
                         </TableBody>
@@ -344,16 +392,16 @@ const BankAccountDetail = () => {
 
                 {account.accountType === 'CRYPTO_WALLET' && (
                   <>
-                    <Typography variant="h6" gutterBottom>Datos Wallet</Typography>
+                    <Typography variant="h6" gutterBottom>{t('finance.accountTypeCrypto')}</Typography>
                     <TableContainer>
                       <Table size="small">
                         <TableBody>
                           <TableRow>
-                            <TableCell sx={{ fontWeight: 'bold', width: '40%' }}>Dirección</TableCell>
+                            <TableCell sx={{ fontWeight: 'bold', width: '40%' }}>{t('finance.walletAddress')}</TableCell>
                             <TableCell sx={{ wordBreak: 'break-all' }}>{account.walletAddress || '-'}</TableCell>
                           </TableRow>
                           <TableRow>
-                            <TableCell sx={{ fontWeight: 'bold' }}>Red</TableCell>
+                            <TableCell sx={{ fontWeight: 'bold' }}>{t('finance.network')}</TableCell>
                             <TableCell>{account.network || '-'}</TableCell>
                           </TableRow>
                         </TableBody>
@@ -364,7 +412,7 @@ const BankAccountDetail = () => {
 
                 {account.notes && (
                   <>
-                    <Typography variant="h6" gutterBottom sx={{ mt: 3 }}>Notas</Typography>
+                    <Typography variant="h6" gutterBottom sx={{ mt: 3 }}>{t('common.notes')}</Typography>
                     <Typography variant="body2" color="text.secondary">
                       {account.notes}
                     </Typography>
@@ -376,50 +424,22 @@ const BankAccountDetail = () => {
 
           {/* Tab: Transacciones */}
           <TabPanel value={activeTab} index={1}>
-            <Typography variant="h6" gutterBottom>Historial de Transacciones</Typography>
+            <Typography variant="h6" gutterBottom>{t('finance.transactions')}</Typography>
             {account.transactions?.length > 0 ? (
               <>
-                <TableContainer component={Paper} variant="outlined">
-                  <Table size="small">
-                    <TableHead>
-                      <TableRow>
-                        <TableCell>Fecha</TableCell>
-                        <TableCell>Código</TableCell>
-                        <TableCell>Tipo</TableCell>
-                        <TableCell>Categoría</TableCell>
-                        <TableCell>Descripción</TableCell>
-                        <TableCell align="right">Monto</TableCell>
-                        <TableCell>Estado</TableCell>
-                      </TableRow>
-                    </TableHead>
-                    <TableBody>
-                      {account.transactions.map((tx) => (
-                        <TableRow key={tx.id} hover>
-                          <TableCell>{formatDate(tx.transactionDate)}</TableCell>
-                          <TableCell>
-                            <EntityLink
-                              type="transaction"
-                              id={tx.id}
-                              label={tx.code}
-                            />
-                          </TableCell>
-                          <TableCell>
-                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-                              {getTransactionTypeIcon(tx.transactionType)}
-                              {getTransactionTypeLabel(tx.transactionType)}
+                {isMobile ? (
+                  // Mobile: Cards view
+                  <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+                    {account.transactions.map((tx) => (
+                      <Card key={tx.id} variant="outlined">
+                        <CardContent sx={{ pb: 1 }}>
+                          <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 1 }}>
+                            <Box>
+                              <EntityLink type="transaction" id={tx.id} label={tx.code} />
+                              <Typography variant="caption" color="text.secondary" display="block">
+                                {formatDate(tx.transactionDate)}
+                              </Typography>
                             </Box>
-                          </TableCell>
-                          <TableCell>{tx.category || '-'}</TableCell>
-                          <TableCell>{tx.description || '-'}</TableCell>
-                          <TableCell align="right" sx={{ 
-                            fontWeight: 'bold',
-                            color: tx.transactionType === 'INCOME' ? 'success.main' : 
-                                   tx.transactionType === 'EXPENSE' ? 'error.main' : 'inherit'
-                          }}>
-                            {tx.transactionType === 'INCOME' ? '+' : tx.transactionType === 'EXPENSE' ? '-' : ''}
-                            {formatCurrency(tx.amount, tx.currency)}
-                          </TableCell>
-                          <TableCell>
                             <Chip
                               label={tx.status}
                               size="small"
@@ -429,12 +449,82 @@ const BankAccountDetail = () => {
                                 tx.status === 'CANCELLED' ? 'error' : 'default'
                               }
                             />
-                          </TableCell>
+                          </Box>
+                          <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5, mb: 1 }}>
+                            {getTransactionTypeIcon(tx.transactionType)}
+                            <Typography variant="body2">{getTransactionTypeLabel(tx.transactionType)}</Typography>
+                          </Box>
+                          <Typography variant="body2" color="text.secondary" noWrap>
+                            {tx.description || tx.category || '-'}
+                          </Typography>
+                          <Typography 
+                            variant="h6" 
+                            fontWeight="bold"
+                            color={tx.transactionType === 'INCOME' ? 'success.main' : tx.transactionType === 'EXPENSE' ? 'error.main' : 'inherit'}
+                            sx={{ mt: 1 }}
+                          >
+                            {tx.transactionType === 'INCOME' ? '+' : tx.transactionType === 'EXPENSE' ? '-' : ''}
+                            {formatCurrency(tx.amount, tx.currency)}
+                          </Typography>
+                        </CardContent>
+                      </Card>
+                    ))}
+                  </Box>
+                ) : (
+                  // Desktop: Table view
+                  <TableContainer component={Paper} variant="outlined">
+                    <Table size="small">
+                      <TableHead>
+                        <TableRow>
+                          <TableCell>{t('finance.date')}</TableCell>
+                          <TableCell>{t('finance.code')}</TableCell>
+                          <TableCell>{t('finance.type')}</TableCell>
+                          <TableCell>{t('finance.category')}</TableCell>
+                          <TableCell>{t('finance.description')}</TableCell>
+                          <TableCell align="right">{t('finance.amount')}</TableCell>
+                          <TableCell>{t('common.status')}</TableCell>
                         </TableRow>
-                      ))}
-                    </TableBody>
-                  </Table>
-                </TableContainer>
+                      </TableHead>
+                      <TableBody>
+                        {account.transactions.map((tx) => (
+                          <TableRow key={tx.id} hover>
+                            <TableCell>{formatDate(tx.transactionDate)}</TableCell>
+                            <TableCell>
+                              <EntityLink type="transaction" id={tx.id} label={tx.code} />
+                            </TableCell>
+                            <TableCell>
+                              <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                                {getTransactionTypeIcon(tx.transactionType)}
+                                {getTransactionTypeLabel(tx.transactionType)}
+                              </Box>
+                            </TableCell>
+                            <TableCell>{tx.category || '-'}</TableCell>
+                            <TableCell>{tx.description || '-'}</TableCell>
+                            <TableCell align="right" sx={{ 
+                              fontWeight: 'bold',
+                              color: tx.transactionType === 'INCOME' ? 'success.main' : 
+                                     tx.transactionType === 'EXPENSE' ? 'error.main' : 'inherit'
+                            }}>
+                              {tx.transactionType === 'INCOME' ? '+' : tx.transactionType === 'EXPENSE' ? '-' : ''}
+                              {formatCurrency(tx.amount, tx.currency)}
+                            </TableCell>
+                            <TableCell>
+                              <Chip
+                                label={tx.status}
+                                size="small"
+                                color={
+                                  tx.status === 'CONFIRMED' ? 'success' :
+                                  tx.status === 'PENDING' ? 'warning' :
+                                  tx.status === 'CANCELLED' ? 'error' : 'default'
+                                }
+                              />
+                            </TableCell>
+                          </TableRow>
+                        ))}
+                      </TableBody>
+                    </Table>
+                  </TableContainer>
+                )}
                 {account.transactionPagination && (
                   <TablePagination
                     component="div"
@@ -447,79 +537,107 @@ const BankAccountDetail = () => {
                       setTransactionPage(0);
                     }}
                     rowsPerPageOptions={[10, 20, 50]}
-                    labelRowsPerPage="Filas por página"
+                    labelRowsPerPage={t('common.rowsPerPage')}
                   />
                 )}
               </>
             ) : (
-              <Alert severity="info">No hay transacciones registradas</Alert>
+              <Alert severity="info">{t('finance.noTransactions')}</Alert>
             )}
           </TabPanel>
 
           {/* Tab: Transferencias */}
           <TabPanel value={activeTab} index={2}>
-            <Typography variant="h6" gutterBottom>Transferencias Entrantes</Typography>
+            <Typography variant="h6" gutterBottom>{t('finance.transfer')}</Typography>
             {account.incomingTransfers?.length > 0 ? (
-              <TableContainer component={Paper} variant="outlined" sx={{ mb: 3 }}>
-                <Table size="small">
-                  <TableHead>
-                    <TableRow>
-                      <TableCell>Fecha</TableCell>
-                      <TableCell>Código</TableCell>
-                      <TableCell>Desde</TableCell>
-                      <TableCell>Descripción</TableCell>
-                      <TableCell align="right">Monto</TableCell>
-                    </TableRow>
-                  </TableHead>
-                  <TableBody>
-                    {account.incomingTransfers.map((tx) => (
-                      <TableRow key={tx.id} hover>
-                        <TableCell>{formatDate(tx.transactionDate)}</TableCell>
-                        <TableCell>{tx.code}</TableCell>
-                        <TableCell>
-                          {tx.account && (
-                            <EntityLink
-                              type="account"
-                              id={tx.account.id}
-                              label={tx.account.name}
-                            />
-                          )}
-                        </TableCell>
-                        <TableCell>{tx.description || '-'}</TableCell>
-                        <TableCell align="right" sx={{ fontWeight: 'bold', color: 'success.main' }}>
-                          +{formatCurrency(tx.amount, tx.currency)}
-                        </TableCell>
+              isMobile ? (
+                // Mobile: Cards view
+                <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, mb: 3 }}>
+                  {account.incomingTransfers.map((tx) => (
+                    <Card key={tx.id} variant="outlined">
+                      <CardContent sx={{ pb: '16px !important' }}>
+                        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                          <Box>
+                            <Typography variant="subtitle2" fontWeight="bold">{tx.code}</Typography>
+                            <Typography variant="caption" color="text.secondary">
+                              {formatDate(tx.transactionDate)}
+                            </Typography>
+                          </Box>
+                          <Typography variant="subtitle1" fontWeight="bold" color="success.main">
+                            +{formatCurrency(tx.amount, tx.currency)}
+                          </Typography>
+                        </Box>
+                        {tx.account && (
+                          <Typography variant="body2" sx={{ mt: 1 }}>
+                            {t('finance.fromAccount')}: <EntityLink type="account" id={tx.account.id} label={tx.account.name} />
+                          </Typography>
+                        )}
+                        {tx.description && (
+                          <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>
+                            {tx.description}
+                          </Typography>
+                        )}
+                      </CardContent>
+                    </Card>
+                  ))}
+                </Box>
+              ) : (
+                // Desktop: Table view
+                <TableContainer component={Paper} variant="outlined" sx={{ mb: 3 }}>
+                  <Table size="small">
+                    <TableHead>
+                      <TableRow>
+                        <TableCell>{t('finance.date')}</TableCell>
+                        <TableCell>{t('finance.code')}</TableCell>
+                        <TableCell>{t('finance.fromAccount')}</TableCell>
+                        <TableCell>{t('finance.description')}</TableCell>
+                        <TableCell align="right">{t('finance.amount')}</TableCell>
                       </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </TableContainer>
+                    </TableHead>
+                    <TableBody>
+                      {account.incomingTransfers.map((tx) => (
+                        <TableRow key={tx.id} hover>
+                          <TableCell>{formatDate(tx.transactionDate)}</TableCell>
+                          <TableCell>{tx.code}</TableCell>
+                          <TableCell>
+                            {tx.account && (
+                              <EntityLink type="account" id={tx.account.id} label={tx.account.name} />
+                            )}
+                          </TableCell>
+                          <TableCell>{tx.description || '-'}</TableCell>
+                          <TableCell align="right" sx={{ fontWeight: 'bold', color: 'success.main' }}>
+                            +{formatCurrency(tx.amount, tx.currency)}
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </TableContainer>
+              )
             ) : (
-              <Alert severity="info" sx={{ mb: 3 }}>No hay transferencias entrantes</Alert>
+              <Alert severity="info" sx={{ mb: 3 }}>{t('finance.noTransactions')}</Alert>
             )}
           </TabPanel>
 
           {/* Tab: Auditoría */}
           <TabPanel value={activeTab} index={3}>
-            <Typography variant="h6" gutterBottom>Historial de Cambios</Typography>
+            <Typography variant="h6" gutterBottom>{t('finance.auditInfo')}</Typography>
             {account.auditLogs?.length > 0 ? (
-              <TableContainer component={Paper} variant="outlined">
-                <Table size="small">
-                  <TableHead>
-                    <TableRow>
-                      <TableCell>Fecha</TableCell>
-                      <TableCell>Usuario</TableCell>
-                      <TableCell>Acción</TableCell>
-                    </TableRow>
-                  </TableHead>
-                  <TableBody>
-                    {account.auditLogs.map((log) => (
-                      <TableRow key={log.id} hover>
-                        <TableCell>
-                          {format(new Date(log.createdAt), 'dd/MM/yyyy HH:mm', { locale: es })}
-                        </TableCell>
-                        <TableCell>{log.user?.username || '-'}</TableCell>
-                        <TableCell>
+              isMobile ? (
+                // Mobile: Cards view
+                <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+                  {account.auditLogs.map((log) => (
+                    <Card key={log.id} variant="outlined">
+                      <CardContent sx={{ pb: '16px !important' }}>
+                        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                          <Box>
+                            <Typography variant="body2" fontWeight="medium">
+                              {log.user?.username || '-'}
+                            </Typography>
+                            <Typography variant="caption" color="text.secondary">
+                              {format(new Date(log.createdAt), 'dd/MM/yyyy HH:mm', { locale: es })}
+                            </Typography>
+                          </Box>
                           <Chip
                             label={log.action}
                             size="small"
@@ -529,14 +647,48 @@ const BankAccountDetail = () => {
                               log.action === 'DELETE' ? 'error' : 'default'
                             }
                           />
-                        </TableCell>
+                        </Box>
+                      </CardContent>
+                    </Card>
+                  ))}
+                </Box>
+              ) : (
+                // Desktop: Table view
+                <TableContainer component={Paper} variant="outlined">
+                  <Table size="small">
+                    <TableHead>
+                      <TableRow>
+                        <TableCell>{t('common.createdAt')}</TableCell>
+                        <TableCell>{t('auth.username')}</TableCell>
+                        <TableCell>{t('common.actions')}</TableCell>
                       </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </TableContainer>
+                    </TableHead>
+                    <TableBody>
+                      {account.auditLogs.map((log) => (
+                        <TableRow key={log.id} hover>
+                          <TableCell>
+                            {format(new Date(log.createdAt), 'dd/MM/yyyy HH:mm', { locale: es })}
+                          </TableCell>
+                          <TableCell>{log.user?.username || '-'}</TableCell>
+                          <TableCell>
+                            <Chip
+                              label={log.action}
+                              size="small"
+                              color={
+                                log.action === 'CREATE' ? 'success' :
+                                log.action === 'UPDATE' ? 'info' :
+                                log.action === 'DELETE' ? 'error' : 'default'
+                              }
+                            />
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </TableContainer>
+              )
             ) : (
-              <Alert severity="info">No hay registros de auditoría</Alert>
+              <Alert severity="info">{t('common.noData')}</Alert>
             )}
           </TabPanel>
         </Box>

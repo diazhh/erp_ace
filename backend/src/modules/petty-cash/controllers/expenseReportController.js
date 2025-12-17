@@ -1,5 +1,5 @@
 const expenseReportService = require('../services/expenseReportService');
-const { NotFoundError, BadRequestError } = require('../../../utils/errors');
+const { NotFoundError, BadRequestError } = require('../../../shared/errors/AppError');
 
 class ExpenseReportController {
   /**
