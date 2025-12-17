@@ -3,33 +3,14 @@ const { sequelize } = require('./index');
 
 const sync = async () => {
   try {
-    // Importar modelos para que se registren
-    const models = require('./models');
+    // Importar modelos para que se registren (esto carga todas las asociaciones)
+    require('./models');
 
     console.log('🔄 Sincronizando base de datos...');
+    console.log('   Usando sequelize.sync({ alter: true }) para manejar dependencias...');
     
-    // Modelos nuevos ordenados por dependencias (primero los que no dependen de otros)
-    const newModels = [
-      // Contracts (primero - Concession es dependencia de Field)
-      'Concession', 'OGContract', 'ContractParty', 'WorkingInterest', 'RoyaltyPayment',
-      // AFE (AFECategory primero)
-      'AFECategory', 'AFE', 'AFEApproval', 'AFEExpense', 'AFEVariance',
-      // Compliance
-      'Policy', 'Certification', 'RegulatoryReport', 'EnvironmentalPermit', 'ComplianceAudit',
-      // Production (Field depende de Concession)
-      'Field', 'Well', 'WellLog', 'WellProduction', 'ProductionAllocation', 'MorningReport',
-      // JIB (depende de AFE y otros)
-      'JointInterestBilling', 'JIBLineItem', 'JIBPartnerShare', 'CashCall', 'CashCallResponse'
-    ];
-    
-    for (const modelName of newModels) {
-      if (models[modelName]) {
-        console.log(`  Sincronizando ${modelName}...`);
-        await models[modelName].sync({ alter: true });
-      } else {
-        console.log(`  ⚠️ Modelo ${modelName} no encontrado`);
-      }
-    }
+    // Usar sync global que maneja dependencias automáticamente
+    await sequelize.sync({ alter: true });
     
     console.log('✅ Base de datos sincronizada correctamente');
     process.exit(0);
