@@ -8,13 +8,26 @@ const sync = async () => {
 
     console.log('🔄 Sincronizando base de datos...');
     
-    // Solo sincronizar modelos de producción (nuevos)
-    const productionModels = ['Field', 'Well', 'WellProduction', 'ProductionAllocation', 'MorningReport'];
+    // Modelos nuevos que necesitan sincronización (no tienen migraciones)
+    const newModels = [
+      // Production
+      'Field', 'Well', 'WellProduction', 'ProductionAllocation', 'MorningReport', 'WellLog',
+      // AFE
+      'AFE', 'AFECategory', 'AFEApproval', 'AFEExpense', 'AFEVariance',
+      // Contracts
+      'OGContract', 'ContractParty', 'WorkingInterest', 'RoyaltyPayment', 'Concession',
+      // Compliance
+      'RegulatoryReport', 'EnvironmentalPermit', 'ComplianceAudit', 'Policy', 'Certification',
+      // JIB
+      'JointInterestBilling', 'JIBLineItem', 'JIBPartnerShare', 'CashCall', 'CashCallResponse'
+    ];
     
-    for (const modelName of productionModels) {
+    for (const modelName of newModels) {
       if (models[modelName]) {
         console.log(`  Sincronizando ${modelName}...`);
         await models[modelName].sync({ alter: true });
+      } else {
+        console.log(`  ⚠️ Modelo ${modelName} no encontrado`);
       }
     }
     
