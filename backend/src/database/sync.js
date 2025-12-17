@@ -8,17 +8,17 @@ const sync = async () => {
 
     console.log('🔄 Sincronizando base de datos...');
     
-    // Modelos nuevos que necesitan sincronización (no tienen migraciones)
+    // Modelos nuevos ordenados por dependencias (primero los que no dependen de otros)
     const newModels = [
-      // Production
-      'Field', 'Well', 'WellProduction', 'ProductionAllocation', 'MorningReport', 'WellLog',
-      // AFE
-      'AFE', 'AFECategory', 'AFEApproval', 'AFEExpense', 'AFEVariance',
-      // Contracts
-      'OGContract', 'ContractParty', 'WorkingInterest', 'RoyaltyPayment', 'Concession',
+      // Contracts (primero - Concession es dependencia de Field)
+      'Concession', 'OGContract', 'ContractParty', 'WorkingInterest', 'RoyaltyPayment',
+      // AFE (AFECategory primero)
+      'AFECategory', 'AFE', 'AFEApproval', 'AFEExpense', 'AFEVariance',
       // Compliance
-      'RegulatoryReport', 'EnvironmentalPermit', 'ComplianceAudit', 'Policy', 'Certification',
-      // JIB
+      'Policy', 'Certification', 'RegulatoryReport', 'EnvironmentalPermit', 'ComplianceAudit',
+      // Production (Field depende de Concession)
+      'Field', 'Well', 'WellLog', 'WellProduction', 'ProductionAllocation', 'MorningReport',
+      // JIB (depende de AFE y otros)
       'JointInterestBilling', 'JIBLineItem', 'JIBPartnerShare', 'CashCall', 'CashCallResponse'
     ];
     
