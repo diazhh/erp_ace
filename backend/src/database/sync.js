@@ -7,10 +7,10 @@ const sync = async () => {
     require('./models');
 
     console.log('🔄 Sincronizando base de datos...');
-    console.log('   Usando sequelize.sync({ alter: true }) para manejar dependencias...');
+    console.log('   Creando tablas faltantes (sin modificar existentes)...');
     
-    // Usar sync global que maneja dependencias automáticamente
-    await sequelize.sync({ alter: true });
+    // Solo crear tablas que no existen (no modifica las existentes)
+    await sequelize.sync({ force: false });
     
     console.log('✅ Base de datos sincronizada correctamente');
     process.exit(0);
