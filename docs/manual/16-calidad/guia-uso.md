@@ -1,303 +1,232 @@
-# ✅ Módulo de Control de Calidad - Guía de Uso
+# ✅ Control de Calidad - Guía de Uso
 
-## Acceder al Módulo
+## Cómo Acceder al Módulo
 
-1. En el menú lateral, hacer clic en **"Control de Calidad"**
-2. Se despliegan las opciones:
-   - Dashboard
-   - Inspecciones
-   - No Conformidades
+1. En el **menú lateral izquierdo**, busque la opción **"Calidad"**
+2. Haga clic en el ícono de flecha (▼) para expandir las opciones
+3. Verá las siguientes secciones:
+   - **Dashboard**: Panel con indicadores
+   - **Inspecciones**: Inspecciones de calidad
+   - **No Conformidades**: Gestión de NC
 
 ---
 
 ## Dashboard de Calidad
 
-**Ruta:** `/quality`
+### Acceder al Dashboard
 
-### KPIs Principales
+1. En el menú, seleccione **"Calidad"** → **"Dashboard"**
+2. Verá el panel principal con indicadores de calidad
 
-| KPI | Descripción |
-|-----|-------------|
-| **Planes** | Total de planes de calidad |
-| **Inspecciones** | Inspecciones del período |
+### Indicadores Principales
+
+| Indicador | Descripción |
+|-----------|-------------|
+| **Inspecciones Pendientes** | Inspecciones sin resultado |
 | **NC Abiertas** | No conformidades sin cerrar |
-| **Acciones Pendientes** | Acciones correctivas pendientes |
-| **Certificados** | Certificados vigentes |
-
-### Distribución de NC
-Gráfico por tipo: Menor, Mayor, Crítica.
-
-### Actividad Reciente
-- Últimas inspecciones
-- Últimas NC registradas
+| **Acciones Vencidas** | Acciones correctivas atrasadas |
+| **Tasa de Aprobación** | % de inspecciones aprobadas |
 
 ---
 
-## Inspecciones
+## Inspecciones de Calidad
 
-### Lista de Inspecciones
+### Ver Lista de Inspecciones
 
-**Ruta:** `/quality/inspections`
+1. En el menú, seleccione **"Calidad"** → **"Inspecciones"**
+2. Verá la tabla/tarjetas de inspecciones
 
-#### Filtros Disponibles
+### Filtros Disponibles
 
 | Filtro | Opciones |
 |--------|----------|
-| **Tipo** | Tipo de inspección |
-| **Estado** | Programada, En Progreso, Completada |
-| **Resultado** | Aprobada, Rechazada, Condicional |
-| **Fecha** | Rango de fechas |
+| **Búsqueda** | Por título o código |
+| **Resultado** | Pendiente, Aprobada, Fallida, Condicional |
+| **Tipo** | Recepción, En Proceso, Final, etc. |
 
-#### Columnas de la Tabla
+### Columnas de la Tabla
 
 | Columna | Descripción |
 |---------|-------------|
 | **Código** | Identificador único |
+| **Título** | Descripción de la inspección |
 | **Tipo** | Tipo de inspección |
-| **Fecha** | Fecha programada/ejecutada |
-| **Inspector** | Quien inspecciona |
-| **Resultado** | PASS/FAIL/CONDITIONAL |
-| **Estado** | Estado actual |
-| **Acciones** | Ver, Editar |
+| **Proyecto** | Proyecto asociado |
+| **Fecha** | Fecha de inspección |
+| **Resultado** | Resultado obtenido |
+| **Acciones** | Ver, Editar, Eliminar |
 
 ---
 
-### Crear Inspección
+### Crear una Inspección
 
-**Ruta:** `/quality/inspections/new`
-
-#### Campos del Formulario
+1. Haga clic en el botón **"+ Nueva Inspección"**
+2. Complete el formulario:
 
 | Campo | Obligatorio | Descripción |
 |-------|-------------|-------------|
-| **Tipo** | ✅ | Tipo de inspección |
-| **Fecha Programada** | ✅ | Cuándo realizar |
-| **Inspector** | ✅ | Quien inspecciona |
-| **Proyecto** | ❌ | Proyecto asociado |
-| **Ubicación** | ❌ | Dónde se realiza |
-| **Descripción** | ❌ | Detalles |
+| **Código** | ✅ Sí | Código único |
+| **Título** | ✅ Sí | Descripción |
+| **Tipo** | ✅ Sí | Recepción, En Proceso, Final, etc. |
+| **Proyecto** | ❌ No | Proyecto asociado |
+| **Fecha** | ✅ Sí | Fecha de inspección |
+| **Inspector** | ❌ No | Quién realiza |
+| **Descripción** | ❌ No | Detalles |
+| **Criterios** | ❌ No | Criterios de aceptación |
 
-#### Pasos
-1. Hacer clic en **"+ Nueva Inspección"**
-2. Seleccionar tipo
-3. Definir fecha
-4. Asignar inspector
-5. Hacer clic en **"Guardar"**
+3. Haga clic en **"Guardar"**
+4. La inspección queda en estado "Pendiente"
 
 ---
 
-### Ejecutar Inspección
+### Registrar Resultado
 
-1. Ir al detalle de la inspección
-2. Clic en **"Iniciar Inspección"**
-3. Completar checklist de verificación
-4. Registrar hallazgos
-5. Definir resultado:
-   - **PASS**: Todo conforme
-   - **FAIL**: No conforme (genera NC)
-   - **CONDITIONAL**: Aprobación con observaciones
-6. Clic en **"Completar"**
-
----
-
-### Detalle de Inspección
-
-**Ruta:** `/quality/inspections/:id`
-
-#### Información
-- Código y tipo
-- Fecha programada/ejecutada
-- Inspector
-- Resultado
-- Estado
-
-#### Tabs
-- **Información**: Datos generales
-- **Checklist**: Puntos verificados
-- **Hallazgos**: Observaciones encontradas
-- **NC Generadas**: No conformidades creadas
-- **Documentos**: Archivos adjuntos
+1. En el detalle de la inspección
+2. Complete los hallazgos encontrados
+3. Seleccione el **resultado**:
+   - **Aprobada**: Cumple todos los criterios
+   - **Fallida**: No cumple criterios críticos
+   - **Condicional**: Cumple con observaciones
+4. Si es "Fallida" o "Condicional", puede generar una NC
+5. Haga clic en **"Guardar"**
 
 ---
 
-## No Conformidades
+## No Conformidades (NC)
 
-### Lista de No Conformidades
+### Ver Lista de NC
 
-**Ruta:** `/quality/non-conformances`
+1. En el menú, seleccione **"Calidad"** → **"No Conformidades"**
+2. Verá la lista de NC registradas
 
-#### Filtros Disponibles
+### Filtros Disponibles
 
 | Filtro | Opciones |
 |--------|----------|
+| **Búsqueda** | Por título o código |
+| **Estado** | Abierta, En Análisis, En Progreso, etc. |
 | **Tipo** | Menor, Mayor, Crítica |
-| **Estado** | Abierta, En Progreso, Cerrada |
-| **Responsable** | Empleados |
-| **Fecha** | Rango de fechas |
+| **Categoría** | Material, Proceso, Equipo, etc. |
 
-#### Columnas de la Tabla
+### Columnas de la Tabla
 
 | Columna | Descripción |
 |---------|-------------|
-| **Código** | NC-XXXXX |
-| **Título** | Descripción breve |
-| **Tipo** | Menor/Mayor/Crítica |
-| **Origen** | Inspección, auditoría, etc. |
-| **Responsable** | Quien debe resolver |
+| **Código** | Identificador único |
+| **Título** | Descripción del problema |
+| **Tipo** | Menor, Mayor, Crítica |
+| **Categoría** | Clasificación |
+| **Proyecto** | Proyecto afectado |
+| **Detectada** | Fecha de detección |
+| **Vence** | Fecha límite |
 | **Estado** | Estado actual |
-| **Días Abierta** | Tiempo sin cerrar |
-| **Acciones** | Ver, Editar |
+| **Acciones** | Ver, Editar, Eliminar |
 
 ---
 
-### Crear No Conformidad
+### Registrar una NC
 
-**Ruta:** `/quality/non-conformances/new`
-
-#### Campos del Formulario
+1. Haga clic en el botón **"+ Nueva NC"**
+2. Complete el formulario:
 
 | Campo | Obligatorio | Descripción |
 |-------|-------------|-------------|
-| **Título** | ✅ | Descripción breve |
-| **Descripción** | ✅ | Detalle de la NC |
-| **Tipo** | ✅ | Menor, Mayor, Crítica |
-| **Origen** | ✅ | Cómo se detectó |
-| **Fecha Detección** | ✅ | Cuándo se encontró |
-| **Responsable** | ✅ | Quien debe resolver |
-| **Proyecto** | ❌ | Proyecto asociado |
-| **Evidencia** | ❌ | Fotos/documentos |
+| **Código** | ✅ Sí | Código único |
+| **Título** | ✅ Sí | Descripción breve |
+| **Tipo** | ✅ Sí | Menor, Mayor, Crítica |
+| **Categoría** | ✅ Sí | Material, Proceso, etc. |
+| **Proyecto** | ❌ No | Proyecto afectado |
+| **Fecha Detectada** | ✅ Sí | Cuándo se detectó |
+| **Fecha Límite** | ❌ No | Cuándo debe resolverse |
+| **Descripción** | ✅ Sí | Detalle del problema |
+| **Evidencia** | ❌ No | Fotos, documentos |
+| **Responsable** | ❌ No | Quién debe resolver |
 
-#### Pasos
-1. Hacer clic en **"+ Nueva NC"**
-2. Ingresar título descriptivo
-3. Describir la no conformidad
-4. Clasificar severidad
-5. Asignar responsable
-6. Adjuntar evidencia
-7. Hacer clic en **"Guardar"**
+3. Haga clic en **"Guardar"**
+4. La NC queda en estado "Abierta"
 
 ---
 
-### Detalle de No Conformidad
-
-**Ruta:** `/quality/non-conformances/:id`
-
-#### Información
-- Código y título
-- Tipo (chip de color)
-- Descripción
-- Origen
-- Fecha de detección
-- Responsable
-- Estado
-- Días abierta
-
-#### Tabs Disponibles
-
-##### Tab: Información
-Datos generales de la NC.
-
-##### Tab: Análisis
-- Causa raíz
-- Análisis de causas (5 Por qués, Ishikawa, etc.)
-
-##### Tab: Acciones Correctivas
-Lista de acciones definidas:
-- Descripción
-- Responsable
-- Fecha límite
-- Estado
-
-**Agregar Acción:**
-1. Clic en "Nueva Acción"
-2. Describir la acción
-3. Asignar responsable
-4. Definir fecha límite
-5. Guardar
-
-##### Tab: Verificación
-- Verificación de efectividad
-- Evidencia de cierre
-
-##### Tab: Documentos
-Evidencias y documentos adjuntos.
-
-##### Tab: Auditoría
-Historial de cambios.
-
----
-
-### Flujo de No Conformidad
+### Flujo de una NC
 
 ```
-OPEN → IN_PROGRESS → PENDING_VERIFICATION → CLOSED
-                                         ↘ Reabierta si no efectiva
+1. ABIERTA → NC detectada y registrada
+   ↓
+2. EN ANÁLISIS → Investigando causa raíz
+   ↓
+3. ACCIÓN PENDIENTE → Definiendo acciones correctivas
+   ↓
+4. EN PROGRESO → Ejecutando acciones
+   ↓
+5. EN VERIFICACIÓN → Verificando efectividad
+   ↓
+6. CERRADA → Problema resuelto
 ```
 
-### Cerrar No Conformidad
+---
 
-1. Verificar que todas las acciones estén completadas
-2. Verificar efectividad de las acciones
-3. Documentar verificación
-4. Clic en **"Cerrar NC"**
-5. Agregar comentarios de cierre
-6. Confirmar
+### Análisis de Causa Raíz
+
+1. En el detalle de la NC, vaya a la sección de análisis
+2. Documente:
+   - Causa inmediata
+   - Causa raíz (5 porqués, Ishikawa, etc.)
+   - Factores contribuyentes
+3. Cambie el estado a "Acción Pendiente"
 
 ---
 
-## Acciones Correctivas
+### Definir Acciones Correctivas
 
-### Estados de Acción
-
-| Estado | Color | Descripción |
-|--------|-------|-------------|
-| **PENDING** | Naranja | Pendiente |
-| **IN_PROGRESS** | Azul | En ejecución |
-| **COMPLETED** | Verde | Completada |
-| **CANCELLED** | Gris | Cancelada |
-
-### Completar Acción
-1. Ir al detalle de la NC
-2. Tab "Acciones Correctivas"
-3. Clic en la acción
-4. Marcar como completada
-5. Agregar evidencia de implementación
+1. En el detalle de la NC, agregue acciones
+2. Para cada acción, especifique:
+   - Descripción de la acción
+   - Responsable
+   - Fecha límite
+   - Recursos necesarios
+3. Cambie el estado a "En Progreso"
 
 ---
 
-## Tips y Mejores Prácticas
+### Cerrar una NC
+
+1. Verifique que todas las acciones estén completadas
+2. Documente la verificación de efectividad
+3. Cambie el estado a "Cerrada"
+4. Agregue notas de cierre
+
+---
+
+## Consejos Útiles
 
 ### Para Inspecciones
-- ✅ Programar inspecciones con anticipación
-- ✅ Usar checklists estandarizados
-- ✅ Documentar todos los hallazgos
-- ✅ Generar NC cuando corresponda
+- ✅ Use criterios de aceptación claros
+- ✅ Documente con fotos cuando sea posible
+- ✅ Sea objetivo en la evaluación
+- ✅ Genere NC inmediatamente si hay fallas
 
 ### Para No Conformidades
-- ✅ Clasificar correctamente la severidad
-- ✅ Investigar causa raíz
-- ✅ Definir acciones efectivas
-- ✅ Verificar antes de cerrar
-
-### Para Acciones Correctivas
-- ✅ Definir acciones específicas y medibles
-- ✅ Asignar responsables claros
-- ✅ Establecer fechas realistas
-- ✅ Verificar efectividad
+- ✅ Describa el problema claramente
+- ✅ Clasifique correctamente el tipo
+- ✅ Investigue la causa raíz, no solo el síntoma
+- ✅ Defina acciones medibles y verificables
+- ✅ Respete las fechas límite
 
 ---
 
-## Solución de Problemas
+## Preguntas Frecuentes
 
-### "No puedo cerrar la NC"
-- Verificar que todas las acciones estén completadas
-- Verificar que se haya documentado la verificación
-- Verificar permisos de usuario
+### ¿Cuándo debo generar una NC?
+Cuando una inspección falla, cuando se detecta un defecto, o cuando hay una desviación de los estándares establecidos.
 
-### "Inspección sin resultado"
-- Completar todos los puntos del checklist
-- Definir resultado antes de completar
+### ¿Qué diferencia hay entre NC menor y mayor?
+La NC menor no afecta la función principal del producto. La NC mayor sí afecta la función o requiere retrabajo significativo.
 
-### "NC sin acciones"
-- Toda NC debe tener al menos una acción correctiva
-- Agregar acciones antes de avanzar estado
+### ¿Puedo cerrar una NC sin acciones correctivas?
+No se recomienda. Toda NC debe tener al menos una acción para prevenir recurrencia.
+
+### ¿Qué pasa si una NC vence?
+Aparece en las alertas del dashboard. Debe actualizar la fecha o escalar el problema.
+
+### ¿Cómo verifico la efectividad de las acciones?
+Después de implementar las acciones, realice una inspección o auditoría para confirmar que el problema no recurre.

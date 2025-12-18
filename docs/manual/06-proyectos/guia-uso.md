@@ -1,366 +1,284 @@
-# 📁 Módulo de Proyectos - Guía de Uso
+# 📁 Gestión de Proyectos - Guía de Uso
 
-## Acceder al Módulo
+## Cómo Acceder al Módulo
 
-1. En el menú lateral, hacer clic en **"Proyectos"**
-2. Se despliegan las opciones:
-   - Dashboard
-   - Lista de Proyectos
+1. En el **menú lateral izquierdo**, busque la opción **"Proyectos"**
+2. Haga clic en el ícono de flecha (▼) para expandir las opciones
+3. Verá las siguientes secciones:
+   - **Dashboard**: Panel con indicadores y gráficos
+   - **Lista**: Todos los proyectos
 
 ---
 
 ## Dashboard de Proyectos
 
-**Ruta:** `/projects/dashboard`
+### Acceder al Dashboard
 
-### KPIs Principales
+1. En el menú, seleccione **"Proyectos"** → **"Dashboard"**
+2. Verá el panel principal con toda la información de proyectos
 
-| KPI | Descripción |
-|-----|-------------|
-| **Proyectos Activos** | En planificación o en progreso |
-| **Presupuesto Total** | Suma de presupuestos |
-| **Gastado** | Total gastado en proyectos |
-| **Proyectos Atrasados** | Con hitos vencidos |
+### Indicadores Principales (KPIs)
 
-### Gráficos
-- **Proyectos por Estado**: Distribución de estados
-- **Presupuesto vs Gastado**: Comparación por proyecto
-- **Progreso de Proyectos**: Avance de cada proyecto
+| Indicador | Descripción |
+|-----------|-------------|
+| **Total** | Cantidad total de proyectos |
+| **Activos** | Proyectos en planificación o en progreso |
+| **Completados** | Proyectos finalizados |
+| **Atrasados** | Proyectos con fecha vencida |
+
+### Sección de Presupuesto
+
+Muestra un resumen financiero de todos los proyectos:
+- **Presupuesto Total**: Suma de presupuestos de todos los proyectos
+- **Costo Real**: Suma de costos reales gastados
+- **Restante**: Diferencia entre presupuesto y costo
+- **Barra de uso**: Porcentaje del presupuesto consumido
+
+### Gráficos Disponibles
+
+| Gráfico | Descripción |
+|---------|-------------|
+| **Por Estado** | Distribución de proyectos por estado (pastel) |
+| **Por Prioridad** | Cantidad de proyectos por nivel de prioridad (barras) |
+
+### Lista de Proyectos Activos
+
+Muestra los 5 proyectos más recientes que están activos, con:
+- Nombre y código
+- Estado (chip de color)
+- Alerta si está atrasado
+- Presupuesto y progreso
+
+Haga clic en cualquier proyecto para ir a su detalle.
 
 ---
 
 ## Lista de Proyectos
 
-**Ruta:** `/projects`
+### Ver Todos los Proyectos
+
+1. En el menú, seleccione **"Proyectos"** → **"Lista"**
+2. Verá indicadores y la tabla/tarjetas de proyectos
+
+### Indicadores de la Lista
+
+| Indicador | Descripción |
+|-----------|-------------|
+| **Total** | Cantidad de proyectos |
+| **Activos** | En planificación o progreso |
+| **Atrasados** | Con fecha vencida |
+| **Presupuesto** | Suma de presupuestos |
+| **Costo Real** | Suma de costos |
+| **Ganancia** | Diferencia presupuesto - costo |
 
 ### Filtros Disponibles
 
 | Filtro | Opciones |
 |--------|----------|
-| **Búsqueda** | Por nombre o código |
+| **Búsqueda** | Por nombre, código o cliente |
 | **Tipo** | Interno, Contratado |
 | **Estado** | Planificación, En Progreso, En Espera, Completado, Cancelado |
 | **Prioridad** | Baja, Media, Alta, Crítica |
 
-### Vista Desktop (Tabla)
+### Columnas de la Tabla (Desktop)
 
 | Columna | Descripción |
 |---------|-------------|
 | **Código** | Identificador único |
-| **Nombre** | Nombre del proyecto |
-| **Tipo** | Interno/Contratado |
+| **Nombre** | Nombre del proyecto y gerente |
+| **Tipo** | Interno o Contratado |
+| **Cliente** | Nombre del cliente (si aplica) |
 | **Estado** | Estado actual |
 | **Prioridad** | Nivel de prioridad |
 | **Progreso** | Barra de avance |
 | **Presupuesto** | Monto asignado |
-| **Fechas** | Inicio - Fin |
-| **Gerente** | Responsable |
+| **Fechas** | Inicio y fin planificados |
 | **Acciones** | Ver, Editar, Eliminar |
 
-### Vista Mobile (Tarjetas)
-Tarjetas con información resumida y barra de progreso.
+### Vista en Dispositivos Móviles
+
+En celulares, los proyectos se muestran como tarjetas con toda la información resumida.
 
 ---
 
-## Crear Proyecto
+## Crear un Nuevo Proyecto
 
-**Ruta:** `/projects/new`
+1. Haga clic en el botón **"+ Nuevo Proyecto"**
+2. Se abrirá una página con el formulario
 
 ### Campos del Formulario
 
+#### Información Básica
+
 | Campo | Obligatorio | Descripción |
 |-------|-------------|-------------|
-| **Código** | ✅ | Código único (PRJ-XXXXX) |
-| **Nombre** | ✅ | Nombre del proyecto |
-| **Descripción** | ❌ | Descripción detallada |
-| **Tipo de Ejecución** | ✅ | Interno o Contratado |
-| **Estado** | ✅ | Estado inicial (default: Planificación) |
-| **Prioridad** | ✅ | Nivel de prioridad |
-| **Fecha Inicio** | ✅ | Fecha de inicio |
-| **Fecha Fin** | ✅ | Fecha de fin planificada |
-| **Presupuesto** | ❌ | Monto asignado |
-| **Moneda** | ❌ | USD, VES |
-| **Gerente** | ❌ | Empleado responsable |
-| **Cliente** | ❌ | Cliente del proyecto |
-| **Contratista** | ❌ | Solo si es contratado |
-| **Ubicación** | ❌ | Ubicación física |
+| **Código** | ✅ Sí | Código único (ej: "PRY-2025-001") |
+| **Nombre** | ✅ Sí | Nombre descriptivo del proyecto |
+| **Descripción** | ❌ No | Descripción detallada |
+| **Tipo de Ejecución** | ✅ Sí | Interno o Contratado |
+| **Estado** | ✅ Sí | Estado inicial (generalmente "Planificación") |
+| **Prioridad** | ✅ Sí | Baja, Media, Alta, Crítica |
 
-### Pasos
-1. Hacer clic en **"+ Nuevo Proyecto"**
-2. Completar código y nombre
-3. Seleccionar tipo de ejecución
-4. Definir fechas y presupuesto
-5. Asignar gerente
-6. Hacer clic en **"Guardar"**
+#### Fechas
+
+| Campo | Obligatorio | Descripción |
+|-------|-------------|-------------|
+| **Fecha de Inicio** | ✅ Sí | Cuándo comienza el proyecto |
+| **Fecha de Fin** | ✅ Sí | Cuándo debe terminar |
+
+#### Responsables
+
+| Campo | Obligatorio | Descripción |
+|-------|-------------|-------------|
+| **Gerente de Proyecto** | ❌ No | Empleado responsable |
+| **Cliente** | ❌ No | Nombre del cliente |
+
+#### Financiero
+
+| Campo | Obligatorio | Descripción |
+|-------|-------------|-------------|
+| **Presupuesto** | ❌ No | Monto asignado |
+| **Moneda** | ❌ No | USD, VES, EUR |
+| **Costo Real** | ❌ No | Monto gastado (se actualiza durante ejecución) |
+
+#### Ubicación
+
+| Campo | Obligatorio | Descripción |
+|-------|-------------|-------------|
+| **Ubicación** | ❌ No | Lugar donde se ejecuta el proyecto |
+
+3. Complete los campos requeridos
+4. Haga clic en **"Guardar"**
 
 ---
 
-## Detalle del Proyecto
+## Ver Detalle de un Proyecto
 
-**Ruta:** `/projects/:id`
+1. En la lista, haga clic en el ícono de **ojo** (👁) o en el nombre del proyecto
+2. Se abrirá la página de detalle
 
-### Encabezado
-- Código y nombre
-- Estado y prioridad (chips)
-- Tipo de ejecución
-- Gerente asignado
-- Botones: Editar, Descargar PDF
+### Información del Encabezado
 
-### KPIs del Proyecto
+- **Nombre** y código del proyecto
+- **Estado** (chip de color)
+- **Tipo** de ejecución
+- **Prioridad**
+- **Gerente** responsable
+- **Fechas** de inicio y fin
 
-| KPI | Descripción |
-|-----|-------------|
-| **Presupuesto** | Monto asignado |
-| **Gastado** | Total de gastos aprobados |
-| **Disponible** | Presupuesto - Gastado |
-| **Progreso** | Porcentaje de avance |
+### Pestañas Disponibles
 
-### Barra de Progreso
-Muestra el avance del proyecto basado en hitos completados.
-
-### Tabs Disponibles
-
-#### Tab: Información
-Datos generales del proyecto:
-- Descripción
-- Fechas (inicio, fin planificado, fin real)
-- Presupuesto y moneda
-- Cliente y contratista
-- Ubicación
-
-#### Tab: Equipo
-Lista de miembros del proyecto:
-- Empleado (enlace)
-- Rol en el proyecto
-- Fecha de inicio y fin
-- Acciones: Editar, Eliminar
-
-**Agregar Miembro:**
-1. Clic en "Agregar Miembro"
-2. Seleccionar empleado
-3. Asignar rol
-4. Definir fechas de participación
-5. Guardar
-
-#### Tab: Hitos
-Lista de hitos del proyecto:
-- Nombre del hito
-- Fecha objetivo
-- Peso (% del progreso)
-- Estado
-- Acciones: Completar, Editar, Eliminar
-
-**Crear Hito:**
-1. Clic en "Nuevo Hito"
-2. Ingresar nombre y descripción
-3. Definir fecha objetivo
-4. Asignar peso porcentual
-5. Guardar
-
-**Completar Hito:**
-1. Clic en ✅ en el hito
-2. Confirmar completación
-3. El progreso del proyecto se actualiza
-
-#### Tab: Gastos
-Lista de gastos del proyecto:
-- Fecha
-- Categoría
-- Descripción
-- Monto
-- Estado (Pendiente, Aprobado, Rechazado)
-- Acciones: Aprobar, Rechazar
-
-**Registrar Gasto:**
-1. Clic en "Nuevo Gasto"
-2. Seleccionar categoría
-3. Ingresar monto y descripción
-4. Adjuntar comprobante
-5. Guardar (queda pendiente)
-
-**Aprobar/Rechazar Gasto:**
-1. Revisar gasto pendiente
-2. Verificar comprobante
-3. Clic en ✅ para aprobar o ❌ para rechazar
-
-#### Tab: Actualizaciones
-Historial de actualizaciones:
-- Fecha
-- Tipo (Avance, Problema, Decisión, etc.)
-- Descripción
-- Usuario que registró
-
-**Agregar Actualización:**
-1. Clic en "Nueva Actualización"
-2. Seleccionar tipo
-3. Escribir descripción
-4. Guardar
-
-#### Tab: Fotos
-Galería de fotos del proyecto:
-- Miniaturas de fotos
-- Categoría
-- Fecha de carga
+#### Pestaña: Resumen
+- Información general del proyecto
+- Progreso actual
+- Presupuesto vs costo real
 - Descripción
 
-**Subir Foto:**
-1. Clic en "Agregar Foto"
-2. Seleccionar archivo
-3. Asignar categoría
-4. Agregar descripción
-5. Subir
+#### Pestaña: Equipo
+- Miembros asignados al proyecto
+- Roles de cada miembro
 
-#### Tab: Valuaciones (solo proyectos contratados)
-Lista de valuaciones:
-- Número de valuación
-- Período
-- Monto
-- Estado
-- Acciones: Ver, Aprobar, Rechazar, Facturar
+#### Pestaña: Tareas
+- Lista de tareas del proyecto
+- Estado de cada tarea
 
-**Crear Valuación:**
-1. Clic en "Nueva Valuación"
-2. Definir período
-3. Ingresar monto y descripción
-4. Guardar como borrador
+#### Pestaña: Documentos
+- Archivos adjuntos (planos, contratos, etc.)
 
-**Flujo de Valuación:**
+#### Pestaña: Historial
+- Registro de cambios y actividades
+
+---
+
+## Actualizar Progreso
+
+1. En el detalle del proyecto, busque la sección de progreso
+2. Modifique el porcentaje de avance
+3. Guarde los cambios
+
+También puede actualizar el progreso desde la edición del proyecto.
+
+---
+
+## Editar un Proyecto
+
+1. En la lista o detalle, haga clic en el ícono de **lápiz** (✏️)
+2. Se abrirá el formulario con los datos actuales
+3. Modifique los campos necesarios:
+   - Actualizar estado
+   - Cambiar prioridad
+   - Modificar fechas
+   - Actualizar progreso
+   - Registrar costo real
+4. Haga clic en **"Guardar"**
+
+---
+
+## Eliminar un Proyecto
+
+1. En la lista, haga clic en el ícono de **papelera** (🗑️)
+2. Confirme la eliminación
+
+> ⚠️ **Importante**: Solo puede eliminar proyectos en estado "Planificación". Los proyectos en progreso o completados no pueden eliminarse.
+
+---
+
+## Flujo de Trabajo Típico
+
 ```
-DRAFT → SUBMITTED → UNDER_REVIEW → APPROVED → INVOICED → PAID
-                                 ↘ REJECTED
+1. CREAR PROYECTO (Estado: Planificación)
+   ↓
+2. DEFINIR EQUIPO Y TAREAS
+   ↓
+3. INICIAR PROYECTO (Estado: En Progreso)
+   ↓
+4. ACTUALIZAR PROGRESO REGULARMENTE
+   ↓
+5. REGISTRAR COSTOS REALES
+   ↓
+6. COMPLETAR PROYECTO (Estado: Completado)
 ```
 
-#### Tab: Documentos
-Archivos adjuntos del proyecto.
+---
 
-#### Tab: Auditoría
-Historial de cambios del proyecto.
+## Consejos Útiles
+
+### Para la Planificación
+- ✅ Defina fechas realistas
+- ✅ Establezca un presupuesto adecuado
+- ✅ Asigne un gerente responsable
+- ✅ Documente bien el alcance
+
+### Para el Seguimiento
+- ✅ Actualice el progreso semanalmente
+- ✅ Registre los costos reales a medida que ocurren
+- ✅ Revise proyectos atrasados diariamente
+- ✅ Documente los cambios importantes
+
+### Para el Control
+- ✅ Compare presupuesto vs costo real regularmente
+- ✅ Identifique desviaciones temprano
+- ✅ Ajuste fechas si es necesario
+- ✅ Comunique cambios al equipo
 
 ---
 
-## Gestión de Hitos
+## Preguntas Frecuentes
 
-### Crear Hito
-1. Ir al detalle del proyecto
-2. Tab "Hitos" → "Nuevo Hito"
-3. Completar:
-   - Nombre
-   - Descripción
-   - Fecha objetivo
-   - Peso (% del progreso total)
-4. Guardar
+### ¿Por qué no puedo eliminar un proyecto?
+Solo puede eliminar proyectos en estado "Planificación". Si el proyecto ya inició, debe cancelarlo en lugar de eliminarlo.
 
-### Completar Hito
-1. En la lista de hitos, clic en ✅
-2. Confirmar completación
-3. Se registra fecha de completación
-4. El progreso del proyecto aumenta según el peso
+### ¿Cómo marco un proyecto como atrasado?
+No es necesario. El sistema detecta automáticamente los proyectos atrasados cuando la fecha de fin ya pasó y el estado no es "Completado".
 
-### Hitos Atrasados
-- Se marcan automáticamente como DELAYED
-- Aparecen en alertas del dashboard
-- Afectan el indicador de salud del proyecto
+### ¿Puedo cambiar el tipo de proyecto después de crearlo?
+Sí, puede cambiar entre "Interno" y "Contratado" editando el proyecto.
 
----
+### ¿Cómo asigno miembros al equipo?
+En el detalle del proyecto, vaya a la pestaña "Equipo" y agregue los miembros.
 
-## Gestión de Gastos
+### ¿Puedo tener varios gerentes en un proyecto?
+El campo "Gerente de Proyecto" es único, pero puede agregar otros responsables en el equipo con roles específicos.
 
-### Registrar Gasto
-1. Tab "Gastos" → "Nuevo Gasto"
-2. Seleccionar categoría
-3. Ingresar monto
-4. Agregar descripción
-5. Adjuntar comprobante (recomendado)
-6. Guardar
-
-### Aprobar Gasto
-1. Revisar gasto pendiente
-2. Verificar que está dentro del presupuesto
-3. Verificar comprobante
-4. Clic en ✅ Aprobar
-5. El gasto se suma al total gastado
-
-### Rechazar Gasto
-1. Revisar gasto pendiente
-2. Clic en ❌ Rechazar
-3. Agregar motivo de rechazo
-4. El gasto no afecta el presupuesto
-
----
-
-## Valuaciones (Proyectos Contratados)
-
-### Crear Valuación
-1. Tab "Valuaciones" → "Nueva Valuación"
-2. Definir período (fecha inicio - fin)
-3. Ingresar monto de la valuación
-4. Agregar descripción del avance
-5. Guardar como borrador
-
-### Enviar Valuación
-1. Desde el detalle de la valuación
-2. Clic en "Enviar para Revisión"
-3. Estado cambia a SUBMITTED
-
-### Aprobar Valuación
-1. Revisar valuación enviada
-2. Verificar avance reportado
-3. Clic en "Aprobar"
-4. Estado cambia a APPROVED
-
-### Generar Factura
-1. Desde valuación aprobada
-2. Clic en "Generar Factura"
-3. Se crea factura en módulo de Finanzas
-4. Estado cambia a INVOICED
-
----
-
-## Tips y Mejores Prácticas
-
-### Al Crear Proyectos
-- ✅ Definir presupuesto realista
-- ✅ Establecer hitos claros y medibles
-- ✅ Asignar gerente responsable
-- ✅ Documentar alcance en descripción
-
-### Para Seguimiento
-- ✅ Actualizar progreso regularmente
-- ✅ Registrar actualizaciones semanales
-- ✅ Subir fotos de avance
-- ✅ Revisar hitos atrasados
-
-### Para Gastos
-- ✅ Registrar gastos inmediatamente
-- ✅ Adjuntar siempre comprobantes
-- ✅ Aprobar gastos oportunamente
-- ✅ Monitorear presupuesto vs gastado
-
-### Para Valuaciones
-- ✅ Crear valuaciones según contrato
-- ✅ Documentar avance claramente
-- ✅ Adjuntar evidencia de avance
-- ✅ Procesar aprobaciones rápidamente
-
----
-
-## Solución de Problemas
-
-### "El progreso no se actualiza"
-- Verificar que los hitos tengan peso asignado
-- Verificar que los hitos estén marcados como completados
-- El progreso se calcula: Σ(peso de hitos completados)
-
-### "No puedo aprobar gastos"
-- Verificar permiso `projects:approve`
-- Verificar que el gasto esté en estado PENDING
-
-### "La valuación fue rechazada"
-- Revisar motivo de rechazo
-- Corregir y crear nueva valuación
-- Las valuaciones rechazadas no se pueden editar
-
-### "Presupuesto excedido"
-- El sistema permite registrar gastos sobre el presupuesto
-- Se muestra alerta visual
-- Revisar gastos y ajustar presupuesto si necesario
+### ¿Cómo exporto la información del proyecto?
+En el detalle del proyecto, busque el botón "Descargar PDF" para exportar un resumen.

@@ -1,176 +1,189 @@
-# 📊 Módulo de Dashboard - Guía de Uso
+# 📊 Panel Principal (Dashboard) - Guía de Uso
 
-## Acceder al Dashboard
+## Cómo Acceder al Dashboard
 
-El dashboard es la página principal del sistema. Se accede automáticamente al iniciar sesión o haciendo clic en **"Dashboard"** en el menú lateral.
+El Dashboard es la **pantalla de inicio** del sistema. Hay varias formas de acceder:
 
-**Ruta:** `/` o `/dashboard`
-
----
-
-## Secciones del Dashboard
-
-### 1. Tarjetas de KPIs
-
-En la parte superior se muestran tarjetas con métricas clave:
-
-| Tarjeta | Información | Acción al Click |
-|---------|-------------|-----------------|
-| **Empleados** | Total activos | Ir a lista de empleados |
-| **Proyectos** | Activos/Total | Ir a lista de proyectos |
-| **Finanzas** | Saldo total | Ir a dashboard financiero |
-| **Inventario** | Valor total | Ir a dashboard de inventario |
-
-#### Indicadores de Tendencia
-- ⬆️ Verde: Aumento respecto al período anterior
-- ⬇️ Rojo: Disminución respecto al período anterior
+1. **Al iniciar sesión**: Se muestra automáticamente
+2. **Desde cualquier pantalla**: Haga clic en el logo o en "Inicio" en el menú
+3. **Desde el menú lateral**: Seleccione la primera opción "Dashboard"
 
 ---
 
-### 2. Gráfico de Flujo de Caja
+## Elementos del Dashboard
 
-Muestra ingresos vs gastos por mes del año actual.
+### Encabezado
 
-- **Barras verdes**: Ingresos
-- **Barras rojas**: Gastos
-- **Eje X**: Meses del año
-- **Eje Y**: Monto en USD
+| Elemento | Descripción |
+|----------|-------------|
+| **Título** | "Panel Principal" o "Dashboard" |
+| **Saludo** | Bienvenida con su nombre |
+| **Botón Actualizar** | Ícono 🔄 para refrescar datos |
+
+---
+
+### Tarjetas de Indicadores (KPIs)
+
+El Dashboard muestra 6 tarjetas principales:
+
+#### 1. Empleados Activos
+- **Valor**: Cantidad de empleados activos
+- **Subtítulo**: Total de empleados
+- **Clic**: Navega a lista de empleados
+
+#### 2. Proyectos Activos
+- **Valor**: Proyectos en planificación o progreso
+- **Subtítulo**: Proyectos atrasados o completados
+- **Clic**: Navega a lista de proyectos
+
+#### 3. Balance General
+- **Valor**: Balance neto del mes (ingresos - gastos)
+- **Subtítulo**: Total de ingresos
+- **Color**: Verde si positivo, rojo si negativo
+- **Clic**: Navega a transacciones
+
+#### 4. Artículos en Inventario
+- **Valor**: Total de artículos registrados
+- **Subtítulo**: Artículos con stock bajo (si hay)
+- **Clic**: Navega a inventario
+
+#### 5. Vehículos
+- **Valor**: Vehículos activos
+- **Subtítulo**: Vehículos en mantenimiento (si hay)
+- **Clic**: Navega a flota
+
+#### 6. Transacciones Pendientes
+- **Valor**: Transacciones por conciliar
+- **Subtítulo**: "Transacciones"
+- **Clic**: Navega a transacciones
+
+---
+
+### Gráfico de Flujo de Caja
+
+Ubicado debajo de las tarjetas, muestra:
+
+| Elemento | Descripción |
+|----------|-------------|
+| **Barras verdes** | Ingresos por mes |
+| **Barras rojas** | Gastos por mes |
+| **Eje horizontal** | Meses del año |
+| **Eje vertical** | Montos en miles de dólares |
 
 #### Interacción
-- Pasar el mouse sobre las barras para ver valores exactos
-- Hacer clic en la leyenda para ocultar/mostrar series
+- **Hover**: Muestra el valor exacto al pasar el mouse
+- **Leyenda**: Indica qué color es ingreso y cuál gasto
 
 ---
 
-### 3. Gráfico de Proyectos por Estado
+### Panel de Alertas
 
-Gráfico circular que muestra la distribución de proyectos:
+A la derecha del gráfico (o debajo en móvil):
 
-| Color | Estado |
-|-------|--------|
-| Azul | Planificación |
-| Verde | En Progreso |
-| Naranja | En Espera |
-| Morado | Completado |
-| Rojo | Cancelado |
+| Elemento | Descripción |
+|----------|-------------|
+| **Título** | "Alertas" |
+| **Contador** | Número total de alertas |
+| **Lista** | Alertas ordenadas por importancia |
+
+#### Tipos de Alerta
+
+| Ícono | Tipo | Significado |
+|-------|------|-------------|
+| 🔴 | Error | Requiere atención inmediata |
+| 🟡 | Advertencia | Requiere atención pronto |
+| 🔵 | Información | Notificación general |
 
 #### Interacción
-- Pasar el mouse para ver cantidad y porcentaje
-- Hacer clic en una sección para filtrar proyectos
+- **Clic en alerta**: Navega al módulo relacionado
 
 ---
 
-### 4. Gráfico de Empleados por Departamento
+### Gráficos Adicionales
 
-Gráfico de barras horizontales mostrando cantidad de empleados por departamento.
+#### Proyectos por Estado
+- **Tipo**: Gráfico de pastel
+- **Muestra**: Distribución de proyectos por estado
+- **Colores**: Cada estado tiene un color diferente
 
-#### Interacción
-- Pasar el mouse para ver cantidad exacta
-- Hacer clic en una barra para ir al departamento
-
----
-
-### 5. Panel de Alertas
-
-Lista de situaciones que requieren atención:
-
-| Tipo | Icono | Ejemplos |
-|------|-------|----------|
-| **Error** | 🔴 | Proyectos muy atrasados, stock agotado |
-| **Warning** | 🟡 | Documentos por vencer, stock bajo |
-| **Info** | 🔵 | Recordatorios, información general |
-
-#### Acciones
-- Hacer clic en una alerta para ir al detalle
-- Las alertas se actualizan automáticamente
+#### Gastos por Categoría
+- **Tipo**: Gráfico de pastel
+- **Muestra**: Distribución de gastos por categoría
+- **Colores**: Cada categoría tiene un color diferente
 
 ---
 
-### 6. Actividad Reciente
+## Acciones Disponibles
 
-Lista de las últimas acciones en el sistema:
-- Documentos subidos
-- Proyectos creados
-- Empleados agregados
-- Transacciones registradas
+### Actualizar Datos
 
----
+1. Haga clic en el botón de **actualizar** (🔄) en la esquina superior derecha
+2. Los datos se recargan desde el servidor
+3. Útil para ver información más reciente
 
-## Controles del Dashboard
+### Navegar a Módulos
 
-### Botón Refrescar
-En la esquina superior derecha, permite actualizar todos los datos del dashboard.
+1. Haga clic en cualquier **tarjeta de KPI**
+2. Se abre el módulo correspondiente
+3. Ejemplo: Clic en "Empleados Activos" → Lista de empleados
 
-### Selector de Período
-Algunos gráficos permiten cambiar el período de visualización:
-- Mes actual
-- Trimestre
-- Año
+### Ver Detalle de Alertas
 
----
-
-## Navegación desde el Dashboard
-
-### Tarjetas Clickeables
-Todas las tarjetas de KPIs son clickeables y llevan al módulo correspondiente.
-
-### Enlaces en Alertas
-Cada alerta tiene un enlace directo al elemento que requiere atención.
-
-### Gráficos Interactivos
-Los gráficos permiten navegar a datos específicos al hacer clic.
+1. Haga clic en cualquier **alerta** de la lista
+2. Se abre el módulo relacionado con la alerta
+3. Ejemplo: Clic en "Proyectos atrasados" → Lista de proyectos
 
 ---
 
-## Personalización
+## Vista en Dispositivos Móviles
 
-### Según Permisos
-El dashboard muestra solo la información de los módulos a los que el usuario tiene acceso.
+En celulares y tablets, el Dashboard se adapta:
 
-### Según Rol
-- **Administrador**: Ve todos los KPIs y alertas
-- **Gerente**: Ve KPIs de su área
-- **Usuario**: Ve información básica
-
----
-
-## Tips y Mejores Prácticas
-
-### Para Revisión Diaria
-- ✅ Revisar alertas al inicio del día
-- ✅ Verificar KPIs principales
-- ✅ Atender items críticos primero
-
-### Para Análisis
-- ✅ Usar gráficos para identificar tendencias
-- ✅ Comparar períodos anteriores
-- ✅ Exportar datos si necesita análisis detallado
-
-### Para Presentaciones
-- ✅ El dashboard es ideal para mostrar estado general
-- ✅ Los gráficos son claros y profesionales
-- ✅ Puede tomar screenshots para reportes
+| Elemento | Cambio |
+|----------|--------|
+| **Tarjetas** | Se muestran en 2 columnas |
+| **Gráficos** | Se apilan verticalmente |
+| **Alertas** | Se muestran debajo de los gráficos |
+| **Texto** | Tamaño reducido para mejor lectura |
 
 ---
 
-## Solución de Problemas
+## Consejos Útiles
 
-### "Los datos no se actualizan"
-- Hacer clic en el botón Refrescar
-- Verificar conexión a internet
-- Cerrar sesión y volver a entrar
+### Para Gerentes
+- ✅ Revise el Dashboard al inicio del día
+- ✅ Preste atención a las alertas rojas
+- ✅ Compare el flujo de caja mes a mes
+- ✅ Verifique proyectos atrasados
 
-### "No veo todos los KPIs"
-- Verificar permisos de usuario
-- Algunos KPIs requieren permisos específicos
-- Contactar al administrador
+### Para Supervisores
+- ✅ Monitoree los indicadores de su área
+- ✅ Atienda las alertas de advertencia
+- ✅ Use las tarjetas para navegar rápido
 
-### "Los gráficos no cargan"
-- Esperar unos segundos (carga asíncrona)
-- Refrescar la página
-- Verificar que hay datos en el sistema
+### Para Todos
+- ✅ Actualice los datos si lleva tiempo en la pantalla
+- ✅ Haga clic en las tarjetas para ver más detalle
+- ✅ Revise las alertas regularmente
 
-### "Las alertas no desaparecen"
-- Las alertas se resuelven atendiendo el problema
-- Ir al detalle y resolver la situación
-- La alerta desaparecerá automáticamente
+---
+
+## Preguntas Frecuentes
+
+### ¿Por qué no veo todos los indicadores?
+Solo ve los indicadores de los módulos a los que tiene acceso según sus permisos.
+
+### ¿Cada cuánto se actualizan los datos?
+Los datos se cargan al entrar al Dashboard. Use el botón de actualizar para refrescar.
+
+### ¿Puedo personalizar qué indicadores ver?
+Actualmente no. El Dashboard muestra los indicadores estándar según su rol.
+
+### ¿Por qué el balance está en rojo?
+El balance se muestra en rojo cuando los gastos superan los ingresos del mes.
+
+### ¿Qué hago si tengo muchas alertas?
+Priorice las alertas rojas (errores), luego las amarillas (advertencias). Haga clic en cada una para resolverla.
+
+### ¿Puedo ver datos de otros años?
+El flujo de caja muestra el año actual. Para ver históricos, vaya al módulo de Finanzas.

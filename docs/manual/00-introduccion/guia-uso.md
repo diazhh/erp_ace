@@ -1,227 +1,212 @@
-# 📖 Introducción al ERP - Guía de Uso
+# 🏢 Introducción al Sistema - Guía de Uso
 
-## Acceso al Sistema
+## Cómo Acceder al Sistema
 
-### URL de Acceso
-- **Producción**: (configurar según despliegue)
-- **Desarrollo**: http://localhost:5173
+### Iniciar Sesión
 
-### Credenciales por Defecto
-- **Usuario**: `admin`
-- **Contraseña**: `Admin123!`
+1. Abra su navegador web (Chrome, Firefox, Edge)
+2. Ingrese la dirección del sistema que le proporcionó su empresa
+3. Verá la pantalla de inicio de sesión con dos campos:
+   - **Usuario**: Ingrese su nombre de usuario
+   - **Contraseña**: Ingrese su contraseña
+4. Haga clic en el botón **"Iniciar Sesión"**
+5. Si los datos son correctos, entrará al Panel Principal
 
-> ⚠️ **Importante**: Cambiar la contraseña después del primer inicio de sesión.
+### Si Olvidó su Contraseña
 
----
-
-## Iniciar Sesión
-
-### Paso 1: Abrir la página de login
-Navegar a la URL del sistema. Se mostrará la pantalla de inicio de sesión.
-
-![Página de Login](screenshots/login.png)
-
-### Paso 2: Ingresar credenciales
-1. Escribir el **nombre de usuario** en el campo "Usuario"
-2. Escribir la **contraseña** en el campo "Contraseña"
-3. Opcionalmente, hacer clic en el ícono 👁️ para ver la contraseña
-
-### Paso 3: Hacer clic en "Ingresar"
-Si las credenciales son correctas, se redirigirá al **Dashboard principal**.
+1. Contacte al administrador del sistema
+2. El administrador le generará una nueva contraseña temporal
+3. Al ingresar con la contraseña temporal, el sistema le pedirá crear una nueva
 
 ---
 
-## Navegación Básica
+## Pantalla Principal (Dashboard)
 
-### Menú Lateral (Sidebar)
+Al iniciar sesión, verá el **Panel Principal** que contiene:
 
-El menú lateral izquierdo contiene todos los módulos del sistema:
+### Tarjetas de Resumen (Parte Superior)
+Son recuadros con números que muestran información importante:
+- Total de empleados
+- Proyectos activos
+- Saldo en cuentas
+- Otros indicadores según su rol
 
-![Menú Lateral](screenshots/dashboard.png)
+### Gráficos (Parte Central)
+Muestran información visual como:
+- Ingresos vs gastos por mes
+- Proyectos por estado
+- Empleados por departamento
 
-| Sección | Módulos |
-|---------|---------|
-| **Principal** | Dashboard |
-| **RRHH** | Empleados, Organización, Nómina |
-| **Finanzas** | Finanzas, Caja Chica |
-| **Operaciones** | Proyectos, Compras, Inventario, Flota |
-| **Seguridad** | HSE |
-| **Documentación** | Documentos |
-| **Activos** | Activos Fijos |
-| **Comercial** | CRM |
-| **Calidad** | Control de Calidad |
-| **Oil & Gas** | Producción, AFE, Contratos O&G, Compliance, JIB, Permisos de Trabajo |
-| **Sistema** | Reportes, Administración |
-
-### Expandir/Colapsar Submenús
-- Hacer clic en la **flecha ▼** junto al nombre del módulo para ver las opciones
-- Hacer clic nuevamente para colapsar
-
-### Colapsar Menú Lateral
-- En pantallas pequeñas, el menú se colapsa automáticamente
-- Hacer clic en el ícono ☰ para mostrar/ocultar el menú
-
----
-
-## Header (Barra Superior)
-
-### Elementos del Header
-
-| Elemento | Función |
-|----------|---------|
-| **Logo/Nombre** | Nombre del sistema y empresa |
-| **Selector de Idioma** 🌐 | Cambiar entre Español, Inglés y Portugués |
-| **Usuario** | Nombre del usuario actual |
-| **Avatar** | Menú de usuario (perfil, configuración, cerrar sesión) |
-
----
-
-## Cambiar Idioma
-
-### Paso 1: Hacer clic en el ícono de idioma 🌐
-Se encuentra en la esquina superior derecha.
-
-### Paso 2: Seleccionar el idioma deseado
-- 🇪🇸 **Español** (ES)
-- 🇺🇸 **English** (EN)
-- 🇧🇷 **Português** (PT)
-
-### Paso 3: El sistema se actualiza automáticamente
-Todos los textos, menús y mensajes cambiarán al idioma seleccionado.
-
-> 💡 **Tip**: La preferencia de idioma se guarda y se mantiene al volver a iniciar sesión.
-
----
-
-## Dashboard Principal
-
-El Dashboard muestra un resumen de todos los módulos:
-
-![Dashboard Principal](screenshots/dashboard.png)
-
-### KPIs (Indicadores Clave)
-
-| KPI | Descripción |
-|-----|-------------|
-| **Empleados Activos** | Número de empleados activos en el sistema |
-| **Proyectos Activos** | Proyectos en estado activo |
-| **Balance del Mes** | Balance financiero del mes actual |
-| **Items en Inventario** | Total de items en stock |
-| **Vehículos Activos** | Vehículos operativos |
-| **Pendientes de Conciliar** | Transacciones por conciliar |
-
-### Gráficos
-
-- **Flujo de Caja**: Ingresos vs Gastos por mes
-- **Proyectos por Estado**: Distribución de proyectos
-- **Gastos por Categoría**: Desglose de gastos
-- **Saldos por Moneda**: Balance en USD, VES, etc.
-- **Presupuesto de Proyectos**: Presupuesto vs Gasto real
-
-### Alertas
-Panel de alertas con:
-- Proyectos atrasados
+### Alertas (Lado Derecho)
+Lista de situaciones que requieren su atención:
 - Documentos por vencer
-- Mantenimientos pendientes
-- Stock bajo
+- Aprobaciones pendientes
+- Tareas atrasadas
 
 ---
 
-## Cerrar Sesión
+## Cómo Usar el Menú Lateral
 
-### Opción 1: Desde el menú de usuario
-1. Hacer clic en el **avatar** o nombre de usuario (esquina superior derecha)
-2. Seleccionar **"Cerrar Sesión"**
+El menú lateral está en el **lado izquierdo** de la pantalla.
 
-### Opción 2: Desde Configuración
-1. Ir a **Administración → Configuración**
-2. En la sección de seguridad, hacer clic en **"Cerrar Sesión"**
+### Navegar a un Módulo
 
----
+1. Busque el nombre del módulo que necesita (ej: "Empleados", "Proyectos")
+2. Si el módulo tiene una flecha (▼), haga clic para ver las opciones
+3. Haga clic en la opción deseada
+4. La pantalla cambiará al módulo seleccionado
 
-## Patrones de Navegación
+### Módulos con Submenús
 
-### Lista de Elementos
-Todas las listas siguen el mismo patrón:
+Algunos módulos tienen varias opciones. Por ejemplo, **"Finanzas"** puede tener:
+- Dashboard Financiero
+- Cuentas Bancarias
+- Transacciones
+- Reportes
 
-```
-/modulo              → Lista de elementos
-/modulo/new          → Crear nuevo elemento
-/modulo/:id          → Ver detalle del elemento
-/modulo/:id/edit     → Editar elemento
-```
+Para ver estas opciones:
+1. Haga clic en **"Finanzas"** en el menú
+2. Se expandirá mostrando las subopciones
+3. Haga clic en la opción que necesita
 
-### Acciones Comunes
+### Contraer/Expandir el Menú
 
-| Acción | Cómo hacerlo |
-|--------|--------------|
-| **Ver lista** | Hacer clic en el módulo en el menú lateral |
-| **Crear nuevo** | Botón "Nuevo" o "+" en la parte superior |
-| **Ver detalle** | Hacer clic en la fila o en el botón "Ver" |
-| **Editar** | Botón "Editar" en el detalle o en la lista |
-| **Eliminar** | Botón "Eliminar" (requiere confirmación) |
-| **Buscar** | Campo de búsqueda en la parte superior de la lista |
-| **Filtrar** | Selectores de filtro según el módulo |
-
-### Tabs en Detalle
-Los detalles de entidades tienen **tabs** para organizar la información:
-
-- **Información**: Datos principales
-- **Relacionados**: Entidades vinculadas
-- **Documentos**: Archivos adjuntos
-- **Auditoría**: Historial de cambios
+- En pantallas pequeñas, el menú puede estar oculto
+- Busque el ícono de tres líneas (☰) en la parte superior para mostrarlo
 
 ---
 
-## Responsive (Móvil y Tablet)
+## Cómo Buscar Información
 
-### En pantallas pequeñas:
-- Las **tablas** se convierten en **tarjetas**
-- El **menú lateral** se oculta y aparece con el botón ☰
-- Los **formularios** se muestran en una sola columna
-- Los **tabs** son scrollables horizontalmente
+La mayoría de las pantallas tienen opciones de búsqueda y filtros.
 
-### Tips para móvil:
-- Deslizar horizontalmente para ver más columnas en tablas
-- Usar el botón de menú para navegar
-- Los botones de acción se agrupan en menús desplegables
+### Usar la Barra de Búsqueda
 
----
+1. Busque el campo con el ícono de lupa (🔍) o el texto "Buscar..."
+2. Escriba lo que está buscando (nombre, código, etc.)
+3. Los resultados se filtrarán automáticamente mientras escribe
 
-## Atajos de Teclado
+### Usar Filtros
 
-| Atajo | Acción |
-|-------|--------|
-| `Ctrl + K` | Búsqueda global (si está habilitada) |
-| `Esc` | Cerrar modal/diálogo |
-| `Enter` | Confirmar acción en formularios |
+1. Busque los selectores con opciones (ej: "Estado", "Tipo", "Fecha")
+2. Haga clic en el selector
+3. Elija la opción deseada
+4. Los resultados se actualizarán según el filtro
 
----
+### Limpiar Filtros
 
-## Solución de Problemas
-
-### No puedo iniciar sesión
-1. Verificar que el usuario y contraseña sean correctos
-2. Verificar que Caps Lock esté desactivado
-3. Contactar al administrador si el problema persiste
-
-### La página no carga
-1. Verificar conexión a internet
-2. Limpiar caché del navegador (Ctrl + Shift + R)
-3. Probar en otro navegador
-
-### Error al guardar
-1. Verificar que todos los campos obligatorios (*) estén completos
-2. Revisar el mensaje de error específico
-3. Contactar soporte si el error persiste
+1. Busque el botón **"Limpiar"** o el ícono de X
+2. Haga clic para quitar todos los filtros
+3. Verá nuevamente todos los registros
 
 ---
 
-## Próximos Pasos
+## Cómo Ver el Detalle de un Registro
 
-Después de familiarizarse con la navegación básica, se recomienda:
+1. En cualquier lista, busque el registro que le interesa
+2. Haga clic en el **ícono de ojo (👁)** o en el **nombre del registro**
+3. Se abrirá la pantalla de detalle con toda la información
 
-1. **Cambiar contraseña** en Configuración
-2. **Configurar preferencias** de idioma y tema
-3. **Explorar el Dashboard** para ver el estado general
-4. **Revisar los módulos** según su rol y permisos
+### Navegación en el Detalle
+
+Muchas pantallas de detalle tienen **pestañas (tabs)** en la parte superior:
+- Haga clic en cada pestaña para ver diferente información
+- Por ejemplo: "Información General", "Documentos", "Historial"
+
+---
+
+## Cómo Crear un Nuevo Registro
+
+1. En la pantalla de lista, busque el botón **"+ Nuevo"** o **"+ Agregar"**
+   - Generalmente está en la esquina superior derecha
+   - Es un botón azul o verde
+2. Haga clic en el botón
+3. Se abrirá un formulario con campos para llenar
+4. Complete los campos requeridos (marcados con *)
+5. Haga clic en **"Guardar"** para crear el registro
+
+### Campos Obligatorios
+
+- Los campos con asterisco (*) son obligatorios
+- No podrá guardar hasta completar todos los campos obligatorios
+- Si falta alguno, verá un mensaje indicando cuál
+
+---
+
+## Cómo Editar un Registro
+
+1. Vaya al detalle del registro que desea modificar
+2. Busque el botón **"Editar"** o el **ícono de lápiz (✏️)**
+   - Generalmente está en la esquina superior derecha
+3. Haga clic en el botón
+4. Se abrirá el formulario con los datos actuales
+5. Modifique lo que necesite
+6. Haga clic en **"Guardar"** para aplicar los cambios
+
+---
+
+## Cómo Eliminar un Registro
+
+⚠️ **Precaución**: La eliminación puede ser permanente.
+
+1. Vaya al detalle del registro o búsquelo en la lista
+2. Busque el **ícono de papelera (🗑)** o el botón **"Eliminar"**
+3. Haga clic en el botón
+4. Aparecerá un mensaje de confirmación
+5. Haga clic en **"Confirmar"** solo si está seguro
+6. El registro será eliminado
+
+---
+
+## Entender los Estados (Chips de Colores)
+
+Los registros muestran su estado con etiquetas de colores:
+
+| Color | Significado General |
+|-------|---------------------|
+| 🟢 Verde | Activo, Aprobado, Completado |
+| 🟡 Amarillo/Naranja | Pendiente, En Proceso, Requiere Atención |
+| 🔴 Rojo | Inactivo, Rechazado, Vencido, Urgente |
+| 🔵 Azul | Información, En Revisión |
+| ⚪ Gris | Borrador, Cancelado, Sin Estado |
+
+---
+
+## Consejos Útiles
+
+### Para Trabajar Más Rápido
+- Use los filtros para encontrar información rápidamente
+- Las tarjetas del dashboard son clickeables y lo llevan al módulo
+- Puede tener varias pestañas del navegador abiertas
+
+### Para Evitar Errores
+- Revise la información antes de guardar
+- Lea los mensajes de confirmación antes de aceptar
+- Si no está seguro, consulte antes de eliminar algo
+
+### Si Algo No Funciona
+- Recargue la página (F5 o botón de recargar)
+- Cierre sesión y vuelva a entrar
+- Contacte al administrador si el problema persiste
+
+---
+
+## Preguntas Frecuentes
+
+### "No veo un módulo en el menú"
+Es posible que no tenga permiso para acceder a ese módulo. Contacte al administrador si cree que debería tener acceso.
+
+### "No puedo editar un registro"
+Algunos registros no se pueden editar cuando están en ciertos estados (ej: aprobados, cerrados). Verifique el estado del registro.
+
+### "El sistema está lento"
+Intente recargar la página. Si persiste, puede ser un problema de conexión a internet o del servidor.
+
+### "Perdí información que estaba escribiendo"
+Siempre haga clic en "Guardar" antes de salir de una pantalla. El sistema no guarda automáticamente los cambios.
+
+### "¿Cómo cambio mi contraseña?"
+Vaya a Configuración (ícono de engranaje) > Perfil > Cambiar Contraseña.
+
+### "¿Cómo cambio el idioma?"
+Vaya a Configuración > Perfil > Idioma y seleccione su preferencia.

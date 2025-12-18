@@ -1,37 +1,39 @@
-# 💰 Módulo de AFE - Guía de Uso
+# 💰 Autorizaciones de Gasto (AFE) - Guía de Uso
 
-## Acceder al Módulo
+## Cómo Acceder al Módulo
 
-1. En el menú lateral, hacer clic en **"Autorizaciones de Gasto (AFE)"**
-2. Se despliegan las opciones:
-   - Dashboard
-   - Lista de AFEs
+1. En el **menú lateral izquierdo**, busque la opción **"AFE"**
+2. Haga clic en el ícono de flecha (▼) para expandir las opciones
+3. Verá las siguientes secciones:
+   - **Dashboard**: Panel con indicadores
+   - **AFEs**: Lista de autorizaciones
 
 ---
 
-## Dashboard AFE
+## Dashboard de AFE
 
-**Ruta:** `/afe`
+### Acceder al Dashboard
 
-### KPIs Principales
+1. En el menú, seleccione **"AFE"** → **"Dashboard"**
+2. Verá el panel principal con indicadores
 
-| KPI | Descripción |
-|-----|-------------|
-| **AFEs Activos** | En ejecución |
+### Indicadores Principales
+
+| Indicador | Descripción |
+|-----------|-------------|
+| **AFEs Pendientes** | Esperando aprobación |
+| **AFEs Aprobados** | Listos para ejecutar |
+| **En Ejecución** | Proyectos activos |
 | **Presupuesto Total** | Suma de AFEs aprobados |
-| **Gastado** | Total ejecutado |
-| **Pendientes** | AFEs por aprobar |
-
-### Gráficos
-- **AFEs por Tipo**: Distribución
-- **Presupuesto vs Gastado**: Comparación
-- **AFEs por Estado**: Pipeline
 
 ---
 
 ## Lista de AFEs
 
-**Ruta:** `/afe/list`
+### Ver Todos los AFEs
+
+1. En el menú, seleccione **"AFE"** → **"AFEs"**
+2. Verá la tabla/tarjetas de AFEs
 
 ### Filtros Disponibles
 
@@ -39,190 +41,148 @@
 |--------|----------|
 | **Búsqueda** | Por código o título |
 | **Estado** | Borrador, Pendiente, Aprobado, etc. |
-| **Tipo** | Perforación, Workover, Facilidades, etc. |
-| **Campo** | Todos los campos |
+| **Tipo** | Perforación, Workover, Instalaciones, etc. |
+| **Campo** | Filtrar por campo |
 
 ### Columnas de la Tabla
 
 | Columna | Descripción |
 |---------|-------------|
-| **Código** | AFE-XXXXX |
-| **Título** | Descripción breve |
-| **Tipo** | Tipo de AFE |
+| **Código** | Identificador único |
+| **Título** | Nombre del AFE |
+| **Tipo** | Perforación, Workover, etc. |
 | **Campo** | Campo asociado |
-| **Presupuesto** | Monto aprobado |
-| **Gastado** | Monto ejecutado |
-| **% Ejecución** | Porcentaje gastado |
+| **Costo Estimado** | Presupuesto |
 | **Estado** | Estado actual |
+| **Fecha** | Fecha de creación |
 | **Acciones** | Ver, Editar, Eliminar |
 
 ---
 
-## Crear AFE
+### Crear un AFE
 
-**Ruta:** `/afe/new`
-
-### Campos del Formulario
+1. Haga clic en el botón **"+ Nuevo AFE"**
+2. Complete el formulario:
 
 | Campo | Obligatorio | Descripción |
 |-------|-------------|-------------|
-| **Título** | ✅ | Descripción del AFE |
-| **Tipo** | ✅ | Perforación, Workover, etc. |
-| **Campo** | ✅ | Campo asociado |
-| **Pozo** | ❌ | Pozo específico |
-| **Presupuesto Estimado** | ✅ | Monto estimado |
-| **Moneda** | ✅ | USD (default) |
-| **Fecha Inicio** | ❌ | Fecha de inicio |
-| **Fecha Fin** | ❌ | Fecha de fin |
-| **Descripción** | ❌ | Detalles del proyecto |
+| **Código** | ✅ Sí | Código único (ej: "AFE-2025-001") |
+| **Título** | ✅ Sí | Nombre descriptivo |
+| **Tipo** | ✅ Sí | Perforación, Workover, etc. |
+| **Campo** | ❌ No | Campo asociado |
+| **Pozo** | ❌ No | Pozo asociado (si aplica) |
+| **Costo Estimado** | ✅ Sí | Presupuesto total |
+| **Moneda** | ✅ Sí | USD |
+| **Fecha Inicio** | ❌ No | Inicio estimado |
+| **Fecha Fin** | ❌ No | Fin estimado |
+| **Descripción** | ❌ No | Detalle del proyecto |
+| **Justificación** | ❌ No | Razón del gasto |
 
-### Items del Presupuesto
-Agregar líneas de presupuesto:
-- Categoría
-- Descripción
-- Cantidad
-- Precio unitario
-- Total
-
-### Pasos
-1. Hacer clic en **"+ Nuevo AFE"**
-2. Completar información general
-3. Agregar items de presupuesto
-4. Guardar como borrador
-5. Enviar para aprobación cuando esté listo
+3. Haga clic en **"Guardar"**
+4. El AFE queda en estado "Borrador"
 
 ---
 
-## Detalle del AFE
+### Agregar Desglose de Costos
 
-**Ruta:** `/afe/:id`
-
-### Información del AFE
-- Código y título
-- Tipo y estado
-- Campo y pozo
-- Presupuesto aprobado
-- Gastado y disponible
-- Fechas
-
-### Barra de Progreso
-Muestra porcentaje de ejecución del presupuesto.
-
-### Tabs Disponibles
-
-#### Tab: Información
-Datos generales del AFE.
-
-#### Tab: Presupuesto
-Items del presupuesto:
-- Categoría
-- Descripción
-- Monto presupuestado
-- Monto gastado
-- Variación
-
-#### Tab: Gastos
-Gastos registrados contra el AFE:
-- Fecha
-- Descripción
-- Monto
-- Categoría
-- Estado
-
-#### Tab: Documentos
-Archivos adjuntos.
-
-#### Tab: Aprobaciones
-Historial de aprobaciones:
-- Fecha
-- Usuario
-- Acción
-- Comentarios
-
-#### Tab: Auditoría
-Historial de cambios.
+1. En el detalle del AFE, vaya a la sección de desglose
+2. Agregue líneas de costo:
+   - Categoría (perforación, equipos, servicios, etc.)
+   - Descripción
+   - Monto estimado
+3. El sistema suma automáticamente el total
 
 ---
 
-## Flujo de Aprobación
+### Flujo de Aprobación
 
 ```
-DRAFT → PENDING → APPROVED → IN_PROGRESS → CLOSED
-                ↘ REJECTED
+1. BORRADOR → AFE en elaboración
+   ↓
+2. PENDIENTE → Enviado para aprobación
+   ↓
+3. APROBADO → Autorizado (o RECHAZADO)
+   ↓
+4. EN PROGRESO → En ejecución
+   ↓
+5. CERRADO → Completado
 ```
+
+---
 
 ### Enviar para Aprobación
-1. Desde AFE en estado DRAFT
-2. Verificar que esté completo
-3. Clic en **"Enviar para Aprobación"**
-4. Estado cambia a PENDING
 
-### Aprobar AFE
-1. Revisar AFE pendiente
-2. Verificar presupuesto y justificación
-3. Clic en **"Aprobar"**
-4. Ingresar presupuesto aprobado (puede diferir del estimado)
-5. Agregar comentarios
-6. Confirmar
-
-### Rechazar AFE
-1. Revisar AFE pendiente
-2. Clic en **"Rechazar"**
-3. Ingresar motivo del rechazo
-4. Confirmar
+1. En el detalle del AFE en estado "Borrador"
+2. Verifique que toda la información esté completa
+3. Haga clic en **"Enviar para Aprobación"**
+4. El estado cambia a "Pendiente"
+5. Los aprobadores reciben notificación
 
 ---
 
-## Registro de Gastos
+### Aprobar/Rechazar un AFE
 
-### Registrar Gasto
-1. Desde el detalle del AFE
-2. Tab "Gastos" → "Nuevo Gasto"
-3. Seleccionar categoría
-4. Ingresar monto y descripción
-5. Adjuntar comprobante
-6. Guardar
-
-### Control de Presupuesto
-- El sistema alerta cuando se supera el 80% del presupuesto
-- Alerta crítica al superar el 100%
-- Se puede solicitar ampliación de presupuesto
+1. En el detalle del AFE en estado "Pendiente"
+2. Revise la información y justificación
+3. Haga clic en **"Aprobar"** o **"Rechazar"**
+4. Agregue comentarios si es necesario
+5. El estado cambia según la decisión
 
 ---
 
-## Tips y Mejores Prácticas
+### Registrar Gastos Reales
+
+1. En el detalle del AFE aprobado
+2. Vaya a la sección de ejecución
+3. Registre los gastos reales por categoría
+4. El sistema compara con el estimado
+5. Muestra desviaciones si las hay
+
+---
+
+### Cerrar un AFE
+
+1. Cuando el proyecto esté completado
+2. Verifique que todos los gastos estén registrados
+3. Haga clic en **"Cerrar AFE"**
+4. Agregue notas de cierre
+5. El estado cambia a "Cerrado"
+
+---
+
+## Consejos Útiles
 
 ### Para Crear AFEs
-- ✅ Detallar bien los items de presupuesto
-- ✅ Incluir contingencias
-- ✅ Documentar justificación
-- ✅ Asociar correctamente a campo/pozo
+- ✅ Use códigos estándar de la empresa
+- ✅ Sea detallado en la justificación
+- ✅ Incluya contingencias en el presupuesto
+- ✅ Desglose los costos por categoría
 
 ### Para Aprobaciones
-- ✅ Revisar detalle del presupuesto
-- ✅ Verificar disponibilidad de fondos
-- ✅ Documentar decisiones
+- ✅ Revise bien antes de enviar
+- ✅ Responda rápido a solicitudes de aprobación
+- ✅ Documente razones de rechazo
 
-### Para Control
-- ✅ Registrar gastos oportunamente
-- ✅ Monitorear ejecución vs presupuesto
-- ✅ Solicitar ampliación antes de exceder
+### Para Ejecución
+- ✅ Registre gastos regularmente
+- ✅ Investigue desviaciones significativas
+- ✅ Solicite suplemento si es necesario
 
 ---
 
-## Solución de Problemas
+## Preguntas Frecuentes
 
-### "No puedo enviar para aprobación"
-- Verificar que tenga items de presupuesto
-- Verificar que esté en estado DRAFT
-- Verificar permisos de usuario
+### ¿Puedo modificar un AFE aprobado?
+No directamente. Debe solicitar un suplemento o revisión que pasa por nuevo proceso de aprobación.
 
-### "AFE sobre presupuesto"
-- Revisar gastos registrados
-- Solicitar ampliación de presupuesto
-- Documentar motivos del exceso
+### ¿Qué pasa si el gasto real supera el estimado?
+El sistema muestra la desviación. Debe solicitar un suplemento de AFE para cubrir el exceso.
 
-### "No puedo registrar gastos"
-- Verificar que el AFE esté aprobado
-- Verificar que esté en estado IN_PROGRESS
-- Verificar permisos de usuario
+### ¿Quién puede aprobar AFEs?
+Depende del monto y los permisos configurados. Generalmente gerencia y socios según participación.
+
+### ¿Puedo cancelar un AFE aprobado?
+Sí, si no se ha ejecutado. Cambie el estado a "Cancelado" con justificación.
+
+### ¿Cómo veo el historial de un AFE?
+En el detalle del AFE, la sección de historial muestra todos los cambios y aprobaciones.

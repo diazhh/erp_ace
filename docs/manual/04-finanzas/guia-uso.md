@@ -1,367 +1,298 @@
-# 🏦 Módulo de Finanzas - Guía de Uso
+# 💵 Finanzas y Contabilidad - Guía de Uso
 
-## Acceder al Módulo
+## Cómo Acceder al Módulo
 
-1. En el menú lateral, hacer clic en **"Finanzas"**
-2. Se despliegan las opciones:
-   - Dashboard
-   - Cuentas Bancarias
-   - Transacciones
+1. En el **menú lateral izquierdo**, busque la opción **"Finanzas"**
+2. Haga clic en el ícono de flecha (▼) para expandir las opciones
+3. Verá las siguientes secciones:
+   - **Dashboard**: Panel con indicadores y gráficos
+   - **Cuentas**: Gestión de cuentas bancarias
+   - **Transacciones**: Registro de ingresos y gastos
 
 ---
 
 ## Dashboard Financiero
 
-**Ruta:** `/finance`
+### Acceder al Dashboard
 
-### KPIs Principales
+1. En el menú, seleccione **"Finanzas"** → **"Dashboard"**
+2. Verá el panel principal con toda la información financiera
 
-| KPI | Descripción |
-|-----|-------------|
-| **Saldo Total USD** | Suma de saldos en dólares |
-| **Saldo Total VES** | Suma de saldos en bolívares |
-| **Ingresos del Mes** | Total de ingresos del mes actual |
-| **Gastos del Mes** | Total de gastos del mes actual |
-| **Pendientes por Conciliar** | Transacciones sin conciliar |
+### Indicadores Principales (KPIs)
 
-### Gráficos
+| Indicador | Descripción | Color |
+|-----------|-------------|-------|
+| **Total Ingresos** | Suma de ingresos del mes | Verde |
+| **Total Gastos** | Suma de gastos del mes | Rojo |
+| **Balance Neto** | Ingresos menos gastos | Verde/Rojo según resultado |
+| **Pendientes de Conciliar** | Transacciones sin verificar | Naranja |
 
-- **Flujo de Caja**: Ingresos vs Gastos por mes
-- **Distribución por Tipo de Cuenta**: Pie chart de saldos
-- **Tendencia de Saldos**: Evolución histórica
+### Saldos por Moneda
 
-### Acciones Rápidas
+Debajo de los KPIs verá tarjetas con el saldo total por cada moneda (USD, VES, etc.), mostrando cuántas cuentas tiene en cada moneda.
 
-| Botón | Acción |
-|-------|--------|
-| **Nueva Transacción** | Ir a crear transacción |
-| **Ver Cuentas** | Ir a lista de cuentas |
-| **Ver Transacciones** | Ir a lista de transacciones |
-| **Refrescar** | Actualizar datos |
+### Gráficos Disponibles
 
-### Filtro de Año
-Selector para ver datos de años anteriores.
+| Gráfico | Descripción |
+|---------|-------------|
+| **Flujo de Caja** | Ingresos vs gastos por mes (área) |
+| **Cuentas por Tipo** | Distribución de saldos por tipo de cuenta (pastel) |
+| **Gastos por Categoría** | Desglose de gastos (barras horizontales) |
+| **Balance Neto Mensual** | Tendencia del resultado neto (línea) |
+
+### Crear Transacción Rápida
+
+1. Haga clic en el botón **"+ Nueva Transacción"** (esquina superior derecha)
+2. Se despliega un menú con opciones:
+   - **Nuevo Ingreso** (verde)
+   - **Nuevo Gasto** (rojo)
+   - **Nueva Transferencia** (azul)
+3. Seleccione la opción deseada
+
+### Cambiar Año de Visualización
+
+1. Use el selector de **Año** en la esquina superior derecha
+2. Los gráficos se actualizarán con los datos del año seleccionado
 
 ---
 
 ## Cuentas Bancarias
 
-### Lista de Cuentas
+### Ver Lista de Cuentas
 
-**Ruta:** `/finance/accounts`
+1. En el menú, seleccione **"Finanzas"** → **"Cuentas"**
+2. Verá tarjetas con todas las cuentas de la empresa
 
-#### Totales por Moneda
-En la parte superior se muestran tarjetas con el total de saldos por cada moneda (USD, VES, etc.).
+### Información de Cada Cuenta
 
-#### Tarjetas de Cuenta
-Cada cuenta se muestra como una tarjeta con:
-- Ícono según tipo de cuenta
-- Nombre de la cuenta
-- Tipo (Corriente, Ahorro, Crypto, etc.)
-- Banco
-- Número de cuenta (parcialmente oculto)
-- Saldo actual
-- Estado (Activa/Inactiva)
-- Badge si es cuenta por defecto
-- Botones: Ver, Editar, Eliminar
+Cada tarjeta muestra:
+- **Nombre** de la cuenta
+- **Tipo** (Corriente, Ahorro, Efectivo, etc.)
+- **Moneda** (USD, VES, EUR)
+- **Banco** (si aplica)
+- **Número de cuenta** (si aplica)
+- **Saldo actual** (en verde si positivo, rojo si negativo)
+- **Etiqueta "Predeterminada"** si es la cuenta principal
 
-#### Íconos por Tipo de Cuenta
+### Crear Nueva Cuenta
 
-| Tipo | Ícono | Color |
-|------|-------|-------|
-| CHECKING | 🏦 Banco | Azul |
-| SAVINGS | 🏦 Banco | Verde |
-| CRYPTO_WALLET | 💱 Crypto | Naranja |
-| CASH | 💵 Efectivo | Gris |
-| PAGO_MOVIL | 📱 Móvil | Celeste |
-| ZELLE | 👛 Wallet | Morado |
-
----
-
-### Crear Cuenta Bancaria
-
-**Ruta:** `/finance/accounts/new`
+1. Haga clic en el botón **"+ Nueva Cuenta"**
+2. Se abrirá una página con el formulario
 
 #### Campos del Formulario
 
 | Campo | Obligatorio | Descripción |
 |-------|-------------|-------------|
-| **Nombre** | ✅ | Nombre descriptivo (ej: "Cuenta Principal BOD") |
-| **Banco** | ❌ | Nombre del banco |
-| **Número de Cuenta** | ❌ | Número completo de la cuenta |
-| **Tipo de Cuenta** | ✅ | Corriente, Ahorro, Crypto, etc. |
-| **Moneda** | ✅ | USD, VES, EUR, USDT |
-| **Saldo Inicial** | ❌ | Saldo al crear la cuenta |
-| **Es Cuenta por Defecto** | ❌ | Marcar como cuenta principal |
-| **Está Activa** | ❌ | Cuenta activa (default: sí) |
-| **Notas** | ❌ | Observaciones |
+| **Nombre** | ✅ Sí | Nombre descriptivo (ej: "Cuenta Principal BOD") |
+| **Tipo de Cuenta** | ✅ Sí | Corriente, Ahorro, Efectivo, etc. |
+| **Moneda** | ✅ Sí | USD, VES, EUR |
+| **Banco** | ❌ No | Nombre del banco |
+| **Número de Cuenta** | ❌ No | Número de la cuenta |
+| **Saldo Inicial** | ❌ No | Saldo al momento de crear |
+| **Es Predeterminada** | ❌ No | Marcar como cuenta principal |
+| **Activa** | ❌ No | Si la cuenta está operativa |
 
-#### Pasos
-1. Hacer clic en **"+ Nueva Cuenta"**
-2. Completar nombre y tipo (obligatorios)
-3. Seleccionar moneda
-4. Ingresar saldo inicial si tiene
-5. Marcar como cuenta por defecto si corresponde
-6. Hacer clic en **"Guardar"**
+3. Complete los campos requeridos
+4. Haga clic en **"Guardar"**
 
----
+### Ver Detalle de una Cuenta
 
-### Detalle de Cuenta
+1. En la lista de cuentas, haga clic en el ícono de **ojo** (👁)
+2. Verá:
+   - Información completa de la cuenta
+   - Historial de transacciones
+   - Gráfico de movimientos
 
-**Ruta:** `/finance/accounts/:id`
+### Editar una Cuenta
 
-#### Información de la Cuenta
-- Nombre
-- Banco
-- Número de cuenta
-- Tipo
-- Moneda
-- Saldo actual
-- Estado
+1. Haga clic en el ícono de **lápiz** (✏️) en la tarjeta de la cuenta
+2. Modifique los campos necesarios
+3. Haga clic en **"Guardar"**
 
-#### Historial de Transacciones
-Lista de transacciones de esta cuenta:
-- Fecha
-- Código
-- Tipo (Ingreso/Gasto/Transferencia)
-- Descripción
-- Monto
-- Saldo resultante
+### Eliminar una Cuenta
 
-#### Acciones
-- **Editar**: Modificar datos de la cuenta
-- **Nueva Transacción**: Crear transacción en esta cuenta
-- **Exportar**: Descargar historial
+1. Haga clic en el ícono de **papelera** (🗑️)
+2. Confirme la eliminación
 
----
-
-### Editar Cuenta
-
-**Ruta:** `/finance/accounts/:id/edit`
-
-1. Desde el detalle o lista, hacer clic en **"Editar"**
-2. Modificar los campos necesarios
-3. Hacer clic en **"Guardar"**
-
-> ⚠️ **Nota**: No se puede cambiar la moneda si la cuenta tiene transacciones.
-
----
-
-### Eliminar Cuenta
-
-1. En la lista o detalle, hacer clic en **🗑️ Eliminar**
-2. Confirmar en el diálogo
-
-> ⚠️ **Nota**: No se puede eliminar una cuenta que tenga transacciones. Primero debe eliminar o transferir las transacciones.
+> ⚠️ **Importante**: No puede eliminar una cuenta que tenga transacciones registradas.
 
 ---
 
 ## Transacciones
 
-### Lista de Transacciones
+### Ver Lista de Transacciones
 
-**Ruta:** `/finance/transactions`
+1. En el menú, seleccione **"Finanzas"** → **"Transacciones"**
+2. Verá indicadores y la tabla de transacciones
 
-#### Filtros Disponibles
+### Indicadores de la Lista
+
+| Indicador | Descripción |
+|-----------|-------------|
+| **Total Ingresos** | Suma de ingresos (verde) |
+| **Total Gastos** | Suma de gastos (rojo) |
+| **Balance Neto** | Diferencia |
+| **Pendientes** | Transacciones sin conciliar |
+
+### Filtros Disponibles
 
 | Filtro | Opciones |
 |--------|----------|
-| **Tipo** | Todos, Ingreso, Gasto, Transferencia, Ajuste |
-| **Cuenta** | Todas las cuentas activas |
-| **Estado** | Todos, Pendiente, Confirmada, Conciliada, Cancelada |
+| **Tipo** | Ingreso, Gasto, Transferencia |
+| **Cuenta** | Todas las cuentas registradas |
+| **Estado** | Pendiente, Confirmada, Conciliada, Cancelada |
 
-#### Columnas de la Tabla (Desktop)
+### Columnas de la Tabla
 
 | Columna | Descripción |
 |---------|-------------|
-| **Código** | Identificador único (TRX-XXXXX) |
 | **Fecha** | Fecha de la transacción |
-| **Tipo** | Ingreso, Gasto, Transferencia |
+| **Código** | Identificador único |
+| **Tipo** | Ingreso/Gasto/Transferencia |
+| **Categoría** | Clasificación del movimiento |
+| **Descripción** | Detalle de la transacción |
 | **Cuenta** | Cuenta afectada |
-| **Categoría** | Categoría de la transacción |
-| **Descripción** | Descripción breve |
-| **Monto** | Monto (verde=ingreso, rojo=gasto) |
-| **Estado** | Pendiente, Confirmada, Conciliada |
+| **Monto** | Cantidad (+ para ingresos, - para gastos) |
+| **Estado** | Estado actual |
 | **Acciones** | Ver, Conciliar, Cancelar |
-
-#### Vista Mobile
-Tarjetas con:
-- Código y tipo (ícono)
-- Fecha
-- Cuenta
-- Monto (con color según tipo)
-- Estado (chip)
-- Botón de ver detalle
-
-#### Acciones en Lista
-
-| Acción | Descripción |
-|--------|-------------|
-| **Ver** | Ir al detalle de la transacción |
-| **Conciliar** | Marcar como conciliada (si está confirmada) |
-| **Cancelar** | Cancelar la transacción (si está pendiente) |
 
 ---
 
-### Crear Transacción
+### Registrar un Ingreso
 
-**Ruta:** `/finance/transactions/new`
+1. Haga clic en el botón **"+ Nuevo Ingreso"** (verde)
+2. Se abrirá el formulario de transacción
 
 #### Campos del Formulario
 
 | Campo | Obligatorio | Descripción |
 |-------|-------------|-------------|
-| **Tipo** | ✅ | Ingreso, Gasto, Transferencia, Ajuste |
-| **Cuenta** | ✅ | Cuenta origen |
-| **Cuenta Destino** | ✅* | Solo para transferencias |
-| **Monto** | ✅ | Monto de la transacción |
-| **Moneda** | ✅ | Moneda (heredada de la cuenta) |
-| **Tasa de Cambio** | ❌ | Si hay conversión de moneda |
-| **Categoría** | ❌ | Categoría de la transacción |
-| **Fecha** | ✅ | Fecha de la transacción |
-| **Referencia** | ❌ | Número de referencia bancaria |
-| **Descripción** | ❌ | Descripción detallada |
+| **Cuenta** | ✅ Sí | Cuenta donde entra el dinero |
+| **Monto** | ✅ Sí | Cantidad del ingreso |
+| **Fecha** | ✅ Sí | Fecha de la transacción |
+| **Categoría** | ✅ Sí | Ventas, Servicios, Otros |
+| **Descripción** | ❌ No | Detalle del ingreso |
+| **Referencia** | ❌ No | Número de factura o referencia |
 
-#### Tipos de Transacción
-
-##### Ingreso
-- Seleccionar cuenta destino
-- El saldo de la cuenta aumenta
-
-##### Gasto
-- Seleccionar cuenta origen
-- El saldo de la cuenta disminuye
-
-##### Transferencia
-- Seleccionar cuenta origen y destino
-- El saldo de origen disminuye
-- El saldo de destino aumenta
-- Si son diferentes monedas, ingresar tasa de cambio
-
-##### Ajuste
-- Para correcciones de saldo
-- Puede ser positivo o negativo
-
-#### Pasos para Crear
-1. Hacer clic en **"+ Nueva Transacción"**
-2. Seleccionar tipo de transacción
-3. Seleccionar cuenta(s)
-4. Ingresar monto
-5. Seleccionar categoría
-6. Ingresar fecha
-7. Agregar referencia y descripción (opcional)
-8. Hacer clic en **"Guardar"**
+3. Complete los campos
+4. Haga clic en **"Guardar"**
 
 ---
 
-### Detalle de Transacción
+### Registrar un Gasto
 
-**Ruta:** `/finance/transactions/:id`
-
-#### Información
-- Código
-- Tipo
-- Cuenta(s) involucrada(s)
-- Monto
-- Moneda
-- Tasa de cambio (si aplica)
-- Categoría
-- Fecha
-- Referencia
-- Descripción
-- Estado
-- Fecha de creación
-- Usuario que creó
-
-#### Acciones Disponibles
-
-| Estado Actual | Acciones |
-|---------------|----------|
-| **PENDING** | Confirmar, Cancelar |
-| **CONFIRMED** | Conciliar, Cancelar |
-| **RECONCILED** | Solo consulta |
-| **CANCELLED** | Solo consulta |
+1. Haga clic en el botón **"+ Nuevo Gasto"** (rojo)
+2. Complete el formulario similar al de ingreso
+3. Seleccione la categoría apropiada:
+   - Nómina
+   - Suministros
+   - Servicios
+   - Transporte
+   - Mantenimiento
+   - Otros
 
 ---
 
-### Conciliar Transacción
+### Realizar una Transferencia
 
-La conciliación es el proceso de verificar que la transacción coincide con el estado de cuenta bancario.
+1. Haga clic en el botón **"+ Nueva Transferencia"** (azul)
+2. Complete el formulario:
 
-1. En la lista o detalle, hacer clic en **"Conciliar"**
-2. Confirmar en el diálogo
-3. El estado cambia a RECONCILED
-4. Ya no se puede modificar ni cancelar
+| Campo | Obligatorio | Descripción |
+|-------|-------------|-------------|
+| **Cuenta Origen** | ✅ Sí | De dónde sale el dinero |
+| **Cuenta Destino** | ✅ Sí | A dónde llega el dinero |
+| **Monto** | ✅ Sí | Cantidad a transferir |
+| **Fecha** | ✅ Sí | Fecha de la transferencia |
+| **Descripción** | ❌ No | Motivo de la transferencia |
 
----
-
-### Cancelar Transacción
-
-1. En la lista o detalle, hacer clic en **"Cancelar"**
-2. Confirmar en el diálogo
-3. El estado cambia a CANCELLED
-4. El saldo de la cuenta se revierte
-
-> ⚠️ **Nota**: Solo se pueden cancelar transacciones en estado PENDING o CONFIRMED.
+3. Haga clic en **"Guardar"**
+4. El sistema crea automáticamente dos movimientos: salida de origen y entrada a destino
 
 ---
 
-## Flujo de Trabajo Recomendado
+### Conciliar una Transacción
 
-### Diario
-1. Registrar todas las transacciones del día
-2. Verificar saldos de cuentas
+La conciliación marca una transacción como verificada con el banco.
 
-### Semanal
-1. Revisar transacciones pendientes
-2. Confirmar transacciones verificadas
+1. En la lista de transacciones, busque una transacción en estado **"Confirmada"**
+2. Haga clic en el ícono de **check verde** (✅)
+3. Confirme la acción
+4. El estado cambia a **"Conciliada"**
 
-### Mensual
-1. Obtener estados de cuenta bancarios
-2. Conciliar transacciones con estados de cuenta
-3. Investigar diferencias
-4. Generar reportes financieros
+> 💡 **Tip**: Concilie las transacciones después de verificar que aparecen en su estado de cuenta bancario.
 
 ---
 
-## Tips y Mejores Prácticas
+### Cancelar una Transacción
+
+1. En la lista de transacciones, busque la transacción a cancelar
+2. Haga clic en el ícono de **X roja** (❌)
+3. Confirme la acción
+4. El estado cambia a **"Cancelada"**
+5. El saldo de la cuenta se revierte automáticamente
+
+> ⚠️ **Importante**: Solo puede cancelar transacciones que no estén conciliadas.
+
+---
+
+### Ver Detalle de una Transacción
+
+1. Haga clic en el ícono de **ojo** (👁) o en cualquier parte de la fila
+2. Verá:
+   - Información completa de la transacción
+   - Cuenta afectada
+   - Historial de cambios
+
+---
+
+## Exportar Reportes
+
+### Reporte de Transacciones
+
+1. En la lista de transacciones, aplique los filtros deseados
+2. Haga clic en el botón **"Descargar PDF"**
+3. Se genera un PDF con las transacciones filtradas
+
+---
+
+## Consejos Útiles
 
 ### Para Cuentas
-- ✅ Usar nombres descriptivos (incluir banco y tipo)
-- ✅ Mantener una cuenta por defecto para operaciones frecuentes
-- ✅ Desactivar cuentas que ya no se usan (no eliminar)
-- ✅ Verificar saldos iniciales al crear cuentas
+- ✅ Cree una cuenta por cada cuenta bancaria real
+- ✅ Use nombres descriptivos (ej: "Corriente BOD USD")
+- ✅ Marque una cuenta como predeterminada para agilizar el registro
+- ✅ Mantenga actualizados los saldos iniciales
 
 ### Para Transacciones
-- ✅ Registrar transacciones el mismo día que ocurren
-- ✅ Usar categorías consistentes
-- ✅ Incluir referencias bancarias para facilitar conciliación
-- ✅ Agregar descripciones claras
+- ✅ Registre las transacciones el mismo día que ocurren
+- ✅ Use descripciones claras y detalladas
+- ✅ Categorice correctamente para mejores reportes
+- ✅ Concilie regularmente con los estados de cuenta
 
-### Para Conciliación
-- ✅ Conciliar al menos una vez por semana
-- ✅ Investigar diferencias inmediatamente
-- ✅ Mantener documentación de ajustes
+### Para el Dashboard
+- ✅ Revise los KPIs diariamente
+- ✅ Monitoree las transacciones pendientes de conciliar
+- ✅ Use los gráficos para identificar tendencias
 
 ---
 
-## Solución de Problemas
+## Preguntas Frecuentes
 
-### "El saldo no coincide con el banco"
-1. Verificar transacciones pendientes
-2. Buscar transacciones duplicadas
-3. Verificar transacciones canceladas
-4. Revisar transferencias entre cuentas
+### ¿Por qué no puedo eliminar una cuenta?
+La cuenta tiene transacciones registradas. Debe cancelar o transferir las transacciones antes de eliminar.
 
-### "No puedo eliminar la cuenta"
-- La cuenta tiene transacciones asociadas
-- Primero debe eliminar o transferir las transacciones
+### ¿Cómo corrijo una transacción con monto incorrecto?
+Cancele la transacción errónea y cree una nueva con el monto correcto.
 
-### "No puedo cancelar la transacción"
-- La transacción ya está conciliada
-- Las transacciones conciliadas no se pueden cancelar
+### ¿Qué significa "Pendiente de Conciliar"?
+Son transacciones registradas pero no verificadas con el banco. Debe conciliarlas después de confirmar que aparecen en su estado de cuenta.
 
-### "La transferencia no actualiza los saldos"
-- Verificar que ambas cuentas estén activas
-- Verificar que la tasa de cambio sea correcta (si aplica)
-- Verificar que la transacción esté confirmada
+### ¿Puedo modificar una transacción conciliada?
+No. Las transacciones conciliadas no pueden modificarse ni cancelarse para mantener la integridad de los registros.
+
+### ¿Cómo registro un pago en efectivo?
+Cree una cuenta tipo "Efectivo" y registre las transacciones en esa cuenta.
+
+### ¿Puedo tener cuentas en diferentes monedas?
+Sí. Puede crear cuentas en USD, VES, EUR u otras monedas. El sistema muestra los totales separados por moneda.

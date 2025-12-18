@@ -1,344 +1,217 @@
-# 👥 Módulo de Empleados - Guía de Uso
+# 👥 Gestión de Empleados - Guía de Uso
 
-## Acceder al Módulo
+## Cómo Acceder al Módulo
 
-1. En el menú lateral, hacer clic en **"Empleados"**
-2. Se abrirá la lista de empleados
-
----
-
-## Lista de Empleados
-
-![Lista de Empleados](screenshots/lista.png)
-
-### Elementos de la Lista
-
-| Columna | Descripción |
-|---------|-------------|
-| **Código** | Identificador único (EMP-XXXXX) |
-| **Nombre** | Nombre del empleado |
-| **Apellido** | Apellido del empleado |
-| **Cédula** | Número de identificación |
-| **Cargo** | Posición en la empresa |
-| **Departamento** | Área de trabajo |
-| **Estado** | Activo, Inactivo, Licencia, Terminado |
-| **Acciones** | Botones de Ver, Editar, Eliminar |
-
-### Buscar Empleados
-
-1. Usar el campo de búsqueda en la parte superior
-2. Escribir nombre, apellido o cédula
-3. Los resultados se filtran automáticamente
-
-### Filtrar por Estado
-
-1. Usar el selector de estado (si está disponible)
-2. Seleccionar: Todos, Activo, Inactivo, Licencia, Terminado
+1. En el **menú lateral izquierdo**, busque la opción **"Empleados"**
+2. Haga clic en **"Empleados"**
+3. Se abrirá la lista de empleados de la empresa
 
 ---
 
-## Crear Nuevo Empleado
+## Pantalla Principal: Lista de Empleados
 
-### Paso 1: Abrir formulario
-Hacer clic en el botón **"+ Nuevo Empleado"** (esquina superior derecha)
+Al entrar al módulo verá:
 
-![Formulario de Nuevo Empleado](screenshots/formulario-crear.png)
+### Parte Superior
+- **Título**: "Empleados" o "Lista de Empleados"
+- **Botón "+ Nuevo Empleado"**: Botón azul en la esquina superior derecha para agregar un nuevo empleado
 
-### Paso 2: Completar Datos Personales
+### Zona de Filtros
+Debajo del título encontrará opciones para filtrar la lista:
+- **Campo de búsqueda**: Escriba nombre, cédula o código para buscar
+- **Filtro de Estado**: Seleccione para ver solo Activos, Inactivos, etc.
+- **Filtro de Departamento**: Seleccione para ver empleados de un departamento específico
 
-| Campo | Obligatorio | Descripción |
-|-------|-------------|-------------|
-| **Nombre** | ✅ | Nombre(s) del empleado |
-| **Apellido** | ✅ | Apellido(s) del empleado |
-| **Tipo ID** | ✅ | V (Venezolano), E (Extranjero), J (Jurídico), P (Pasaporte) |
-| **Cédula** | ✅ | Número de identificación |
-| **Fecha de Nacimiento** | ❌ | Formato: dd/mm/aaaa |
-| **Género** | ❌ | Masculino, Femenino, Otro |
-| **Estado Civil** | ❌ | Soltero, Casado, Divorciado, Viudo |
-| **Nacionalidad** | ❌ | País de origen |
-| **Email** | ❌ | Correo electrónico |
-
-### Paso 3: Completar Datos de Contacto
-
-| Campo | Descripción |
-|-------|-------------|
-| **Teléfono** | Teléfono fijo |
-| **Celular** | Teléfono móvil |
-| **Extensión** | Extensión telefónica en oficina |
-| **Dirección** | Dirección de residencia |
-| **Ciudad** | Ciudad de residencia |
-| **Estado** | Estado/Provincia |
-
-### Paso 4: Contacto de Emergencia
-
-| Campo | Descripción |
-|-------|-------------|
-| **Contacto de Emergencia** | Nombre de la persona |
-| **Teléfono** | Teléfono del contacto |
-| **Relación** | Parentesco (Padre, Madre, Cónyuge, etc.) |
-
-### Paso 5: Datos Laborales
-
-| Campo | Obligatorio | Descripción |
-|-------|-------------|-------------|
-| **Cargo** | ✅ | Posición en la empresa |
-| **Departamento** | ❌ | Área de trabajo |
-| **Departamento (Estructura)** | ❌ | Departamento en organigrama |
-| **Cargo (Estructura)** | ❌ | Cargo en organigrama |
-| **Supervisor Directo** | ❌ | Jefe inmediato |
-| **Fecha de Ingreso** | ✅ | Fecha de inicio laboral |
-| **Tipo de Contrato** | ❌ | Tiempo Completo, Medio Tiempo, Contratado, Pasante |
-| **Estado** | ✅ | Activo (por defecto) |
-| **Ubicación/Oficina** | ❌ | Lugar de trabajo |
-| **Horario de Trabajo** | ❌ | Horario asignado |
-
-### Paso 6: Datos Bancarios
-
-| Campo | Descripción |
-|-------|-------------|
-| **Salario** | Salario base mensual |
-| **Moneda** | USD, VES, etc. |
-| **Frecuencia de Pago** | Mensual, Quincenal, Semanal |
-
-### Paso 7: Notas Adicionales
-Campo de texto libre para observaciones.
-
-### Paso 8: Guardar
-Hacer clic en el botón **"Guardar"** (esquina superior derecha)
+### Lista de Empleados
+Una tabla que muestra:
+- **Foto**: Imagen del empleado (o iniciales si no tiene foto)
+- **Nombre**: Nombre completo del empleado
+- **Cédula**: Número de identificación
+- **Cargo**: Puesto que ocupa
+- **Departamento**: Área donde trabaja
+- **Estado**: Etiqueta de color indicando si está Activo, Inactivo, etc.
+- **Acciones**: Íconos para ver (👁) y editar (✏️)
 
 ---
 
-## Ver Detalle de Empleado
+## Ver el Detalle de un Empleado
 
-### Acceder al Detalle
-1. En la lista, hacer clic en el botón **👁️ Ver** en la fila del empleado
-2. O hacer clic en el nombre/código del empleado
+### Paso 1: Encontrar al empleado
+- Use el campo de búsqueda para escribir el nombre o cédula
+- O navegue por la lista hasta encontrarlo
 
-![Detalle de Empleado](screenshots/detalle.png)
+### Paso 2: Abrir el detalle
+- Haga clic en el **ícono de ojo (👁)** en la columna de acciones
+- O haga clic directamente en el **nombre del empleado**
 
-### Encabezado del Detalle
+### Paso 3: Explorar la información
+La pantalla de detalle tiene varias **pestañas** en la parte superior:
 
-- **Avatar**: Iniciales del empleado
-- **Nombre completo**: Con badge de estado
-- **Cargo y Departamento**
-- **Código**: EMP-XXXXX
-- **Cédula**
-- **Fecha de ingreso y antigüedad**
+| Pestaña | Qué contiene |
+|---------|--------------|
+| **Información** | Datos personales: nombre, cédula, fecha de nacimiento, contacto |
+| **Trabajo** | Datos laborales: cargo, departamento, fecha de ingreso, salario |
+| **Cuentas** | Cuentas bancarias registradas |
+| **Jerarquía** | Supervisor y subordinados |
+| **Nómina** | Historial de pagos |
+| **Préstamos** | Préstamos y adelantos |
+| **Documentos** | Documentos adjuntos |
+| **Auditoría** | Historial de cambios |
 
-### KPIs del Empleado
-
-| KPI | Descripción |
-|-----|-------------|
-| **Nóminas** | Cantidad de períodos de nómina |
-| **Préstamos Activos** | Préstamos vigentes |
-| **Saldo Préstamos** | Monto pendiente de préstamos |
-| **Docs. por Vencer** | Documentos próximos a vencer |
-
-### Tabs Disponibles
-
-#### Tab: Información
-Datos personales y de contacto:
-- Nombre completo
-- Identificación
-- Fecha de nacimiento
-- Género, Estado civil
-- Nacionalidad
-- Email, Teléfono, Celular
-- Dirección completa
-- Contacto de emergencia
-
-#### Tab: Laboral
-![Tab Laboral](screenshots/detalle-laboral.png)
-
-Datos laborales y bancarios:
-- Código de empleado
-- Cargo
-- Departamento
-- Tipo de contrato
-- Fecha de ingreso
-- Horario
-- Banco, Tipo de cuenta
-- Número de cuenta
-- Salario base
-- Frecuencia de pago
-- Seguro Social, RIF
-
-#### Tab: Cuentas
-Cuentas bancarias del empleado:
-- Lista de cuentas registradas
-- Tipo de cuenta
-- Banco
-- Número de cuenta
-- Cuenta primaria (para nómina)
-- Porcentaje de pago
-- Acciones: Editar, Eliminar, Establecer como primaria
-
-#### Tab: Jerarquía
-Estructura organizacional:
-- Supervisor directo (con enlace)
-- Subordinados directos (lista con enlaces)
-
-#### Tab: Nómina
-Historial de pagos de nómina:
-- Período
-- Salario bruto
-- Deducciones
-- Salario neto
-- Estado del pago
-
-#### Tab: Préstamos
-![Tab Préstamos](screenshots/detalle-nomina.png)
-
-Préstamos del empleado:
-- Monto del préstamo
-- Cuotas totales / pagadas
-- Saldo pendiente
-- Estado
-- Enlace al detalle del préstamo
-
-#### Tab: Documentos
-Documentos del empleado:
-- Tipo de documento
-- Número
-- Fecha de emisión
-- Fecha de vencimiento
-- Estado (Vigente, Por vencer, Vencido)
-- Acciones: Ver, Descargar, Eliminar
-
-#### Tab: Auditoría
-Historial de cambios:
-- Fecha y hora
-- Usuario que realizó el cambio
-- Acción (Creación, Actualización)
-- Campos modificados
+Para cambiar de pestaña, simplemente haga clic en el nombre de la pestaña.
 
 ---
 
-## Editar Empleado
+## Crear un Nuevo Empleado
 
-### Paso 1: Acceder a edición
-- Desde la lista: Botón **✏️ Editar** en la fila
-- Desde el detalle: Botón **"Editar"** (esquina superior derecha)
+### Paso 1: Iniciar la creación
+- En la lista de empleados, haga clic en el botón **"+ Nuevo Empleado"** (esquina superior derecha)
 
-### Paso 2: Modificar campos
-El formulario es igual al de creación, con los datos actuales precargados.
+### Paso 2: Completar información personal
+En el formulario, complete los campos:
+- **Nombre** (*): Nombre completo del empleado
+- **Cédula** (*): Número de identificación
+- **Fecha de Nacimiento**: Seleccione del calendario
+- **Género**: Seleccione Masculino o Femenino
+- **Estado Civil**: Seleccione de la lista
+- **Teléfono**: Número de contacto
+- **Email**: Correo electrónico
+- **Dirección**: Dirección de residencia
 
-### Paso 3: Guardar cambios
-Hacer clic en **"Guardar"**
+*Los campos marcados con (*) son obligatorios*
+
+### Paso 3: Completar información laboral
+- **Código de Empleado**: Se genera automáticamente o ingrese uno
+- **Cargo** (*): Seleccione de la lista de cargos
+- **Departamento** (*): Seleccione de la lista de departamentos
+- **Fecha de Ingreso** (*): Cuándo comenzó a trabajar
+- **Tipo de Contrato**: Seleccione el tipo
+- **Salario**: Monto del salario
+
+### Paso 4: Guardar
+- Revise que toda la información esté correcta
+- Haga clic en el botón **"Guardar"** (generalmente verde o azul)
+- Si hay errores, el sistema le indicará qué campos corregir
+- Si todo está bien, volverá a la lista y verá el nuevo empleado
 
 ---
 
-## Eliminar Empleado
+## Editar un Empleado
 
-### Paso 1: Iniciar eliminación
-- Desde la lista: Botón **🗑️ Eliminar** en la fila
-- Desde el detalle: Botón **"Eliminar"**
+### Paso 1: Ir al detalle del empleado
+- Busque al empleado en la lista
+- Haga clic en su nombre o en el ícono de ojo (👁)
 
-### Paso 2: Confirmar
-Se mostrará un diálogo de confirmación:
-> "¿Está seguro de eliminar este empleado?"
+### Paso 2: Entrar en modo edición
+- En la pantalla de detalle, busque el botón **"Editar"** o el **ícono de lápiz (✏️)**
+- Generalmente está en la esquina superior derecha
+- Haga clic en él
 
-### Paso 3: Confirmar o Cancelar
-- **Confirmar**: El empleado se desactiva (soft delete)
-- **Cancelar**: Se cierra el diálogo sin cambios
+### Paso 3: Modificar la información
+- Se abrirá el formulario con los datos actuales
+- Modifique los campos que necesite cambiar
+- Los campos obligatorios siguen marcados con (*)
 
-> ⚠️ **Nota**: Los empleados no se eliminan físicamente, solo se desactivan para mantener la trazabilidad.
+### Paso 4: Guardar los cambios
+- Haga clic en **"Guardar"**
+- Los cambios se aplicarán inmediatamente
 
 ---
 
 ## Gestionar Cuentas Bancarias
 
-### Agregar Cuenta Bancaria
+### Ver cuentas existentes
+1. Vaya al detalle del empleado
+2. Haga clic en la pestaña **"Cuentas"**
+3. Verá la lista de cuentas bancarias registradas
+4. La cuenta marcada con una **estrella (⭐)** es la cuenta principal
 
-1. Ir al detalle del empleado
-2. Seleccionar tab **"Cuentas"**
-3. Hacer clic en **"+ Nueva Cuenta"**
-4. Completar:
-   - Banco
-   - Tipo de cuenta (Corriente, Ahorro, Pago Móvil, Zelle, Crypto)
-   - Número de cuenta
-   - Titular
-   - Es cuenta primaria (checkbox)
-   - Porcentaje de pago (si hay múltiples cuentas)
-5. Guardar
+### Agregar una nueva cuenta
+1. En la pestaña "Cuentas", haga clic en **"+ Agregar Cuenta"**
+2. Complete los campos:
+   - **Banco**: Seleccione el banco
+   - **Tipo de Cuenta**: Corriente o Ahorro
+   - **Número de Cuenta**: Ingrese el número
+   - **Es cuenta principal**: Marque si será la cuenta para pagos
+3. Haga clic en **"Guardar"**
 
-### Establecer Cuenta Primaria
+### Cambiar la cuenta principal
+1. En la lista de cuentas, busque la cuenta que desea hacer principal
+2. Haga clic en el **ícono de estrella vacía (☆)**
+3. La estrella se llenará (⭐) indicando que ahora es la principal
 
-1. En la lista de cuentas, hacer clic en **"Establecer como primaria"**
-2. Esta cuenta se usará para pagos de nómina
-
-### Eliminar Cuenta
-
-1. Hacer clic en **🗑️ Eliminar** en la cuenta
-2. Confirmar eliminación
-
-> ⚠️ **Nota**: No se puede eliminar la cuenta primaria si es la única.
-
----
-
-## Gestionar Documentos del Empleado
-
-### Agregar Documento
-
-1. Ir al detalle del empleado
-2. Seleccionar tab **"Documentos"**
-3. Hacer clic en **"+ Nuevo Documento"**
-4. Completar:
-   - Tipo de documento
-   - Número
-   - Fecha de emisión
-   - Fecha de vencimiento
-   - Archivo adjunto (opcional)
-5. Guardar
-
-### Alertas de Vencimiento
-
-Los documentos próximos a vencer se muestran con indicadores:
-- 🟢 **Verde**: Vigente (más de 30 días)
-- 🟡 **Amarillo**: Por vencer (menos de 30 días)
-- 🔴 **Rojo**: Vencido
+### Eliminar una cuenta
+1. Busque la cuenta que desea eliminar
+2. Haga clic en el **ícono de papelera (🗑)**
+3. Confirme la eliminación en el mensaje que aparece
 
 ---
 
-## Descargar PDF
+## Buscar y Filtrar Empleados
 
-1. En el detalle del empleado
-2. Hacer clic en **"Descargar PDF"** (esquina superior derecha)
-3. Se genera un PDF con toda la información del empleado
+### Búsqueda rápida
+1. En la parte superior de la lista, busque el campo con el ícono de lupa (🔍)
+2. Escriba el nombre, cédula o código del empleado
+3. La lista se filtrará automáticamente mientras escribe
 
----
+### Filtrar por estado
+1. Busque el selector **"Estado"**
+2. Haga clic y seleccione: Activo, Inactivo, De Permiso, o Terminado
+3. La lista mostrará solo empleados con ese estado
 
-## Tips y Mejores Prácticas
+### Filtrar por departamento
+1. Busque el selector **"Departamento"**
+2. Haga clic y seleccione el departamento deseado
+3. La lista mostrará solo empleados de ese departamento
 
-### Al Crear Empleados
-- ✅ Verificar que la cédula no esté duplicada
-- ✅ Asignar departamento y cargo correctos
-- ✅ Registrar al menos una cuenta bancaria
-- ✅ Subir documentos importantes (cédula, certificados)
-
-### Al Editar
-- ✅ Documentar el motivo del cambio en notas
-- ✅ Verificar que el supervisor esté correcto
-- ✅ Actualizar estado si hay cambios laborales
-
-### Mantenimiento
-- ✅ Revisar documentos por vencer mensualmente
-- ✅ Actualizar información de contacto periódicamente
-- ✅ Verificar cuentas bancarias antes de procesar nómina
+### Limpiar filtros
+1. Busque el botón **"Limpiar"** o el ícono de X
+2. Haga clic para quitar todos los filtros
+3. Volverá a ver todos los empleados
 
 ---
 
-## Solución de Problemas
+## Consejos Útiles
+
+### Para mantener información actualizada
+- ✅ Actualice los datos de contacto cuando cambien
+- ✅ Registre los cambios de cargo o departamento
+- ✅ Mantenga las cuentas bancarias al día
+
+### Para encontrar empleados rápidamente
+- ✅ Use la búsqueda por nombre o cédula
+- ✅ Combine filtros para resultados más específicos
+- ✅ Los empleados activos aparecen primero por defecto
+
+### Para evitar errores
+- ✅ Verifique la cédula antes de guardar (no se puede duplicar)
+- ✅ Asegúrese de seleccionar el cargo y departamento correctos
+- ✅ Revise la información antes de guardar cambios
+
+---
+
+## Preguntas Frecuentes
+
+### "No encuentro a un empleado"
+- Verifique que no tenga filtros activos (límpielos)
+- Pruebe buscar por cédula en lugar de nombre
+- El empleado podría estar en estado "Terminado" (filtre por ese estado)
+
+### "No puedo editar a un empleado"
+- Verifique que tenga permisos para editar empleados
+- Algunos campos pueden estar bloqueados según el estado del empleado
 
 ### "La cédula ya existe"
-- Verificar si el empleado ya está registrado
-- Buscar por cédula en la lista
+- Cada empleado debe tener una cédula única
+- Verifique si el empleado ya está registrado
+- Si es un error, contacte al administrador
 
-### "No se puede eliminar el empleado"
-- Verificar que no tenga préstamos activos
-- Verificar que no esté asignado a proyectos activos
+### "No veo la pestaña de Nómina/Préstamos"
+- Algunas pestañas solo son visibles para usuarios con permisos especiales
+- Contacte al administrador si necesita acceso
 
-### "Error al guardar"
-- Verificar campos obligatorios (*)
-- Verificar formato de cédula
-- Verificar formato de fecha
+### "¿Cómo cambio el estado de un empleado a Terminado?"
+- Vaya al detalle del empleado
+- Haga clic en Editar
+- Cambie el campo "Estado" a "Terminado"
+- Guarde los cambios

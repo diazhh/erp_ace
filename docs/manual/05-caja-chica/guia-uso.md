@@ -1,307 +1,270 @@
-# 💵 Módulo de Caja Chica - Guía de Uso
+# 💵 Caja Chica - Guía de Uso
 
-## Acceder al Módulo
+## Cómo Acceder al Módulo
 
-1. En el menú lateral, hacer clic en **"Caja Chica"**
-2. Se despliegan las opciones:
-   - Cajas Chicas
-   - Reportes de Gastos
+1. En el **menú lateral izquierdo**, busque la opción **"Caja Chica"**
+2. Haga clic para acceder directamente a la lista de cajas chicas
 
 ---
 
 ## Lista de Cajas Chicas
 
-**Ruta:** `/petty-cash`
+### Pantalla Principal
 
-### KPIs en la Parte Superior
+Al entrar al módulo verá:
 
-| KPI | Descripción |
-|-----|-------------|
+#### Indicadores Principales (KPIs)
+
+| Indicador | Descripción |
+|-----------|-------------|
 | **Cajas Activas** | Cantidad de cajas en operación |
 | **Saldo Total** | Suma de saldos de todas las cajas |
 | **Necesitan Reposición** | Cajas con saldo bajo el mínimo |
 | **Pendientes de Aprobación** | Gastos sin aprobar |
-| **Gastos del Mes** | Total gastado en el mes |
+| **Gastos del Mes** | Total gastado en el mes actual |
 
-### Tarjetas de Caja Chica
+#### Tarjetas de Caja Chica
 
 Cada caja se muestra como una tarjeta con:
-- Nombre y código
-- Estado (chip de color)
-- Custodio asignado
-- Saldo actual vs inicial
-- Barra de progreso del saldo
-- Alerta si saldo bajo el mínimo
-- Botones: Ver, Editar
+- **Nombre** y código de la caja
+- **Estado** (Activa, Inactiva, etc.)
+- **Custodio** responsable
+- **Barra de saldo** (porcentaje del monto inicial)
+- **Saldo actual** (en color según nivel)
+- **Monto inicial** y **saldo mínimo**
+- **Alerta** si necesita reposición (borde rojo)
 
-### Indicadores de Saldo
+#### Colores del Saldo
 
 | Color | Significado |
 |-------|-------------|
-| 🟢 Verde | Saldo saludable (> 150% del mínimo) |
-| 🟡 Naranja | Saldo bajo (entre 100% y 150% del mínimo) |
-| 🔴 Rojo | Necesita reposición (< mínimo) |
+| 🟢 Verde | Saldo saludable |
+| 🟡 Naranja | Saldo bajo, considerar reposición |
+| 🔴 Rojo | Necesita reposición urgente |
 
 ---
 
-## Crear Caja Chica
+## Crear una Nueva Caja Chica
 
-**Ruta:** `/petty-cash/new`
+1. Haga clic en el botón **"+ Nueva Caja Chica"**
+2. Se abrirá una página con el formulario
 
 ### Campos del Formulario
 
 | Campo | Obligatorio | Descripción |
 |-------|-------------|-------------|
-| **Nombre** | ✅ | Nombre descriptivo (ej: "Caja Oficina Principal") |
-| **Código** | ✅ | Código único (ej: "PC-001") |
-| **Custodio** | ✅ | Empleado responsable |
-| **Moneda** | ✅ | USD, VES |
-| **Monto Inicial** | ✅ | Saldo de apertura |
-| **Saldo Mínimo** | ✅ | Monto para alerta de reposición |
-| **Descripción** | ❌ | Propósito de la caja |
-| **Estado** | ❌ | Activa (default) |
+| **Nombre** | ✅ Sí | Nombre descriptivo (ej: "Caja Oficina Principal") |
+| **Código** | ✅ Sí | Código único (ej: "PC-001") |
+| **Custodio** | ✅ Sí | Empleado responsable |
+| **Moneda** | ✅ Sí | USD o VES |
+| **Monto Inicial** | ✅ Sí | Cantidad de dinero inicial |
+| **Saldo Mínimo** | ✅ Sí | Monto para alerta de reposición |
+| **Descripción** | ❌ No | Propósito de la caja |
 
-### Pasos
-1. Hacer clic en **"+ Nueva Caja Chica"**
-2. Completar nombre y código
-3. Seleccionar custodio
-4. Definir moneda y montos
-5. Hacer clic en **"Guardar"**
-6. Se crea movimiento inicial automáticamente
+3. Complete los campos requeridos
+4. Haga clic en **"Guardar"**
+5. Se crea la caja con un movimiento inicial automático
 
 ---
 
-## Detalle de Caja Chica
+## Ver Detalle de una Caja Chica
 
-**Ruta:** `/petty-cash/:id`
+1. En la lista, haga clic en el ícono de **ojo** (👁) de la caja deseada
+2. Se abrirá la página de detalle
 
-### Encabezado
-- Nombre y código
-- Estado (chip de color)
-- Custodio (enlace al empleado)
-- Botones: Editar, Refrescar
+### Información del Encabezado
 
-### KPIs de la Caja
+- **Nombre** y código de la caja
+- **Estado** (chip de color)
+- **Alerta de reposición** (si aplica)
+- **Custodio** (enlace al empleado)
+- **Saldo actual** con barra de progreso
 
-| KPI | Descripción |
-|-----|-------------|
-| **Saldo Actual** | Saldo disponible |
-| **Monto Inicial** | Saldo de apertura |
-| **Total Gastado** | Suma de gastos aprobados |
-| **Pendientes** | Gastos por aprobar |
-
-### Barra de Saldo
-- Muestra porcentaje del saldo actual vs inicial
-- Color según nivel de saldo
-- Alerta si está bajo el mínimo
-
-### Acciones Principales
+### Botones de Acción
 
 | Botón | Descripción |
 |-------|-------------|
-| **Nuevo Gasto** | Registrar un gasto |
-| **Solicitar Reposición** | Pedir fondos adicionales |
+| **Registrar Gasto** (rojo) | Agregar un nuevo gasto |
+| **Reponer** (verde) | Solicitar reposición de fondos |
+| **Editar** | Modificar datos de la caja |
 | **Descargar PDF** | Exportar movimientos |
+| **Refrescar** | Actualizar información |
 
-### Tabs Disponibles
+### Pestañas Disponibles
 
-#### Tab: Movimientos
-Lista de todos los movimientos:
+#### Pestaña: Movimientos
+Lista de todos los movimientos de la caja:
 - Fecha
 - Tipo (Gasto, Reposición, Ajuste)
 - Descripción
-- Empleado
+- Categoría
 - Monto
 - Estado
-- Acciones (Aprobar/Rechazar si pendiente)
+- Acciones (Aprobar/Rechazar si está pendiente)
 
-#### Tab: Documentos
+#### Pestaña: Documentos
 Comprobantes adjuntos a los movimientos.
 
-#### Tab: Auditoría
+#### Pestaña: Auditoría
 Historial de cambios en la caja.
 
 ---
 
-## Registrar Gasto
+## Registrar un Gasto
 
-### Desde el Detalle de Caja
-1. Hacer clic en **"Nuevo Gasto"**
-2. Se abre diálogo de gasto
+1. En el detalle de la caja, haga clic en **"Registrar Gasto"** (botón rojo)
+2. Se abre un formulario
 
 ### Campos del Formulario
 
 | Campo | Obligatorio | Descripción |
 |-------|-------------|-------------|
-| **Tipo** | ✅ | Gasto (default) |
-| **Monto** | ✅ | Monto del gasto |
-| **Categoría** | ✅ | Suministros, Transporte, etc. |
-| **Descripción** | ✅ | Detalle del gasto |
-| **Empleado** | ❌ | Quien realizó el gasto |
-| **Referencia** | ❌ | Número de factura/recibo |
-| **Fecha** | ✅ | Fecha del gasto |
+| **Monto** | ✅ Sí | Cantidad del gasto |
+| **Categoría** | ✅ Sí | Suministros, Transporte, Alimentación, etc. |
+| **Descripción** | ✅ Sí | Detalle del gasto |
+| **Fecha** | ✅ Sí | Fecha del gasto |
+| **Referencia** | ❌ No | Número de factura o recibo |
+| **Empleado** | ❌ No | Quien realizó el gasto |
 
-### Pasos
-1. Clic en "Nuevo Gasto"
-2. Ingresar monto y descripción
-3. Seleccionar categoría
-4. Agregar referencia de factura
-5. Hacer clic en **"Guardar"**
-6. El gasto queda en estado PENDING
-7. Adjuntar comprobante (opcional pero recomendado)
+3. Complete los campos
+4. Haga clic en **"Guardar"**
+5. El gasto queda en estado **"Pendiente"** esperando aprobación
+
+### Adjuntar Comprobante
+
+1. Después de guardar el gasto, vaya a la pestaña "Documentos"
+2. Haga clic en **"Adjuntar"**
+3. Seleccione el archivo (foto de factura, recibo, etc.)
+4. El comprobante queda asociado al movimiento
 
 ---
 
-## Aprobar/Rechazar Gastos
+## Aprobar o Rechazar Gastos
 
-### Desde la Lista de Movimientos
-1. Ir al detalle de la caja chica
-2. En tab "Movimientos", ver gastos pendientes
-3. Para cada gasto:
-   - Revisar descripción y monto
-   - Ver comprobante adjunto
-   - Clic en ✅ para aprobar o ❌ para rechazar
+### Aprobar un Gasto
 
-### Aprobar
-- El gasto se marca como APPROVED
-- El saldo de la caja disminuye
-- Se registra quién aprobó y cuándo
+1. En la lista de movimientos, busque gastos en estado **"Pendiente"**
+2. Haga clic en el ícono de **check verde** (✅)
+3. Confirme la aprobación
+4. El gasto se marca como **"Aprobado"**
+5. El saldo de la caja disminuye
 
-### Rechazar
-- El gasto se marca como REJECTED
-- El saldo NO se afecta
-- Se puede agregar motivo de rechazo
+### Rechazar un Gasto
+
+1. Haga clic en el ícono de **X roja** (❌)
+2. Confirme el rechazo
+3. El gasto se marca como **"Rechazado"**
+4. El saldo NO se afecta
+
+> 💡 **Tip**: Revise el comprobante adjunto antes de aprobar un gasto.
 
 ---
 
 ## Solicitar Reposición
 
 ### Cuándo Solicitar
-- Cuando el saldo está bajo el mínimo
+
+- Cuando el saldo está bajo el mínimo (aparece alerta roja)
 - Cuando hay muchos gastos pendientes de fondos
+- Preventivamente antes de quedarse sin fondos
 
 ### Pasos
-1. Ir al detalle de la caja chica
-2. Clic en **"Solicitar Reposición"**
-3. Ingresar monto a reponer
-4. Agregar justificación
-5. Hacer clic en **"Enviar Solicitud"**
-6. La solicitud queda pendiente de aprobación
+
+1. En el detalle de la caja, haga clic en **"Reponer"** (botón verde)
+2. Se abre un formulario
+
+| Campo | Obligatorio | Descripción |
+|-------|-------------|-------------|
+| **Monto** | ✅ Sí | Cantidad a reponer |
+| **Descripción** | ❌ No | Justificación de la reposición |
+| **Referencia** | ❌ No | Número de transferencia o cheque |
+
+3. Haga clic en **"Guardar"**
+4. La reposición queda **"Pendiente"** de aprobación
 
 ### Aprobar Reposición
-1. Supervisor recibe notificación
-2. Revisa solicitud y justificación
-3. Aprueba o rechaza
-4. Si aprobado, Finanzas procesa transferencia
-5. Se registra reposición y saldo aumenta
+
+1. Un supervisor revisa la solicitud
+2. Hace clic en el ícono de **check verde** (✅)
+3. La reposición se aprueba
+4. El saldo de la caja aumenta
 
 ---
 
-## Reportes de Gastos
+## Editar una Caja Chica
 
-### Lista de Reportes
+1. En el detalle de la caja, haga clic en **"Editar"**
+2. Modifique los campos necesarios:
+   - Nombre
+   - Custodio
+   - Saldo mínimo
+   - Descripción
+   - Estado
+3. Haga clic en **"Guardar"**
 
-**Ruta:** `/petty-cash/expense-reports`
-
-Lista de reportes de gastos creados:
-- Código del reporte
-- Caja chica asociada
-- Período
-- Total de gastos
-- Estado
-- Acciones
-
-### Crear Reporte de Gastos
-
-**Ruta:** `/petty-cash/expense-reports/new`
-
-1. Seleccionar caja chica
-2. Definir período (fecha inicio y fin)
-3. El sistema agrupa los gastos aprobados del período
-4. Revisar y ajustar si necesario
-5. Guardar reporte
-6. Enviar para aprobación
-
-### Detalle del Reporte
-
-**Ruta:** `/petty-cash/expense-reports/:id`
-
-- Información del reporte
-- Lista de gastos incluidos
-- Total por categoría
-- Comprobantes adjuntos
-- Estado de aprobación
-- Exportar a PDF
+> ⚠️ **Nota**: No puede modificar el monto inicial ni la moneda después de crear la caja.
 
 ---
 
-## Adjuntar Comprobantes
+## Cerrar una Caja Chica
 
-### Al Registrar Gasto
-1. Después de guardar el gasto
-2. En el detalle del movimiento
-3. Clic en "Adjuntar Archivo"
-4. Seleccionar imagen o PDF
-5. El archivo se asocia al movimiento
+1. En el detalle de la caja, haga clic en **"Editar"**
+2. Cambie el estado a **"Cerrada"**
+3. Guarde los cambios
 
-### Tipos de Archivo Permitidos
-- Imágenes: JPG, PNG
-- Documentos: PDF
-- Tamaño máximo: 5MB
-
-### Buenas Prácticas
-- Adjuntar siempre el comprobante original
-- Asegurar que sea legible
-- Incluir número de factura en la referencia
+> ⚠️ **Importante**: Una caja cerrada no puede registrar más movimientos.
 
 ---
 
-## Tips y Mejores Prácticas
+## Exportar Reporte
+
+1. En el detalle de la caja, haga clic en **"Descargar PDF"**
+2. Se genera un PDF con:
+   - Información de la caja
+   - Saldo actual
+   - Lista de movimientos
+   - Totales por tipo
+
+---
+
+## Consejos Útiles
 
 ### Para Custodios
-- ✅ Registrar gastos el mismo día que ocurren
-- ✅ Adjuntar comprobantes inmediatamente
-- ✅ Solicitar reposición antes de quedarse sin fondos
-- ✅ Mantener organizado el archivo físico de comprobantes
+- ✅ Registre los gastos el mismo día que ocurren
+- ✅ Siempre adjunte el comprobante (foto de factura)
+- ✅ Use descripciones claras y detalladas
+- ✅ Solicite reposición antes de quedarse sin fondos
 
 ### Para Supervisores
-- ✅ Revisar gastos pendientes diariamente
-- ✅ Verificar comprobantes antes de aprobar
-- ✅ Rechazar gastos sin justificación adecuada
-- ✅ Monitorear cajas con saldo bajo
+- ✅ Revise los comprobantes antes de aprobar
+- ✅ Apruebe los gastos regularmente para mantener el control
+- ✅ Monitoree las cajas que necesitan reposición
+- ✅ Verifique que las categorías sean correctas
 
-### Para Control
-- ✅ Realizar arqueos periódicos
-- ✅ Comparar saldo físico vs sistema
-- ✅ Investigar diferencias inmediatamente
-- ✅ Generar reportes mensuales
+### Mejores Prácticas
+- ✅ Defina un saldo mínimo realista (ej: 20% del inicial)
+- ✅ Asigne un solo custodio por caja
+- ✅ Haga arqueos periódicos (verificar dinero físico vs sistema)
+- ✅ Archive los comprobantes físicos ordenadamente
 
 ---
 
-## Solución de Problemas
+## Preguntas Frecuentes
 
-### "El saldo no coincide con el efectivo físico"
-1. Verificar gastos pendientes de aprobar
-2. Buscar gastos rechazados que se pagaron
-3. Verificar reposiciones registradas
-4. Realizar ajuste si es necesario
+### ¿Por qué no puedo registrar gastos?
+Verifique que la caja esté en estado "Activa". Las cajas inactivas, suspendidas o cerradas no permiten nuevos movimientos.
 
-### "No puedo registrar gasto"
-- Verificar que la caja esté activa
-- Verificar que tenga saldo suficiente
-- Verificar permisos de usuario
+### ¿Qué pasa si rechazo un gasto?
+El gasto se marca como rechazado y el saldo no se afecta. El custodio debe corregir el registro o proporcionar mejor documentación.
 
-### "La reposición no se refleja"
-- Verificar que la reposición esté aprobada
-- Verificar que se haya registrado correctamente
-- Contactar a Finanzas si hay dudas
+### ¿Puedo modificar un gasto aprobado?
+No. Los gastos aprobados no pueden modificarse. Si hay un error, debe registrar un ajuste.
 
-### "No aparece el comprobante"
-- Verificar que el archivo se subió correctamente
-- Verificar el tamaño del archivo (máx 5MB)
-- Intentar subir nuevamente
+### ¿Cómo hago un arqueo de caja?
+Compare el saldo mostrado en el sistema con el dinero físico. Si hay diferencia, registre un ajuste para corregir.
 
-### "Gasto rechazado por error"
-- Los gastos rechazados no se pueden aprobar después
-- Crear nuevo registro de gasto
-- Documentar el error para auditoría
+### ¿Puedo tener varias cajas chicas?
+Sí. Puede crear tantas cajas como necesite (por departamento, por proyecto, por ubicación, etc.).
+
+### ¿Quién puede aprobar gastos?
+Los usuarios con permisos de aprobación de caja chica. Generalmente supervisores o personal de finanzas.

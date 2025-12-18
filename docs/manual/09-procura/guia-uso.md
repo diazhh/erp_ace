@@ -1,319 +1,279 @@
-# 🛒 Módulo de Procura - Guía de Uso
+# 🛒 Compras y Procura - Guía de Uso
 
-## Acceder al Módulo
+## Cómo Acceder al Módulo
 
-1. En el menú lateral, hacer clic en **"Compras"** o **"Procura"**
-2. Se despliegan las opciones:
-   - Órdenes de Compra
-   - Facturas
-   - Pagos
-   - Cotizaciones
+1. En el **menú lateral izquierdo**, busque la opción **"Procura"**
+2. Haga clic en el ícono de flecha (▼) para expandir las opciones
+3. Verá las siguientes secciones:
+   - **Órdenes de Compra**: Gestión de compras
+   - **Facturas**: Facturas de proveedores
+   - **Pagos**: Pagos realizados
+   - **Cotizaciones**: Solicitudes de cotización
 
 ---
 
 ## Órdenes de Compra
 
-### Lista de Órdenes
+### Ver Lista de Órdenes
 
-**Ruta:** `/procurement/purchase-orders`
+1. En el menú, seleccione **"Procura"** → **"Órdenes de Compra"**
+2. Verá la tabla/tarjetas de órdenes
 
-#### Filtros Disponibles
+### Filtros Disponibles
 
 | Filtro | Opciones |
 |--------|----------|
-| **Búsqueda** | Por código o proveedor |
+| **Búsqueda** | Por código o título |
 | **Estado** | Borrador, Pendiente, Aprobada, etc. |
 | **Tipo** | Compra, Servicio, Obra |
 
-#### Columnas de la Tabla
+### Columnas de la Tabla
 
 | Columna | Descripción |
 |---------|-------------|
-| **Código** | Identificador único (OC-XXXXX) |
-| **Tipo** | Compra/Servicio/Obra |
-| **Proveedor** | Nombre del proveedor |
+| **Código** | Identificador único |
+| **Tipo** | Compra, Servicio, Obra |
+| **Título** | Descripción breve |
+| **Contratista** | Proveedor |
 | **Fecha** | Fecha de la orden |
 | **Total** | Monto total |
+| **Progreso** | Porcentaje de entrega |
 | **Estado** | Estado actual |
-| **Acciones** | Ver, Editar, PDF |
+| **Acciones** | Ver, Editar |
 
 ---
 
-### Crear Orden de Compra
+### Crear una Orden de Compra
 
-**Ruta:** `/procurement/purchase-orders/new`
+1. Haga clic en el botón **"+ Nueva Orden"**
+2. Se abrirá una página con el formulario
 
 #### Campos del Formulario
 
 | Campo | Obligatorio | Descripción |
 |-------|-------------|-------------|
-| **Tipo** | ✅ | Compra, Servicio, Obra |
-| **Proveedor** | ✅ | Seleccionar proveedor |
-| **Proyecto** | ❌ | Proyecto asociado |
-| **Fecha** | ✅ | Fecha de la orden |
-| **Fecha Entrega** | ❌ | Fecha esperada de entrega |
-| **Moneda** | ✅ | USD, VES |
-| **Notas** | ❌ | Observaciones |
+| **Código** | ✅ Sí | Código único (ej: "OC-2025-001") |
+| **Título** | ✅ Sí | Descripción breve |
+| **Tipo** | ✅ Sí | Compra, Servicio, Obra |
+| **Contratista** | ✅ Sí | Seleccione proveedor |
+| **Proyecto** | ❌ No | Proyecto asociado |
+| **Fecha** | ✅ Sí | Fecha de la orden |
+| **Fecha de Entrega** | ❌ No | Fecha esperada |
+| **Moneda** | ✅ Sí | USD, VES |
+| **Descripción** | ❌ No | Detalle de la orden |
 
-#### Items de la Orden
+#### Agregar Ítems
 
-| Campo | Obligatorio | Descripción |
-|-------|-------------|-------------|
-| **Descripción** | ✅ | Descripción del item |
-| **Cantidad** | ✅ | Cantidad solicitada |
-| **Unidad** | ✅ | Unidad de medida |
-| **Precio Unitario** | ✅ | Precio por unidad |
-| **Impuesto** | ❌ | Porcentaje de impuesto |
+1. En la sección de ítems, haga clic en **"Agregar Ítem"**
+2. Complete:
+   - Descripción del ítem
+   - Cantidad
+   - Unidad
+   - Precio unitario
+3. El sistema calcula el subtotal automáticamente
 
-#### Pasos
-1. Hacer clic en **"+ Nueva Orden"**
-2. Seleccionar tipo de orden
-3. Seleccionar proveedor
-4. Agregar items con cantidades y precios
-5. Definir fecha de entrega
-6. Hacer clic en **"Guardar"** (queda como borrador)
+3. Haga clic en **"Guardar"**
+4. La orden queda en estado "Borrador"
 
 ---
 
-### Detalle de Orden
+### Flujo de una Orden de Compra
 
-**Ruta:** `/procurement/purchase-orders/:id`
-
-#### Encabezado
-- Código y tipo
-- Proveedor
-- Estado (chip de color)
-- Fechas
-- Totales
-
-#### Acciones según Estado
-
-| Estado | Acciones Disponibles |
-|--------|---------------------|
-| **DRAFT** | Editar, Enviar para Aprobación, Eliminar |
-| **PENDING** | Aprobar, Rechazar |
-| **APPROVED** | Enviar a Proveedor |
-| **SENT** | Marcar como Confirmada |
-| **CONFIRMED** | Registrar Recepción |
-| **IN_PROGRESS** | Registrar Recepción, Completar |
-
-#### Tabs Disponibles
-- **Items**: Lista de items de la orden
-- **Recepciones**: Entregas recibidas
-- **Facturas**: Facturas asociadas
-- **Documentos**: Archivos adjuntos
-- **Auditoría**: Historial de cambios
+```
+1. BORRADOR → Crear y editar la orden
+   ↓
+2. PENDIENTE → Enviar para aprobación
+   ↓
+3. APROBADA → Aprobada por supervisor
+   ↓
+4. ENVIADA → Enviada al proveedor
+   ↓
+5. CONFIRMADA → Proveedor confirma
+   ↓
+6. EN PROGRESO → Entregas en curso
+   ↓
+7. COMPLETADA → Todo entregado
+```
 
 ---
 
-### Flujo de Aprobación
+### Ver Detalle de una Orden
 
-1. **Crear Orden** → Estado: DRAFT
-2. **Enviar para Aprobación** → Estado: PENDING
-3. **Aprobar** → Estado: APPROVED
-4. **Enviar a Proveedor** → Estado: SENT
-5. **Proveedor Confirma** → Estado: CONFIRMED
-6. **Recibir Mercancía** → Estado: IN_PROGRESS o PARTIAL
-7. **Completar** → Estado: COMPLETED
+1. En la lista, haga clic en el ícono de **ojo** (👁)
+2. Verá:
+   - Información general
+   - Lista de ítems
+   - Historial de entregas
+   - Facturas asociadas
+   - Documentos adjuntos
 
 ---
 
 ## Facturas de Proveedores
 
-### Lista de Facturas
+### Ver Lista de Facturas
 
-**Ruta:** `/procurement/invoices`
+1. En el menú, seleccione **"Procura"** → **"Facturas"**
+2. Verá la lista de facturas recibidas
 
-#### Filtros Disponibles
+### Filtros Disponibles
 
 | Filtro | Opciones |
 |--------|----------|
-| **Proveedor** | Todos los proveedores |
-| **Estado** | Pendiente, Verificada, Aprobada, Pagada |
-| **Fecha Desde** | Fecha inicial |
-| **Fecha Hasta** | Fecha final |
+| **Estado** | Pendiente, Aprobada, Pagada, etc. |
+| **Contratista** | Filtrar por proveedor |
 
-#### Columnas de la Tabla
+### Columnas de la Tabla
 
 | Columna | Descripción |
 |---------|-------------|
 | **Código** | Código interno |
 | **Nº Factura** | Número del proveedor |
-| **Proveedor** | Nombre del proveedor |
+| **Contratista** | Proveedor |
 | **Fecha** | Fecha de factura |
-| **Vencimiento** | Fecha de vencimiento |
+| **Vencimiento** | Fecha de pago |
 | **Total** | Monto total |
-| **Pagado** | Monto pagado |
+| **Pagado** | Monto ya pagado |
 | **Estado** | Estado actual |
+| **Acciones** | Ver, Aprobar |
 
 ---
 
-### Registrar Factura
+### Registrar una Factura
 
-**Ruta:** `/procurement/invoices/new`
-
-#### Campos del Formulario
+1. Haga clic en el botón **"+ Nueva Factura"**
+2. Complete el formulario:
 
 | Campo | Obligatorio | Descripción |
 |-------|-------------|-------------|
-| **Proveedor** | ✅ | Seleccionar proveedor |
-| **Nº Factura** | ✅ | Número de factura del proveedor |
-| **Orden de Compra** | ❌ | OC asociada |
-| **Fecha Factura** | ✅ | Fecha de emisión |
-| **Fecha Vencimiento** | ✅ | Fecha de pago |
-| **Subtotal** | ✅ | Monto antes de impuestos |
-| **Impuesto** | ❌ | Monto de impuestos |
-| **Total** | ✅ | Monto total |
-| **Moneda** | ✅ | USD, VES |
-| **Notas** | ❌ | Observaciones |
+| **Contratista** | ✅ Sí | Proveedor que emite |
+| **Nº Factura** | ✅ Sí | Número de la factura |
+| **Fecha** | ✅ Sí | Fecha de emisión |
+| **Vencimiento** | ✅ Sí | Fecha límite de pago |
+| **Orden de Compra** | ❌ No | Orden asociada |
+| **Subtotal** | ✅ Sí | Monto sin impuestos |
+| **Impuestos** | ❌ No | Monto de impuestos |
+| **Total** | Auto | Se calcula automáticamente |
+| **Moneda** | ✅ Sí | USD, VES |
 
-#### Pasos
-1. Hacer clic en **"+ Nueva Factura"**
-2. Seleccionar proveedor
-3. Ingresar número de factura
-4. Asociar a orden de compra (si aplica)
-5. Ingresar fechas y montos
-6. Adjuntar copia de factura
-7. Hacer clic en **"Guardar"**
+3. Haga clic en **"Guardar"**
+4. La factura queda en estado "Pendiente"
 
 ---
 
-### Detalle de Factura
+### Aprobar una Factura
 
-**Ruta:** `/procurement/invoices/:id`
-
-#### Información
-- Código interno y número de factura
-- Proveedor
-- Orden de compra asociada
-- Fechas
-- Montos (subtotal, impuesto, total)
-- Monto pagado y pendiente
-- Estado
-
-#### Acciones según Estado
-
-| Estado | Acciones |
-|--------|----------|
-| **PENDING** | Verificar, Cancelar |
-| **VERIFIED** | Aprobar, Rechazar |
-| **APPROVED** | Registrar Pago |
-| **PARTIAL** | Registrar Pago |
-
-#### Tabs
-- **Pagos**: Pagos realizados
-- **Documentos**: Factura adjunta
-- **Auditoría**: Historial
+1. En la lista de facturas, busque una en estado "Pendiente"
+2. Haga clic en el ícono de **check verde** (✅)
+3. Confirme la aprobación
+4. El estado cambia a "Aprobada"
+5. La factura está lista para pago
 
 ---
 
 ## Pagos a Proveedores
 
-### Lista de Pagos
+### Ver Lista de Pagos
 
-**Ruta:** `/procurement/payments`
+1. En el menú, seleccione **"Procura"** → **"Pagos"**
+2. Verá el historial de pagos realizados
 
-#### Filtros Disponibles
-
-| Filtro | Opciones |
-|--------|----------|
-| **Proveedor** | Todos los proveedores |
-| **Estado** | Pendiente, Procesando, Completado |
-| **Método** | Transferencia, Cheque, etc. |
-| **Fecha Desde** | Fecha inicial |
-| **Fecha Hasta** | Fecha final |
-
-#### Columnas de la Tabla
+### Columnas de la Tabla
 
 | Columna | Descripción |
 |---------|-------------|
-| **Código** | Código del pago |
-| **Factura** | Factura asociada |
-| **Proveedor** | Nombre del proveedor |
+| **Código** | Identificador del pago |
+| **Contratista** | Proveedor |
+| **Factura** | Factura pagada |
 | **Fecha** | Fecha del pago |
-| **Monto** | Monto pagado |
-| **Método** | Método de pago |
-| **Estado** | Estado del pago |
+| **Monto** | Cantidad pagada |
+| **Método** | Transferencia, Cheque, etc. |
+| **Estado** | Completado, Pendiente |
 
 ---
 
-### Registrar Pago
+### Registrar un Pago
 
-**Ruta:** `/procurement/payments/new`
-
-#### Campos del Formulario
+1. Haga clic en el botón **"+ Nuevo Pago"**
+2. Complete el formulario:
 
 | Campo | Obligatorio | Descripción |
 |-------|-------------|-------------|
-| **Factura** | ✅ | Factura a pagar |
-| **Monto** | ✅ | Monto del pago |
-| **Fecha** | ✅ | Fecha del pago |
-| **Método** | ✅ | Transferencia, Cheque, etc. |
-| **Cuenta Bancaria** | ✅ | Cuenta de origen |
-| **Referencia** | ❌ | Número de referencia |
-| **Notas** | ❌ | Observaciones |
+| **Factura** | ✅ Sí | Factura a pagar |
+| **Fecha** | ✅ Sí | Fecha del pago |
+| **Monto** | ✅ Sí | Cantidad a pagar |
+| **Método de Pago** | ✅ Sí | Transferencia, Cheque, Efectivo |
+| **Referencia** | ❌ No | Número de transferencia |
+| **Cuenta Bancaria** | ❌ No | Cuenta de origen |
+| **Notas** | ❌ No | Observaciones |
 
-#### Pasos
-1. Hacer clic en **"+ Nuevo Pago"**
-2. Seleccionar factura a pagar
-3. Ingresar monto (puede ser parcial)
-4. Seleccionar método de pago
-5. Seleccionar cuenta bancaria
-6. Ingresar referencia bancaria
-7. Hacer clic en **"Guardar"**
+3. Haga clic en **"Guardar"**
+4. El monto se descuenta del saldo de la factura
 
 ---
 
 ## Cotizaciones
 
-### Lista de Cotizaciones
+### Ver Lista de Cotizaciones
 
-**Ruta:** `/procurement/quotes`
+1. En el menú, seleccione **"Procura"** → **"Cotizaciones"**
+2. Verá las cotizaciones solicitadas y recibidas
 
-Permite gestionar cotizaciones recibidas de proveedores para comparar y seleccionar la mejor opción.
+### Crear una Solicitud de Cotización
+
+1. Haga clic en **"+ Nueva Cotización"**
+2. Complete:
+   - Descripción de lo que necesita
+   - Proveedores a consultar
+   - Fecha límite de respuesta
+3. Envíe la solicitud
+
+### Comparar Cotizaciones
+
+1. Cuando reciba respuestas, regístrelas en el sistema
+2. Compare precios, plazos y condiciones
+3. Seleccione la mejor opción
+4. Convierta a orden de compra
 
 ---
 
-## Tips y Mejores Prácticas
+## Consejos Útiles
 
 ### Para Órdenes de Compra
-- ✅ Verificar stock antes de crear OC
-- ✅ Comparar cotizaciones de varios proveedores
-- ✅ Definir fechas de entrega realistas
-- ✅ Documentar especificaciones detalladas
+- ✅ Siempre asocie a un proyecto si aplica
+- ✅ Detalle bien los ítems para evitar confusiones
+- ✅ Verifique los precios antes de aprobar
+- ✅ Actualice el progreso al recibir entregas
 
 ### Para Facturas
-- ✅ Verificar que coincida con la OC
-- ✅ Verificar cantidades y precios
-- ✅ Adjuntar siempre la factura original
-- ✅ Registrar antes del vencimiento
+- ✅ Registre las facturas inmediatamente al recibirlas
+- ✅ Verifique que coincidan con las órdenes de compra
+- ✅ Controle las fechas de vencimiento
+- ✅ Adjunte copia digital de la factura
 
 ### Para Pagos
-- ✅ Verificar fondos disponibles
-- ✅ Registrar referencia bancaria
-- ✅ Mantener documentación de pagos
-- ✅ Conciliar con estados de cuenta
+- ✅ Registre la referencia de transferencia
+- ✅ Puede hacer pagos parciales
+- ✅ Verifique el saldo pendiente antes de pagar
 
 ---
 
-## Solución de Problemas
+## Preguntas Frecuentes
 
-### "No puedo aprobar la orden"
-- Verificar que tenga permiso `procurement:approve`
-- Verificar que la orden esté en estado PENDING
-- Verificar que tenga items agregados
+### ¿Puedo editar una orden aprobada?
+No. Una vez aprobada, la orden no puede editarse. Si necesita cambios, debe cancelarla y crear una nueva.
 
-### "La factura no coincide con la OC"
-- Verificar cantidades y precios
-- Verificar que sea el proveedor correcto
-- Contactar al proveedor para aclarar
+### ¿Cómo registro una entrega parcial?
+En el detalle de la orden, registre la cantidad recibida. El sistema actualiza el progreso automáticamente.
 
-### "El pago no se refleja"
-- Verificar que el pago esté en estado COMPLETED
-- Verificar que se asoció a la factura correcta
-- Verificar el monto registrado
+### ¿Puedo pagar una factura en partes?
+Sí. Puede registrar múltiples pagos parciales hasta completar el total.
 
-### "Orden parcialmente recibida"
-- Registrar cada recepción parcial
-- El estado cambia a PARTIAL
-- Completar cuando se reciba todo
+### ¿Qué pasa si rechazo una factura?
+La factura queda en estado "Rechazada" y no puede pagarse. Debe comunicarse con el proveedor para resolver.
+
+### ¿Cómo asocio una factura a una orden?
+Al crear la factura, seleccione la orden de compra correspondiente en el campo "Orden de Compra".
+
+### ¿Puedo ver el historial de un proveedor?
+Sí. En el detalle del contratista puede ver todas sus órdenes, facturas y pagos.

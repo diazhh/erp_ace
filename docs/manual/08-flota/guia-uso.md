@@ -1,370 +1,300 @@
-# 🚗 Módulo de Flota - Guía de Uso
+# 🚗 Gestión de Flota - Guía de Uso
 
-## Acceder al Módulo
+## Cómo Acceder al Módulo
 
-1. En el menú lateral, hacer clic en **"Flota"**
-2. Se despliegan las opciones:
-   - Dashboard
-   - Vehículos
-   - Combustible
-   - Mantenimientos
+1. En el **menú lateral izquierdo**, busque la opción **"Flota"**
+2. Haga clic en el ícono de flecha (▼) para expandir las opciones
+3. Verá las siguientes secciones:
+   - **Dashboard**: Panel con indicadores
+   - **Vehículos**: Gestión de vehículos
+   - **Mantenimientos**: Programación y seguimiento
+   - **Combustible**: Registro de cargas
 
 ---
 
 ## Dashboard de Flota
 
-**Ruta:** `/fleet`
+### Acceder al Dashboard
 
-### KPIs Principales
+1. En el menú, seleccione **"Flota"** → **"Dashboard"**
+2. Verá el panel principal con indicadores y alertas
 
-| KPI | Descripción |
-|-----|-------------|
-| **Total Vehículos** | Cantidad total de vehículos |
-| **Disponibles** | Vehículos sin asignar |
+### Indicadores Principales
+
+| Indicador | Descripción |
+|-----------|-------------|
+| **Total Vehículos** | Cantidad de vehículos registrados |
+| **Disponibles** | Vehículos listos para usar |
 | **Mant. Pendientes** | Mantenimientos programados |
-| **Doc. por Vencer** | Documentos próximos a vencer |
+| **Doc. por Vencer** | Documentos próximos a expirar |
 
 ### Alertas
-- Vehículos con documentos por vencer
-- Mantenimientos pendientes
-- Vehículos con alto kilometraje
+
+El dashboard muestra alertas de:
+- Documentos por vencer (seguro, revisión técnica)
+- Mantenimientos programados próximos
+- Vehículos fuera de servicio
 
 ---
 
 ## Vehículos
 
-### Lista de Vehículos
+### Ver Lista de Vehículos
 
-**Ruta:** `/fleet/vehicles`
+1. En el menú, seleccione **"Flota"** → **"Vehículos"**
+2. Verá indicadores y la tabla/tarjetas de vehículos
 
-#### Filtros Disponibles
+### Filtros Disponibles
 
 | Filtro | Opciones |
 |--------|----------|
-| **Búsqueda** | Por placa, marca o modelo |
+| **Búsqueda** | Por código, placa, marca |
 | **Estado** | Disponible, Asignado, En Mantenimiento, etc. |
-| **Tipo** | Sedan, Camioneta, Camión, etc. |
+| **Tipo** | Automóvil, Camioneta, Camión, etc. |
 
-#### Columnas de la Tabla
+### Columnas de la Tabla
 
 | Columna | Descripción |
 |---------|-------------|
-| **Placa** | Placa del vehículo |
-| **Marca/Modelo** | Marca y modelo |
-| **Año** | Año de fabricación |
+| **Código** | Identificador interno |
+| **Placa** | Número de placa |
+| **Vehículo** | Marca, modelo y año |
 | **Tipo** | Tipo de vehículo |
-| **Kilometraje** | Km actuales |
+| **Kilometraje** | Odómetro actual |
 | **Estado** | Estado actual |
-| **Asignado a** | Empleado/Proyecto |
+| **Asignado a** | Empleado o proyecto |
 | **Acciones** | Ver, Editar |
 
-#### Vista Mobile
-Tarjetas con información resumida del vehículo.
-
 ---
 
-### Crear Vehículo
+### Crear un Nuevo Vehículo
 
-**Ruta:** `/fleet/vehicles/new`
+1. Haga clic en el botón **"+ Nuevo"**
+2. Se abrirá una página con el formulario
 
 #### Campos del Formulario
 
 | Campo | Obligatorio | Descripción |
 |-------|-------------|-------------|
-| **Código** | ✅ | Código interno |
-| **Placa** | ✅ | Placa del vehículo |
-| **Marca** | ✅ | Marca del vehículo |
-| **Modelo** | ✅ | Modelo |
-| **Año** | ✅ | Año de fabricación |
-| **Color** | ❌ | Color del vehículo |
-| **Tipo** | ✅ | Sedan, Camioneta, etc. |
-| **Combustible** | ✅ | Gasolina, Diesel, etc. |
-| **VIN** | ❌ | Número de serie |
-| **Kilometraje** | ❌ | Km inicial |
-| **Fecha Compra** | ❌ | Fecha de adquisición |
-| **Precio Compra** | ❌ | Costo de adquisición |
-| **Estado** | ❌ | Disponible (default) |
+| **Código** | ✅ Sí | Código interno (ej: "VEH-001") |
+| **Placa** | ✅ Sí | Número de placa |
+| **Marca** | ✅ Sí | Marca del vehículo |
+| **Modelo** | ✅ Sí | Modelo específico |
+| **Año** | ✅ Sí | Año de fabricación |
+| **Tipo** | ✅ Sí | Automóvil, Camioneta, etc. |
+| **Color** | ❌ No | Color del vehículo |
+| **VIN** | ❌ No | Número de identificación |
+| **Kilometraje** | ❌ No | Odómetro actual |
+| **Tipo de Combustible** | ❌ No | Gasolina, Diesel, etc. |
+| **Capacidad de Tanque** | ❌ No | Litros |
+| **Estado** | ✅ Sí | Estado inicial |
 
-#### Pasos
-1. Hacer clic en **"+ Nuevo Vehículo"**
-2. Ingresar placa y código
-3. Completar marca, modelo y año
-4. Seleccionar tipo y combustible
-5. Ingresar kilometraje inicial
-6. Hacer clic en **"Guardar"**
+3. Complete los campos requeridos
+4. Haga clic en **"Guardar"**
 
 ---
 
-### Detalle del Vehículo
+### Ver Detalle de un Vehículo
 
-**Ruta:** `/fleet/vehicles/:id`
+1. En la lista, haga clic en el ícono de **ojo** (👁)
+2. Verá la página de detalle con pestañas
 
-#### Encabezado
-- Placa y código
-- Marca/Modelo/Año
-- Estado (chip de color)
-- Kilometraje actual
-- Asignación actual (si tiene)
-- Botones: Editar, Asignar/Finalizar
+#### Pestañas Disponibles
 
-#### Tabs Disponibles
-
-##### Tab: Información
-Datos generales del vehículo:
-- Marca, modelo, año
-- Color, tipo, combustible
-- VIN
-- Fecha y precio de compra
-- Kilometraje
-
-##### Tab: Asignaciones
-Historial de asignaciones:
-- Tipo (Empleado/Proyecto)
-- Asignado a
-- Fecha inicio - fin
-- Km inicio - fin
-- Propósito
-
-**Asignar Vehículo:**
-1. Clic en "Asignar"
-2. Seleccionar tipo (Empleado o Proyecto)
-3. Seleccionar empleado/proyecto
-4. Ingresar propósito
-5. Guardar
-
-**Finalizar Asignación:**
-1. Clic en "Finalizar Asignación"
-2. Ingresar fecha de fin
-3. Ingresar kilometraje final
-4. Agregar notas
-5. Guardar
-
-##### Tab: Combustible
-Registros de carga de combustible:
-- Fecha
-- Litros
-- Precio/litro
-- Total
-- Kilometraje
-- Estación
-
-##### Tab: Mantenimientos
-Historial de mantenimientos:
-- Fecha
-- Tipo (Preventivo/Correctivo)
-- Descripción
-- Costo
-- Estado
-
-##### Tab: Documentos
-Documentos del vehículo:
-- Seguro
-- Revisión técnica
-- Permisos
-- Otros documentos
-
-##### Tab: Auditoría
-Historial de cambios.
+| Pestaña | Contenido |
+|---------|-----------|
+| **Información** | Datos generales del vehículo |
+| **Asignaciones** | Historial de asignaciones |
+| **Mantenimientos** | Historial de mantenimientos |
+| **Combustible** | Historial de cargas |
+| **Documentos** | Archivos adjuntos |
 
 ---
 
-## Combustible
+### Asignar un Vehículo
 
-### Lista de Registros
+1. En el detalle del vehículo, vaya a la pestaña **"Asignaciones"**
+2. Haga clic en **"Nueva Asignación"**
+3. Complete el formulario:
 
-**Ruta:** `/fleet/fuel`
+| Campo | Descripción |
+|-------|-------------|
+| **Tipo** | Empleado o Proyecto |
+| **Empleado/Proyecto** | Seleccione a quién asignar |
+| **Fecha Inicio** | Desde cuándo |
+| **Fecha Fin** | Hasta cuándo (opcional) |
+| **Notas** | Observaciones |
 
-#### Filtros Disponibles
-
-| Filtro | Opciones |
-|--------|----------|
-| **Vehículo** | Todos los vehículos |
-| **Fecha Desde** | Fecha inicial |
-| **Fecha Hasta** | Fecha final |
-
-#### Columnas de la Tabla
-
-| Columna | Descripción |
-|---------|-------------|
-| **Fecha** | Fecha de carga |
-| **Vehículo** | Placa del vehículo |
-| **Litros** | Cantidad cargada |
-| **Precio/L** | Precio por litro |
-| **Total** | Costo total |
-| **Km** | Kilometraje al cargar |
-| **Estación** | Estación de servicio |
-
----
-
-### Registrar Carga de Combustible
-
-**Ruta:** `/fleet/fuel/new`
-
-#### Campos del Formulario
-
-| Campo | Obligatorio | Descripción |
-|-------|-------------|-------------|
-| **Vehículo** | ✅ | Seleccionar vehículo |
-| **Fecha** | ✅ | Fecha de la carga |
-| **Tipo Combustible** | ✅ | Gasolina, Diesel, etc. |
-| **Litros** | ✅ | Cantidad en litros |
-| **Precio por Litro** | ✅ | Precio unitario |
-| **Kilometraje** | ✅ | Km al momento de cargar |
-| **Estación** | ❌ | Nombre de la estación |
-| **Notas** | ❌ | Observaciones |
-
-#### Pasos
-1. Hacer clic en **"+ Nueva Carga"**
-2. Seleccionar vehículo
-3. Ingresar fecha y tipo de combustible
-4. Ingresar litros y precio
-5. Registrar kilometraje actual
-6. Hacer clic en **"Guardar"**
+4. Haga clic en **"Guardar"**
+5. El estado del vehículo cambia a "Asignado"
 
 ---
 
 ## Mantenimientos
 
-### Lista de Mantenimientos
+### Ver Lista de Mantenimientos
 
-**Ruta:** `/fleet/maintenance`
+1. En el menú, seleccione **"Flota"** → **"Mantenimientos"**
+2. Verá la lista de todos los mantenimientos
 
-#### Filtros Disponibles
+### Filtros Disponibles
 
 | Filtro | Opciones |
 |--------|----------|
-| **Vehículo** | Todos los vehículos |
+| **Estado** | Programado, En Progreso, Completado, Cancelado |
 | **Tipo** | Preventivo, Correctivo, Inspección |
-| **Estado** | Programado, En Proceso, Completado |
 
-#### Columnas de la Tabla
+### Columnas de la Tabla
 
 | Columna | Descripción |
 |---------|-------------|
-| **Fecha** | Fecha programada/realizada |
-| **Vehículo** | Placa del vehículo |
-| **Tipo** | Preventivo/Correctivo |
-| **Descripción** | Trabajo realizado |
-| **Costo** | Costo del mantenimiento |
+| **Código** | Identificador del mantenimiento |
+| **Vehículo** | Placa y modelo |
+| **Tipo** | Tipo de mantenimiento |
+| **Descripción** | Detalle del trabajo |
+| **Fecha** | Fecha programada |
+| **Costo** | Costo total |
 | **Estado** | Estado actual |
 | **Acciones** | Ver, Completar |
 
 ---
 
-### Crear Mantenimiento
+### Programar un Mantenimiento
 
-**Ruta:** `/fleet/maintenance/new`
-
-#### Campos del Formulario
+1. Haga clic en el botón **"+ Nuevo"**
+2. Complete el formulario:
 
 | Campo | Obligatorio | Descripción |
 |-------|-------------|-------------|
-| **Vehículo** | ✅ | Seleccionar vehículo |
-| **Tipo** | ✅ | Preventivo, Correctivo, Inspección |
-| **Fecha Programada** | ✅ | Fecha del mantenimiento |
-| **Descripción** | ✅ | Trabajo a realizar |
-| **Kilometraje** | ❌ | Km al momento |
-| **Proveedor** | ❌ | Taller/Proveedor |
-| **Costo Estimado** | ❌ | Costo aproximado |
-| **Notas** | ❌ | Observaciones |
+| **Vehículo** | ✅ Sí | Seleccione el vehículo |
+| **Tipo** | ✅ Sí | Preventivo, Correctivo, Inspección |
+| **Descripción** | ✅ Sí | Detalle del trabajo a realizar |
+| **Fecha Programada** | ✅ Sí | Cuándo se realizará |
+| **Kilometraje** | ❌ No | Odómetro al momento |
+| **Proveedor** | ❌ No | Taller o proveedor |
+| **Costo Estimado** | ❌ No | Costo aproximado |
+| **Notas** | ❌ No | Observaciones |
 
-#### Pasos
-1. Hacer clic en **"+ Nuevo Mantenimiento"**
-2. Seleccionar vehículo
-3. Seleccionar tipo de mantenimiento
-4. Definir fecha programada
-5. Describir el trabajo
-6. Hacer clic en **"Guardar"**
-
-### Completar Mantenimiento
-1. Ir al detalle del mantenimiento
-2. Clic en "Completar"
-3. Ingresar fecha real de completación
-4. Ingresar costo real
-5. Agregar notas del trabajo realizado
-6. Guardar
+3. Haga clic en **"Guardar"**
+4. El mantenimiento queda en estado "Programado"
 
 ---
 
-## Flujo de Trabajo
+### Completar un Mantenimiento
 
-### Ciclo de Vida del Vehículo
-```
-DISPONIBLE → ASIGNADO → DISPONIBLE
-     ↓           ↓
-EN MANTENIMIENTO ←
-     ↓
-FUERA DE SERVICIO
-     ↓
-VENDIDO
-```
-
-### Flujo de Asignación
-```
-1. Vehículo disponible
-   ↓
-2. Asignar a empleado/proyecto
-   ↓
-3. Registrar propósito y km inicial
-   ↓
-4. Vehículo en uso
-   ↓
-5. Finalizar asignación
-   ↓
-6. Registrar km final
-   ↓
-7. Vehículo disponible
-```
+1. En la lista de mantenimientos, busque uno en estado "Programado" o "En Progreso"
+2. Haga clic en el ícono de **check verde** (✅)
+3. Complete la información final:
+   - Fecha de completado
+   - Costo real
+   - Notas finales
+4. Confirme la acción
+5. El estado cambia a "Completado"
 
 ---
 
-## Tips y Mejores Prácticas
+## Registro de Combustible
+
+### Ver Lista de Cargas
+
+1. En el menú, seleccione **"Flota"** → **"Combustible"**
+2. Verá el historial de cargas de combustible
+
+### Filtros Disponibles
+
+| Filtro | Opciones |
+|--------|----------|
+| **Fecha Desde** | Inicio del período |
+| **Fecha Hasta** | Fin del período |
+
+### Columnas de la Tabla
+
+| Columna | Descripción |
+|---------|-------------|
+| **Código** | Identificador de la carga |
+| **Vehículo** | Placa y modelo |
+| **Fecha** | Fecha de la carga |
+| **Cantidad** | Litros cargados |
+| **Costo** | Monto pagado |
+| **Kilometraje** | Odómetro al cargar |
+| **Conductor** | Quién realizó la carga |
+| **Acciones** | Editar, Eliminar |
+
+---
+
+### Registrar una Carga de Combustible
+
+1. Haga clic en el botón **"+ Nuevo"**
+2. Complete el formulario:
+
+| Campo | Obligatorio | Descripción |
+|-------|-------------|-------------|
+| **Vehículo** | ✅ Sí | Seleccione el vehículo |
+| **Fecha** | ✅ Sí | Fecha de la carga |
+| **Cantidad** | ✅ Sí | Litros cargados |
+| **Precio por Litro** | ✅ Sí | Precio unitario |
+| **Costo Total** | Auto | Se calcula automáticamente |
+| **Kilometraje** | ✅ Sí | Odómetro actual |
+| **Conductor** | ❌ No | Quién realizó la carga |
+| **Estación** | ❌ No | Nombre de la estación |
+| **Tipo de Combustible** | ❌ No | Gasolina, Diesel |
+| **Notas** | ❌ No | Observaciones |
+
+3. Haga clic en **"Guardar"**
+
+---
+
+## Exportar Reportes
+
+### Reporte de Mantenimientos
+
+1. En la lista de mantenimientos, aplique los filtros deseados
+2. Haga clic en **"Descargar PDF"**
+3. Se genera un PDF con los mantenimientos filtrados
+
+### Reporte de Combustible
+
+1. En la lista de combustible, seleccione el rango de fechas
+2. Haga clic en **"Descargar PDF"**
+3. Se genera un PDF con el consumo del período
+
+---
+
+## Consejos Útiles
 
 ### Para Vehículos
-- ✅ Mantener kilometraje actualizado
-- ✅ Registrar todos los documentos
-- ✅ Programar mantenimientos preventivos
-- ✅ Verificar documentos antes de vencer
-
-### Para Asignaciones
-- ✅ Registrar propósito de cada asignación
-- ✅ Verificar kilometraje al asignar y devolver
-- ✅ Documentar cualquier incidente
-
-### Para Combustible
-- ✅ Registrar cada carga de combustible
-- ✅ Verificar rendimiento (km/litro)
-- ✅ Investigar consumos anormales
+- ✅ Mantenga actualizado el kilometraje
+- ✅ Registre todos los documentos con fechas de vencimiento
+- ✅ Asigne siempre un responsable
 
 ### Para Mantenimientos
-- ✅ Programar mantenimientos preventivos
-- ✅ No posponer mantenimientos
-- ✅ Documentar trabajos realizados
-- ✅ Guardar facturas y garantías
+- ✅ Programe mantenimientos preventivos regularmente
+- ✅ Registre el costo real al completar
+- ✅ Documente los trabajos realizados
+
+### Para Combustible
+- ✅ Registre cada carga inmediatamente
+- ✅ Siempre anote el kilometraje
+- ✅ Revise el rendimiento (km/litro) periódicamente
 
 ---
 
-## Solución de Problemas
+## Preguntas Frecuentes
 
-### "No puedo asignar el vehículo"
-- Verificar que el vehículo esté en estado DISPONIBLE
-- Verificar que no tenga asignación activa
-- Verificar permisos de usuario
+### ¿Por qué no puedo asignar un vehículo?
+Verifique que el vehículo esté en estado "Disponible". Los vehículos en mantenimiento o fuera de servicio no pueden asignarse.
 
-### "El kilometraje no se actualiza"
-- El kilometraje se actualiza al:
-  - Registrar carga de combustible
-  - Finalizar asignación
-  - Completar mantenimiento
-- Verificar que se ingresó correctamente
+### ¿Cómo veo el historial de un vehículo?
+En el detalle del vehículo, las pestañas muestran el historial de asignaciones, mantenimientos y cargas de combustible.
 
-### "Documentos por vencer"
-- Revisar alertas en el dashboard
-- Renovar documentos antes del vencimiento
-- Actualizar fechas en el sistema
+### ¿Puedo asignar un vehículo a un proyecto?
+Sí. Al crear una asignación, seleccione "Proyecto" como tipo y elija el proyecto correspondiente.
 
-### "Consumo de combustible alto"
-- Verificar registros de combustible
-- Comparar con histórico del vehículo
-- Revisar si necesita mantenimiento
-- Verificar estilo de conducción
+### ¿Cómo calculo el rendimiento de combustible?
+El sistema calcula automáticamente el rendimiento (km/litro) basándose en las cargas registradas y el kilometraje.
+
+### ¿Qué pasa cuando vence un documento?
+El sistema muestra una alerta en el dashboard indicando los documentos próximos a vencer o ya vencidos.
+
+### ¿Puedo eliminar un vehículo?
+No directamente. Debe cambiar el estado a "Vendido" para indicar que ya no pertenece a la empresa.

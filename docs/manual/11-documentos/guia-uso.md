@@ -1,262 +1,216 @@
-# 📄 Módulo de Documentos - Guía de Uso
+# 📄 Gestión Documental - Guía de Uso
 
-## Acceder al Módulo
+## Cómo Acceder al Módulo
 
-1. En el menú lateral, hacer clic en **"Documentos"**
-2. Se despliegan las opciones:
-   - Dashboard
-   - Lista de Documentos
-   - Categorías
+1. En el **menú lateral izquierdo**, busque la opción **"Documentos"**
+2. Haga clic en el ícono de flecha (▼) para expandir las opciones
+3. Verá las siguientes secciones:
+   - **Dashboard**: Panel con indicadores
+   - **Documentos**: Lista de documentos
+   - **Categorías**: Gestión de categorías
 
 ---
 
 ## Dashboard de Documentos
 
-**Ruta:** `/documents`
+### Acceder al Dashboard
 
-### KPIs Principales
+1. En el menú, seleccione **"Documentos"** → **"Dashboard"**
+2. Verá el panel principal con indicadores
 
-| KPI | Descripción |
-|-----|-------------|
-| **Total Documentos** | Cantidad de documentos |
-| **Pendientes de Revisión** | Documentos por aprobar |
+### Indicadores Principales
+
+| Indicador | Descripción |
+|-----------|-------------|
+| **Total Documentos** | Cantidad de documentos registrados |
+| **Aprobados** | Documentos vigentes |
+| **Pendientes** | Esperando aprobación |
 | **Vencidos** | Documentos expirados |
-| **Por Vencer** | Próximos a expirar |
 
 ### Alertas
-- Documentos pendientes de revisión
-- Documentos por vencer (próximos 30 días)
-- Documentos vencidos
 
-### Actividad Reciente
-Lista de últimos documentos subidos o modificados.
+El dashboard muestra:
+- Documentos próximos a vencer
+- Documentos pendientes de aprobación
+- Documentos recientes
 
 ---
 
 ## Lista de Documentos
 
-**Ruta:** `/documents/list`
+### Ver Todos los Documentos
+
+1. En el menú, seleccione **"Documentos"** → **"Documentos"**
+2. Verá la tabla/tarjetas de documentos
 
 ### Filtros Disponibles
 
 | Filtro | Opciones |
 |--------|----------|
-| **Búsqueda** | Por título o código |
+| **Búsqueda** | Por código, título o descripción |
 | **Estado** | Borrador, Pendiente, Aprobado, etc. |
 | **Tipo** | Política, Procedimiento, Manual, etc. |
-| **Categoría** | Todas las categorías |
+| **Categoría** | Categorías registradas |
 
-### Vista de Documentos
-Tarjetas con:
-- Ícono según tipo de archivo
-- Título y código
-- Categoría
-- Estado (chip de color)
-- Fecha de vencimiento
-- Acciones: Ver, Editar, Eliminar
+### Columnas de la Tabla
+
+| Columna | Descripción |
+|---------|-------------|
+| **Código** | Identificador único |
+| **Título** | Nombre del documento |
+| **Tipo** | Tipo de documento |
+| **Categoría** | Clasificación |
+| **Estado** | Estado actual |
+| **Vencimiento** | Fecha de expiración |
+| **Acciones** | Ver, Editar, Más opciones |
 
 ---
 
-## Subir Documento
+### Crear un Nuevo Documento
 
-**Ruta:** `/documents/new`
+1. Haga clic en el botón **"+ Nuevo Documento"**
+2. Se abrirá una página con el formulario
 
-### Campos del Formulario
+#### Campos del Formulario
 
 | Campo | Obligatorio | Descripción |
 |-------|-------------|-------------|
-| **Archivo** | ✅ | Seleccionar archivo |
-| **Título** | ✅ | Título del documento |
-| **Código** | ❌ | Código único (auto-generado) |
-| **Descripción** | ❌ | Descripción del contenido |
-| **Tipo** | ✅ | Tipo de documento |
-| **Categoría** | ❌ | Categoría |
-| **Fecha Vigencia** | ❌ | Desde cuándo es válido |
-| **Fecha Vencimiento** | ❌ | Hasta cuándo es válido |
-| **Propietario** | ❌ | Responsable del documento |
-| **Tags** | ❌ | Etiquetas para búsqueda |
+| **Código** | ✅ Sí | Código único (ej: "POL-001") |
+| **Título** | ✅ Sí | Nombre del documento |
+| **Tipo** | ✅ Sí | Política, Procedimiento, etc. |
+| **Categoría** | ❌ No | Clasificación |
+| **Descripción** | ❌ No | Resumen del contenido |
+| **Versión** | ❌ No | Número de versión |
+| **Fecha de Emisión** | ❌ No | Cuándo se creó |
+| **Fecha de Vencimiento** | ❌ No | Cuándo expira |
+| **Archivo** | ❌ No | Archivo adjunto (PDF, Word, etc.) |
+| **Estado** | ✅ Sí | Estado inicial |
 
-### Tipos de Archivo Permitidos
-- PDF
-- Word (doc, docx)
-- Excel (xls, xlsx)
-- PowerPoint (ppt, pptx)
-- Imágenes (jpg, png)
-- Texto (txt)
-
-### Pasos
-1. Hacer clic en **"+ Nuevo Documento"**
-2. Seleccionar archivo a subir
-3. Completar título
-4. Seleccionar tipo de documento
-5. Asignar categoría
-6. Definir fechas de vigencia (si aplica)
-7. Hacer clic en **"Guardar"**
+3. Adjunte el archivo si es necesario
+4. Haga clic en **"Guardar"**
 
 ---
 
-## Detalle del Documento
+### Ver Detalle de un Documento
 
-**Ruta:** `/documents/:id`
-
-### Información del Documento
-- Título y código
-- Tipo y categoría
-- Estado (chip de color)
-- Versión actual
-- Fechas de vigencia
-- Propietario
-- Tamaño del archivo
-
-### Acciones Disponibles
-
-| Estado | Acciones |
-|--------|----------|
-| **DRAFT** | Editar, Enviar a Revisión, Eliminar |
-| **PENDING_REVIEW** | Aprobar, Rechazar |
-| **APPROVED** | Descargar, Nueva Versión, Archivar |
-| **REJECTED** | Editar, Reenviar |
-| **EXPIRED** | Renovar |
-
-### Tabs Disponibles
-
-#### Tab: Información
-Datos generales del documento.
-
-#### Tab: Versiones
-Historial de versiones:
-- Número de versión
-- Fecha de subida
-- Usuario que subió
-- Descargar versión
-
-#### Tab: Revisiones
-Historial de aprobaciones:
-- Fecha
-- Revisor
-- Acción (Aprobado/Rechazado)
-- Comentarios
-
-#### Tab: Auditoría
-Historial de cambios.
+1. En la lista, haga clic en el ícono de **ojo** (👁) o doble clic en la fila
+2. Verá:
+   - Información completa del documento
+   - Archivo adjunto (con opción de descargar)
+   - Historial de versiones
+   - Historial de cambios
 
 ---
 
-## Flujo de Aprobación
+### Editar un Documento
 
-### Enviar a Revisión
-1. Desde documento en estado DRAFT
-2. Clic en **"Enviar a Revisión"**
-3. Estado cambia a PENDING_REVIEW
-
-### Aprobar Documento
-1. Ir a documento pendiente
-2. Revisar contenido
-3. Clic en **"Aprobar"**
-4. Agregar comentarios (opcional)
-5. Estado cambia a APPROVED
-
-### Rechazar Documento
-1. Ir a documento pendiente
-2. Revisar contenido
-3. Clic en **"Rechazar"**
-4. Agregar motivo del rechazo
-5. Estado cambia a REJECTED
+1. En la lista o detalle, haga clic en el ícono de **lápiz** (✏️)
+2. Modifique los campos necesarios
+3. Si sube un nuevo archivo, se crea una nueva versión
+4. Haga clic en **"Guardar"**
 
 ---
 
-## Versiones
+### Flujo de Aprobación
 
-### Subir Nueva Versión
-1. Ir al detalle del documento
-2. Clic en **"Nueva Versión"**
-3. Seleccionar nuevo archivo
-4. Agregar notas de cambios
-5. Guardar
-6. La versión se incrementa automáticamente
+```
+1. BORRADOR → Documento en elaboración
+   ↓
+2. PENDIENTE → Enviado para aprobación
+   ↓
+3. APROBADO → Documento vigente
+   (o RECHAZADO → Requiere correcciones)
+```
 
-### Ver Versiones Anteriores
-1. Tab "Versiones"
-2. Ver lista de todas las versiones
-3. Descargar cualquier versión anterior
+### Aprobar un Documento
+
+1. En el detalle del documento en estado "Pendiente"
+2. Revise el contenido
+3. Haga clic en **"Aprobar"** o **"Rechazar"**
+4. Agregue comentarios si es necesario
+
+---
+
+### Archivar un Documento
+
+1. En el detalle del documento
+2. Haga clic en el menú de opciones (⋮)
+3. Seleccione **"Archivar"**
+4. El documento pasa a estado "Archivado"
+
+> Los documentos archivados no se eliminan, solo se marcan como no vigentes.
 
 ---
 
 ## Categorías
 
-### Lista de Categorías
+### Ver Lista de Categorías
 
-**Ruta:** `/documents/categories`
+1. En el menú, seleccione **"Documentos"** → **"Categorías"**
+2. Verá la lista de categorías
 
-Muestra estructura jerárquica de categorías.
+### Crear una Categoría
 
-### Crear Categoría
-
-**Ruta:** `/documents/categories/new`
+1. Haga clic en **"+ Nueva Categoría"**
+2. Complete el formulario:
 
 | Campo | Obligatorio | Descripción |
 |-------|-------------|-------------|
-| **Código** | ✅ | Código único |
-| **Nombre** | ✅ | Nombre de la categoría |
-| **Descripción** | ❌ | Descripción |
-| **Categoría Padre** | ❌ | Para subcategorías |
-| **Estado** | ❌ | Activa (default) |
+| **Código** | ✅ Sí | Código único |
+| **Nombre** | ✅ Sí | Nombre de la categoría |
+| **Descripción** | ❌ No | Descripción |
+| **Categoría Padre** | ❌ No | Para subcategorías |
+| **Color** | ❌ No | Color de identificación |
+| **Estado** | ✅ Sí | Activa o Inactiva |
+
+3. Haga clic en **"Guardar"**
 
 ---
 
-## Control de Vencimientos
+## Descargar Documentos
 
-### Documentos por Vencer
-- El sistema alerta 30 días antes del vencimiento
-- Se muestran en el dashboard
-- Se pueden filtrar en la lista
-
-### Renovar Documento
-1. Ir al documento vencido o por vencer
-2. Clic en **"Renovar"**
-3. Subir nueva versión del documento
-4. Actualizar fecha de vencimiento
-5. Enviar para aprobación
+1. En el detalle del documento
+2. Haga clic en el botón **"Descargar"**
+3. El archivo se descarga a su computadora
 
 ---
 
-## Tips y Mejores Prácticas
+## Consejos Útiles
 
-### Para Documentos
-- ✅ Usar títulos descriptivos
-- ✅ Categorizar correctamente
-- ✅ Definir fechas de vencimiento
-- ✅ Mantener versiones actualizadas
+### Para Organización
+- ✅ Use códigos consistentes (POL-001, PROC-001, etc.)
+- ✅ Cree categorías lógicas
+- ✅ Agregue descripciones claras
+- ✅ Defina fechas de vencimiento cuando aplique
 
-### Para Categorías
-- ✅ Crear estructura lógica
-- ✅ No crear demasiados niveles
-- ✅ Usar nombres claros
+### Para Control de Versiones
+- ✅ Incremente la versión en cada cambio
+- ✅ Documente los cambios realizados
+- ✅ Mantenga el historial de versiones
 
 ### Para Aprobaciones
-- ✅ Revisar contenido antes de aprobar
-- ✅ Documentar motivos de rechazo
-- ✅ Procesar pendientes oportunamente
+- ✅ Revise bien antes de aprobar
+- ✅ Agregue comentarios al rechazar
+- ✅ Notifique a los interesados
 
 ---
 
-## Solución de Problemas
+## Preguntas Frecuentes
 
-### "No puedo subir el archivo"
-- Verificar tamaño del archivo (máximo 50MB)
-- Verificar tipo de archivo permitido
-- Verificar conexión a internet
+### ¿Qué tipos de archivo puedo subir?
+PDF, Word, Excel, PowerPoint, imágenes y otros formatos comunes. El tamaño máximo depende de la configuración del sistema.
 
-### "Documento no aparece en búsqueda"
-- Verificar filtros aplicados
-- Verificar estado del documento
-- Usar términos más específicos
+### ¿Puedo tener varias versiones del mismo documento?
+Sí. Cada vez que sube un nuevo archivo, se crea una nueva versión. El historial se mantiene.
 
-### "No puedo aprobar el documento"
-- Verificar permiso `documents:approve`
-- Verificar que esté en estado PENDING_REVIEW
+### ¿Qué pasa cuando un documento vence?
+El estado cambia automáticamente a "Vencido" y aparece en las alertas del dashboard.
 
-### "Documento vencido"
-- Subir nueva versión
-- Actualizar fecha de vencimiento
-- Enviar para nueva aprobación
+### ¿Puedo eliminar un documento?
+Sí, pero se recomienda archivar en lugar de eliminar para mantener el historial.
+
+### ¿Cómo busco un documento específico?
+Use el campo de búsqueda para buscar por código, título o descripción. También puede filtrar por tipo, categoría o estado.
+
+### ¿Quién puede aprobar documentos?
+Depende de los permisos configurados. Generalmente supervisores o administradores.

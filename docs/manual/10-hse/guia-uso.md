@@ -1,350 +1,291 @@
-# 🛡️ Módulo de HSE - Guía de Uso
+# 🦺 Seguridad y Salud (HSE) - Guía de Uso
 
-## Acceder al Módulo
+## Cómo Acceder al Módulo
 
-1. En el menú lateral, hacer clic en **"HSE"**
-2. Se despliegan las opciones:
-   - Dashboard
-   - Incidentes
-   - Inspecciones
-   - Capacitaciones
-   - Equipos
+1. En el **menú lateral izquierdo**, busque la opción **"HSE"**
+2. Haga clic en el ícono de flecha (▼) para expandir las opciones
+3. Verá las siguientes secciones:
+   - **Dashboard**: Panel con indicadores
+   - **Incidentes**: Gestión de incidentes
+   - **Inspecciones**: Inspecciones de seguridad
+   - **Capacitaciones**: Entrenamientos
+   - **Equipos**: Equipos de protección
 
 ---
 
-## Dashboard HSE
+## Dashboard de HSE
 
-**Ruta:** `/hse`
+### Acceder al Dashboard
 
-### KPIs Principales
+1. En el menú, seleccione **"HSE"** → **"Dashboard"**
+2. Verá el panel principal con indicadores de seguridad
 
-| KPI | Descripción |
-|-----|-------------|
-| **Días sin Accidentes** | Contador desde el último accidente |
-| **Incidentes Abiertos** | Incidentes sin cerrar |
+### Indicadores Principales
+
+| Indicador | Descripción |
+|-----------|-------------|
+| **Incidentes del Mes** | Cantidad de incidentes reportados |
 | **Inspecciones Pendientes** | Inspecciones programadas |
-| **Capacitaciones por Vencer** | Certificaciones próximas a expirar |
-
-### Alertas
-- Incidentes de alta severidad
-- Inspecciones vencidas
-- Capacitaciones por renovar
-- EPP por vencer
-
-### Estadísticas
-- Tendencia de incidentes por mes
-- Distribución por tipo
-- Cumplimiento de inspecciones
+| **Capacitaciones Próximas** | Entrenamientos por realizar |
+| **Días sin Incidentes** | Racha de días seguros |
 
 ---
 
 ## Incidentes
 
-### Lista de Incidentes
+### Ver Lista de Incidentes
 
-**Ruta:** `/hse/incidents`
+1. En el menú, seleccione **"HSE"** → **"Incidentes"**
+2. Verá la tabla/tarjetas de incidentes
 
-#### Filtros Disponibles
+### Filtros Disponibles
 
 | Filtro | Opciones |
 |--------|----------|
-| **Tipo** | Accidente, Casi Accidente, Condición Insegura, etc. |
+| **Tipo** | Accidente, Casi-accidente, Ambiental, etc. |
 | **Severidad** | Baja, Media, Alta, Crítica |
-| **Estado** | Reportado, Investigando, En Progreso, Cerrado |
+| **Estado** | Reportado, Investigando, Cerrado, etc. |
 
-#### Columnas de la Tabla
+### Columnas de la Tabla
 
 | Columna | Descripción |
 |---------|-------------|
 | **Código** | Identificador único |
-| **Fecha** | Fecha del incidente |
 | **Tipo** | Tipo de incidente |
-| **Severidad** | Nivel de severidad |
-| **Ubicación** | Lugar del incidente |
+| **Título** | Descripción breve |
+| **Ubicación** | Dónde ocurrió |
+| **Fecha** | Cuándo ocurrió |
+| **Severidad** | Nivel de gravedad |
 | **Estado** | Estado actual |
 | **Acciones** | Ver detalle |
 
 ---
 
-### Reportar Incidente
+### Reportar un Incidente
 
-**Ruta:** `/hse/incidents/new`
-
-#### Campos del Formulario
+1. Haga clic en el botón **"+ Nuevo Incidente"**
+2. Complete el formulario:
 
 | Campo | Obligatorio | Descripción |
 |-------|-------------|-------------|
-| **Tipo** | ✅ | Tipo de incidente |
-| **Severidad** | ✅ | Nivel de severidad |
-| **Fecha y Hora** | ✅ | Cuándo ocurrió |
-| **Ubicación** | ✅ | Dónde ocurrió |
-| **Descripción** | ✅ | Qué pasó |
-| **Empleados Involucrados** | ❌ | Personas afectadas |
-| **Testigos** | ❌ | Personas que presenciaron |
-| **Proyecto** | ❌ | Proyecto asociado |
-| **Fotos** | ❌ | Evidencia fotográfica |
+| **Tipo** | ✅ Sí | Accidente, Casi-accidente, etc. |
+| **Título** | ✅ Sí | Descripción breve |
+| **Fecha y Hora** | ✅ Sí | Cuándo ocurrió |
+| **Ubicación** | ✅ Sí | Dónde ocurrió |
+| **Severidad** | ✅ Sí | Baja, Media, Alta, Crítica |
+| **Descripción** | ✅ Sí | Detalle de lo ocurrido |
+| **Proyecto** | ❌ No | Proyecto relacionado |
+| **Empleados Involucrados** | ❌ No | Personas afectadas |
+| **Testigos** | ❌ No | Quiénes presenciaron |
 
-#### Pasos
-1. Hacer clic en **"+ Reportar Incidente"**
-2. Seleccionar tipo de incidente
-3. Evaluar y seleccionar severidad
-4. Ingresar fecha, hora y ubicación
-5. Describir detalladamente lo ocurrido
-6. Identificar empleados involucrados
-7. Adjuntar fotos si las hay
-8. Hacer clic en **"Guardar"**
+3. Haga clic en **"Guardar"**
+4. El incidente queda en estado "Reportado"
 
 ---
 
-### Detalle del Incidente
+### Investigar un Incidente
 
-**Ruta:** `/hse/incidents/:id`
+1. En el detalle del incidente, cambie el estado a "Investigando"
+2. Complete la investigación:
+   - Causa raíz
+   - Factores contribuyentes
+   - Evidencias
+3. Defina acciones correctivas
+4. Asigne responsables y fechas
 
-#### Información del Incidente
-- Código y tipo
-- Severidad (chip de color)
-- Fecha y hora
-- Ubicación
-- Descripción
-- Empleados involucrados
-- Estado
+---
 
-#### Tabs Disponibles
+### Cerrar un Incidente
 
-##### Tab: Información
-Datos generales del incidente.
-
-##### Tab: Investigación
-- Causa raíz
-- Factores contribuyentes
-- Análisis de causas
-
-##### Tab: Acciones Correctivas
-- Lista de acciones definidas
-- Responsables
-- Fechas límite
-- Estado de cada acción
-
-##### Tab: Documentos
-- Fotos del incidente
-- Reportes
-- Evidencias
-
-##### Tab: Auditoría
-Historial de cambios.
-
-#### Flujo de Investigación
-
-1. **Reportado** → Incidente recién registrado
-2. **Investigando** → Se está analizando
-3. **Pendiente de Acciones** → Se definieron acciones
-4. **En Progreso** → Acciones en ejecución
-5. **Cerrado** → Todas las acciones completadas
+1. Verifique que todas las acciones correctivas estén completadas
+2. Cambie el estado a "Cerrado"
+3. Agregue notas de cierre
 
 ---
 
 ## Inspecciones
 
-### Lista de Inspecciones
+### Ver Lista de Inspecciones
 
-**Ruta:** `/hse/inspections`
+1. En el menú, seleccione **"HSE"** → **"Inspecciones"**
+2. Verá la lista de inspecciones
 
-#### Filtros Disponibles
+### Filtros Disponibles
 
 | Filtro | Opciones |
 |--------|----------|
-| **Tipo** | Tipo de inspección |
+| **Tipo** | Lugar de Trabajo, Equipos, Vehículos, etc. |
 | **Estado** | Programada, En Progreso, Completada |
-| **Fecha Desde** | Fecha inicial |
-| **Fecha Hasta** | Fecha final |
 
-#### Columnas de la Tabla
+### Columnas de la Tabla
 
 | Columna | Descripción |
 |---------|-------------|
 | **Código** | Identificador único |
 | **Tipo** | Tipo de inspección |
-| **Fecha Programada** | Cuándo se debe realizar |
-| **Inspector** | Quien realiza |
-| **Ubicación** | Área a inspeccionar |
-| **Puntuación** | Resultado (0-100) |
+| **Título** | Descripción |
+| **Inspector** | Quién realiza |
+| **Fecha** | Fecha programada |
+| **Resultado** | Satisfactorio, Necesita Mejoras, etc. |
 | **Estado** | Estado actual |
+| **Acciones** | Ver, Editar |
 
 ---
 
-### Crear Inspección
+### Programar una Inspección
 
-**Ruta:** `/hse/inspections/new`
-
-#### Campos del Formulario
+1. Haga clic en el botón **"+ Nueva Inspección"**
+2. Complete el formulario:
 
 | Campo | Obligatorio | Descripción |
 |-------|-------------|-------------|
-| **Tipo** | ✅ | Tipo de inspección |
-| **Fecha Programada** | ✅ | Cuándo realizar |
-| **Inspector** | ✅ | Quien inspecciona |
-| **Ubicación** | ✅ | Área a inspeccionar |
-| **Checklist** | ❌ | Puntos a verificar |
-| **Notas** | ❌ | Observaciones |
+| **Tipo** | ✅ Sí | Lugar de Trabajo, Equipos, etc. |
+| **Título** | ✅ Sí | Descripción de la inspección |
+| **Fecha Programada** | ✅ Sí | Cuándo se realizará |
+| **Inspector** | ✅ Sí | Empleado que inspecciona |
+| **Ubicación** | ❌ No | Área a inspeccionar |
+| **Proyecto** | ❌ No | Proyecto relacionado |
+| **Checklist** | ❌ No | Lista de verificación |
 
-#### Pasos
-1. Hacer clic en **"+ Nueva Inspección"**
-2. Seleccionar tipo de inspección
-3. Definir fecha programada
-4. Asignar inspector
-5. Indicar ubicación/área
-6. Hacer clic en **"Guardar"**
+3. Haga clic en **"Guardar"**
 
 ---
 
-### Ejecutar Inspección
+### Completar una Inspección
 
-1. Ir al detalle de la inspección programada
-2. Clic en **"Iniciar Inspección"**
-3. Completar checklist de verificación
-4. Registrar hallazgos encontrados
-5. Asignar puntuación general
-6. Clic en **"Completar Inspección"**
+1. En el detalle de la inspección, registre los hallazgos
+2. Marque cada ítem del checklist
+3. Agregue observaciones y fotos
+4. Seleccione el resultado:
+   - **Satisfactorio**: Todo en orden
+   - **Necesita Mejoras**: Observaciones menores
+   - **No Satisfactorio**: Problemas graves
+5. Cambie el estado a "Completada"
 
 ---
 
 ## Capacitaciones
 
-### Lista de Capacitaciones
+### Ver Lista de Capacitaciones
 
-**Ruta:** `/hse/trainings`
+1. En el menú, seleccione **"HSE"** → **"Capacitaciones"**
+2. Verá la lista de entrenamientos
 
-#### Filtros Disponibles
+### Filtros Disponibles
 
 | Filtro | Opciones |
 |--------|----------|
-| **Tipo** | Tipo de capacitación |
-| **Estado** | Programada, En Curso, Completada |
-| **Fecha Desde** | Fecha inicial |
-| **Fecha Hasta** | Fecha final |
+| **Tipo** | Inducción, Primeros Auxilios, Trabajo en Alturas, etc. |
+| **Estado** | Programada, En Progreso, Completada |
 
-#### Columnas de la Tabla
+### Columnas de la Tabla
 
 | Columna | Descripción |
 |---------|-------------|
 | **Código** | Identificador único |
-| **Nombre** | Nombre del curso |
 | **Tipo** | Tipo de capacitación |
-| **Fechas** | Inicio - Fin |
-| **Instructor** | Quien imparte |
+| **Título** | Nombre del curso |
+| **Instructor** | Quién imparte |
+| **Fecha** | Fecha programada |
+| **Duración** | Horas de duración |
 | **Participantes** | Cantidad de asistentes |
 | **Estado** | Estado actual |
+| **Acciones** | Ver, Editar |
 
 ---
 
-### Crear Capacitación
+### Programar una Capacitación
 
-**Ruta:** `/hse/trainings/new`
-
-#### Campos del Formulario
+1. Haga clic en el botón **"+ Nueva Capacitación"**
+2. Complete el formulario:
 
 | Campo | Obligatorio | Descripción |
 |-------|-------------|-------------|
-| **Nombre** | ✅ | Nombre del curso |
-| **Tipo** | ✅ | Tipo de capacitación |
-| **Fecha Inicio** | ✅ | Cuándo inicia |
-| **Fecha Fin** | ✅ | Cuándo termina |
-| **Instructor** | ❌ | Quien imparte |
-| **Ubicación** | ❌ | Dónde se realiza |
-| **Participantes** | ❌ | Empleados a capacitar |
-| **Validez (meses)** | ❌ | Duración de la certificación |
-| **Descripción** | ❌ | Contenido del curso |
+| **Tipo** | ✅ Sí | Inducción, Primeros Auxilios, etc. |
+| **Título** | ✅ Sí | Nombre del curso |
+| **Fecha** | ✅ Sí | Cuándo se realizará |
+| **Duración** | ✅ Sí | Horas de duración |
+| **Instructor** | ❌ No | Quién imparte |
+| **Ubicación** | ❌ No | Dónde se realizará |
+| **Descripción** | ❌ No | Contenido del curso |
+| **Participantes** | ❌ No | Empleados convocados |
 
-#### Pasos
-1. Hacer clic en **"+ Nueva Capacitación"**
-2. Ingresar nombre del curso
-3. Seleccionar tipo
-4. Definir fechas de inicio y fin
-5. Asignar instructor
-6. Agregar participantes
-7. Definir validez de la certificación
-8. Hacer clic en **"Guardar"**
+3. Haga clic en **"Guardar"**
 
 ---
 
 ### Registrar Asistencia
 
-1. Ir al detalle de la capacitación
-2. Tab "Participantes"
-3. Marcar asistencia de cada participante
-4. Al completar, se generan certificaciones
+1. En el detalle de la capacitación, vaya a la pestaña "Participantes"
+2. Marque la asistencia de cada empleado
+3. Registre la calificación si aplica
+4. Al finalizar, cambie el estado a "Completada"
 
 ---
 
-## Equipos de Protección
+## Equipos de Protección (EPP)
 
-### Lista de Equipos
+### Ver Lista de Equipos
 
-**Ruta:** `/hse/equipment`
+1. En el menú, seleccione **"HSE"** → **"Equipos"**
+2. Verá el inventario de equipos de protección
 
-#### Información Mostrada
-- Tipo de equipo
-- Cantidad en inventario
-- Asignados
-- Disponibles
-- Por vencer
+### Registrar un Equipo
 
-### Asignar EPP a Empleado
+1. Haga clic en **"+ Nuevo Equipo"**
+2. Complete:
+   - Tipo de equipo (casco, guantes, arnés, etc.)
+   - Marca y modelo
+   - Fecha de vencimiento
+   - Cantidad disponible
 
-1. Ir al detalle del equipo
-2. Clic en "Asignar"
-3. Seleccionar empleado
-4. Definir fecha de entrega
-5. Definir fecha de vencimiento
-6. Guardar
+### Asignar Equipo a Empleado
+
+1. En el detalle del equipo, haga clic en "Asignar"
+2. Seleccione el empleado
+3. Registre la fecha de entrega
+4. El empleado firma la recepción
 
 ---
 
-## Tips y Mejores Prácticas
+## Consejos Útiles
 
 ### Para Incidentes
-- ✅ Reportar inmediatamente después de ocurrir
-- ✅ Incluir toda la información disponible
-- ✅ Adjuntar fotos como evidencia
-- ✅ Identificar todos los involucrados
-- ✅ No omitir casi-accidentes
+- ✅ Reporte inmediatamente, no espere
+- ✅ Documente con fotos si es posible
+- ✅ Identifique testigos
+- ✅ No altere la escena hasta documentar
 
 ### Para Inspecciones
-- ✅ Programar inspecciones periódicas
-- ✅ Usar checklists estandarizados
-- ✅ Documentar todos los hallazgos
-- ✅ Dar seguimiento a acciones correctivas
+- ✅ Use checklists estandarizados
+- ✅ Tome fotos de hallazgos
+- ✅ Defina acciones con fechas
+- ✅ Haga seguimiento a las mejoras
 
 ### Para Capacitaciones
-- ✅ Mantener registro de asistencia
-- ✅ Controlar vencimientos de certificaciones
-- ✅ Programar renovaciones con anticipación
-- ✅ Documentar contenido impartido
-
-### Para EPP
-- ✅ Mantener inventario actualizado
-- ✅ Controlar fechas de vencimiento
-- ✅ Registrar todas las entregas
-- ✅ Verificar uso correcto
+- ✅ Programe con anticipación
+- ✅ Confirme asistencia previa
+- ✅ Registre asistencia el mismo día
+- ✅ Entregue certificados
 
 ---
 
-## Solución de Problemas
+## Preguntas Frecuentes
 
-### "No puedo cerrar el incidente"
-- Verificar que todas las acciones correctivas estén completadas
-- Verificar que la investigación esté completa
-- Verificar permisos de usuario
+### ¿Quién puede reportar un incidente?
+Cualquier empleado puede y debe reportar incidentes. Es responsabilidad de todos.
 
-### "La inspección no se puede completar"
-- Verificar que todos los puntos del checklist estén evaluados
-- Verificar que se haya asignado puntuación
+### ¿Qué diferencia hay entre accidente y casi-accidente?
+El accidente causa daño real (lesión o pérdida). El casi-accidente pudo causar daño pero no lo hizo.
 
-### "Capacitación sin participantes"
-- Agregar participantes antes de iniciar
-- Verificar que los empleados estén activos
+### ¿Cada cuánto debo hacer inspecciones?
+Depende del área y riesgo. Generalmente: diarias para áreas críticas, semanales para equipos, mensuales para instalaciones.
 
-### "EPP no disponible"
-- Verificar inventario
-- Solicitar reposición si es necesario
-- Verificar asignaciones activas
+### ¿Las capacitaciones son obligatorias?
+Algunas sí, como la inducción y las específicas del puesto. Otras son recomendadas según el rol.
+
+### ¿Cómo sé si un EPP está vencido?
+El sistema muestra alertas de equipos próximos a vencer. Revise las fechas de vencimiento regularmente.
+
+### ¿Puedo adjuntar fotos a los incidentes?
+Sí. En el detalle del incidente puede adjuntar fotos, videos y documentos como evidencia.

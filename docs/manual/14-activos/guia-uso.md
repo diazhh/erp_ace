@@ -1,34 +1,38 @@
-# 🏢 Módulo de Activos Fijos - Guía de Uso
+# 🏢 Activos Fijos - Guía de Uso
 
-## Acceder al Módulo
+## Cómo Acceder al Módulo
 
-1. En el menú lateral, hacer clic en **"Activos Fijos"**
-2. Se despliegan las opciones:
-   - Lista de Activos
-   - Categorías
+1. En el **menú lateral izquierdo**, busque la opción **"Activos"**
+2. Haga clic en el ícono de flecha (▼) para expandir las opciones
+3. Verá las siguientes secciones:
+   - **Activos**: Lista de activos fijos
+   - **Categorías**: Gestión de categorías
 
 ---
 
 ## Lista de Activos
 
-**Ruta:** `/assets`
+### Ver Todos los Activos
 
-### KPIs en la Parte Superior
+1. En el menú, seleccione **"Activos"** → **"Activos"**
+2. Verá indicadores y la tabla/tarjetas de activos
 
-| KPI | Descripción |
-|-----|-------------|
-| **Total Activos** | Cantidad de activos |
-| **Valor Total** | Suma del valor actual |
-| **En Mantenimiento** | Activos en reparación |
-| **Depreciación Mensual** | Depreciación del mes |
+### Indicadores Principales
+
+| Indicador | Descripción |
+|-----------|-------------|
+| **Total Activos** | Cantidad de activos registrados |
+| **En Uso** | Activos en estado activo |
+| **Valor en Libros** | Suma del valor actual de todos los activos |
+| **Mant. Pendientes** | Mantenimientos programados |
 
 ### Filtros Disponibles
 
 | Filtro | Opciones |
 |--------|----------|
-| **Búsqueda** | Por código o nombre |
+| **Búsqueda** | Por código, nombre o número de serie |
 | **Estado** | Activo, En Mantenimiento, Almacenado, etc. |
-| **Categoría** | Todas las categorías |
+| **Categoría** | Categorías registradas |
 
 ### Columnas de la Tabla
 
@@ -36,237 +40,175 @@
 |---------|-------------|
 | **Código** | Identificador único |
 | **Nombre** | Nombre del activo |
-| **Categoría** | Categoría asignada |
-| **Valor Actual** | Valor después de depreciación |
-| **Estado** | Estado actual |
+| **Categoría** | Clasificación |
+| **Marca/Modelo** | Fabricante y modelo |
+| **Valor** | Valor en libros |
 | **Condición** | Estado físico |
+| **Estado** | Estado operativo |
 | **Asignado a** | Empleado responsable |
 | **Acciones** | Ver, Editar |
 
 ---
 
-## Crear Activo
+### Registrar un Nuevo Activo
 
-**Ruta:** `/assets/new`
+1. Haga clic en el botón **"+ Nuevo"**
+2. Se abrirá una página con el formulario
 
-### Campos del Formulario
+#### Campos del Formulario
 
 | Campo | Obligatorio | Descripción |
 |-------|-------------|-------------|
-| **Código** | ✅ | Código único |
-| **Nombre** | ✅ | Nombre del activo |
-| **Descripción** | ❌ | Descripción detallada |
-| **Categoría** | ✅ | Categoría del activo |
-| **Número de Serie** | ❌ | Serial del fabricante |
-| **Marca** | ❌ | Marca del activo |
-| **Modelo** | ❌ | Modelo |
-| **Fecha de Compra** | ✅ | Cuándo se adquirió |
-| **Precio de Compra** | ✅ | Costo de adquisición |
-| **Vida Útil (meses)** | ✅ | Duración estimada |
-| **Método Depreciación** | ✅ | Línea recta, Saldos decrecientes |
-| **Ubicación** | ❌ | Dónde está el activo |
-| **Estado** | ❌ | Activo (default) |
-| **Condición** | ❌ | Estado físico |
+| **Código** | ✅ Sí | Código único (ej: "ACT-001") |
+| **Nombre** | ✅ Sí | Nombre descriptivo |
+| **Categoría** | ✅ Sí | Seleccione categoría |
+| **Marca** | ❌ No | Fabricante |
+| **Modelo** | ❌ No | Modelo específico |
+| **Número de Serie** | ❌ No | Serial del fabricante |
+| **Fecha de Adquisición** | ✅ Sí | Cuándo se compró |
+| **Costo de Adquisición** | ✅ Sí | Precio de compra |
+| **Moneda** | ✅ Sí | USD, VES |
+| **Vida Útil (años)** | ❌ No | Años de uso estimado |
+| **Valor Residual** | ❌ No | Valor al final de vida útil |
+| **Condición** | ✅ Sí | Excelente, Bueno, Regular, Malo |
+| **Estado** | ✅ Sí | Activo, Almacenado, etc. |
+| **Ubicación** | ❌ No | Dónde está físicamente |
+| **Asignado a** | ❌ No | Empleado responsable |
+| **Descripción** | ❌ No | Detalles adicionales |
 
-### Pasos
-1. Hacer clic en **"+ Nuevo Activo"**
-2. Ingresar código único
-3. Completar nombre y descripción
-4. Seleccionar categoría
-5. Ingresar datos de compra
-6. Definir vida útil y método de depreciación
-7. Hacer clic en **"Guardar"**
+3. Complete los campos requeridos
+4. Haga clic en **"Guardar"**
 
 ---
 
-## Detalle del Activo
+### Ver Detalle de un Activo
 
-**Ruta:** `/assets/:id`
-
-### Información del Activo
-- Código y nombre
-- Categoría
-- Marca, modelo, serial
-- Fecha de compra
-- Valor de compra vs valor actual
-- Depreciación acumulada
-- Estado y condición
-- Ubicación
-- Asignado a
-
-### Tabs Disponibles
-
-#### Tab: Información
-Datos generales del activo.
-
-#### Tab: Depreciación
-- Valor original
-- Depreciación acumulada
-- Valor en libros
-- Historial de depreciación mensual
-
-#### Tab: Asignaciones
-Historial de asignaciones:
-- Empleado
-- Fecha inicio - fin
-- Notas
-
-#### Tab: Mantenimientos
-Historial de mantenimientos:
-- Fecha
-- Tipo
-- Descripción
-- Costo
-- Estado
-
-#### Tab: Documentos
-Archivos adjuntos (facturas, garantías, etc.)
-
-#### Tab: Auditoría
-Historial de cambios.
-
-### Acciones Disponibles
-
-| Acción | Descripción |
-|--------|-------------|
-| **Editar** | Modificar datos |
-| **Asignar** | Asignar a empleado |
-| **Transferir** | Cambiar responsable |
-| **Mantenimiento** | Registrar mantenimiento |
-| **Dar de Baja** | Retirar del inventario |
+1. En la lista, haga clic en el ícono de **ojo** (👁)
+2. Verá:
+   - Información completa del activo
+   - Cálculo de depreciación
+   - Historial de asignaciones
+   - Historial de mantenimientos
+   - Documentos adjuntos
 
 ---
 
-## Asignar Activo
+### Editar un Activo
 
-1. Ir al detalle del activo
-2. Clic en **"Asignar"**
-3. Seleccionar empleado
-4. Ingresar fecha de asignación
-5. Agregar notas (opcional)
-6. Guardar
+1. En la lista o detalle, haga clic en el ícono de **lápiz** (✏️)
+2. Modifique los campos necesarios
+3. Haga clic en **"Guardar"**
 
-### Transferir Activo
-1. Ir al detalle del activo asignado
-2. Clic en **"Transferir"**
-3. Seleccionar nuevo responsable
-4. Documentar motivo
-5. Guardar
+---
+
+### Asignar un Activo
+
+1. En el detalle del activo, busque la sección de asignación
+2. Haga clic en **"Asignar"** o **"Transferir"**
+3. Seleccione el empleado
+4. Agregue notas si es necesario
+5. Confirme la asignación
+
+---
+
+### Dar de Baja un Activo
+
+1. En el detalle del activo
+2. Haga clic en **"Dar de Baja"**
+3. Seleccione el motivo:
+   - Obsoleto
+   - Dañado irreparable
+   - Vendido
+   - Perdido
+4. Agregue notas explicativas
+5. Confirme la baja
+
+> ⚠️ **Importante**: Los activos dados de baja no pueden reactivarse. Verifique bien antes de confirmar.
+
+---
+
+## Categorías de Activos
+
+### Ver Lista de Categorías
+
+1. En el menú, seleccione **"Activos"** → **"Categorías"**
+2. Verá la lista de categorías
+
+### Crear una Categoría
+
+1. Haga clic en **"+ Nueva Categoría"**
+2. Complete el formulario:
+
+| Campo | Obligatorio | Descripción |
+|-------|-------------|-------------|
+| **Código** | ✅ Sí | Código único |
+| **Nombre** | ✅ Sí | Nombre de la categoría |
+| **Descripción** | ❌ No | Descripción |
+| **Vida Útil (años)** | ❌ No | Vida útil predeterminada |
+| **Método de Depreciación** | ❌ No | Línea recta, etc. |
+| **Cuenta Contable** | ❌ No | Para integración contable |
+
+3. Haga clic en **"Guardar"**
 
 ---
 
 ## Depreciación
 
-### Cálculo Automático
-El sistema calcula la depreciación mensualmente según el método configurado.
+### Cómo Funciona
 
-### Método Línea Recta
-```
-Depreciación Mensual = (Valor Compra - Valor Residual) / Vida Útil
-```
+El sistema calcula automáticamente la depreciación:
 
-### Método Saldos Decrecientes
-```
-Depreciación Mensual = Valor en Libros × Tasa de Depreciación
-```
+1. **Depreciación Mensual** = (Costo - Valor Residual) / (Vida Útil × 12)
+2. **Depreciación Acumulada** = Depreciación Mensual × Meses transcurridos
+3. **Valor en Libros** = Costo - Depreciación Acumulada
 
 ### Ver Depreciación
-1. Ir al detalle del activo
-2. Tab "Depreciación"
-3. Ver historial y proyección
+
+1. En el detalle del activo
+2. La sección de depreciación muestra:
+   - Costo original
+   - Depreciación acumulada
+   - Valor en libros actual
+   - Porcentaje depreciado
 
 ---
 
-## Mantenimientos
+## Consejos Útiles
 
-### Registrar Mantenimiento
-1. Ir al detalle del activo
-2. Clic en **"Registrar Mantenimiento"**
-3. Seleccionar tipo (Preventivo/Correctivo)
-4. Ingresar descripción
-5. Registrar costo
-6. Guardar
-
-### Estados de Mantenimiento
-- **Programado**: Pendiente de realizar
-- **En Proceso**: En ejecución
-- **Completado**: Finalizado
-
----
-
-## Dar de Baja
-
-### Motivos de Baja
-- **DISPOSED**: Dado de baja por obsolescencia
-- **SOLD**: Vendido
-- **LOST**: Perdido
-- **DAMAGED**: Dañado irreparablemente
-
-### Proceso
-1. Ir al detalle del activo
-2. Clic en **"Dar de Baja"**
-3. Seleccionar motivo
-4. Documentar la baja
-5. Confirmar
-6. El activo cambia a estado correspondiente
-
----
-
-## Categorías
-
-### Lista de Categorías
-
-**Ruta:** `/assets/categories`
-
-Muestra las categorías de activos:
-- Equipos de Cómputo
-- Mobiliario
-- Vehículos
-- Maquinaria
-- Herramientas
-
-### Crear Categoría
-1. Clic en **"Nueva Categoría"**
-2. Ingresar código y nombre
-3. Definir vida útil por defecto
-4. Definir método de depreciación por defecto
-5. Guardar
-
----
-
-## Tips y Mejores Prácticas
-
-### Para Activos
-- ✅ Usar códigos consistentes
-- ✅ Registrar número de serie
-- ✅ Adjuntar factura de compra
-- ✅ Mantener ubicación actualizada
-
-### Para Depreciación
-- ✅ Definir vida útil realista
-- ✅ Revisar valores periódicamente
-- ✅ Ajustar si cambia la vida útil
+### Para Registrar Activos
+- ✅ Use códigos consistentes (ACT-001, EQP-001)
+- ✅ Registre el número de serie
+- ✅ Tome fotos del activo
+- ✅ Defina la vida útil correctamente
 
 ### Para Asignaciones
-- ✅ Documentar cada asignación
-- ✅ Actualizar al cambiar responsable
-- ✅ Verificar estado al transferir
+- ✅ Siempre asigne un responsable
+- ✅ Documente las transferencias
+- ✅ Verifique la condición al transferir
+
+### Para Depreciación
+- ✅ Revise los valores periódicamente
+- ✅ Ajuste la vida útil si es necesario
+- ✅ Considere el valor residual
 
 ---
 
-## Solución de Problemas
+## Preguntas Frecuentes
 
-### "El valor no se deprecia"
-- Verificar método de depreciación
-- Verificar vida útil configurada
-- Verificar que el activo esté activo
+### ¿Cuál es la diferencia entre activo e inventario?
+Los activos fijos son bienes de larga duración que se deprecian (equipos, maquinaria). El inventario son bienes para consumo o venta.
 
-### "No puedo dar de baja"
-- Verificar permisos de usuario
-- Verificar que no tenga asignación activa
-- Documentar motivo de baja
+### ¿Puedo cambiar el costo de adquisición?
+No se recomienda. Si hay un error, documente el ajuste con una nota.
 
-### "Activo no aparece en lista"
-- Verificar filtros aplicados
-- Verificar estado del activo
-- Buscar por código exacto
+### ¿Qué pasa cuando un activo se deprecia completamente?
+El activo sigue existiendo pero su valor en libros es igual al valor residual. Puede seguir usándose.
+
+### ¿Cómo registro la venta de un activo?
+Dé de baja el activo con motivo "Vendido" y registre el ingreso en el módulo de Finanzas.
+
+### ¿Puedo tener activos sin asignar?
+Sí. Los activos pueden estar en estado "Almacenado" sin asignación.
+
+### ¿Cómo hago un inventario físico de activos?
+Exporte la lista de activos y verifique físicamente cada uno. Actualice la condición y ubicación según corresponda.

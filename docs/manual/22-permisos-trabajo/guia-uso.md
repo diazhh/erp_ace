@@ -1,82 +1,203 @@
-# 🔒 Módulo de Permisos de Trabajo - Guía de Uso
+# 🔒 Permisos de Trabajo (PTW) - Guía de Uso
 
-## Acceder al Módulo
+## Cómo Acceder al Módulo
 
-1. En el menú lateral, hacer clic en **"Permisos de Trabajo"**
-2. Se despliegan las opciones:
-   - Dashboard
-   - Lista de Permisos
+1. En el **menú lateral izquierdo**, busque la opción **"Permisos de Trabajo"** o **"PTW"**
+2. Haga clic en el ícono de flecha (▼) para expandir las opciones
+3. Verá las siguientes secciones:
+   - **Dashboard**: Panel con indicadores
+   - **Permisos**: Lista de permisos
+   - **Stop Work**: Paradas de trabajo
 
 ---
 
-## Dashboard PTW
+## Dashboard de PTW
 
-**Ruta:** `/ptw`
+### Acceder al Dashboard
 
-### KPIs Principales
+1. En el menú, seleccione **"PTW"** → **"Dashboard"**
+2. Verá el panel principal con indicadores
 
-| KPI | Descripción |
-|-----|-------------|
-| **Permisos Activos** | En ejecución |
+### Indicadores Principales
+
+| Indicador | Descripción |
+|-----------|-------------|
+| **Permisos Activos** | Trabajos en curso |
 | **Pendientes** | Por aprobar |
-| **Vencidos** | Expirados |
+| **Por Vencer** | Próximos a expirar |
+| **Stop Works** | Paradas activas |
 
 ---
 
-## Solicitar Permiso
+## Lista de Permisos
 
-**Ruta:** `/ptw/permits/new`
+### Ver Todos los Permisos
 
-### Campos del Formulario
+1. En el menú, seleccione **"PTW"** → **"Permisos"**
+2. Verá la tabla/tarjetas de permisos
+
+### Filtros Disponibles
+
+| Filtro | Opciones |
+|--------|----------|
+| **Búsqueda** | Por código o título |
+| **Estado** | Borrador, Pendiente, Activo, etc. |
+| **Tipo** | Trabajo en Caliente, Espacio Confinado, etc. |
+
+### Columnas de la Tabla
+
+| Columna | Descripción |
+|---------|-------------|
+| **Código** | Identificador único |
+| **Título** | Descripción del trabajo |
+| **Tipo** | Tipo de permiso |
+| **Ubicación** | Dónde se realiza |
+| **Vigencia** | Inicio y fin |
+| **Estado** | Estado actual |
+| **Acciones** | Ver, Editar, Aprobar, Activar |
+
+---
+
+### Solicitar un Permiso
+
+1. Haga clic en el botón **"+ Nuevo Permiso"**
+2. Complete el formulario:
 
 | Campo | Obligatorio | Descripción |
 |-------|-------------|-------------|
-| **Tipo** | ✅ | Tipo de permiso |
-| **Ubicación** | ✅ | Dónde se realizará |
-| **Descripción** | ✅ | Trabajo a realizar |
-| **Fecha Inicio** | ✅ | Cuándo inicia |
-| **Fecha Fin** | ✅ | Cuándo termina |
-| **Responsable** | ✅ | Quien ejecuta |
-| **Análisis de Riesgos** | ✅ | JSA adjunto |
+| **Código** | ✅ Sí | Código único |
+| **Título** | ✅ Sí | Descripción del trabajo |
+| **Tipo** | ✅ Sí | Tipo de permiso |
+| **Ubicación** | ✅ Sí | Dónde se realizará |
+| **Fecha/Hora Inicio** | ✅ Sí | Cuándo inicia |
+| **Fecha/Hora Fin** | ✅ Sí | Cuándo termina |
+| **Descripción del Trabajo** | ✅ Sí | Detalle de actividades |
+| **Riesgos Identificados** | ✅ Sí | Peligros del trabajo |
+| **Medidas de Control** | ✅ Sí | Cómo se controlan los riesgos |
+| **Personal Autorizado** | ✅ Sí | Quiénes realizarán el trabajo |
+| **Equipos de Protección** | ❌ No | EPP requerido |
 
-### Pasos
-1. Clic en **"+ Nuevo Permiso"**
-2. Seleccionar tipo de permiso
-3. Describir el trabajo
-4. Definir ubicación y fechas
-5. Completar análisis de riesgos
-6. Enviar para aprobación
-
----
-
-## Flujo de Aprobación
-
-```
-DRAFT → PENDING → APPROVED → ACTIVE → CLOSED
-                ↘ REJECTED
-```
-
-### Aprobar Permiso
-1. Revisar solicitud
-2. Verificar análisis de riesgos
-3. Verificar medidas de control
-4. Aprobar o rechazar
-
-### Activar Permiso
-1. Verificar condiciones en sitio
-2. Confirmar medidas implementadas
-3. Activar permiso
-
-### Cerrar Permiso
-1. Verificar trabajo completado
-2. Verificar área segura
-3. Cerrar permiso
+3. Haga clic en **"Guardar"**
+4. El permiso queda en estado "Borrador"
 
 ---
 
-## Tips y Mejores Prácticas
+### Flujo del Permiso
 
-- ✅ Solicitar con anticipación
-- ✅ Completar JSA detallado
-- ✅ Verificar vigencia antes de trabajar
-- ✅ Cerrar al terminar el trabajo
+```
+1. BORRADOR → Crear y completar información
+   ↓ [Enviar para Aprobación]
+2. PENDIENTE → Esperando revisión de HSE
+   ↓ [Aprobar]
+3. APROBADO → Listo para iniciar
+   ↓ [Activar]
+4. ACTIVO → Trabajo en curso
+   ↓ [Cerrar]
+5. CERRADO → Trabajo completado
+```
+
+---
+
+### Enviar para Aprobación
+
+1. En el detalle del permiso en estado "Borrador"
+2. Verifique que toda la información esté completa
+3. Haga clic en **"Enviar para Aprobación"**
+4. El estado cambia a "Pendiente"
+
+---
+
+### Aprobar un Permiso
+
+1. En el detalle del permiso en estado "Pendiente"
+2. Revise la información y medidas de control
+3. Haga clic en **"Aprobar"** o **"Rechazar"**
+4. Agregue comentarios si es necesario
+
+---
+
+### Activar un Permiso
+
+1. En el detalle del permiso aprobado
+2. Verifique que las condiciones están listas
+3. Haga clic en **"Activar"**
+4. El trabajo puede comenzar
+
+---
+
+### Cerrar un Permiso
+
+1. Cuando el trabajo esté completado
+2. En el detalle del permiso activo
+3. Haga clic en **"Cerrar Permiso"**
+4. Confirme que el área quedó segura
+5. El estado cambia a "Cerrado"
+
+---
+
+## Stop Work Authority
+
+### Ver Lista de Stop Works
+
+1. En el menú, seleccione **"PTW"** → **"Stop Work"**
+2. Verá las paradas de trabajo registradas
+
+### Registrar una Parada
+
+1. Haga clic en **"+ Nuevo Stop Work"**
+2. Complete:
+   - Permiso afectado (si aplica)
+   - Ubicación
+   - Razón de la parada
+   - Condición insegura observada
+   - Acciones inmediatas tomadas
+3. Haga clic en **"Guardar"**
+
+### Resolver una Parada
+
+1. En el detalle del Stop Work
+2. Documente las acciones correctivas
+3. Verifique que la condición se corrigió
+4. Marque como resuelto
+5. El trabajo puede reanudarse
+
+---
+
+## Consejos Útiles
+
+### Para Solicitar Permisos
+- ✅ Identifique todos los riesgos
+- ✅ Defina medidas de control claras
+- ✅ Liste todo el personal autorizado
+- ✅ Solicite con anticipación
+
+### Para Aprobar
+- ✅ Verifique que los riesgos están controlados
+- ✅ Confirme que el personal está capacitado
+- ✅ Revise los EPP requeridos
+- ✅ Visite el área si es necesario
+
+### Para Trabajos Activos
+- ✅ Mantenga el permiso visible en el área
+- ✅ Respete los horarios autorizados
+- ✅ Detenga el trabajo si hay cambios
+- ✅ Cierre el permiso al terminar
+
+---
+
+## Preguntas Frecuentes
+
+### ¿Puedo extender un permiso?
+Sí, antes de que expire puede solicitar una extensión que debe ser aprobada.
+
+### ¿Qué pasa si el permiso expira?
+El trabajo debe detenerse. Debe solicitar un nuevo permiso o extensión.
+
+### ¿Quién puede aprobar permisos?
+Personal de HSE o supervisores autorizados según el tipo de trabajo.
+
+### ¿Puedo trabajar sin permiso?
+No para trabajos de alto riesgo. Es una violación de seguridad grave.
+
+### ¿Qué hago si veo una condición insegura?
+Use la autoridad de Stop Work para detener el trabajo inmediatamente.

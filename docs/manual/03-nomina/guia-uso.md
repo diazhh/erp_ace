@@ -1,351 +1,306 @@
-# 💰 Módulo de Nómina - Guía de Uso
+# 💰 Nómina y Pagos - Guía de Uso
 
-## Acceder al Módulo
+## Cómo Acceder al Módulo
 
-1. En el menú lateral, hacer clic en **"Nómina"**
-2. Se despliegan las opciones:
-   - Períodos
-   - Préstamos
+1. En el **menú lateral izquierdo**, busque la opción **"Nómina"**
+2. Haga clic en el ícono de flecha (▼) para expandir las opciones
+3. Verá las siguientes secciones:
+   - **Períodos**: Gestión de períodos de nómina
+   - **Préstamos**: Gestión de préstamos a empleados
 
 ---
 
 ## Períodos de Nómina
 
-### Lista de Períodos
+### Ver Lista de Períodos
 
-**Ruta:** `/payroll`
-
-#### KPIs en la Parte Superior
-| KPI | Descripción |
-|-----|-------------|
-| **Total Anual** | Suma de nóminas pagadas en el año |
-| **Períodos Pendientes** | Períodos sin pagar |
-| **Préstamos Activos** | Cantidad de préstamos vigentes |
-| **Monto Total Préstamos** | Saldo pendiente de préstamos |
+1. En el menú, seleccione **"Nómina"** → **"Períodos"**
+2. Verá indicadores en la parte superior con:
+   - **Total del Año**: Suma de nóminas pagadas en el año
+   - **Períodos Pendientes**: Períodos sin aprobar
+   - **Préstamos Activos**: Cantidad de préstamos vigentes
+   - **Monto en Préstamos**: Total de préstamos activos
 
 #### Filtros Disponibles
-| Filtro | Opciones |
-|--------|----------|
-| **Estado** | Todos, Borrador, Calculando, Pendiente, Aprobado, Pagado |
-| **Año** | Últimos 5 años |
 
-#### Columnas de la Tabla (Desktop)
+| Filtro | Descripción |
+|--------|-------------|
+| **Estado** | Borrador, Calculando, Pendiente, Aprobado, Pagado |
+| **Año** | Filtrar por año |
+
+#### Columnas de la Tabla
+
 | Columna | Descripción |
 |---------|-------------|
-| **Código** | Identificador único (NOM-2025-01) |
-| **Nombre** | Nombre descriptivo del período |
-| **Fecha Inicio** | Inicio del período |
-| **Fecha Fin** | Fin del período |
-| **Fecha Pago** | Fecha programada de pago |
+| **Código** | Identificador único del período |
+| **Nombre** | Nombre descriptivo (ej: "Quincena 1 Enero") |
+| **Fecha Inicio** | Primer día del período |
+| **Fecha Fin** | Último día del período |
+| **Fecha de Pago** | Cuándo se realiza el pago |
 | **Total Neto** | Monto total a pagar |
-| **Empleados** | Cantidad de empleados |
-| **Estado** | Borrador, Aprobado, Pagado, etc. |
+| **Empleados** | Cantidad de empleados incluidos |
+| **Estado** | Estado actual del período |
 | **Acciones** | Ver, Editar, Eliminar |
 
-#### Vista Mobile
-Tarjetas con:
-- Código y nombre
-- Estado (chip de color)
-- Fechas de inicio y fin
-- Total neto y cantidad de empleados
-- Botones de acción
-
 ---
 
-### Crear Período de Nómina
+### Crear un Nuevo Período
 
-1. Hacer clic en **"+ Nuevo Período"**
-2. Se abre un diálogo con el formulario
+1. En la lista de períodos, haga clic en el botón **"+ Nuevo Período"**
+2. Se abrirá un formulario con los siguientes campos:
 
 #### Campos del Formulario
 
 | Campo | Obligatorio | Descripción |
 |-------|-------------|-------------|
-| **Código** | ✅ | Código único (ej: NOM-2025-01) |
-| **Nombre** | ✅ | Nombre descriptivo |
-| **Tipo de Período** | ✅ | Semanal, Quincenal, Mensual |
-| **Fecha Inicio** | ✅ | Primer día del período |
-| **Fecha Fin** | ✅ | Último día del período |
-| **Fecha de Pago** | ✅ | Fecha de procesamiento del pago |
-| **Moneda** | ✅ | USD, VES |
-| **Tasa de Cambio** | ❌ | Tasa USD/VES si aplica |
+| **Código** | ✅ Sí | Código único (ej: "NOM-2025-01") |
+| **Nombre** | ✅ Sí | Nombre descriptivo |
+| **Tipo de Período** | ✅ Sí | Semanal, Quincenal o Mensual |
+| **Fecha de Inicio** | ✅ Sí | Primer día del período |
+| **Fecha de Fin** | ✅ Sí | Último día del período |
+| **Fecha de Pago** | ✅ Sí | Cuándo se realizará el pago |
+| **Moneda** | ✅ Sí | USD o VES |
+| **Tasa de Cambio** | ❌ No | Tasa de cambio del día |
 
-3. Hacer clic en **"Guardar"**
-4. El período se crea en estado **DRAFT**
+3. Complete los campos requeridos
+4. Haga clic en **"Guardar"**
+5. El período se crea en estado **"Borrador"**
 
 ---
 
-### Detalle del Período
+### Procesar un Período de Nómina
 
-**Ruta:** `/payroll/periods/:id`
+El proceso de nómina sigue estos pasos:
 
-#### Encabezado
-- Nombre del período
-- Código
-- Estado (chip de color)
-- Botón de volver
+#### Paso 1: Generar Entradas
 
-#### KPIs del Período
-| KPI | Descripción |
-|-----|-------------|
-| **Total Bruto** | Suma de salarios brutos |
-| **Total Deducciones** | Suma de todas las deducciones |
-| **Total Neto** | Monto a pagar (Bruto - Deducciones) |
-| **Empleados** | Cantidad de empleados en el período |
+1. Abra el detalle del período (clic en el ícono de ojo 👁)
+2. Haga clic en el botón **"Generar Entradas"**
+3. Confirme la acción
+4. El sistema:
+   - Busca todos los empleados activos
+   - Calcula el salario base de cada uno
+   - Aplica las deducciones legales (SSO, RPE, FAOV, ISLR)
+   - Descuenta cuotas de préstamos activos
+   - Genera una entrada por cada empleado
+
+#### Paso 2: Revisar Entradas
+
+1. En el detalle del período, verá la tabla de entradas
+2. Cada entrada muestra:
+   - Nombre del empleado
+   - Cargo
+   - Salario base
+   - Total bruto
+   - Deducciones
+   - Neto a pagar
+3. Si necesita ajustar alguna entrada, haga clic en el ícono de **lápiz** (✏️)
+
+#### Paso 3: Aprobar el Período
+
+1. Una vez revisadas las entradas, haga clic en **"Aprobar"**
+2. Confirme la acción
+3. El estado cambia a **"Aprobado"**
+4. Ya no se pueden modificar las entradas
+
+#### Paso 4: Marcar como Pagado
+
+1. Después de realizar el pago (transferencias, cheques, etc.)
+2. Haga clic en **"Marcar como Pagado"**
+3. Confirme la acción
+4. El estado cambia a **"Pagado"**
+
+---
+
+### Ver Detalle de un Período
+
+1. En la lista, haga clic en el ícono de **ojo** (👁) en la columna de acciones
+2. Verá:
+
+#### Indicadores Principales
+- **Total Bruto**: Suma de salarios antes de deducciones
+- **Total Deducciones**: Suma de todas las deducciones
+- **Total Neto**: Monto total a pagar
+- **Empleados**: Cantidad de empleados en el período
 
 #### Información del Período
-- Tipo de período (Semanal, Quincenal, Mensual)
-- Fecha de inicio
-- Fecha de fin
-- Fecha de pago
-- Moneda
-- Tasa de cambio
-
-#### Acciones Disponibles
-
-| Estado Actual | Acción | Descripción |
-|---------------|--------|-------------|
-| **DRAFT** | Generar Entradas | Crea entradas para todos los empleados activos |
-| **CALCULATING/PENDING** | Aprobar | Autoriza el período para pago |
-| **APPROVED** | Marcar como Pagado | Indica que el pago fue procesado |
-| **Cualquiera** | Descargar PDF | Exporta resumen del período |
+- Tipo de período
+- Fechas de inicio, fin y pago
+- Moneda y tasa de cambio
 
 #### Tabla de Entradas
-
-| Columna | Descripción |
-|---------|-------------|
-| **Nombre** | Nombre del empleado (enlace al detalle) |
-| **Apellido** | Apellido del empleado |
-| **Cargo** | Posición del empleado |
-| **Salario Base** | Salario mensual base |
-| **Salario Bruto** | Bruto del período (proporcional) |
-| **Deducciones** | Total de deducciones |
-| **Neto** | Monto a recibir |
-| **Estado Pago** | Pendiente/Pagado |
-| **Acciones** | Editar entrada |
+Lista de todos los empleados con sus montos calculados.
 
 ---
 
-### Flujo de Trabajo Completo
+### Descargar Documentos
 
-#### Paso 1: Crear Período
-1. Clic en "Nuevo Período"
-2. Completar datos
-3. Guardar (estado: DRAFT)
+#### Resumen de Nómina
+1. En el detalle del período, haga clic en **"Descargar PDF"**
+2. Se genera un PDF con el resumen completo
 
-#### Paso 2: Generar Entradas
-1. Abrir detalle del período
-2. Clic en **"Generar Entradas"**
-3. Confirmar en el diálogo
-4. El sistema:
-   - Obtiene todos los empleados activos
-   - Calcula salario proporcional por días
-   - Aplica deducciones legales (SSO, RPE, FAOV, ISLR)
-   - Descuenta cuotas de préstamos activos
-5. Estado cambia a CALCULATING o PENDING_APPROVAL
-
-#### Paso 3: Revisar y Ajustar
-1. Revisar cada entrada en la tabla
-2. Si necesita ajustes, clic en **"Editar"** en la entrada
-3. Modificar montos de bonos, deducciones adicionales
-4. Guardar cambios
-
-#### Paso 4: Aprobar
-1. Clic en **"Aprobar"**
-2. Confirmar en el diálogo
-3. Estado cambia a APPROVED
-4. Ya no se pueden editar entradas
-
-#### Paso 5: Procesar Pago
-1. Realizar transferencias bancarias (proceso externo)
-2. Verificar que todos los pagos fueron procesados
-
-#### Paso 6: Marcar como Pagado
-1. Clic en **"Marcar como Pagado"**
-2. Confirmar en el diálogo
-3. Estado cambia a PAID
-4. Se registra la fecha de pago real
+#### Recibo Individual
+1. En la tabla de entradas, haga clic en el ícono de **recibo** (🧾) del empleado
+2. Se genera el recibo de pago individual
 
 ---
 
-## Préstamos
+## Préstamos a Empleados
 
-### Lista de Préstamos
+### Ver Lista de Préstamos
 
-**Ruta:** `/payroll/loans`
+1. En el menú, seleccione **"Nómina"** → **"Préstamos"**
+2. Verá la lista de todos los préstamos
 
 #### Filtros Disponibles
-| Filtro | Opciones |
-|--------|----------|
-| **Estado** | Todos, Activo, Pagado, Cancelado, Pausado |
-| **Tipo** | Todos, Personal, Adelanto, Emergencia, Otro |
-| **Fecha Inicio** | Desde fecha |
-| **Fecha Fin** | Hasta fecha |
 
-#### Columnas de la Tabla (Desktop)
+| Filtro | Descripción |
+|--------|-------------|
+| **Estado** | Activo, Pagado, Cancelado, Pausado |
+| **Tipo** | Personal, Adelanto, Emergencia, Otro |
+| **Fecha Desde** | Filtrar por fecha de inicio |
+| **Fecha Hasta** | Filtrar por fecha de fin |
+
+#### Columnas de la Tabla
+
 | Columna | Descripción |
 |---------|-------------|
-| **Código** | Identificador único (LOAN-XXXXX) |
-| **Empleado** | Nombre del beneficiario |
-| **Tipo** | Personal, Adelanto, Emergencia, Otro |
+| **Código** | Identificador del préstamo |
+| **Empleado** | Nombre del empleado |
+| **Tipo** | Tipo de préstamo |
 | **Monto** | Monto total del préstamo |
 | **Cuota** | Monto de cada cuota |
-| **Progreso** | Cuotas pagadas / Total |
-| **Saldo** | Monto pendiente |
-| **Estado** | Activo, Pagado, Cancelado, Pausado |
+| **Progreso** | Cuotas pagadas / Total cuotas |
+| **Pendiente** | Monto que falta por pagar |
+| **Estado** | Estado actual |
 | **Acciones** | Ver detalle |
-
-#### Vista Mobile
-Tarjetas con:
-- Código y empleado
-- Estado (chip de color)
-- Tipo de préstamo
-- Monto y cuota
-- Progreso (cuotas pagadas)
-- Saldo pendiente
-- Barra de progreso visual
 
 ---
 
-### Crear Préstamo
+### Crear un Nuevo Préstamo
 
-**Ruta:** `/payroll/loans/new`
+1. En la lista de préstamos, haga clic en **"+ Nuevo Préstamo"**
+2. Se abrirá una página con el formulario
 
 #### Campos del Formulario
 
 | Campo | Obligatorio | Descripción |
 |-------|-------------|-------------|
-| **Empleado** | ✅ | Seleccionar empleado |
-| **Tipo de Préstamo** | ✅ | Personal, Adelanto, Emergencia, Otro |
-| **Monto** | ✅ | Monto total del préstamo |
-| **Moneda** | ✅ | USD, VES |
-| **Número de Cuotas** | ✅ | Cantidad de cuotas |
-| **Fecha de Inicio** | ✅ | Cuándo empezar a descontar |
-| **Descripción** | ❌ | Motivo del préstamo |
+| **Empleado** | ✅ Sí | Seleccione el empleado |
+| **Tipo de Préstamo** | ✅ Sí | Personal, Adelanto, Emergencia, Otro |
+| **Monto Total** | ✅ Sí | Monto del préstamo |
+| **Moneda** | ✅ Sí | USD o VES |
+| **Número de Cuotas** | ✅ Sí | En cuántas cuotas se pagará |
+| **Fecha de Inicio** | ✅ Sí | Desde cuándo empezar a descontar |
+| **Motivo** | ❌ No | Razón del préstamo |
 
-#### Pasos
-1. Hacer clic en **"+ Nuevo Préstamo"**
-2. Seleccionar empleado
-3. Elegir tipo de préstamo
-4. Ingresar monto y número de cuotas
-5. El sistema calcula automáticamente el monto de cada cuota
-6. Establecer fecha de inicio de descuento
-7. Hacer clic en **"Guardar"**
-8. El préstamo queda pendiente de aprobación
+3. El sistema calcula automáticamente el monto de cada cuota
+4. Haga clic en **"Guardar"**
 
 ---
 
-### Detalle del Préstamo
+### Ver Detalle de un Préstamo
 
-**Ruta:** `/payroll/loans/:id`
+1. En la lista, haga clic en el ícono de **ojo** (👁)
+2. Verá:
 
 #### Información del Préstamo
-- Código
-- Empleado (enlace al detalle)
-- Tipo de préstamo
-- Monto total
-- Monto de cuota
-- Cuotas pagadas / Total
-- Saldo pendiente
+- Código y tipo
+- Empleado (enlace a su ficha)
+- Monto total y cuota
 - Fecha de inicio
 - Estado
 
+#### Progreso de Pago
+- Barra de progreso visual
+- Cuotas pagadas vs total
+- Monto pendiente
+
 #### Historial de Pagos
-Tabla con cada pago/cuota:
-- Número de cuota
-- Fecha
-- Monto
-- Período de nómina asociado
-- Estado
-
-#### Acciones Disponibles
-
-| Estado | Acción | Descripción |
-|--------|--------|-------------|
-| **Pendiente** | Aprobar | Activa el préstamo |
-| **Pendiente** | Rechazar | Cancela la solicitud |
-| **Activo** | Pausar | Suspende temporalmente los descuentos |
-| **Pausado** | Reactivar | Reanuda los descuentos |
-| **Activo** | Cancelar | Cancela el préstamo (con saldo pendiente) |
+Lista de cuotas descontadas:
+- Fecha del descuento
+- Período de nómina
+- Monto descontado
 
 ---
 
-## Cálculo de Deducciones
+### Acciones sobre Préstamos
 
-### Deducciones Legales Venezolanas
+#### Pausar un Préstamo
+1. En el detalle del préstamo, haga clic en **"Pausar"**
+2. El préstamo deja de descontarse de la nómina
+3. Puede reactivarlo cuando desee
 
-El sistema calcula automáticamente:
+#### Cancelar un Préstamo
+1. En el detalle del préstamo, haga clic en **"Cancelar"**
+2. Confirme la acción
+3. El préstamo se marca como cancelado
+4. El saldo pendiente queda sin cobrar
 
-```
-Salario Bruto = Salario Base × (Días del Período / 30)
-
-SSO (4%)     = Salario Bruto × 0.04
-RPE (0.5%)   = Salario Bruto × 0.005
-FAOV (1%)    = Salario Bruto × 0.01
-ISLR         = Según tabla simplificada
-
-Total Deducciones = SSO + RPE + FAOV + ISLR + Cuota Préstamo
-
-Salario Neto = Salario Bruto - Total Deducciones
-```
-
-### Descuento de Préstamos
-
-- Los préstamos activos se descuentan automáticamente
-- Una cuota por período de nómina
-- El descuento se registra como pago del préstamo
-- Cuando se completan todas las cuotas, el préstamo pasa a PAID
+#### Registrar Pago Manual
+1. Si el empleado paga una cuota fuera de nómina
+2. Haga clic en **"Registrar Pago"**
+3. Ingrese el monto y la fecha
+4. El sistema actualiza el saldo pendiente
 
 ---
 
-## Tips y Mejores Prácticas
+## Flujo Completo de Nómina
 
-### Al Crear Períodos
-- ✅ Usar códigos consistentes (NOM-2025-01, NOM-2025-02)
-- ✅ Verificar fechas de inicio y fin correctas
-- ✅ Establecer fecha de pago realista
-- ✅ Verificar tasa de cambio actualizada
+```
+1. CREAR PERÍODO
+   ↓
+2. GENERAR ENTRADAS (automático)
+   ↓
+3. REVISAR Y AJUSTAR (si es necesario)
+   ↓
+4. APROBAR
+   ↓
+5. REALIZAR PAGOS (fuera del sistema)
+   ↓
+6. MARCAR COMO PAGADO
+```
 
-### Al Generar Entradas
-- ✅ Verificar que todos los empleados activos tienen salario asignado
-- ✅ Revisar empleados nuevos o con cambios recientes
-- ✅ Verificar cuentas bancarias actualizadas
+---
 
-### Al Aprobar
-- ✅ Revisar totales antes de aprobar
-- ✅ Verificar que no hay entradas con errores
-- ✅ Confirmar disponibilidad de fondos
+## Consejos Útiles
+
+### Para Períodos de Nómina
+- ✅ Verifique que todos los empleados tengan salario base registrado
+- ✅ Revise las entradas antes de aprobar
+- ✅ Genere los recibos individuales para cada empleado
+- ✅ Guarde el PDF del resumen para sus registros
 
 ### Para Préstamos
-- ✅ Verificar capacidad de pago del empleado
-- ✅ Documentar el motivo del préstamo
-- ✅ Establecer cuotas razonables según salario
+- ✅ Defina cuotas que el empleado pueda pagar cómodamente
+- ✅ Documente el motivo del préstamo
+- ✅ Revise el estado de préstamos antes de cada nómina
+- ✅ Use "Pausar" en lugar de "Cancelar" si es temporal
+
+### Mejores Prácticas
+- ✅ Procese la nómina con suficiente anticipación
+- ✅ Mantenga actualizada la información de empleados
+- ✅ Revise los totales antes de aprobar
+- ✅ Archive los PDFs de cada período
 
 ---
 
-## Solución de Problemas
+## Preguntas Frecuentes
 
-### "No se generaron entradas"
-- Verificar que existen empleados con estado ACTIVE
-- Verificar que los empleados tienen salario asignado
-- Verificar que el período no se superpone con otro
+### ¿Por qué un empleado no aparece en la nómina?
+Verifique que el empleado tenga estado "Activo" y que tenga un salario base registrado en su ficha.
 
-### "El monto neto es incorrecto"
-- Revisar deducciones manuales agregadas
-- Verificar préstamos activos del empleado
-- Revisar cálculo de días trabajados
+### ¿Puedo modificar una entrada después de aprobar?
+No. Una vez aprobado el período, las entradas no se pueden modificar. Si hay un error, debe cancelar el período y crear uno nuevo.
 
-### "No puedo editar el período"
-- Solo se puede editar en estado DRAFT
-- Una vez aprobado, no se pueden hacer cambios
-- Si necesita correcciones, crear un período de ajuste
+### ¿Cómo se calculan las deducciones?
+El sistema aplica automáticamente los porcentajes legales venezolanos sobre el salario base: SSO (4%), RPE (0.5%), FAOV (1%) e ISLR (variable según el monto).
 
-### "El préstamo no se descuenta"
-- Verificar que el préstamo está en estado ACTIVE
-- Verificar que la fecha de inicio ya pasó
-- Verificar que el empleado está en el período de nómina
+### ¿Qué pasa si un empleado tiene un préstamo activo?
+La cuota del préstamo se descuenta automáticamente al generar las entradas de nómina.
 
-### "No puedo aprobar el período"
-- Verificar que tiene el permiso `payroll:approve`
-- Verificar que el período tiene entradas generadas
-- Verificar que no hay errores en las entradas
+### ¿Puedo tener varios préstamos para un mismo empleado?
+Sí, un empleado puede tener varios préstamos activos. Todas las cuotas se descontarán de su nómina.
+
+### ¿Cómo veo el historial de pagos de un empleado?
+Vaya a la ficha del empleado en el módulo de Empleados y busque la pestaña de "Nómina" o "Pagos".

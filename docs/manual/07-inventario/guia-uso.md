@@ -1,377 +1,326 @@
-# 📦 Módulo de Inventario - Guía de Uso
+# 📦 Inventario y Almacén - Guía de Uso
 
-## Acceder al Módulo
+## Cómo Acceder al Módulo
 
-1. En el menú lateral, hacer clic en **"Inventario"**
-2. Se despliegan las opciones:
-   - Dashboard
-   - Items
-   - Almacenes
-   - Movimientos
-   - Categorías
+1. En el **menú lateral izquierdo**, busque la opción **"Inventario"**
+2. Haga clic en el ícono de flecha (▼) para expandir las opciones
+3. Verá las siguientes secciones:
+   - **Dashboard**: Panel con indicadores
+   - **Artículos**: Gestión de productos y materiales
+   - **Almacenes**: Gestión de ubicaciones de almacenamiento
+   - **Movimientos**: Registro de entradas y salidas
 
 ---
 
 ## Dashboard de Inventario
 
-**Ruta:** `/inventory`
+### Acceder al Dashboard
 
-### KPIs Principales
+1. En el menú, seleccione **"Inventario"** → **"Dashboard"**
+2. Verá el panel principal con indicadores y alertas
 
-| KPI | Descripción |
-|-----|-------------|
-| **Total Items** | Cantidad de items activos |
+### Indicadores Principales
+
+| Indicador | Descripción |
+|-----------|-------------|
+| **Total Artículos** | Cantidad de artículos registrados |
 | **Valor del Inventario** | Suma del valor de todo el stock |
-| **Items con Stock Bajo** | Items bajo el mínimo |
-| **Movimientos del Mes** | Cantidad de movimientos |
+| **Almacenes Activos** | Cantidad de almacenes operativos |
+| **Stock Bajo** | Artículos que necesitan reposición |
 
-### Gráficos
-- **Stock por Categoría**: Distribución del inventario
-- **Movimientos Recientes**: Entradas vs salidas
-- **Items Críticos**: Lista de items con stock bajo
+### Alertas de Stock Bajo
+
+Lista de artículos cuyo stock está por debajo del mínimo definido.
 
 ---
 
-## Items de Inventario
+## Artículos
 
-### Lista de Items
+### Ver Lista de Artículos
 
-**Ruta:** `/inventory/items`
+1. En el menú, seleccione **"Inventario"** → **"Artículos"**
+2. Verá indicadores y la tabla/tarjetas de artículos
 
-#### Filtros Disponibles
+### Filtros Disponibles
 
 | Filtro | Opciones |
 |--------|----------|
-| **Búsqueda** | Por código o nombre |
-| **Categoría** | Todas las categorías |
+| **Búsqueda** | Por nombre, código o SKU |
+| **Categoría** | Categorías registradas |
 | **Tipo** | Producto, Material, Herramienta, etc. |
 | **Estado** | Activo, Inactivo, Descontinuado |
-| **Stock Bajo** | Solo items bajo mínimo |
+| **Stock Bajo** | Solo artículos con alerta |
 
-#### Columnas de la Tabla
+### Columnas de la Tabla
 
 | Columna | Descripción |
 |---------|-------------|
-| **Código** | SKU del item |
-| **Nombre** | Nombre del item |
-| **Categoría** | Categoría asignada |
-| **Tipo** | Tipo de item |
-| **Stock** | Cantidad actual |
-| **Mínimo** | Stock mínimo |
-| **Costo** | Precio de costo |
-| **Estado** | Activo/Inactivo |
+| **Código** | Identificador único |
+| **Nombre** | Nombre del artículo |
+| **Categoría** | Clasificación |
+| **Tipo** | Tipo de artículo |
+| **Stock** | Cantidad total |
+| **Disponible** | Cantidad sin reservar |
+| **Costo Unit.** | Costo por unidad |
+| **Estado** | Estado actual |
 | **Acciones** | Ver, Editar, Eliminar |
 
-#### Indicadores de Stock
+### Indicadores de Alerta
 
-| Indicador | Significado |
-|-----------|-------------|
-| 🔴 Rojo | Stock bajo el mínimo |
-| 🟡 Naranja | Stock cerca del mínimo |
-| 🟢 Verde | Stock saludable |
+| Ícono | Significado |
+|-------|-------------|
+| 🔴 ⚠️ | Sin stock (cantidad = 0) |
+| 🟡 ⚠️ | Stock bajo (≤ mínimo) |
 
 ---
 
-### Crear Item
+### Crear un Nuevo Artículo
 
-**Ruta:** `/inventory/items/new`
+1. Haga clic en el botón **"+ Nuevo Artículo"**
+2. Se abrirá una página con el formulario
 
 #### Campos del Formulario
 
 | Campo | Obligatorio | Descripción |
 |-------|-------------|-------------|
-| **Código** | ✅ | SKU único del item |
-| **Nombre** | ✅ | Nombre descriptivo |
-| **Descripción** | ❌ | Descripción detallada |
-| **Categoría** | ❌ | Categoría del item |
-| **Tipo** | ✅ | Producto, Material, etc. |
-| **Unidad** | ✅ | Unidad de medida (UN, KG, LT, etc.) |
-| **Stock Mínimo** | ❌ | Cantidad para alerta |
-| **Stock Máximo** | ❌ | Cantidad máxima |
-| **Precio de Costo** | ❌ | Costo unitario |
-| **Precio de Venta** | ❌ | Precio de venta |
-| **Moneda** | ❌ | USD, VES |
-| **Estado** | ❌ | Activo (default) |
+| **Código** | ✅ Sí | Código único (ej: "MAT-001") |
+| **Nombre** | ✅ Sí | Nombre descriptivo |
+| **SKU** | ❌ No | Código de barras o SKU |
+| **Categoría** | ❌ No | Seleccione categoría |
+| **Tipo** | ✅ Sí | Producto, Material, etc. |
+| **Unidad** | ✅ Sí | Unidad de medida (UND, KG, LT, etc.) |
+| **Descripción** | ❌ No | Descripción detallada |
+| **Marca** | ❌ No | Marca del artículo |
+| **Modelo** | ❌ No | Modelo específico |
+| **Stock Mínimo** | ❌ No | Nivel para alerta |
+| **Stock Máximo** | ❌ No | Capacidad máxima |
+| **Costo Unitario** | ❌ No | Costo por unidad |
+| **Precio de Venta** | ❌ No | Precio al público |
+| **Moneda** | ❌ No | USD, VES |
+| **Estado** | ✅ Sí | Activo, Inactivo |
 
-#### Pasos
-1. Hacer clic en **"+ Nuevo Item"**
-2. Ingresar código único (SKU)
-3. Completar nombre y descripción
-4. Seleccionar categoría y tipo
-5. Definir unidad de medida
-6. Establecer stock mínimo/máximo
-7. Ingresar precios
-8. Hacer clic en **"Guardar"**
+3. Complete los campos requeridos
+4. Haga clic en **"Guardar"**
 
 ---
 
-### Detalle del Item
+### Ver Detalle de un Artículo
 
-**Ruta:** `/inventory/items/:id`
-
-#### Información del Item
-- Código y nombre
-- Descripción
-- Categoría y tipo
-- Unidad de medida
-- Precios (costo y venta)
-- Estado
-
-#### Stock por Almacén
-Tabla con stock en cada almacén:
-- Almacén
-- Cantidad disponible
-- Cantidad reservada
-- Total
-
-#### Historial de Movimientos
-Lista de movimientos del item:
-- Fecha
-- Tipo de movimiento
-- Almacén
-- Cantidad
-- Referencia
-
-#### Tabs Disponibles
-- **Información**: Datos generales
-- **Stock**: Stock por almacén
-- **Movimientos**: Historial
-- **Documentos**: Archivos adjuntos
+1. En la lista, haga clic en el ícono de **ojo** (👁)
+2. Verá:
+   - Información completa del artículo
+   - Stock por almacén
+   - Historial de movimientos
+   - Documentos adjuntos
 
 ---
 
 ## Almacenes
 
-### Lista de Almacenes
+### Ver Lista de Almacenes
 
-**Ruta:** `/inventory/warehouses`
+1. En el menú, seleccione **"Inventario"** → **"Almacenes"**
+2. Verá la lista de todos los almacenes
 
-#### Filtros Disponibles
+### Columnas de la Tabla
 
-| Filtro | Opciones |
-|--------|----------|
-| **Búsqueda** | Por código o nombre |
+| Columna | Descripción |
+|---------|-------------|
+| **Código** | Identificador único |
+| **Nombre** | Nombre del almacén |
 | **Tipo** | Principal, Secundario, Tránsito, Proyecto |
+| **Ubicación** | Dirección física |
+| **Encargado** | Empleado responsable |
+| **Proyecto** | Proyecto asociado (si aplica) |
 | **Estado** | Activo, Inactivo, Cerrado |
-
-#### Información Mostrada
-- Código y nombre
-- Tipo de almacén
-- Ubicación
-- Responsable
-- Cantidad de items
-- Valor del stock
-- Estado
+| **Acciones** | Ver, Editar, Eliminar |
 
 ---
 
-### Crear Almacén
+### Crear un Nuevo Almacén
 
-**Ruta:** `/inventory/warehouses/new`
-
-#### Campos del Formulario
+1. Haga clic en el botón **"+ Nuevo Almacén"**
+2. Complete el formulario:
 
 | Campo | Obligatorio | Descripción |
 |-------|-------------|-------------|
-| **Código** | ✅ | Código único |
-| **Nombre** | ✅ | Nombre del almacén |
-| **Tipo** | ✅ | Principal, Secundario, etc. |
-| **Dirección** | ❌ | Ubicación física |
-| **Responsable** | ❌ | Empleado encargado |
-| **Estado** | ❌ | Activo (default) |
-| **Notas** | ❌ | Observaciones |
+| **Código** | ✅ Sí | Código único (ej: "ALM-001") |
+| **Nombre** | ✅ Sí | Nombre descriptivo |
+| **Tipo** | ✅ Sí | Principal, Secundario, Tránsito, Proyecto |
+| **Ubicación** | ❌ No | Dirección física |
+| **Encargado** | ❌ No | Empleado responsable |
+| **Proyecto** | ❌ No | Solo para tipo "Proyecto" |
+| **Descripción** | ❌ No | Descripción adicional |
+| **Estado** | ✅ Sí | Activo, Inactivo |
 
-#### Pasos
-1. Hacer clic en **"+ Nuevo Almacén"**
-2. Ingresar código y nombre
-3. Seleccionar tipo de almacén
-4. Ingresar dirección
-5. Asignar responsable
-6. Hacer clic en **"Guardar"**
+3. Haga clic en **"Guardar"**
 
 ---
 
-### Detalle del Almacén
+### Ver Detalle de un Almacén
 
-**Ruta:** `/inventory/warehouses/:id`
-
-#### Información del Almacén
-- Código y nombre
-- Tipo
-- Dirección
-- Responsable
-- Estado
-
-#### Stock del Almacén
-Lista de items con stock en este almacén:
-- Item (código y nombre)
-- Cantidad
-- Valor
-
-#### Movimientos del Almacén
-Historial de entradas y salidas.
+1. En la lista, haga clic en el ícono de **ojo** (👁)
+2. Verá:
+   - Información del almacén
+   - Inventario actual (artículos y cantidades)
+   - Historial de movimientos del almacén
 
 ---
 
-## Movimientos de Inventario
+## Movimientos
 
-### Lista de Movimientos
+### Ver Lista de Movimientos
 
-**Ruta:** `/inventory/movements`
+1. En el menú, seleccione **"Inventario"** → **"Movimientos"**
+2. Verá el historial de todos los movimientos
 
-#### Filtros Disponibles
+### Filtros Disponibles
 
 | Filtro | Opciones |
 |--------|----------|
-| **Tipo** | Compra, Venta, Transferencia, Ajuste, etc. |
-| **Almacén** | Todos los almacenes |
-| **Fecha Desde** | Fecha inicial |
-| **Fecha Hasta** | Fecha final |
+| **Tipo** | Entrada, Salida, Transferencia, Ajuste, etc. |
+| **Razón** | Compra, Uso en Proyecto, Venta, etc. |
+| **Almacén** | Filtrar por almacén específico |
+| **Estado** | Pendiente, Completado, Cancelado |
+| **Fecha Desde/Hasta** | Rango de fechas |
 
-#### Columnas de la Tabla
+### Columnas de la Tabla
 
 | Columna | Descripción |
 |---------|-------------|
 | **Código** | Identificador del movimiento |
 | **Fecha** | Fecha del movimiento |
-| **Tipo** | Tipo de movimiento |
-| **Item** | Item afectado |
-| **Almacén** | Almacén origen/destino |
+| **Tipo** | Entrada, Salida, etc. |
+| **Razón** | Motivo del movimiento |
+| **Artículo** | Artículo afectado |
 | **Cantidad** | Cantidad movida |
-| **Referencia** | OC, factura, etc. |
-| **Usuario** | Quien registró |
+| **Origen** | Almacén de origen |
+| **Destino** | Almacén de destino |
+| **Costo** | Costo total del movimiento |
+| **Estado** | Estado actual |
+| **Acciones** | Cancelar (si aplica) |
 
 ---
 
-### Crear Movimiento
+### Registrar un Nuevo Movimiento
 
-**Ruta:** `/inventory/movements/new`
+1. Haga clic en el botón **"+ Nuevo Movimiento"**
+2. Se abrirá una página con el formulario
 
 #### Campos del Formulario
 
 | Campo | Obligatorio | Descripción |
 |-------|-------------|-------------|
-| **Tipo** | ✅ | Tipo de movimiento |
-| **Almacén** | ✅ | Almacén origen |
-| **Almacén Destino** | ✅* | Solo para transferencias |
-| **Item** | ✅ | Item a mover |
-| **Cantidad** | ✅ | Cantidad a mover |
-| **Costo Unitario** | ❌ | Costo del item |
-| **Referencia** | ❌ | Número de documento |
-| **Fecha** | ✅ | Fecha del movimiento |
-| **Notas** | ❌ | Observaciones |
+| **Tipo** | ✅ Sí | Entrada, Salida, Transferencia, etc. |
+| **Razón** | ✅ Sí | Motivo del movimiento |
+| **Artículo** | ✅ Sí | Seleccione el artículo |
+| **Cantidad** | ✅ Sí | Cantidad a mover |
+| **Almacén Origen** | Según tipo | De dónde sale |
+| **Almacén Destino** | Según tipo | A dónde llega |
+| **Fecha** | ✅ Sí | Fecha del movimiento |
+| **Costo Unitario** | ❌ No | Costo por unidad |
+| **Referencia** | ❌ No | Número de factura, orden, etc. |
+| **Notas** | ❌ No | Observaciones |
 
-#### Tipos de Movimiento
-
-##### Compra (Entrada)
-1. Seleccionar tipo "Compra"
-2. Seleccionar almacén destino
-3. Seleccionar item
-4. Ingresar cantidad recibida
-5. Ingresar costo unitario
-6. Agregar referencia de OC
-7. Guardar
-
-##### Consumo (Salida)
-1. Seleccionar tipo "Consumo"
-2. Seleccionar almacén origen
-3. Seleccionar item
-4. Ingresar cantidad consumida
-5. Agregar referencia (proyecto, etc.)
-6. Guardar
-
-##### Transferencia
-1. Seleccionar tipo "Transferencia"
-2. Seleccionar almacén origen
-3. Seleccionar almacén destino
-4. Seleccionar item
-5. Ingresar cantidad
-6. Guardar
-7. Se generan dos movimientos: salida y entrada
-
-##### Ajuste
-1. Seleccionar tipo "Ajuste Positivo" o "Ajuste Negativo"
-2. Seleccionar almacén
-3. Seleccionar item
-4. Ingresar cantidad de diferencia
-5. Documentar motivo en notas
-6. Guardar
+3. Complete los campos según el tipo de movimiento
+4. Haga clic en **"Guardar"**
 
 ---
 
-## Categorías
+### Tipos de Movimiento y Campos Requeridos
 
-### Gestión de Categorías
+| Tipo | Origen | Destino |
+|------|--------|---------|
+| **Entrada** | No aplica | Requerido |
+| **Salida** | Requerido | No aplica |
+| **Transferencia** | Requerido | Requerido |
+| **Ajuste (+)** | No aplica | Requerido |
+| **Ajuste (-)** | Requerido | No aplica |
 
-Las categorías permiten organizar los items del inventario.
+---
 
-#### Crear Categoría
-1. Ir a Inventario → Categorías
-2. Clic en "Nueva Categoría"
-3. Ingresar código y nombre
-4. Seleccionar categoría padre (si es subcategoría)
-5. Guardar
+### Cancelar un Movimiento
 
-#### Estructura Jerárquica
-Las categorías pueden tener subcategorías:
+1. En la lista de movimientos, busque el movimiento a cancelar
+2. Haga clic en el ícono de **X roja** (❌)
+3. Confirme la cancelación
+4. El stock se revierte automáticamente
+
+> ⚠️ **Importante**: Solo puede cancelar movimientos en estado "Completado". Los movimientos cancelados no pueden revertirse.
+
+---
+
+## Flujo de Trabajo Típico
+
+### Entrada por Compra
 ```
-Materiales
-├── Materiales de Construcción
-├── Materiales Eléctricos
-└── Materiales de Plomería
-Herramientas
-├── Herramientas Manuales
-└── Herramientas Eléctricas
+1. Recibir mercancía del proveedor
+2. Ir a Movimientos → Nuevo Movimiento
+3. Tipo: Entrada, Razón: Compra
+4. Seleccionar artículo y cantidad
+5. Indicar almacén destino
+6. Guardar → Stock aumenta
+```
+
+### Salida para Proyecto
+```
+1. Recibir solicitud de materiales
+2. Ir a Movimientos → Nuevo Movimiento
+3. Tipo: Salida, Razón: Uso en Proyecto
+4. Seleccionar artículo y cantidad
+5. Indicar almacén origen
+6. Guardar → Stock disminuye
+```
+
+### Transferencia entre Almacenes
+```
+1. Identificar necesidad de mover stock
+2. Ir a Movimientos → Nuevo Movimiento
+3. Tipo: Transferencia
+4. Seleccionar artículo y cantidad
+5. Indicar origen y destino
+6. Guardar → Stock se mueve
 ```
 
 ---
 
-## Tips y Mejores Prácticas
+## Consejos Útiles
 
-### Para Items
-- ✅ Usar códigos SKU consistentes
-- ✅ Definir stock mínimo realista
-- ✅ Mantener precios actualizados
-- ✅ Categorizar correctamente
+### Para Artículos
+- ✅ Defina stock mínimo para recibir alertas
+- ✅ Use códigos consistentes (ej: MAT-001, HER-001)
+- ✅ Mantenga actualizado el costo unitario
+- ✅ Categorice correctamente para facilitar búsquedas
 
 ### Para Almacenes
-- ✅ Asignar responsable a cada almacén
-- ✅ Documentar ubicación exacta
-- ✅ Realizar conteos periódicos
+- ✅ Asigne un encargado a cada almacén
+- ✅ Use tipo "Proyecto" para almacenes de obra
+- ✅ Mantenga actualizada la ubicación física
 
 ### Para Movimientos
-- ✅ Registrar movimientos inmediatamente
-- ✅ Siempre incluir referencia
-- ✅ Documentar ajustes con detalle
-- ✅ Verificar stock antes de salidas
-
-### Para Control
-- ✅ Revisar alertas de stock bajo diariamente
-- ✅ Realizar inventario físico mensual
-- ✅ Investigar diferencias inmediatamente
-- ✅ Mantener documentación de ajustes
+- ✅ Registre los movimientos inmediatamente
+- ✅ Use la razón correcta para cada movimiento
+- ✅ Incluya referencias (facturas, órdenes)
+- ✅ Haga conteos físicos periódicos
 
 ---
 
-## Solución de Problemas
+## Preguntas Frecuentes
 
-### "Stock negativo"
-- El sistema permite stock negativo para no bloquear operaciones
-- Investigar movimientos recientes
-- Verificar si hay entradas pendientes de registrar
-- Realizar ajuste si es necesario
+### ¿Por qué no puedo eliminar un artículo?
+Solo puede eliminar artículos con stock = 0. Si tiene stock, primero debe registrar una salida.
 
-### "No puedo eliminar el item"
-- El item tiene movimientos registrados
-- Cambiar estado a "Descontinuado" en lugar de eliminar
+### ¿Cómo corrijo un error de stock?
+Use un movimiento de tipo "Ajuste (+)" o "Ajuste (-)" con razón "Ajuste por Conteo".
 
-### "Diferencia en inventario físico"
-1. Verificar movimientos no registrados
-2. Buscar errores en cantidades
-3. Verificar transferencias pendientes
-4. Registrar ajuste documentando el motivo
+### ¿Puedo tener el mismo artículo en varios almacenes?
+Sí. El sistema muestra el stock total y también el stock por almacén en el detalle del artículo.
 
-### "No aparece el item en el almacén"
-- Verificar que el item tenga stock en ese almacén
-- Verificar filtros aplicados
-- Verificar estado del item (debe ser Activo)
+### ¿Qué pasa si cancelo un movimiento?
+El stock se revierte automáticamente. Si fue una entrada, el stock disminuye. Si fue una salida, el stock aumenta.
+
+### ¿Cómo veo el stock de un almacén específico?
+Vaya al detalle del almacén para ver todos los artículos y cantidades en esa ubicación.
+
+### ¿Puedo reservar stock para un proyecto?
+Sí, use el tipo de movimiento "Reserva". El stock sigue en el almacén pero se reduce el "disponible".

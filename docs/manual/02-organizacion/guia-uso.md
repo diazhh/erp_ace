@@ -1,353 +1,302 @@
-# 🏢 Módulo de Organización - Guía de Uso
+# 🏢 Estructura Organizacional - Guía de Uso
 
-## Acceder al Módulo
+## Cómo Acceder al Módulo
 
-1. En el menú lateral, hacer clic en **"Organización"**
-2. Se despliegan las opciones:
-   - Departamentos
-   - Posiciones
-   - Organigrama
-   - Directorio
+1. En el **menú lateral izquierdo**, busque la opción **"Organización"**
+2. Haga clic en el ícono de flecha (▼) para expandir las opciones
+3. Verá las siguientes secciones:
+   - **Departamentos**: Gestión de departamentos
+   - **Cargos**: Gestión de posiciones/cargos
+   - **Organigrama**: Vista gráfica de la estructura
+   - **Directorio**: Búsqueda de empleados
 
 ---
 
 ## Departamentos
 
-### Lista de Departamentos
+### Ver Lista de Departamentos
 
-**Ruta:** `/organization/departments`
+1. En el menú, seleccione **"Organización"** → **"Departamentos"**
+2. Verá una tabla con todos los departamentos de la empresa
 
-#### Columnas de la Tabla (Desktop)
+#### Columnas de la Tabla
+
 | Columna | Descripción |
 |---------|-------------|
-| **Código** | Identificador único |
-| **Nombre** | Nombre con indicador de color |
-| **Tipo** | Dirección, Gerencia, Departamento, Área, Unidad |
-| **Pertenece a** | Departamento padre |
-| **Manager** | Empleado responsable |
-| **Estado** | Activo/Inactivo |
-| **Acciones** | Ver, Editar, Eliminar |
+| **Código** | Identificador único del departamento |
+| **Nombre** | Nombre del departamento con indicador de color |
+| **Tipo** | Nivel jerárquico (Dirección, Gerencia, etc.) |
+| **Pertenece a** | Departamento padre (si tiene) |
+| **Gerente** | Persona responsable del departamento |
+| **Estado** | Activo o Inactivo |
+| **Acciones** | Botones para ver, editar o eliminar |
 
-#### Vista Mobile
-En pantallas pequeñas, los departamentos se muestran como **tarjetas** con:
-- Nombre y código
-- Tipo (chip de color)
-- Manager (si tiene)
-- Departamento padre
-- Botones de acción
-
-#### Acciones Disponibles
-- **Ver Organigrama**: Botón en la parte superior
-- **Nuevo Departamento**: Botón "+ Nuevo Departamento"
+#### Vista en Dispositivos Móviles
+En celulares y tablets, la información se muestra en tarjetas en lugar de tabla para facilitar la lectura.
 
 ---
 
-### Crear Departamento
+### Crear un Nuevo Departamento
 
-**Ruta:** `/organization/departments/new`
+1. En la lista de departamentos, haga clic en el botón **"+ Nuevo Departamento"** (esquina superior derecha)
+2. Se abrirá una página con el formulario de creación
 
 #### Campos del Formulario
 
 | Campo | Obligatorio | Descripción |
 |-------|-------------|-------------|
-| **Código** | ✅ | Código único (ej: DIR-001) |
-| **Nombre** | ✅ | Nombre del departamento |
-| **Tipo** | ❌ | Dirección, Gerencia, Departamento, Área, Unidad |
-| **Pertenece a** | ❌ | Departamento padre (para jerarquía) |
-| **Descripción** | ❌ | Descripción del departamento |
-| **Manager** | ❌ | Empleado responsable |
-| **Ubicación** | ❌ | Ubicación física |
-| **Centro de Costo** | ❌ | Código de centro de costo |
-| **Color** | ❌ | Color para visualización |
-| **Estado** | ❌ | Activo (default) o Inactivo |
+| **Código** | ✅ Sí | Código único (ej: "DEP-001", "GER-OPS") |
+| **Nombre** | ✅ Sí | Nombre descriptivo del departamento |
+| **Tipo** | ✅ Sí | Seleccione: Dirección, Gerencia, Departamento, Área o Unidad |
+| **Pertenece a** | ❌ No | Seleccione el departamento padre (si aplica) |
+| **Descripción** | ❌ No | Descripción de las funciones del departamento |
+| **Gerente** | ❌ No | Seleccione el empleado responsable |
+| **Ubicación** | ❌ No | Ubicación física del departamento |
+| **Centro de Costo** | ❌ No | Código para control financiero |
+| **Color** | ❌ No | Color para identificar en el organigrama |
+| **Estado** | ❌ No | Activo (predeterminado) o Inactivo |
 
-#### Pasos
-1. Hacer clic en **"+ Nuevo Departamento"**
-2. Completar código y nombre (obligatorios)
-3. Seleccionar tipo de departamento
-4. Si es subdepartamento, seleccionar "Pertenece a"
-5. Asignar manager si corresponde
-6. Hacer clic en **"Guardar"**
+3. Complete los campos requeridos
+4. Haga clic en **"Guardar"**
+5. Verá un mensaje de confirmación y volverá a la lista
 
 ---
 
-### Detalle de Departamento
+### Ver Detalle de un Departamento
 
-**Ruta:** `/organization/departments/:id`
-
-#### Encabezado
-- Avatar con color del departamento
-- Nombre y código
-- Chips de tipo y estado
-- Botón "Editar"
-
-#### Tabs Disponibles
-
-##### Tab: Información
-Datos generales del departamento:
-- Código
-- Nombre
-- Nivel/Tipo
-- Pertenece a (departamento padre)
-- Manager
-- Centro de Costo
-- Descripción
-
-##### Tab: Empleados
-Lista de empleados que pertenecen al departamento:
-- Avatar y nombre
-- Cargo
-- Estado
-- Clic para ir al detalle del empleado
-
-##### Tab: Posiciones
-Cargos definidos para este departamento:
-- Nombre y código del cargo
-- Estado
-- Tarjetas clickeables
-
-##### Tab: Departamentos
-Subdepartamentos (hijos):
-- Avatar con color
-- Nombre y código
-- Tipo
-- Clic para ir al detalle
+1. En la lista de departamentos, haga clic en el ícono de **edificio** (🏢) en la columna de acciones
+2. Se abrirá la página de detalle mostrando:
+   - Información general del departamento
+   - Gerente asignado
+   - Empleados que pertenecen al departamento
+   - Subdepartamentos (si tiene)
 
 ---
 
-### Editar Departamento
+### Editar un Departamento
 
-**Ruta:** `/organization/departments/:id/edit`
-
-1. Desde el detalle, hacer clic en **"Editar"**
-2. Modificar los campos necesarios
-3. Hacer clic en **"Guardar"**
+1. En la lista de departamentos, haga clic en el ícono de **lápiz** (✏️) en la columna de acciones
+2. Modifique los campos necesarios
+3. Haga clic en **"Guardar"**
 
 ---
 
-### Eliminar Departamento
+### Eliminar un Departamento
 
-1. En la lista o detalle, hacer clic en **🗑️ Eliminar**
-2. Confirmar en el diálogo
-3. El departamento se elimina
+1. En la lista de departamentos, haga clic en el ícono de **papelera** (🗑️) en la columna de acciones
+2. Aparecerá un diálogo de confirmación
+3. Haga clic en **"Confirmar"** para eliminar
 
-> ⚠️ **Nota**: No se puede eliminar un departamento que tenga empleados o subdepartamentos asignados.
+> ⚠️ **Importante**: No puede eliminar un departamento que tenga empleados asignados o subdepartamentos. Primero debe reasignar los empleados y eliminar los subdepartamentos.
 
 ---
 
-## Posiciones/Cargos
+## Cargos (Posiciones)
 
-### Lista de Posiciones
+### Ver Lista de Cargos
 
-**Ruta:** `/organization/positions`
+1. En el menú, seleccione **"Organización"** → **"Cargos"**
+2. Verá una tabla con todos los cargos de la empresa
 
-#### Columnas de la Tabla (Desktop)
+#### Columnas de la Tabla
+
 | Columna | Descripción |
 |---------|-------------|
-| **Código** | Identificador único |
-| **Nombre** | Nombre del cargo (+ badge si es supervisión) |
-| **Nivel** | Ejecutivo, Director, Gerente, etc. |
-| **Departamento** | Departamento asociado |
+| **Código** | Identificador único del cargo |
+| **Nombre** | Nombre del cargo |
+| **Nivel** | Nivel jerárquico (Ejecutivo, Director, etc.) |
+| **Departamento** | Departamento al que pertenece |
 | **Empleados** | Cantidad actual / Máximo permitido |
-| **Rango Salarial** | Min - Max en moneda |
-| **Estado** | Activo/Inactivo |
-| **Acciones** | Ver, Editar, Eliminar |
-
-#### Vista Mobile
-Tarjetas con:
-- Nombre y código
-- Nivel (chip de color)
-- Departamento
-- Contador de empleados
-- Botones de acción
+| **Rango Salarial** | Salario mínimo - máximo |
+| **Estado** | Activo o Inactivo |
+| **Acciones** | Botones para ver, editar o eliminar |
 
 ---
 
-### Crear Posición
+### Crear un Nuevo Cargo
 
-**Ruta:** `/organization/positions/new`
+1. En la lista de cargos, haga clic en el botón **"+ Nuevo Cargo"**
+2. Se abrirá una página con el formulario de creación
 
 #### Campos del Formulario
 
 | Campo | Obligatorio | Descripción |
 |-------|-------------|-------------|
-| **Código** | ✅ | Código único (ej: POS-001) |
-| **Nombre** | ✅ | Nombre del cargo |
-| **Departamento** | ❌ | Departamento al que pertenece |
-| **Nivel** | ❌ | 0-Ejecutivo a 6-Operativo |
-| **Descripción** | ❌ | Descripción del cargo |
-| **Salario Mínimo** | ❌ | Rango salarial mínimo |
-| **Salario Máximo** | ❌ | Rango salarial máximo |
-| **Moneda** | ❌ | USD, VES, EUR |
-| **Headcount Máximo** | ❌ | Cantidad máxima de empleados |
-| **Requisitos** | ❌ | Requisitos del cargo |
-| **Responsabilidades** | ❌ | Responsabilidades del cargo |
-| **Estado** | ❌ | Activo (default) o Inactivo |
+| **Código** | ✅ Sí | Código único (ej: "POS-001", "GER-001") |
+| **Nombre** | ✅ Sí | Nombre del cargo (ej: "Gerente de Operaciones") |
+| **Departamento** | ❌ No | Departamento al que pertenece el cargo |
+| **Nivel** | ✅ Sí | Nivel jerárquico (0-Ejecutivo hasta 6-Operativo) |
+| **Descripción** | ❌ No | Descripción general del cargo |
+| **Salario Mínimo** | ❌ No | Salario mínimo para este cargo |
+| **Salario Máximo** | ❌ No | Salario máximo para este cargo |
+| **Moneda** | ❌ No | USD, VES o EUR |
+| **Máximo de Empleados** | ❌ No | Cantidad máxima de personas en este cargo |
+| **Requisitos** | ❌ No | Requisitos para ocupar el cargo |
+| **Responsabilidades** | ❌ No | Responsabilidades del cargo |
+| **Estado** | ❌ No | Activo o Inactivo |
 
-#### Pasos
-1. Hacer clic en **"+ Nueva Posición"**
-2. Completar código y nombre (obligatorios)
-3. Seleccionar departamento y nivel
-4. Definir rango salarial si aplica
-5. Establecer headcount máximo
-6. Hacer clic en **"Guardar"**
+3. Complete los campos requeridos
+4. Haga clic en **"Guardar"**
 
 ---
 
-### Detalle de Posición
+### Ver Detalle de un Cargo
 
-**Ruta:** `/organization/positions/:id`
+1. En la lista de cargos, haga clic en el ícono de **maletín** (💼) en la columna de acciones
+2. Verá información detallada del cargo incluyendo:
+   - Datos generales
+   - Requisitos y responsabilidades
+   - Lista de empleados que ocupan este cargo
 
-Muestra información completa del cargo:
-- Datos generales
-- Departamento asociado
-- Rango salarial
-- Requisitos y responsabilidades
-- Empleados con este cargo
+---
+
+### Editar un Cargo
+
+1. En la lista de cargos, haga clic en el ícono de **lápiz** (✏️)
+2. Modifique los campos necesarios
+3. Haga clic en **"Guardar"**
+
+---
+
+### Eliminar un Cargo
+
+1. En la lista de cargos, haga clic en el ícono de **papelera** (🗑️)
+2. Confirme la eliminación
+
+> ⚠️ **Importante**: No puede eliminar un cargo que tenga empleados asignados.
 
 ---
 
 ## Organigrama
 
-**Ruta:** `/organization/chart`
+### Ver el Organigrama
 
-### Modos de Vista
+1. En el menú, seleccione **"Organización"** → **"Organigrama"**
+2. También puede acceder desde la lista de departamentos haciendo clic en el botón **"Organigrama"**
 
-#### Vista por Departamentos
-- Muestra la estructura de departamentos
-- Cada nodo incluye:
-  - Nombre y código del departamento
-  - Tipo (chip de color)
-  - Manager (si tiene)
-  - Contador de empleados
-- Nodos expandibles/colapsables
-- Líneas de conexión entre niveles
+### Estadísticas Generales
 
-#### Vista por Jerarquía
-- Muestra la cadena de mando
-- Basado en relación supervisor → subordinados
-- Cada nodo incluye:
-  - Foto y nombre del empleado
-  - Cargo
-  - Departamento (chip)
-  - Botones de email/teléfono
-- Nodos expandibles/colapsables
+En la parte superior verá indicadores con:
+- **Total de Empleados**
+- **Total de Departamentos**
+- **Total de Cargos**
+- **Empleados Activos**
 
-### Controles
+### Modos de Visualización
 
-| Control | Función |
-|---------|---------|
-| **Toggle Departamentos/Jerarquía** | Cambiar modo de vista |
-| **Ver Directorio** | Ir al directorio de empleados |
-| **Expandir/Colapsar** | Botones +/- en cada nodo |
+Puede cambiar entre dos vistas usando los botones en la esquina superior derecha:
 
-### Estadísticas
-Panel superior con KPIs:
-- Total de empleados
-- Total de departamentos
-- Total de posiciones
-- Empleados activos
+| Modo | Descripción |
+|------|-------------|
+| **Por Departamentos** (🏢) | Muestra la estructura de departamentos con sus empleados |
+| **Por Jerarquía** (🌳) | Muestra la cadena de supervisión (quién reporta a quién) |
 
-### Interacción
-- **Clic en departamento**: Ir a lista de departamentos
-- **Clic en empleado**: Ir al detalle del empleado
-- **Clic en manager**: Ir al detalle del empleado
+### Navegar por el Organigrama
 
-### Vista Mobile
-En pantallas pequeñas, el organigrama se muestra como **lista jerárquica** con indentación para mostrar niveles.
+- **Expandir/Colapsar**: Haga clic en el ícono de flecha (▼/▲) debajo de cada nodo para mostrar u ocultar los niveles inferiores
+- **Ver Departamento**: Haga clic en la tarjeta del departamento para ir a su detalle
+- **Ver Empleado**: Haga clic en la tarjeta del empleado para ir a su ficha
+- **Contactar**: Use los íconos de email (📧) o teléfono (📞) para contactar directamente
+
+### Vista en Dispositivos Móviles
+
+En celulares, el organigrama se muestra como una lista jerárquica con indentación para facilitar la navegación.
 
 ---
 
 ## Directorio de Empleados
 
-**Ruta:** `/organization/directory`
+### Acceder al Directorio
 
-### Filtros Disponibles
+1. En el menú, seleccione **"Organización"** → **"Directorio"**
+2. También puede acceder desde el organigrama haciendo clic en **"Ver Directorio"**
 
-| Filtro | Descripción |
-|--------|-------------|
-| **Búsqueda** | Por nombre del empleado |
-| **Letra** | Filtro alfabético A-Z |
-| **Departamento** | Filtrar por departamento |
+### Buscar Empleados
 
-### Modos de Vista (Desktop)
+#### Por Nombre
+1. Escriba el nombre o apellido en el campo de búsqueda
+2. Los resultados se filtran automáticamente mientras escribe
 
-#### Vista Grid (Tarjetas)
-- Avatar grande
-- Nombre completo
-- Cargo
-- Departamento (chip)
-- Botones de email/teléfono
-- Ubicación
+#### Por Letra Inicial
+1. Haga clic en una letra del alfabeto (A-Z) que aparece debajo del buscador
+2. Se mostrarán solo los empleados cuyo apellido comienza con esa letra
+3. Haga clic en **"Limpiar"** para quitar el filtro
 
-#### Vista Lista
-- Avatar pequeño
-- Nombre y cargo en línea
-- Departamento
-- Botones de contacto
+#### Por Departamento
+1. Use el selector **"Departamento"** para filtrar por área
+2. Seleccione el departamento deseado
+3. Seleccione **"Todos"** para ver todos los departamentos
 
-### Acciones
+### Modos de Vista
 
-| Acción | Descripción |
-|--------|-------------|
-| **Clic en tarjeta/fila** | Ir al detalle del empleado |
-| **Botón Email** | Abrir cliente de correo |
-| **Botón Teléfono** | Iniciar llamada |
-| **Descargar PDF** | Exportar directorio |
-| **Ver Organigrama** | Ir al organigrama |
+En pantallas grandes puede alternar entre:
+- **Vista de Cuadrícula** (🔲): Tarjetas con foto y datos de contacto
+- **Vista de Lista** (📋): Lista compacta con información básica
 
-### Paginación
-- 24 empleados por página
-- Navegación con números de página
+### Información de Cada Empleado
 
-### Vista Mobile
-Siempre muestra vista de tarjetas (grid) optimizada para móvil.
+Cada tarjeta muestra:
+- **Foto** del empleado (o iniciales si no tiene foto)
+- **Nombre completo**
+- **Cargo**
+- **Departamento**
+- **Botones de contacto**: Email y teléfono
+- **Extensión** (si tiene)
+- **Ubicación de oficina** (si está registrada)
+
+### Contactar a un Empleado
+
+- Haga clic en el ícono de **email** (📧) para abrir su cliente de correo con la dirección del empleado
+- Haga clic en el ícono de **teléfono** (📞) para iniciar una llamada (en dispositivos móviles)
+
+### Exportar Directorio
+
+1. Haga clic en el botón **"Descargar PDF"** en la esquina superior derecha
+2. Se generará un PDF con la lista de empleados (respetando los filtros aplicados)
+
+### Ver Detalle del Empleado
+
+Haga clic en cualquier parte de la tarjeta del empleado para ir a su ficha completa en el módulo de Empleados.
 
 ---
 
-## Tips y Mejores Prácticas
+## Consejos Útiles
 
-### Al Crear Departamentos
-- ✅ Usar códigos consistentes (DIR-001, GER-001, DEP-001)
-- ✅ Crear primero los niveles superiores, luego los inferiores
-- ✅ Asignar colores distintivos para mejor visualización
-- ✅ Asignar managers para completar el organigrama
+### Para Departamentos
+- ✅ Use códigos consistentes (ej: "DIR-001", "GER-OPS", "DEP-PROD")
+- ✅ Asigne colores distintos a cada departamento principal para facilitar la identificación en el organigrama
+- ✅ Mantenga actualizado el gerente de cada departamento
+- ✅ Use centros de costo para vincular con el sistema financiero
 
-### Al Crear Posiciones
-- ✅ Definir niveles correctamente para jerarquía
-- ✅ Establecer rangos salariales realistas
-- ✅ Documentar requisitos y responsabilidades
-- ✅ Establecer headcount para control de plantilla
+### Para Cargos
+- ✅ Defina rangos salariales realistas para cada cargo
+- ✅ Documente los requisitos y responsabilidades
+- ✅ Establezca el máximo de empleados según la estructura planificada
+- ✅ Use niveles jerárquicos consistentes
 
 ### Para el Organigrama
-- ✅ Asegurar que todos los empleados tengan departamento
-- ✅ Asignar supervisores para vista por jerarquía
-- ✅ Usar colores de departamento para identificación visual
-
-### Para el Directorio
-- ✅ Mantener emails y teléfonos actualizados
-- ✅ Asignar departamentos a todos los empleados
-- ✅ Usar fotos de perfil para mejor identificación
+- ✅ Revise periódicamente que la estructura esté actualizada
+- ✅ Use la vista por departamentos para ver la estructura formal
+- ✅ Use la vista por jerarquía para ver las líneas de reporte
 
 ---
 
-## Solución de Problemas
+## Preguntas Frecuentes
 
-### "No se puede eliminar el departamento"
-- Verificar que no tenga empleados asignados
-- Verificar que no tenga subdepartamentos
-- Reasignar empleados y subdepartamentos primero
+### ¿Por qué no puedo eliminar un departamento?
+Probablemente tiene empleados asignados o subdepartamentos. Primero debe reasignar los empleados a otro departamento y eliminar los subdepartamentos.
 
-### "El organigrama está vacío"
-- Verificar que existan departamentos creados
-- Verificar que los departamentos tengan managers asignados
-- Para vista por jerarquía, verificar que empleados tengan supervisores
+### ¿Cómo cambio el gerente de un departamento?
+Vaya a editar el departamento y seleccione un nuevo empleado en el campo "Gerente".
 
-### "No aparecen empleados en el directorio"
-- Verificar que existan empleados activos
-- Limpiar filtros de búsqueda
-- Verificar filtro de departamento
+### ¿Por qué un empleado no aparece en el directorio?
+Verifique que el empleado tenga estado "Activo" en el módulo de Empleados.
 
-### "El headcount está lleno"
-- La posición alcanzó el máximo de empleados
-- Aumentar maxHeadcount o crear nueva posición
+### ¿Cómo veo quién reporta a quién?
+Use el organigrama en modo "Por Jerarquía". Esta vista muestra la cadena de supervisión basada en el campo "Supervisor" de cada empleado.
+
+### ¿Puedo tener un cargo sin departamento?
+Sí, el campo departamento es opcional. Esto es útil para cargos que aplican a toda la organización.
+
+### ¿Cómo exporto el organigrama?
+Actualmente puede exportar el directorio de empleados a PDF. Para el organigrama visual, use la función de captura de pantalla de su navegador.

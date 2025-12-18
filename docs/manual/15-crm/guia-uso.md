@@ -1,321 +1,240 @@
-# 🤝 Módulo de CRM - Guía de Uso
+# 💼 Clientes y Ventas (CRM) - Guía de Uso
 
-## Acceder al Módulo
+## Cómo Acceder al Módulo
 
-1. En el menú lateral, hacer clic en **"CRM"**
-2. Se despliegan las opciones:
-   - Dashboard
-   - Clientes
-   - Oportunidades
+1. En el **menú lateral izquierdo**, busque la opción **"CRM"**
+2. Haga clic en el ícono de flecha (▼) para expandir las opciones
+3. Verá las siguientes secciones:
+   - **Dashboard**: Panel con indicadores
+   - **Clientes**: Gestión de clientes
+   - **Oportunidades**: Pipeline de ventas
 
 ---
 
-## Dashboard CRM
+## Dashboard de CRM
 
-**Ruta:** `/crm`
+### Acceder al Dashboard
 
-### KPIs Principales
+1. En el menú, seleccione **"CRM"** → **"Dashboard"**
+2. Verá el panel principal con indicadores de ventas
 
-| KPI | Descripción |
-|-----|-------------|
-| **Total Clientes** | Cantidad de clientes |
-| **Clientes Activos** | Clientes con estado activo |
-| **Oportunidades Abiertas** | En proceso |
-| **Valor Pipeline** | Suma de oportunidades |
+### Indicadores Principales
 
-### Pipeline Visual
-Muestra oportunidades por etapa:
-- Nueva → Calificada → Propuesta → Negociación → Ganada/Perdida
-
-### Actividades Pendientes
-Lista de seguimientos programados.
+| Indicador | Descripción |
+|-----------|-------------|
+| **Total Clientes** | Cantidad de clientes registrados |
+| **Clientes Activos** | Clientes con actividad reciente |
+| **Oportunidades Abiertas** | Oportunidades en proceso |
+| **Valor del Pipeline** | Suma de oportunidades abiertas |
 
 ---
 
 ## Clientes
 
-### Lista de Clientes
+### Ver Lista de Clientes
 
-**Ruta:** `/crm/clients`
+1. En el menú, seleccione **"CRM"** → **"Clientes"**
+2. Verá la tabla/tarjetas de clientes
 
-#### Filtros Disponibles
+### Filtros Disponibles
 
 | Filtro | Opciones |
 |--------|----------|
-| **Búsqueda** | Por nombre o código |
+| **Búsqueda** | Por nombre, código o email |
 | **Estado** | Prospecto, Activo, Inactivo, Suspendido |
 | **Categoría** | A, B, C, D |
 | **Tipo** | Empresa, Persona |
 
-#### Columnas de la Tabla
+### Columnas de la Tabla
 
 | Columna | Descripción |
 |---------|-------------|
 | **Código** | Identificador único |
-| **Nombre** | Nombre/Razón social |
-| **Tipo** | Empresa/Persona |
-| **Categoría** | A, B, C, D |
-| **Email** | Email principal |
-| **Teléfono** | Teléfono principal |
+| **Nombre** | Nombre o razón social |
+| **Tipo** | Empresa o Persona |
+| **Industria** | Sector del cliente |
+| **Email** | Correo de contacto |
+| **Teléfono** | Teléfono de contacto |
+| **Categoría** | Clasificación A-D |
 | **Estado** | Estado actual |
 | **Acciones** | Ver, Editar, Eliminar |
 
 ---
 
-### Crear Cliente
+### Registrar un Nuevo Cliente
 
-**Ruta:** `/crm/clients/new`
+1. Haga clic en el botón **"+ Nuevo Cliente"**
+2. Se abrirá una página con el formulario
 
-#### Campos del Formulario
+#### Campos para Empresa
 
 | Campo | Obligatorio | Descripción |
 |-------|-------------|-------------|
-| **Tipo** | ✅ | Empresa o Persona |
-| **Nombre** | ✅ | Nombre o razón social |
-| **RIF/Cédula** | ❌ | Identificación fiscal |
-| **Email** | ❌ | Correo electrónico |
-| **Teléfono** | ❌ | Teléfono principal |
-| **Dirección** | ❌ | Dirección física |
-| **Categoría** | ❌ | A, B, C, D |
-| **Industria** | ❌ | Sector/Industria |
-| **Sitio Web** | ❌ | URL del sitio web |
-| **Notas** | ❌ | Observaciones |
+| **Código** | ✅ Sí | Código único |
+| **Tipo** | ✅ Sí | Seleccione "Empresa" |
+| **Razón Social** | ✅ Sí | Nombre legal |
+| **Nombre Comercial** | ❌ No | Nombre de fantasía |
+| **RIF** | ❌ No | Registro fiscal |
+| **Industria** | ❌ No | Sector de actividad |
+| **Email** | ❌ No | Correo principal |
+| **Teléfono** | ❌ No | Teléfono principal |
+| **Dirección** | ❌ No | Dirección fiscal |
+| **Categoría** | ❌ No | A, B, C, D |
+| **Estado** | ✅ Sí | Prospecto, Activo, etc. |
 
-#### Pasos
-1. Hacer clic en **"+ Nuevo Cliente"**
-2. Seleccionar tipo (Empresa/Persona)
-3. Completar nombre
-4. Agregar datos de contacto
-5. Asignar categoría
-6. Hacer clic en **"Guardar"**
+#### Campos para Persona
+
+| Campo | Obligatorio | Descripción |
+|-------|-------------|-------------|
+| **Código** | ✅ Sí | Código único |
+| **Tipo** | ✅ Sí | Seleccione "Persona" |
+| **Nombre** | ✅ Sí | Nombre |
+| **Apellido** | ✅ Sí | Apellido |
+| **Cédula** | ❌ No | Documento de identidad |
+| **Email** | ❌ No | Correo |
+| **Teléfono** | ❌ No | Teléfono |
+
+3. Complete los campos requeridos
+4. Haga clic en **"Guardar"**
 
 ---
 
-### Detalle del Cliente
+### Ver Detalle de un Cliente
 
-**Ruta:** `/crm/clients/:id`
+1. En la lista, haga clic en el ícono de **ojo** (👁)
+2. Verá:
+   - Información completa del cliente
+   - Contactos asociados
+   - Oportunidades relacionadas
+   - Historial de actividades
+   - Documentos adjuntos
 
-#### Información del Cliente
-- Nombre y código
-- Tipo y categoría
-- Datos de contacto
-- Estado
+---
 
-#### Tabs Disponibles
+### Agregar Contactos a un Cliente
 
-##### Tab: Información
-Datos generales del cliente.
-
-##### Tab: Contactos
-Lista de contactos del cliente:
-- Nombre
-- Cargo
-- Email
-- Teléfono
-- Es contacto principal
-
-**Agregar Contacto:**
-1. Clic en "Agregar Contacto"
-2. Completar datos
-3. Marcar si es principal
-4. Guardar
-
-##### Tab: Oportunidades
-Oportunidades asociadas al cliente.
-
-##### Tab: Cotizaciones
-Cotizaciones enviadas al cliente.
-
-##### Tab: Actividades
-Historial de interacciones:
-- Llamadas
-- Reuniones
-- Emails
-- Notas
-
-##### Tab: Documentos
-Archivos adjuntos.
-
-##### Tab: Auditoría
-Historial de cambios.
+1. En el detalle del cliente, vaya a la pestaña **"Contactos"**
+2. Haga clic en **"+ Agregar Contacto"**
+3. Complete:
+   - Nombre y apellido
+   - Cargo
+   - Email y teléfono
+   - Si es contacto principal
+4. Haga clic en **"Guardar"**
 
 ---
 
 ## Oportunidades
 
-### Lista de Oportunidades
+### Ver Lista de Oportunidades
 
-**Ruta:** `/crm/opportunities`
+1. En el menú, seleccione **"CRM"** → **"Oportunidades"**
+2. Verá la lista de oportunidades de venta
 
-#### Filtros Disponibles
+### Filtros Disponibles
 
 | Filtro | Opciones |
 |--------|----------|
-| **Búsqueda** | Por nombre o código |
-| **Etapa** | Nueva, Calificada, Propuesta, etc. |
-| **Estado** | Abierta, Ganada, Perdida |
-| **Responsable** | Empleados |
+| **Búsqueda** | Por título o código |
+| **Etapa** | Prospecto, Calificado, Propuesta, etc. |
+| **Prioridad** | Baja, Media, Alta, Crítica |
 
-#### Columnas de la Tabla
+### Columnas de la Tabla
 
 | Columna | Descripción |
 |---------|-------------|
 | **Código** | Identificador único |
-| **Nombre** | Nombre de la oportunidad |
+| **Título** | Nombre de la oportunidad |
 | **Cliente** | Cliente asociado |
-| **Valor** | Valor estimado |
+| **Valor Estimado** | Monto potencial |
 | **Probabilidad** | % de cierre |
-| **Etapa** | Etapa actual |
-| **Fecha Cierre** | Fecha esperada |
-| **Responsable** | Quien gestiona |
-| **Acciones** | Ver, Editar |
+| **Cierre Esperado** | Fecha estimada |
+| **Etapa** | Estado actual |
+| **Acciones** | Ver, Editar, Eliminar |
 
 ---
 
-### Crear Oportunidad
+### Crear una Oportunidad
 
-**Ruta:** `/crm/opportunities/new`
-
-#### Campos del Formulario
+1. Haga clic en el botón **"+ Nueva Oportunidad"**
+2. Complete el formulario:
 
 | Campo | Obligatorio | Descripción |
 |-------|-------------|-------------|
-| **Nombre** | ✅ | Nombre descriptivo |
-| **Cliente** | ✅ | Cliente asociado |
-| **Valor** | ✅ | Valor estimado |
-| **Moneda** | ✅ | USD, VES |
-| **Probabilidad** | ❌ | % de cierre (0-100) |
-| **Fecha Cierre Esperada** | ❌ | Cuándo se espera cerrar |
-| **Etapa** | ✅ | Etapa inicial |
-| **Responsable** | ❌ | Quien gestiona |
-| **Origen** | ❌ | Cómo llegó el lead |
-| **Descripción** | ❌ | Detalles |
+| **Código** | ✅ Sí | Código único |
+| **Título** | ✅ Sí | Nombre descriptivo |
+| **Cliente** | ✅ Sí | Seleccione cliente |
+| **Valor Estimado** | ❌ No | Monto potencial |
+| **Moneda** | ✅ Sí | USD, VES |
+| **Probabilidad** | ❌ No | % de cierre (0-100) |
+| **Cierre Esperado** | ❌ No | Fecha estimada |
+| **Etapa** | ✅ Sí | Prospecto, Calificado, etc. |
+| **Prioridad** | ❌ No | Baja, Media, Alta |
+| **Descripción** | ❌ No | Detalles de la oportunidad |
+| **Responsable** | ❌ No | Empleado asignado |
 
-#### Pasos
-1. Hacer clic en **"+ Nueva Oportunidad"**
-2. Seleccionar cliente
-3. Ingresar nombre y valor
-4. Definir probabilidad
-5. Asignar responsable
-6. Hacer clic en **"Guardar"**
+3. Haga clic en **"Guardar"**
 
 ---
 
-### Detalle de Oportunidad
+### Avanzar una Oportunidad
 
-**Ruta:** `/crm/opportunities/:id`
-
-#### Información
-- Nombre y código
-- Cliente (enlace)
-- Valor y probabilidad
-- Etapa actual
-- Fecha esperada de cierre
-- Responsable
-
-#### Acciones
-
-| Acción | Descripción |
-|--------|-------------|
-| **Avanzar Etapa** | Mover a siguiente etapa |
-| **Marcar Ganada** | Cerrar como ganada |
-| **Marcar Perdida** | Cerrar como perdida |
-| **Crear Cotización** | Generar cotización |
-
-#### Tabs
-- **Información**: Datos generales
-- **Cotizaciones**: Cotizaciones generadas
-- **Actividades**: Historial de seguimiento
-- **Documentos**: Archivos adjuntos
+1. En el detalle de la oportunidad
+2. Cambie la **etapa** según el progreso:
+   - Prospecto → Calificado (cliente confirmó interés)
+   - Calificado → Propuesta (envió cotización)
+   - Propuesta → Negociación (discutiendo términos)
+   - Negociación → Ganada/Perdida (resultado final)
+3. Actualice la **probabilidad** según corresponda
+4. Haga clic en **"Guardar"**
 
 ---
 
-## Pipeline de Ventas
+### Cerrar una Oportunidad
 
-### Etapas del Pipeline
+#### Como Ganada
+1. Cambie la etapa a **"Ganada"**
+2. Registre el valor final
+3. Agregue notas del cierre
+4. Guarde los cambios
 
-```
-NUEVA → CALIFICADA → PROPUESTA → NEGOCIACIÓN → GANADA
-                                            ↘ PERDIDA
-```
-
-### Avanzar Oportunidad
-1. Ir al detalle de la oportunidad
-2. Clic en **"Avanzar Etapa"**
-3. Confirmar el cambio
-4. La oportunidad pasa a la siguiente etapa
-
-### Cerrar Oportunidad
-- **Ganada**: Se concretó la venta
-- **Perdida**: No se concretó (registrar motivo)
+#### Como Perdida
+1. Cambie la etapa a **"Perdida"**
+2. Seleccione el motivo de pérdida
+3. Agregue notas explicativas
+4. Guarde los cambios
 
 ---
 
-## Cotizaciones
-
-### Crear Cotización
-1. Desde la oportunidad, clic en **"Crear Cotización"**
-2. Agregar items con precios
-3. Definir validez
-4. Guardar
-5. Enviar al cliente
-
-### Items de Cotización
-- Descripción
-- Cantidad
-- Precio unitario
-- Descuento
-- Total
-
----
-
-## Actividades
-
-### Tipos de Actividad
-- **Llamada**: Llamada telefónica
-- **Reunión**: Reunión presencial o virtual
-- **Email**: Correo electrónico
-- **Nota**: Nota interna
-
-### Registrar Actividad
-1. Desde el cliente u oportunidad
-2. Clic en **"Nueva Actividad"**
-3. Seleccionar tipo
-4. Completar descripción
-5. Programar seguimiento (opcional)
-6. Guardar
-
----
-
-## Tips y Mejores Prácticas
+## Consejos Útiles
 
 ### Para Clientes
-- ✅ Mantener datos de contacto actualizados
-- ✅ Categorizar correctamente
-- ✅ Registrar todas las interacciones
+- ✅ Clasifique correctamente por categoría
+- ✅ Mantenga actualizada la información de contacto
+- ✅ Registre todos los contactos relevantes
+- ✅ Documente las interacciones importantes
 
 ### Para Oportunidades
-- ✅ Actualizar etapas regularmente
-- ✅ Mantener probabilidad realista
-- ✅ Documentar motivos de pérdida
-
-### Para Seguimiento
-- ✅ Registrar todas las actividades
-- ✅ Programar seguimientos
-- ✅ No dejar oportunidades sin atender
+- ✅ Actualice la etapa regularmente
+- ✅ Sea realista con la probabilidad
+- ✅ Defina fechas de cierre alcanzables
+- ✅ Registre actividades de seguimiento
 
 ---
 
-## Solución de Problemas
+## Preguntas Frecuentes
 
-### "No puedo eliminar el cliente"
-- Verificar que no tenga oportunidades activas
-- Verificar permisos de usuario
+### ¿Cuál es la diferencia entre prospecto y cliente activo?
+El prospecto es un cliente potencial que aún no ha comprado. El cliente activo ya tiene historial de compras.
 
-### "Oportunidad no avanza de etapa"
-- Verificar que no esté cerrada
-- Verificar permisos de usuario
+### ¿Puedo tener múltiples oportunidades con el mismo cliente?
+Sí. Un cliente puede tener varias oportunidades simultáneas o sucesivas.
 
-### "No veo las cotizaciones"
-- Verificar que se hayan creado desde la oportunidad
-- Verificar permisos de lectura
+### ¿Cómo convierto una oportunidad en proyecto?
+Al marcar la oportunidad como "Ganada", puede crear un proyecto asociado desde el detalle.
+
+### ¿Puedo reabrir una oportunidad perdida?
+No directamente. Debe crear una nueva oportunidad si el cliente vuelve a mostrar interés.
+
+### ¿Cómo veo el historial de un cliente?
+En el detalle del cliente, las pestañas muestran oportunidades, actividades y documentos históricos.

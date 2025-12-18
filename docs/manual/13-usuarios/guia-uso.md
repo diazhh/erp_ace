@@ -1,158 +1,155 @@
-# 👥 Módulo de Usuarios y Permisos - Guía de Uso
+# 👤 Usuarios y Accesos - Guía de Uso
 
-## Acceder al Módulo
+## Cómo Acceder al Módulo
 
-1. En el menú lateral, hacer clic en **"Administración"**
-2. Se despliegan las opciones:
-   - Usuarios
-   - Roles
-   - Configuración Email
-   - Configuración WhatsApp
+1. En el **menú lateral izquierdo**, busque la opción **"Administración"**
+2. Haga clic en el ícono de flecha (▼) para expandir las opciones
+3. Verá las siguientes secciones:
+   - **Usuarios**: Gestión de cuentas
+   - **Roles**: Gestión de roles y permisos
+
+> ⚠️ **Nota**: Solo usuarios con permisos de administración pueden acceder a este módulo.
 
 ---
 
-## Usuarios
+## Lista de Usuarios
 
-### Lista de Usuarios
+### Ver Todos los Usuarios
 
-**Ruta:** `/admin/users`
+1. En el menú, seleccione **"Administración"** → **"Usuarios"**
+2. Verá indicadores y la tabla/tarjetas de usuarios
 
-#### KPIs en la Parte Superior
+### Indicadores Principales
 
-| KPI | Descripción |
-|-----|-------------|
-| **Total Usuarios** | Cantidad total de usuarios |
-| **Activos** | Usuarios que pueden acceder |
-| **Inactivos** | Usuarios bloqueados |
+| Indicador | Descripción |
+|-----------|-------------|
+| **Total Usuarios** | Cantidad de usuarios registrados |
+| **Activos** | Usuarios que pueden iniciar sesión |
+| **Inactivos** | Usuarios desactivados |
+| **Con Empleado** | Usuarios vinculados a empleados |
 
-#### Filtros Disponibles
+### Filtros Disponibles
 
 | Filtro | Opciones |
 |--------|----------|
-| **Búsqueda** | Por username o email |
+| **Búsqueda** | Por nombre, usuario o email |
 | **Estado** | Activo, Inactivo |
-| **Rol** | Todos los roles |
+| **Rol** | Filtrar por rol asignado |
 
-#### Columnas de la Tabla
+### Columnas de la Tabla
 
 | Columna | Descripción |
 |---------|-------------|
-| **Usuario** | Avatar, username y email |
-| **Empleado** | Empleado vinculado |
-| **Rol** | Rol asignado |
-| **Estado** | Activo/Inactivo |
-| **Último Acceso** | Fecha del último login |
-| **Acciones** | Ver, Editar, Activar/Desactivar, Reset Password |
+| **Avatar** | Iniciales del usuario |
+| **Nombre** | Nombre completo |
+| **Usuario** | Nombre de usuario (username) |
+| **Email** | Correo electrónico |
+| **Empleado** | Empleado vinculado (si hay) |
+| **Roles** | Roles asignados |
+| **Estado** | Activo o Inactivo |
+| **Acciones** | Ver, Editar, Restablecer, Activar/Desactivar |
 
 ---
 
-### Crear Usuario
+### Crear un Nuevo Usuario
 
-**Ruta:** `/admin/users/new`
+1. Haga clic en el botón **"+ Nuevo Usuario"**
+2. Se abrirá una página con el formulario
 
 #### Campos del Formulario
 
 | Campo | Obligatorio | Descripción |
 |-------|-------------|-------------|
-| **Username** | ✅ | Nombre de usuario único |
-| **Email** | ✅ | Correo electrónico |
-| **Empleado** | ❌ | Vincular con empleado |
-| **Rol** | ✅ | Rol a asignar |
-| **Activo** | ❌ | Estado inicial (default: activo) |
+| **Nombre** | ✅ Sí | Nombre del usuario |
+| **Apellido** | ✅ Sí | Apellido del usuario |
+| **Usuario** | ✅ Sí | Nombre de usuario para login |
+| **Email** | ✅ Sí | Correo electrónico |
+| **Contraseña** | ✅ Sí | Contraseña inicial |
+| **Confirmar Contraseña** | ✅ Sí | Repetir contraseña |
+| **Empleado** | ❌ No | Vincular a un empleado |
+| **Roles** | ✅ Sí | Seleccionar uno o más roles |
+| **Activo** | ✅ Sí | Si puede iniciar sesión |
 
-#### Pasos
-1. Hacer clic en **"+ Nuevo Usuario"**
-2. Ingresar username único
-3. Ingresar email
-4. Seleccionar empleado (opcional)
-5. Asignar rol
-6. Hacer clic en **"Guardar"**
-7. Se genera contraseña temporal
-8. **Importante**: Copiar y comunicar la contraseña al usuario
+3. Complete los campos requeridos
+4. Haga clic en **"Guardar"**
 
 ---
 
-### Detalle del Usuario
+### Ver Detalle de un Usuario
 
-**Ruta:** `/admin/users/:id`
-
-#### Información del Usuario
-- Username y email
-- Empleado vinculado (enlace)
-- Rol asignado
-- Estado
-- Fecha de creación
-- Último acceso
-
-#### Acciones Disponibles
-
-| Acción | Descripción |
-|--------|-------------|
-| **Editar** | Modificar datos del usuario |
-| **Activar/Desactivar** | Cambiar estado |
-| **Restablecer Contraseña** | Generar nueva contraseña |
+1. En la lista, haga clic en el ícono de **ojo** (👁)
+2. Verá:
+   - Información del usuario
+   - Roles asignados
+   - Permisos efectivos
+   - Empleado vinculado
+   - Historial de accesos
 
 ---
 
-### Activar/Desactivar Usuario
+### Editar un Usuario
 
-1. En la lista o detalle del usuario
-2. Clic en el botón de activar/desactivar
-3. Confirmar la acción
-4. El usuario podrá/no podrá acceder al sistema
+1. En la lista o detalle, haga clic en el ícono de **lápiz** (✏️)
+2. Modifique los campos necesarios
+3. Haga clic en **"Guardar"**
+
+> **Nota**: No puede cambiar el nombre de usuario (username) después de creado.
+
+---
+
+### Activar/Desactivar un Usuario
+
+1. En la lista, haga clic en el ícono de **persona** (activar/desactivar)
+2. Confirme la acción
+3. El estado cambia inmediatamente
+
+| Acción | Efecto |
+|--------|--------|
+| **Desactivar** | El usuario no puede iniciar sesión |
+| **Activar** | El usuario puede iniciar sesión nuevamente |
 
 ---
 
 ### Restablecer Contraseña
 
-1. En la lista o detalle del usuario
-2. Clic en **"Restablecer Contraseña"**
-3. Confirmar la acción
-4. Se genera contraseña temporal
-5. **Copiar la contraseña** mostrada en el diálogo
-6. Comunicar al usuario
-7. El usuario deberá cambiarla en el primer acceso
+1. En la lista, haga clic en el ícono de **llave** (🔑)
+2. Confirme la acción
+3. Se genera una contraseña temporal
+4. **Copie la contraseña** y entréguela al usuario
+5. El usuario deberá cambiarla en su próximo inicio de sesión
+
+> ⚠️ **Importante**: La contraseña temporal solo se muestra una vez. Cópiela antes de cerrar el diálogo.
 
 ---
 
-## Roles
+## Gestión de Roles
 
-### Lista de Roles
+### Ver Lista de Roles
 
-**Ruta:** `/admin/roles`
+1. En el menú, seleccione **"Administración"** → **"Roles"**
+2. Verá la lista de roles disponibles
 
-#### Información Mostrada
-- Nombre del rol
-- Descripción
-- Cantidad de usuarios con ese rol
-- Si es rol del sistema (no editable)
-- Acciones
+### Roles Predefinidos
 
-#### Roles del Sistema
-Los roles marcados como "Sistema" no pueden ser editados ni eliminados:
-- Super Admin
-- Admin
+| Rol | Descripción |
+|-----|-------------|
+| **Administrador** | Acceso total |
+| **Supervisor** | Acceso con aprobaciones |
+| **Usuario** | Acceso básico |
 
----
+### Crear un Nuevo Rol
 
-### Crear Rol
-
-**Ruta:** `/admin/roles/new`
-
-#### Campos del Formulario
+1. Haga clic en **"+ Nuevo Rol"**
+2. Complete el formulario:
 
 | Campo | Obligatorio | Descripción |
 |-------|-------------|-------------|
-| **Nombre** | ✅ | Nombre del rol |
-| **Descripción** | ❌ | Descripción del rol |
-| **Permisos** | ✅ | Permisos a asignar |
+| **Nombre** | ✅ Sí | Nombre del rol |
+| **Descripción** | ❌ No | Descripción del rol |
+| **Permisos** | ✅ Sí | Seleccionar permisos |
 
-#### Pasos
-1. Hacer clic en **"+ Nuevo Rol"**
-2. Ingresar nombre descriptivo
-3. Agregar descripción
-4. Seleccionar permisos necesarios
-5. Hacer clic en **"Guardar"**
+3. Marque los permisos que tendrá el rol
+4. Haga clic en **"Guardar"**
 
 ---
 
@@ -160,123 +157,54 @@ Los roles marcados como "Sistema" no pueden ser editados ni eliminados:
 
 Los permisos se organizan por módulo:
 
-#### Estructura de Permisos
-```
-📁 Empleados
-  ☑️ employees:read    - Ver empleados
-  ☑️ employees:create  - Crear empleados
-  ☑️ employees:update  - Editar empleados
-  ☐ employees:delete  - Eliminar empleados
-
-📁 Proyectos
-  ☑️ projects:read     - Ver proyectos
-  ☑️ projects:create   - Crear proyectos
-  ☑️ projects:update   - Editar proyectos
-  ☐ projects:delete   - Eliminar proyectos
-  ☑️ projects:approve  - Aprobar proyectos
-```
-
-#### Selección Rápida
-- **Seleccionar Todos**: Marca todos los permisos del módulo
-- **Deseleccionar Todos**: Desmarca todos los permisos
+| Módulo | Permisos Disponibles |
+|--------|---------------------|
+| **Empleados** | Leer, Crear, Editar, Eliminar |
+| **Proyectos** | Leer, Crear, Editar, Eliminar, Aprobar |
+| **Finanzas** | Leer, Crear, Editar, Aprobar, Conciliar |
+| **Inventario** | Leer, Crear, Editar, Mover |
+| **HSE** | Leer, Crear, Editar, Aprobar |
+| **Usuarios** | Leer, Crear, Editar, Restablecer |
 
 ---
 
-### Detalle del Rol
+## Consejos Útiles
 
-**Ruta:** `/admin/roles/:id`
+### Para Crear Usuarios
+- ✅ Use nombres de usuario fáciles de recordar
+- ✅ Vincule a empleados cuando sea posible
+- ✅ Asigne solo los roles necesarios
+- ✅ Use contraseñas seguras
 
-#### Información
-- Nombre y descripción
-- Lista de permisos asignados
-- Usuarios con este rol
-
-#### Acciones
-- Editar (si no es rol del sistema)
-- Eliminar (si no tiene usuarios asignados)
-
----
-
-## Configuración de Email
-
-**Ruta:** `/admin/email-config`
-
-### Campos de Configuración
-
-| Campo | Descripción |
-|-------|-------------|
-| **Host SMTP** | Servidor de correo |
-| **Puerto** | Puerto del servidor |
-| **Usuario** | Usuario de autenticación |
-| **Contraseña** | Contraseña del correo |
-| **Remitente** | Email que aparece como remitente |
-| **TLS/SSL** | Usar conexión segura |
-
-### Probar Configuración
-1. Completar todos los campos
-2. Clic en **"Probar Conexión"**
-3. Se envía email de prueba
-4. Verificar recepción
-
----
-
-## Configuración de WhatsApp
-
-**Ruta:** `/admin/whatsapp-config`
-
-### Integración con Baileys
-El sistema usa Baileys para integración con WhatsApp.
-
-### Pasos para Conectar
-1. Ir a configuración de WhatsApp
-2. Clic en **"Generar QR"**
-3. Escanear QR con WhatsApp del teléfono
-4. Esperar confirmación de conexión
-5. El sistema puede enviar notificaciones por WhatsApp
-
----
-
-## Tips y Mejores Prácticas
-
-### Para Usuarios
-- ✅ Usar usernames descriptivos
-- ✅ Vincular siempre con empleado
-- ✅ Asignar rol apropiado
-- ✅ Desactivar usuarios que ya no trabajan
+### Para Gestionar Accesos
+- ✅ Desactive usuarios que ya no necesitan acceso
+- ✅ Revise los roles periódicamente
+- ✅ No comparta cuentas entre personas
+- ✅ Restablezca contraseñas si hay sospecha de compromiso
 
 ### Para Roles
-- ✅ Crear roles específicos por función
-- ✅ Aplicar principio de mínimo privilegio
-- ✅ Documentar propósito de cada rol
-- ✅ Revisar permisos periódicamente
-
-### Para Seguridad
-- ✅ Forzar cambio de contraseña inicial
-- ✅ Revisar usuarios inactivos
-- ✅ Auditar accesos regularmente
-- ✅ No compartir credenciales
+- ✅ Cree roles específicos para cada función
+- ✅ Siga el principio de mínimo privilegio
+- ✅ Documente qué hace cada rol
 
 ---
 
-## Solución de Problemas
+## Preguntas Frecuentes
 
-### "Usuario no puede acceder"
-- Verificar que el usuario esté activo
-- Verificar que tenga rol asignado
-- Verificar credenciales correctas
-- Restablecer contraseña si es necesario
+### ¿Puedo eliminar un usuario?
+No se recomienda eliminar usuarios. Es mejor desactivarlos para mantener el historial de auditoría.
 
-### "Usuario no ve cierto módulo"
-- Verificar permisos del rol asignado
-- El rol debe tener permiso `modulo:read`
-- Asignar permiso o cambiar rol
+### ¿Qué pasa si olvido mi contraseña?
+Contacte a un administrador para que restablezca su contraseña.
 
-### "No puedo eliminar el rol"
-- Verificar que no sea rol del sistema
-- Verificar que no tenga usuarios asignados
-- Reasignar usuarios a otro rol primero
+### ¿Puedo tener varios roles?
+Sí. Un usuario puede tener múltiples roles y tendrá todos los permisos combinados.
 
-### "Contraseña temporal no funciona"
-- Las contraseñas temporales expiran
-- Generar nueva contraseña
-- Verificar que se copió correctamente
+### ¿Por qué no veo ciertos módulos?
+Su rol no tiene permisos para esos módulos. Contacte a un administrador si necesita acceso.
+
+### ¿Cómo cambio mi propia contraseña?
+Vaya a Configuración (ícono de engranaje) → Cambiar Contraseña.
+
+### ¿Puedo ver quién hizo qué en el sistema?
+Sí, el sistema registra todas las acciones. Consulte el módulo de Auditoría.

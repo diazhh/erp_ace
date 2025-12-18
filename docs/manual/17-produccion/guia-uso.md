@@ -1,261 +1,232 @@
-# 🛢️ Módulo de Producción y Pozos - Guía de Uso
+# 🛢️ Producción y Pozos - Guía de Uso
 
-## Acceder al Módulo
+## Cómo Acceder al Módulo
 
-1. En el menú lateral, hacer clic en **"Producción"**
-2. Se despliegan las opciones:
-   - Dashboard
-   - Campos
-   - Pozos
-   - Producción Diaria
-   - Asignaciones
+1. En el **menú lateral izquierdo**, busque la opción **"Producción"**
+2. Haga clic en el ícono de flecha (▼) para expandir las opciones
+3. Verá las siguientes secciones:
+   - **Dashboard**: Panel con indicadores
+   - **Campos**: Gestión de campos
+   - **Pozos**: Gestión de pozos
+   - **Producción Diaria**: Registro de producción
+   - **Asignaciones**: Asignación de producción
 
 ---
 
 ## Dashboard de Producción
 
-**Ruta:** `/production`
+### Acceder al Dashboard
 
-### KPIs Principales
+1. En el menú, seleccione **"Producción"** → **"Dashboard"**
+2. Verá el panel principal con indicadores de producción
 
-| KPI | Descripción |
-|-----|-------------|
-| **Producción de Petróleo** | BBL/día total |
-| **Producción de Gas** | MCF/día total |
-| **Producción de Agua** | BBL/día total |
-| **Pozos Activos** | Cantidad produciendo |
+### Indicadores Principales
 
-### Filtro por Campo
-Selector para ver producción de un campo específico.
-
-### Gráficos
-- **Tendencia de Producción**: Últimos 30 días
-- **Distribución por Campo**: Pie chart
-- **Corte de Agua**: Evolución del BSW
+| Indicador | Descripción |
+|-----------|-------------|
+| **Producción Total** | Barriles producidos hoy |
+| **Pozos Activos** | Pozos en producción |
+| **Campos Activos** | Campos operativos |
+| **Tendencia** | Comparación con período anterior |
 
 ---
 
-## Campos Petroleros
+## Campos
 
-### Lista de Campos
+### Ver Lista de Campos
 
-**Ruta:** `/production/fields`
+1. En el menú, seleccione **"Producción"** → **"Campos"**
+2. Verá la tabla/tarjetas de campos
 
-#### Información Mostrada
-- Nombre del campo
-- Ubicación
-- Cantidad de pozos
-- Producción total
-- Estado
+### Filtros Disponibles
 
-### Crear Campo
+| Filtro | Opciones |
+|--------|----------|
+| **Búsqueda** | Por código o nombre |
+| **Estado** | Activo, Inactivo, En Desarrollo, Abandonado |
+| **Tipo** | Onshore, Offshore |
 
-**Ruta:** `/production/fields/new`
+### Columnas de la Tabla
+
+| Columna | Descripción |
+|---------|-------------|
+| **Código** | Identificador único |
+| **Nombre** | Nombre del campo |
+| **Tipo** | Onshore/Offshore |
+| **Ubicación** | Localización geográfica |
+| **Pozos** | Cantidad de pozos |
+| **Estado** | Estado actual |
+| **Acciones** | Ver, Editar, Eliminar |
+
+---
+
+### Registrar un Campo
+
+1. Haga clic en el botón **"+ Nuevo Campo"**
+2. Complete el formulario:
 
 | Campo | Obligatorio | Descripción |
 |-------|-------------|-------------|
-| **Código** | ✅ | Código único |
-| **Nombre** | ✅ | Nombre del campo |
-| **Ubicación** | ❌ | Ubicación geográfica |
-| **Operador** | ❌ | Empresa operadora |
-| **Estado** | ❌ | Activo (default) |
+| **Código** | ✅ Sí | Código único |
+| **Nombre** | ✅ Sí | Nombre del campo |
+| **Tipo** | ✅ Sí | Onshore, Offshore |
+| **Estado** | ✅ Sí | Estado inicial |
+| **Ubicación** | ❌ No | Localización |
+| **Coordenadas** | ❌ No | Latitud/Longitud |
+| **Descripción** | ❌ No | Detalles |
 
-### Detalle del Campo
-
-**Ruta:** `/production/fields/:id`
-
-- Información general
-- Lista de pozos del campo
-- Producción acumulada
-- Gráficos de tendencia
+3. Haga clic en **"Guardar"**
 
 ---
 
 ## Pozos
 
-### Lista de Pozos
+### Ver Lista de Pozos
 
-**Ruta:** `/production/wells`
+1. En el menú, seleccione **"Producción"** → **"Pozos"**
+2. Verá la tabla/tarjetas de pozos
 
-#### Filtros Disponibles
+### Filtros Disponibles
 
 | Filtro | Opciones |
 |--------|----------|
-| **Campo** | Todos los campos |
-| **Estado** | Activo, Inactivo, Cerrado |
+| **Búsqueda** | Por código o nombre |
+| **Campo** | Filtrar por campo |
+| **Estado** | Activo, Inactivo, Cerrado, etc. |
 | **Tipo** | Productor, Inyector, Observación |
 
-#### Columnas de la Tabla
+### Columnas de la Tabla
 
 | Columna | Descripción |
 |---------|-------------|
-| **Código** | Identificador del pozo |
+| **Código** | Identificador único |
 | **Nombre** | Nombre del pozo |
-| **Campo** | Campo asociado |
-| **Tipo** | Productor/Inyector |
+| **Campo** | Campo al que pertenece |
+| **Tipo** | Productor, Inyector, etc. |
+| **Clasificación** | Petróleo, Gas, Mixto |
 | **Estado** | Estado actual |
-| **Última Producción** | Fecha del último registro |
-| **Acciones** | Ver, Editar |
+| **Acciones** | Ver, Editar, Eliminar |
 
 ---
 
-### Crear Pozo
+### Registrar un Pozo
 
-**Ruta:** `/production/wells/new`
+1. Haga clic en el botón **"+ Nuevo Pozo"**
+2. Complete el formulario:
 
 | Campo | Obligatorio | Descripción |
 |-------|-------------|-------------|
-| **Código** | ✅ | Código único |
-| **Nombre** | ✅ | Nombre del pozo |
-| **Campo** | ✅ | Campo asociado |
-| **Tipo** | ✅ | Productor, Inyector, etc. |
-| **Coordenadas** | ❌ | Ubicación GPS |
-| **Profundidad** | ❌ | Profundidad total |
-| **Fecha Completación** | ❌ | Cuándo se completó |
-| **Estado** | ❌ | Activo (default) |
+| **Código** | ✅ Sí | Código único |
+| **Nombre** | ✅ Sí | Nombre del pozo |
+| **Campo** | ✅ Sí | Campo al que pertenece |
+| **Tipo** | ✅ Sí | Productor, Inyector, etc. |
+| **Clasificación** | ❌ No | Petróleo, Gas, Mixto |
+| **Estado** | ✅ Sí | Estado inicial |
+| **Profundidad** | ❌ No | Profundidad total |
+| **Coordenadas** | ❌ No | Ubicación |
+| **Fecha Perforación** | ❌ No | Cuándo se perforó |
+
+3. Haga clic en **"Guardar"**
 
 ---
 
-### Detalle del Pozo
+### Ver Detalle de un Pozo
 
-**Ruta:** `/production/wells/:id`
-
-#### Información
-- Código y nombre
-- Campo asociado
-- Tipo y estado
-- Datos técnicos
-
-#### Tabs Disponibles
-
-##### Tab: Información
-Datos generales del pozo.
-
-##### Tab: Producción
-Historial de producción diaria:
-- Fecha
-- Petróleo (BBL)
-- Gas (MCF)
-- Agua (BBL)
-- Horas producidas
-
-##### Tab: Logs
-Historial de operaciones:
-- Fecha
-- Tipo de operación
-- Descripción
-- Responsable
-
-##### Tab: Documentos
-Archivos adjuntos.
+1. En la lista, haga clic en el ícono de **ojo** (👁)
+2. Verá:
+   - Información técnica del pozo
+   - Historial de producción
+   - Intervenciones realizadas
+   - Gráficos de rendimiento
 
 ---
 
 ## Producción Diaria
 
-### Lista de Registros
+### Ver Lista de Producción
 
-**Ruta:** `/production/daily`
+1. En el menú, seleccione **"Producción"** → **"Producción Diaria"**
+2. Verá los registros de producción
 
-#### Filtros Disponibles
+### Filtros Disponibles
 
 | Filtro | Opciones |
 |--------|----------|
-| **Pozo** | Todos los pozos |
-| **Campo** | Todos los campos |
-| **Fecha Desde** | Fecha inicial |
-| **Fecha Hasta** | Fecha final |
-
-#### Columnas de la Tabla
-
-| Columna | Descripción |
-|---------|-------------|
-| **Fecha** | Fecha de producción |
-| **Pozo** | Pozo productor |
-| **Petróleo** | BBL producidos |
-| **Gas** | MCF producidos |
-| **Agua** | BBL de agua |
-| **BSW** | Corte de agua (%) |
-| **Horas** | Horas de producción |
-| **Acciones** | Ver, Editar |
+| **Fecha** | Rango de fechas |
+| **Campo** | Filtrar por campo |
+| **Pozo** | Filtrar por pozo |
 
 ---
 
 ### Registrar Producción Diaria
 
-**Ruta:** `/production/daily/new`
+1. Haga clic en el botón **"+ Nueva Producción"**
+2. Complete el formulario:
 
 | Campo | Obligatorio | Descripción |
 |-------|-------------|-------------|
-| **Pozo** | ✅ | Seleccionar pozo |
-| **Fecha** | ✅ | Fecha de producción |
-| **Petróleo (BBL)** | ✅ | Barriles de petróleo |
-| **Gas (MCF)** | ❌ | Miles de pies cúbicos |
-| **Agua (BBL)** | ❌ | Barriles de agua |
-| **Horas Producidas** | ❌ | Horas de operación |
-| **Choke** | ❌ | Tamaño del choke |
-| **Presión** | ❌ | Presión de cabezal |
-| **Temperatura** | ❌ | Temperatura |
-| **Notas** | ❌ | Observaciones |
+| **Fecha** | ✅ Sí | Día de producción |
+| **Pozo** | ✅ Sí | Pozo que produjo |
+| **Petróleo (BOPD)** | ❌ No | Barriles de petróleo |
+| **Gas (MCFD)** | ❌ No | Miles de pies cúbicos de gas |
+| **Agua (BWPD)** | ❌ No | Barriles de agua |
+| **Horas Operación** | ❌ No | Horas de producción |
+| **Presión Cabezal** | ❌ No | Presión en cabezal |
+| **Temperatura** | ❌ No | Temperatura |
+| **Notas** | ❌ No | Observaciones |
 
-#### Pasos
-1. Hacer clic en **"+ Nueva Producción"**
-2. Seleccionar pozo
-3. Ingresar fecha
-4. Registrar volúmenes producidos
-5. Agregar parámetros operacionales
-6. Hacer clic en **"Guardar"**
+3. Haga clic en **"Guardar"**
 
 ---
 
-## Asignaciones (Allocations)
+## Asignaciones
 
-### Lista de Asignaciones
+### Ver Asignaciones
 
-**Ruta:** `/production/allocations`
+1. En el menú, seleccione **"Producción"** → **"Asignaciones"**
+2. Verá las asignaciones de producción a socios
 
-Muestra la distribución de producción entre socios según porcentajes de participación.
+### Crear Asignación
 
-#### Información Mostrada
-- Período
-- Campo
-- Producción total
-- Distribución por socio
+1. Haga clic en **"+ Nueva Asignación"**
+2. Seleccione el período y los socios
+3. El sistema calcula las participaciones
+4. Revise y confirme
 
 ---
 
-## Tips y Mejores Prácticas
+## Consejos Útiles
 
-### Para Producción Diaria
-- ✅ Registrar producción diariamente
-- ✅ Verificar datos antes de guardar
-- ✅ Incluir observaciones relevantes
-- ✅ Reportar anomalías inmediatamente
+### Para Campos
+- ✅ Use códigos estándar de la industria
+- ✅ Mantenga actualizada la ubicación
+- ✅ Documente cambios de estado
 
 ### Para Pozos
-- ✅ Mantener datos técnicos actualizados
-- ✅ Registrar cambios de estado
-- ✅ Documentar operaciones en logs
+- ✅ Registre todos los datos técnicos
+- ✅ Actualice el estado cuando cambie
+- ✅ Documente intervenciones
 
-### Para Análisis
-- ✅ Revisar tendencias regularmente
-- ✅ Identificar pozos con declinación
-- ✅ Comparar con históricos
+### Para Producción
+- ✅ Registre diariamente
+- ✅ Verifique los datos antes de guardar
+- ✅ Investigue desviaciones significativas
 
 ---
 
-## Solución de Problemas
+## Preguntas Frecuentes
 
-### "No puedo registrar producción"
-- Verificar que el pozo esté activo
-- Verificar que no exista registro para esa fecha
-- Verificar permisos de usuario
+### ¿Puedo registrar producción de días anteriores?
+Sí, puede seleccionar cualquier fecha pasada al registrar producción.
 
-### "Datos de producción incorrectos"
-- Editar el registro existente
-- Documentar la corrección en notas
+### ¿Cómo veo la producción acumulada de un pozo?
+En el detalle del pozo, la pestaña de producción muestra el historial y acumulados.
 
-### "Pozo no aparece en lista"
-- Verificar filtros aplicados
-- Verificar estado del pozo
-- Verificar campo seleccionado
+### ¿Qué pasa si un pozo cambia de productor a inyector?
+Cambie el tipo del pozo en la edición. El historial de producción se mantiene.
+
+### ¿Cómo genero reportes de producción?
+Use el módulo de Reportes para generar informes de producción por período, campo o pozo.
+
+### ¿Puedo importar datos de producción?
+Consulte con el administrador sobre la funcionalidad de importación masiva.

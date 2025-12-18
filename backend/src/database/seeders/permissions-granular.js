@@ -124,12 +124,17 @@ const PERMISSIONS = {
   inventory: [
     { code: 'inventory:*', name: 'Inventario - Acceso Completo', description: 'Acceso completo al módulo de inventario', action: '*', permissionType: 'module' },
     { code: 'inventory:read', name: 'Ver Inventario', description: 'Ver items de inventario', action: 'read', permissionType: 'action' },
+    { code: 'inventory:read:stock', name: 'Ver Stock', description: 'Ver niveles de stock por almacén', action: 'read', field: 'stock', permissionType: 'field' },
+    { code: 'inventory:read:movements', name: 'Ver Movimientos', description: 'Ver historial de movimientos', action: 'read', field: 'movements', permissionType: 'field' },
+    { code: 'inventory:read:warehouses', name: 'Ver Almacenes', description: 'Ver lista de almacenes', action: 'read', field: 'warehouses', permissionType: 'field' },
     { code: 'inventory:create', name: 'Crear Item', description: 'Crear items de inventario', action: 'create', permissionType: 'action' },
     { code: 'inventory:update', name: 'Editar Item', description: 'Editar items de inventario', action: 'update', permissionType: 'action' },
     { code: 'inventory:delete', name: 'Eliminar Item', description: 'Eliminar items de inventario', action: 'delete', permissionType: 'action' },
     { code: 'inventory:movement', name: 'Registrar Movimiento', description: 'Registrar movimientos de inventario', action: 'movement', permissionType: 'action' },
     { code: 'inventory:adjust', name: 'Ajustar Stock', description: 'Realizar ajustes de inventario', action: 'adjust', permissionType: 'action' },
     { code: 'inventory:transfer', name: 'Transferir', description: 'Transferir entre almacenes', action: 'transfer', permissionType: 'action' },
+    { code: 'inventory:approve', name: 'Aprobar Ajustes', description: 'Aprobar ajustes de inventario', action: 'approve', permissionType: 'action' },
+    { code: 'inventory:export', name: 'Exportar Inventario', description: 'Exportar datos de inventario', action: 'export', permissionType: 'action' },
   ],
 
   // ========== FLOTA ==========
@@ -269,10 +274,17 @@ const PERMISSIONS = {
   production: [
     { code: 'production:*', name: 'Producción - Acceso Completo', description: 'Acceso completo al módulo de producción', action: '*', permissionType: 'module' },
     { code: 'production:read', name: 'Ver Producción', description: 'Ver campos, pozos y producción diaria', action: 'read', permissionType: 'action' },
+    { code: 'production:read:fields', name: 'Ver Campos', description: 'Ver tab de campos petroleros', action: 'read', field: 'fields', permissionType: 'field' },
+    { code: 'production:read:wells', name: 'Ver Pozos', description: 'Ver tab de pozos', action: 'read', field: 'wells', permissionType: 'field' },
+    { code: 'production:read:daily', name: 'Ver Producción Diaria', description: 'Ver tab de producción diaria', action: 'read', field: 'daily', permissionType: 'field' },
+    { code: 'production:read:allocations', name: 'Ver Allocations', description: 'Ver tab de allocations mensuales', action: 'read', field: 'allocations', permissionType: 'field' },
+    { code: 'production:read:logs', name: 'Ver Bitácoras', description: 'Ver tab de bitácoras de pozos', action: 'read', field: 'logs', permissionType: 'field' },
     { code: 'production:create', name: 'Registrar Producción', description: 'Crear campos, pozos y registrar producción', action: 'create', permissionType: 'action' },
     { code: 'production:update', name: 'Editar Producción', description: 'Editar registros de producción', action: 'update', permissionType: 'action' },
     { code: 'production:delete', name: 'Eliminar Producción', description: 'Eliminar registros de producción', action: 'delete', permissionType: 'action' },
     { code: 'production:approve', name: 'Aprobar Producción', description: 'Verificar y aprobar registros de producción y allocations', action: 'approve', permissionType: 'action' },
+    { code: 'production:verify', name: 'Verificar Producción', description: 'Verificar registros de producción diaria', action: 'verify', permissionType: 'action' },
+    { code: 'production:export', name: 'Exportar Producción', description: 'Exportar datos de producción', action: 'export', permissionType: 'action' },
   ],
 
   // ========== AFE (Authorization for Expenditure) ==========
@@ -334,6 +346,37 @@ const PERMISSIONS = {
     { code: 'reserves:delete', name: 'Eliminar Reservas', description: 'Eliminar estimaciones y valoraciones en borrador', action: 'delete', permissionType: 'action' },
     { code: 'reserves:approve', name: 'Aprobar Reservas', description: 'Aprobar estimaciones y valoraciones de reservas', action: 'approve', permissionType: 'action' },
   ],
+
+  // ========== LOGÍSTICA (TRANSPORTE DE HIDROCARBUROS) ==========
+  logistics: [
+    { code: 'logistics:*', name: 'Logística - Acceso Completo', description: 'Acceso completo al módulo de logística y transporte', action: '*', permissionType: 'module' },
+    { code: 'logistics:read', name: 'Ver Logística', description: 'Ver tanques, tickets de carga, calidad y ductos', action: 'read', permissionType: 'action' },
+    { code: 'logistics:read:tanks', name: 'Ver Tanques', description: 'Ver tab de tanques de almacenamiento', action: 'read', field: 'tanks', permissionType: 'field' },
+    { code: 'logistics:read:tickets', name: 'Ver Tickets de Carga', description: 'Ver tab de tickets de carga/descarga', action: 'read', field: 'tickets', permissionType: 'field' },
+    { code: 'logistics:read:quality', name: 'Ver Calidad de Crudo', description: 'Ver tab de muestras de calidad', action: 'read', field: 'quality', permissionType: 'field' },
+    { code: 'logistics:read:pipelines', name: 'Ver Ductos', description: 'Ver tab de ductos', action: 'read', field: 'pipelines', permissionType: 'field' },
+    { code: 'logistics:create', name: 'Crear en Logística', description: 'Crear tanques, tickets, muestras y ductos', action: 'create', permissionType: 'action' },
+    { code: 'logistics:update', name: 'Editar en Logística', description: 'Editar registros de logística', action: 'update', permissionType: 'action' },
+    { code: 'logistics:delete', name: 'Eliminar en Logística', description: 'Eliminar registros de logística', action: 'delete', permissionType: 'action' },
+    { code: 'logistics:approve', name: 'Aprobar Calidad', description: 'Aprobar muestras de calidad de crudo', action: 'approve', permissionType: 'action' },
+    { code: 'logistics:gauging', name: 'Registrar Mediciones', description: 'Registrar mediciones de tanques', action: 'gauging', permissionType: 'action' },
+  ],
+
+  // ========== ATTACHMENTS ==========
+  attachments: [
+    { code: 'attachments:*', name: 'Adjuntos - Acceso Completo', description: 'Acceso completo a archivos adjuntos', action: '*', permissionType: 'module' },
+    { code: 'attachments:read', name: 'Ver Adjuntos', description: 'Ver archivos adjuntos', action: 'read', permissionType: 'action' },
+    { code: 'attachments:create', name: 'Subir Adjuntos', description: 'Subir archivos adjuntos', action: 'create', permissionType: 'action' },
+    { code: 'attachments:delete', name: 'Eliminar Adjuntos', description: 'Eliminar archivos adjuntos', action: 'delete', permissionType: 'action' },
+  ],
+
+  // ========== BACKUP ==========
+  backup: [
+    { code: 'backup:*', name: 'Backup - Acceso Completo', description: 'Acceso completo a backups del sistema', action: '*', permissionType: 'module' },
+    { code: 'backup:read', name: 'Ver Backups', description: 'Ver lista de backups', action: 'read', permissionType: 'action' },
+    { code: 'backup:create', name: 'Crear Backup', description: 'Crear backup manual', action: 'create', permissionType: 'action' },
+    { code: 'backup:restore', name: 'Restaurar Backup', description: 'Restaurar desde backup', action: 'restore', permissionType: 'action' },
+  ],
 };
 
 // Roles predefinidos con sus permisos
@@ -372,6 +415,9 @@ const ROLES = {
       'jib:read', 'jib:approve',
       'ptw:read', 'ptw:approve',
       'reserves:read', 'reserves:approve',
+      'logistics:read', 'logistics:approve',
+      'crm:read',
+      'quality:read', 'quality:approve',
     ],
   },
   'Gerente Administrativo': {
@@ -410,6 +456,10 @@ const ROLES = {
       'contracts:*',
       'compliance:*',
       'reserves:*',
+      'logistics:*',
+      'quality:*',
+      'ptw:*',
+      'jib:read',
     ],
   },
   'Contador': {
@@ -424,6 +474,8 @@ const ROLES = {
       'fleet:read', 'fleet:fuel_approve', 'fleet:fuel_pay',
       'reports:finance', 'reports:payroll',
       'assets:read', 'assets:read:depreciation', 'assets:depreciation',
+      'jib:read', 'jib:update',
+      'contracts:read',
     ],
   },
   'Jefe de RRHH': {
@@ -451,6 +503,9 @@ const ROLES = {
       'petty_cash:expense',
       'expense_reports:create', 'expense_reports:update', 'expense_reports:read',
       'hse:create', 'hse:read',
+      'quality:read', 'quality:create',
+      'ptw:read', 'ptw:create',
+      'production:read',
     ],
   },
   'Empleado': {
@@ -462,6 +517,127 @@ const ROLES = {
       'petty_cash:expense', // Registrar gastos
       'expense_reports:create', 'expense_reports:update', 'expense_reports:read', // Reportar gastos
       'documents:read', // Solo sus documentos
+      'reports:dashboard',
+    ],
+  },
+
+  // ========== NUEVOS ROLES ESPECIALIZADOS O&G ==========
+
+  'Ingeniero de Producción': {
+    description: 'Gestión de producción y pozos petroleros',
+    isSystemRole: true,
+    permissions: [
+      'production:*',
+      'reserves:read',
+      'logistics:read', 'logistics:gauging',
+      'hse:read', 'hse:create',
+      'ptw:read', 'ptw:create',
+      'afe:read',
+      'reports:dashboard',
+    ],
+  },
+
+  'Coordinador HSE': {
+    description: 'Seguridad industrial y permisos de trabajo',
+    isSystemRole: true,
+    permissions: [
+      'hse:*',
+      'ptw:*',
+      'quality:read', 'quality:create',
+      'employees:read:personal',
+      'projects:read',
+      'production:read',
+      'compliance:read', 'compliance:create',
+      'reports:dashboard',
+    ],
+  },
+
+  'Coordinador de Logística': {
+    description: 'Transporte y almacenamiento de hidrocarburos',
+    isSystemRole: true,
+    permissions: [
+      'logistics:*',
+      'production:read',
+      'inventory:read', 'inventory:movement',
+      'fleet:read', 'fleet:fuel',
+      'quality:read',
+      'reports:dashboard',
+    ],
+  },
+
+  'Almacenista': {
+    description: 'Gestión de almacén e inventario',
+    isSystemRole: true,
+    permissions: [
+      'inventory:read', 'inventory:movement', 'inventory:transfer',
+      'procurement:read', 'procurement:receive',
+      'assets:read',
+      'reports:dashboard',
+    ],
+  },
+
+  'Analista de Contratos': {
+    description: 'Gestión de contratos O&G y JIB',
+    isSystemRole: true,
+    permissions: [
+      'contracts:*',
+      'jib:*',
+      'afe:read',
+      'crm:read',
+      'finance:read',
+      'production:read',
+      'reports:dashboard',
+    ],
+  },
+
+  'Analista de Reservas': {
+    description: 'Estimación y valoración de reservas',
+    isSystemRole: true,
+    permissions: [
+      'reserves:*',
+      'production:read',
+      'contracts:read',
+      'afe:read',
+      'reports:dashboard',
+    ],
+  },
+
+  'Ejecutivo Comercial': {
+    description: 'Gestión comercial y CRM',
+    isSystemRole: true,
+    permissions: [
+      'crm:*',
+      'projects:read',
+      'contractors:read',
+      'documents:read', 'documents:create',
+      'reports:dashboard',
+    ],
+  },
+
+  'Inspector de Calidad': {
+    description: 'Control de calidad e inspecciones',
+    isSystemRole: true,
+    permissions: [
+      'quality:*',
+      'projects:read',
+      'hse:read',
+      'production:read',
+      'logistics:read:quality',
+      'documents:read', 'documents:create',
+      'reports:dashboard',
+    ],
+  },
+
+  'Operador de Campo': {
+    description: 'Operaciones de campo y producción diaria',
+    isSystemRole: true,
+    permissions: [
+      'production:read', 'production:create',
+      'logistics:read', 'logistics:gauging',
+      'hse:read', 'hse:create',
+      'ptw:read',
+      'inventory:read', 'inventory:movement',
+      'fleet:read', 'fleet:fuel',
       'reports:dashboard',
     ],
   },
