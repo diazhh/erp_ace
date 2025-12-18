@@ -1175,7 +1175,7 @@ class ProductionService {
         { model: Well, as: 'well', attributes: ['id', 'code', 'name'] },
         { model: User, as: 'creator', attributes: ['id', 'username'] },
         { model: User, as: 'responsible', attributes: ['id', 'username'] },
-        { model: Contractor, as: 'contractor', attributes: ['id', 'name'] },
+        { model: Contractor, as: 'contractor', attributes: ['id', 'code', 'companyName'] },
         { model: Project, as: 'project', attributes: ['id', 'code', 'name'] },
       ],
       order: [['log_date', 'DESC'], ['created_at', 'DESC']],

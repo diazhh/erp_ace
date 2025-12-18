@@ -505,8 +505,13 @@ class OrganizationController {
         throw new NotFoundError('Posición no encontrada');
       }
 
-      // Verificar que no tenga empleados asignados
-      const employeesCount = await Employee.count({ where: { positionId: id } });
+      // Verificar que no tenga empleados activos asignados
+      const employeesCount = await Employee.count({ 
+        where: { 
+          positionId: id,
+          status: { [Op.ne]: 'TERMINATED' }
+        } 
+      });
       if (employeesCount > 0) {
         throw new BadRequestError('No se puede eliminar una posición con empleados asignados');
       }

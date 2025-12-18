@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { useDispatch } from 'react-redux';
+import { useTranslation } from 'react-i18next';
 import {
   Dialog,
   DialogTitle,
@@ -31,6 +32,7 @@ import { createReplenishment } from '../../store/slices/pettyCashSlice';
 
 const PettyCashReplenishDialog = ({ open, onClose, pettyCash }) => {
   const dispatch = useDispatch();
+  const { t } = useTranslation();
   const theme = useTheme();
   const fullScreen = useMediaQuery(theme.breakpoints.down('sm'));
   const fileInputRef = useRef(null);
@@ -56,7 +58,7 @@ const PettyCashReplenishDialog = ({ open, onClose, pettyCash }) => {
       setReceiptPreview(null);
       setFormData({
         amount: suggested > 0 ? suggested.toFixed(2) : '',
-        description: 'Reposición de caja chica',
+        description: t('pettyCash.replenishmentDescription'),
         notes: '',
         createTransaction: !!pettyCash.bankAccountId,
       });
@@ -108,7 +110,7 @@ const PettyCashReplenishDialog = ({ open, onClose, pettyCash }) => {
       };
 
       await dispatch(createReplenishment({ pettyCashId: pettyCash.id, data })).unwrap();
-      toast.success('Reposición registrada');
+      toast.success(t('pettyCash.replenishmentRegistered'));
       onClose(true);
     } catch (error) {
       toast.error(error);
@@ -134,25 +136,25 @@ const PettyCashReplenishDialog = ({ open, onClose, pettyCash }) => {
       }}
     >
       <form onSubmit={handleSubmit}>
-        <DialogTitle>Reponer Caja Chica</DialogTitle>
+        <DialogTitle>{t('pettyCash.replenishPettyCash')}</DialogTitle>
         <DialogContent>
           <Box sx={{ mb: 3, p: 2, bgcolor: 'grey.100', borderRadius: 1 }}>
             <Grid container spacing={2}>
               <Grid item xs={6}>
-                <Typography variant="body2" color="text.secondary">Saldo Actual</Typography>
+                <Typography variant="body2" color="text.secondary">{t('pettyCash.currentBalance')}</Typography>
                 <Typography variant="h6" color="error.main">
                   {pettyCash?.currency} {currentBalance.toFixed(2)}
                 </Typography>
               </Grid>
               <Grid item xs={6}>
-                <Typography variant="body2" color="text.secondary">Monto Inicial</Typography>
+                <Typography variant="body2" color="text.secondary">{t('pettyCash.initialAmount')}</Typography>
                 <Typography variant="h6">
                   {pettyCash?.currency} {initialAmount.toFixed(2)}
                 </Typography>
               </Grid>
               {amount > 0 && (
                 <Grid item xs={12}>
-                  <Typography variant="body2" color="text.secondary">Nuevo Saldo</Typography>
+                  <Typography variant="body2" color="text.secondary">{t('pettyCash.newBalance')}</Typography>
                   <Typography variant="h5" color="success.main">
                     {pettyCash?.currency} {newBalance.toFixed(2)}
                   </Typography>
@@ -165,7 +167,7 @@ const PettyCashReplenishDialog = ({ open, onClose, pettyCash }) => {
             <Grid item xs={12}>
               <TextField
                 name="amount"
-                label="Monto a Reponer"
+                label={t('pettyCash.amountToReplenish')}
                 type="number"
                 value={formData.amount}
                 onChange={handleChange}
@@ -181,7 +183,7 @@ const PettyCashReplenishDialog = ({ open, onClose, pettyCash }) => {
             <Grid item xs={12}>
               <TextField
                 name="description"
-                label="Descripción"
+                label={t('pettyCash.description')}
                 value={formData.description}
                 onChange={handleChange}
                 fullWidth
@@ -199,11 +201,11 @@ const PettyCashReplenishDialog = ({ open, onClose, pettyCash }) => {
                       onChange={handleChange}
                     />
                   }
-                  label="Registrar egreso en cuenta bancaria asociada"
+                  label={t('pettyCash.registerBankAccountExpense')}
                 />
                 {formData.createTransaction && pettyCash?.bankAccount && (
                   <Alert severity="info" sx={{ mt: 1 }}>
-                    Se registrará un egreso en la cuenta "{pettyCash.bankAccount.name}"
+                    {t('pettyCash.willRegisterExpenseInAccount', { account: pettyCash.bankAccount.name })}
                   </Alert>
                 )}
               </Grid>
@@ -212,7 +214,7 @@ const PettyCashReplenishDialog = ({ open, onClose, pettyCash }) => {
             {!pettyCash?.bankAccountId && (
               <Grid item xs={12}>
                 <Alert severity="warning">
-                  No hay cuenta bancaria asociada. La reposición se registrará solo en la caja chica.
+                  {t('pettyCash.noAssociatedAccountWarning')}
                 </Alert>
               </Grid>
             )}
@@ -220,7 +222,7 @@ const PettyCashReplenishDialog = ({ open, onClose, pettyCash }) => {
             {/* Comprobante (opcional) */}
             <Grid item xs={12}>
               <Typography variant="subtitle2" color="text.secondary" gutterBottom>
-                Comprobante de transferencia (opcional)
+                {t('pettyCash.transferReceiptOptional')}
               </Typography>
               <input
                 type="file"
@@ -239,7 +241,7 @@ const PettyCashReplenishDialog = ({ open, onClose, pettyCash }) => {
                   fullWidth
                   sx={{ py: 1.5, borderStyle: 'dashed' }}
                 >
-                  Subir comprobante
+                  {t('pettyCash.uploadReceipt')}
                 </Button>
               ) : (
                 <Box sx={{ 
@@ -287,7 +289,7 @@ const PettyCashReplenishDialog = ({ open, onClose, pettyCash }) => {
             <Grid item xs={12}>
               <TextField
                 name="notes"
-                label="Notas"
+                label={t('common.notes')}
                 value={formData.notes}
                 onChange={handleChange}
                 fullWidth
@@ -300,7 +302,7 @@ const PettyCashReplenishDialog = ({ open, onClose, pettyCash }) => {
         </DialogContent>
         <DialogActions>
           <Button onClick={() => onClose(false)} disabled={loading}>
-            Cancelar
+            {t('common.cancel')}
           </Button>
           <Button
             type="submit"
@@ -309,7 +311,7 @@ const PettyCashReplenishDialog = ({ open, onClose, pettyCash }) => {
             disabled={loading || !formData.amount}
             startIcon={loading && <CircularProgress size={20} />}
           >
-            Reponer
+            {t('pettyCash.replenish')}
           </Button>
         </DialogActions>
       </form>

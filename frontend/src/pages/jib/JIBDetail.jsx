@@ -30,6 +30,10 @@ import {
   DialogContent,
   DialogActions,
   TextField,
+  FormControl,
+  Select,
+  MenuItem,
+  InputLabel,
 } from '@mui/material';
 import {
   ArrowBack as BackIcon,
@@ -46,7 +50,7 @@ const JIBDetail = () => {
   const navigate = useNavigate();
   const { id } = useParams();
   const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
   const { currentJIB, loading } = useSelector((state) => state.jib);
 
@@ -128,11 +132,11 @@ const JIBDetail = () => {
   return (
     <Box sx={{ p: { xs: 2, md: 3 } }}>
       <Box sx={{ display: 'flex', flexDirection: { xs: 'column', sm: 'row' }, justifyContent: 'space-between', alignItems: { xs: 'stretch', sm: 'center' }, mb: 3, gap: 2 }}>
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-          <Button startIcon={<BackIcon />} onClick={() => navigate('/jib/billings')}>
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, flexWrap: 'wrap' }}>
+          <Button startIcon={<BackIcon />} onClick={() => navigate('/jib/billings')} fullWidth={isMobile}>
             {t('common.back', 'Volver')}
           </Button>
-          <Typography variant="h4" fontWeight="bold">
+          <Typography variant={isMobile ? 'h5' : 'h4'} fontWeight="bold">
             {currentJIB.code}
           </Typography>
           <Chip
@@ -140,13 +144,13 @@ const JIBDetail = () => {
             color={getStatusColor(currentJIB.status)}
           />
         </Box>
-        <Box sx={{ display: 'flex', gap: 1 }}>
+        <Box sx={{ display: 'flex', gap: 1, flexDirection: isMobile ? 'column' : 'row', width: isMobile ? '100%' : 'auto' }}>
           {currentJIB.status === 'DRAFT' && (
             <>
-              <Button variant="outlined" startIcon={<EditIcon />} onClick={() => navigate(`/jib/billings/${id}/edit`)}>
+              <Button variant="outlined" startIcon={<EditIcon />} onClick={() => navigate(`/jib/billings/${id}/edit`)} fullWidth={isMobile}>
                 {t('common.edit', 'Editar')}
               </Button>
-              <Button variant="contained" startIcon={<SendIcon />} onClick={handleSend}>
+              <Button variant="contained" startIcon={<SendIcon />} onClick={handleSend} fullWidth={isMobile}>
                 {t('jib.send', 'Enviar')}
               </Button>
             </>
@@ -212,17 +216,32 @@ const JIBDetail = () => {
         </Grid>
       </Paper>
 
-      {/* Tabs */}
+      {/* Tabs - Select en mobile, Tabs en desktop */}
       <Paper sx={{ mb: 3 }}>
-        <Tabs
-          value={tabValue}
-          onChange={(e, v) => setTabValue(v)}
-          variant={isMobile ? 'scrollable' : 'standard'}
-          scrollButtons="auto"
-        >
-          <Tab label={t('jib.lineItems', 'Items de Costo')} />
-          <Tab label={t('jib.partnerShares', 'Distribución Socios')} />
-        </Tabs>
+        {isMobile ? (
+          <Box sx={{ p: 2 }}>
+            <FormControl fullWidth>
+              <InputLabel>{t('common.section')}</InputLabel>
+              <Select
+                value={tabValue}
+                label={t('common.section')}
+                onChange={(e) => setTabValue(e.target.value)}
+              >
+                <MenuItem value={0}>{t('jib.lineItems', 'Items de Costo')}</MenuItem>
+                <MenuItem value={1}>{t('jib.partnerShares', 'Distribución Socios')}</MenuItem>
+              </Select>
+            </FormControl>
+          </Box>
+        ) : (
+          <Tabs
+            value={tabValue}
+            onChange={(e, v) => setTabValue(v)}
+            variant="standard"
+          >
+            <Tab label={t('jib.lineItems', 'Items de Costo')} />
+            <Tab label={t('jib.partnerShares', 'Distribución Socios')} />
+          </Tabs>
+        )}
         <Divider />
 
         {/* Line Items Tab */}

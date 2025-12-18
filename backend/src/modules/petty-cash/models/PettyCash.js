@@ -111,5 +111,24 @@ module.exports = (sequelize) => {
     ],
   });
 
+  PettyCash.associate = (models) => {
+    PettyCash.belongsTo(models.Employee, {
+      foreignKey: 'custodianId',
+      as: 'custodian',
+    });
+    PettyCash.belongsTo(models.BankAccount, {
+      foreignKey: 'bankAccountId',
+      as: 'bankAccount',
+    });
+    PettyCash.belongsTo(models.User, {
+      foreignKey: 'createdBy',
+      as: 'creator',
+    });
+    PettyCash.hasMany(models.PettyCashEntry, {
+      foreignKey: 'pettyCashId',
+      as: 'entries',
+    });
+  };
+
   return PettyCash;
 };

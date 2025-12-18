@@ -294,6 +294,22 @@ router.get('/inventory/items/:id', reportController.downloadInventoryItemReport)
  */
 router.get('/inventory/warehouses/:id', reportController.downloadWarehouseReport);
 
+// ==================== LOGISTICS ====================
+
+/**
+ * @route   GET /api/reports/logistics/quality/:id
+ * @desc    Descargar reporte de muestra de calidad en PDF
+ * @access  Private
+ */
+router.get('/logistics/quality/:id', reportController.downloadQualityReport);
+
+/**
+ * @route   GET /api/reports/logistics/pipeline/:id
+ * @desc    Descargar reporte de ducto en PDF
+ * @access  Private
+ */
+router.get('/logistics/pipeline/:id', reportController.downloadPipelineReport);
+
 // ==================== EXCEL EXPORTS ====================
 
 /**

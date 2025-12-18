@@ -1,8 +1,9 @@
 import { createTheme } from '@mui/material/styles';
 
-const theme = createTheme({
+// Base theme configuration shared between light and dark modes
+const getBaseTheme = (mode) => ({
   palette: {
-    mode: 'light',
+    mode,
     primary: {
       main: '#1976d2',
       light: '#42a5f5',
@@ -28,10 +29,27 @@ const theme = createTheme({
       light: '#ef5350',
       dark: '#c62828',
     },
-    background: {
-      default: '#f5f5f5',
-      paper: '#ffffff',
-    },
+    ...(mode === 'light'
+      ? {
+          background: {
+            default: '#f5f5f5',
+            paper: '#ffffff',
+          },
+          text: {
+            primary: 'rgba(0, 0, 0, 0.87)',
+            secondary: 'rgba(0, 0, 0, 0.6)',
+          },
+        }
+      : {
+          background: {
+            default: '#121212',
+            paper: '#1e1e1e',
+          },
+          text: {
+            primary: '#ffffff',
+            secondary: 'rgba(255, 255, 255, 0.7)',
+          },
+        }),
   },
   typography: {
     fontFamily: '"Roboto", "Helvetica", "Arial", sans-serif',
@@ -73,7 +91,9 @@ const theme = createTheme({
       styleOverrides: {
         root: {
           borderRadius: 12,
-          boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
+          boxShadow: mode === 'light' 
+            ? '0 2px 8px rgba(0,0,0,0.1)' 
+            : '0 2px 8px rgba(0,0,0,0.4)',
         },
       },
     },
@@ -86,7 +106,34 @@ const theme = createTheme({
         },
       },
     },
+    MuiPaper: {
+      styleOverrides: {
+        root: {
+          backgroundImage: 'none',
+        },
+      },
+    },
+    MuiAppBar: {
+      styleOverrides: {
+        root: {
+          backgroundImage: 'none',
+        },
+      },
+    },
+    MuiDrawer: {
+      styleOverrides: {
+        paper: {
+          backgroundImage: 'none',
+        },
+      },
+    },
   },
 });
+
+// Create theme function that can be called with mode
+export const createAppTheme = (mode = 'light') => createTheme(getBaseTheme(mode));
+
+// Default light theme for backwards compatibility
+const theme = createAppTheme('light');
 
 export default theme;

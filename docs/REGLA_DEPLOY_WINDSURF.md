@@ -123,6 +123,29 @@ ssh 144 "cd /var/proyectos/erp_ace/backend && npx sequelize-cli db:migrate:statu
 
 ---
 
+### Paso 6.1: Ejecutar Seeders en Producción (si hay nuevos)
+
+**DESPUÉS de las migraciones**, verificar si hay seeders nuevos que ejecutar:
+
+```bash
+# Listar seeders disponibles
+ls -la /home/diazhh/dev/erp/backend/src/database/seeders/*.js
+```
+
+Si hay seeders nuevos que necesitan ejecutarse en producción:
+```bash
+# Ejecutar seeders específicos (reemplazar NOMBRE_SEEDER)
+ssh 144 "cd /var/proyectos/erp_ace/backend && NODE_ENV=production npx sequelize-cli db:seed --seed NOMBRE_SEEDER.js"
+```
+
+**Seeders disponibles para datos de prueba:**
+- `20241220-001-employee-bank-accounts.js` - Cuentas bancarias de empleados
+- `20241220-002-employee-loans.js` - Préstamos de empleados
+
+**IMPORTANTE**: Los seeders solo deben ejecutarse una vez. Verificar si ya existen datos antes de ejecutar.
+
+---
+
 ### Paso 7: Dependencias del Backend
 
 ```bash

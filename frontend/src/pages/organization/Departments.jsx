@@ -40,12 +40,13 @@ import { toast } from 'react-toastify';
 import organizationService from '../../services/organizationService';
 import ConfirmDialog from '../../components/ConfirmDialog';
 
-const departmentTypes = {
-  DIRECTION: { label: 'Dirección', color: 'error' },
-  MANAGEMENT: { label: 'Gerencia', color: 'warning' },
-  DEPARTMENT: { label: 'Departamento', color: 'primary' },
-  AREA: { label: 'Área', color: 'info' },
-  UNIT: { label: 'Unidad', color: 'default' },
+// Department types - labels will be translated using t() function
+const departmentTypeColors = {
+  DIRECTION: 'error',
+  MANAGEMENT: 'warning',
+  DEPARTMENT: 'primary',
+  AREA: 'info',
+  UNIT: 'default',
 };
 
 const initialFormData = {
@@ -88,7 +89,7 @@ const Departments = () => {
       const response = await organizationService.listDepartments({ includeChildren: 'true' });
       setDepartments(response.data || []);
     } catch (error) {
-      toast.error('Error al cargar departamentos');
+      toast.error(t('common.error'));
     } finally {
       setLoading(false);
     }
@@ -132,7 +133,7 @@ const Departments = () => {
 
   const handleSubmit = async () => {
     if (!formData.code.trim() || !formData.name.trim()) {
-      toast.error('Código y nombre son requeridos');
+      toast.error(t('validation.required'));
       return;
     }
 
@@ -144,15 +145,15 @@ const Departments = () => {
 
       if (editingId) {
         await organizationService.updateDepartment(editingId, dataToSend);
-        toast.success('Departamento actualizado');
+        toast.success(t('organization.departmentUpdated'));
       } else {
         await organizationService.createDepartment(dataToSend);
-        toast.success('Departamento creado');
+        toast.success(t('organization.departmentCreated'));
       }
       handleCloseForm();
       loadDepartments();
     } catch (error) {
-      toast.error(error.response?.data?.message || 'Error al guardar');
+      toast.error(error.response?.data?.message || t('common.error'));
     } finally {
       setSaving(false);
     }
@@ -161,18 +162,24 @@ const Departments = () => {
   const handleDelete = async () => {
     try {
       await organizationService.deleteDepartment(departmentToDelete.id);
-      toast.success('Departamento eliminado');
+      toast.success(t('organization.departmentDeleted'));
       setDeleteDialogOpen(false);
       setDepartmentToDelete(null);
       loadDepartments();
     } catch (error) {
-      toast.error(error.response?.data?.message || 'Error al eliminar');
+      toast.error(error.response?.data?.message || t('common.error'));
     }
   };
 
   const getTypeChip = (type) => {
-    const config = departmentTypes[type] || departmentTypes.DEPARTMENT;
-    return <Chip label={config.label} color={config.color} size="small" />;
+    const typeLabels = {
+      DIRECTION: t('organization.typeDirection'),
+      MANAGEMENT: t('organization.typeManagement'),
+      DEPARTMENT: t('organization.typeDepartment'),
+      AREA: t('organization.typeArea'),
+      UNIT: t('organization.typeUnit'),
+    };
+    return <Chip label={typeLabels[type] || type} color={departmentTypeColors[type] || 'default'} size="small" />;
   };
 
   if (loading) {
@@ -187,7 +194,7 @@ const Departments = () => {
     <Box>
       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3, flexWrap: 'wrap', gap: 2 }}>
         <Typography variant="h4" fontWeight="bold">
-          Departamentos
+          {t('organization.departments')}
         </Typography>
         <Box sx={{ display: 'flex', gap: 1 }}>
           <Button
@@ -195,14 +202,14 @@ const Departments = () => {
             startIcon={<TreeIcon />}
             onClick={() => navigate('/organization/chart')}
           >
-            Ver Organigrama
+            {t('organization.orgChart')}
           </Button>
           <Button
             variant="contained"
             startIcon={<AddIcon />}
-            onClick={() => handleOpenForm()}
+            onClick={() => navigate('/organization/departments/new')}
           >
-            Nuevo Departamento
+            {t('organization.newDepartment')}
           </Button>
         </Box>
       </Box>
@@ -225,16 +232,19 @@ const Departments = () => {
                   </Box>
                   {dept.manager && (
                     <Typography variant="body2" sx={{ mt: 1 }}>
-                      Responsable: {dept.manager.firstName} {dept.manager.lastName}
+                      {t('organization.manager')}: {dept.manager.firstName} {dept.manager.lastName}
                     </Typography>
                   )}
                   {dept.parent && (
                     <Typography variant="body2" color="text.secondary">
-                      Pertenece a: {dept.parent.name}
+                      {t('organization.belongsTo') || 'Pertenece a'}: {dept.parent.name}
                     </Typography>
                   )}
                   <Box sx={{ mt: 2, display: 'flex', justifyContent: 'flex-end', gap: 1 }}>
-                    <IconButton size="small" onClick={() => handleOpenForm(dept)}>
+                    <IconButton size="small" onClick={() => navigate(`/organization/departments/${dept.id}`)}>
+                      <BusinessIcon />
+                    </IconButton>
+                    <IconButton size="small" onClick={() => navigate(`/organization/departments/${dept.id}/edit`)}>
                       <EditIcon />
                     </IconButton>
                     <IconButton
@@ -259,20 +269,20 @@ const Departments = () => {
           <Table>
             <TableHead>
               <TableRow>
-                <TableCell>Código</TableCell>
-                <TableCell>Nombre</TableCell>
-                <TableCell>Tipo</TableCell>
-                <TableCell>Pertenece a</TableCell>
-                <TableCell>Responsable</TableCell>
-                <TableCell>Estado</TableCell>
-                <TableCell align="right">Acciones</TableCell>
+                <TableCell>{t('employees.code')}</TableCell>
+                <TableCell>{t('common.name')}</TableCell>
+                <TableCell>{t('common.type') || 'Tipo'}</TableCell>
+                <TableCell>{t('organization.belongsTo') || 'Pertenece a'}</TableCell>
+                <TableCell>{t('organization.manager')}</TableCell>
+                <TableCell>{t('common.status')}</TableCell>
+                <TableCell align="right">{t('common.actions')}</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
               {departments.length === 0 ? (
                 <TableRow>
                   <TableCell colSpan={7} align="center">
-                    No hay departamentos registrados
+                    {t('organization.noDepartments')}
                   </TableCell>
                 </TableRow>
               ) : (
@@ -301,18 +311,23 @@ const Departments = () => {
                     </TableCell>
                     <TableCell>
                       <Chip
-                        label={dept.status === 'ACTIVE' ? 'Activo' : 'Inactivo'}
+                        label={dept.status === 'ACTIVE' ? t('common.active') : t('common.inactive')}
                         color={dept.status === 'ACTIVE' ? 'success' : 'default'}
                         size="small"
                       />
                     </TableCell>
                     <TableCell align="right">
-                      <Tooltip title="Editar">
-                        <IconButton size="small" onClick={() => handleOpenForm(dept)}>
+                      <Tooltip title={t('common.view')}>
+                        <IconButton size="small" onClick={() => navigate(`/organization/departments/${dept.id}`)}>
+                          <BusinessIcon />
+                        </IconButton>
+                      </Tooltip>
+                      <Tooltip title={t('common.edit')}>
+                        <IconButton size="small" onClick={() => navigate(`/organization/departments/${dept.id}/edit`)}>
                           <EditIcon />
                         </IconButton>
                       </Tooltip>
-                      <Tooltip title="Eliminar">
+                      <Tooltip title={t('common.delete')}>
                         <IconButton
                           size="small"
                           color="error"
@@ -336,14 +351,14 @@ const Departments = () => {
       {/* Dialog de formulario */}
       <Dialog open={formOpen} onClose={handleCloseForm} maxWidth="sm" fullWidth>
         <DialogTitle>
-          {editingId ? 'Editar Departamento' : 'Nuevo Departamento'}
+          {editingId ? t('organization.editDepartment') : t('organization.newDepartment')}
         </DialogTitle>
         <DialogContent>
           <Grid container spacing={2} sx={{ mt: 1 }}>
             <Grid item xs={12} sm={4}>
               <TextField
                 name="code"
-                label="Código"
+                label={t('employees.code')}
                 value={formData.code}
                 onChange={handleChange}
                 fullWidth
@@ -353,7 +368,7 @@ const Departments = () => {
             <Grid item xs={12} sm={8}>
               <TextField
                 name="name"
-                label="Nombre"
+                label={t('common.name')}
                 value={formData.name}
                 onChange={handleChange}
                 fullWidth
@@ -363,15 +378,15 @@ const Departments = () => {
             <Grid item xs={12} sm={6}>
               <TextField
                 name="type"
-                label="Tipo"
+                label={t('common.type')}
                 value={formData.type}
                 onChange={handleChange}
                 select
                 fullWidth
               >
-                {Object.entries(departmentTypes).map(([key, value]) => (
+                {Object.entries(departmentTypeColors).map(([key]) => (
                   <MenuItem key={key} value={key}>
-                    {value.label}
+                    {t(`organization.type${key.charAt(0) + key.slice(1).toLowerCase()}`)}
                   </MenuItem>
                 ))}
               </TextField>
@@ -379,13 +394,13 @@ const Departments = () => {
             <Grid item xs={12} sm={6}>
               <TextField
                 name="parentId"
-                label="Pertenece a"
+                label={t('organization.belongsTo')}
                 value={formData.parentId}
                 onChange={handleChange}
                 select
                 fullWidth
               >
-                <MenuItem value="">Ninguno (Nivel superior)</MenuItem>
+                <MenuItem value="">{t('organization.topLevel') || 'Ninguno (Nivel superior)'}</MenuItem>
                 {departments
                   .filter((d) => d.id !== editingId)
                   .map((dept) => (
@@ -398,7 +413,7 @@ const Departments = () => {
             <Grid item xs={12}>
               <TextField
                 name="description"
-                label="Descripción"
+                label={t('common.description')}
                 value={formData.description}
                 onChange={handleChange}
                 fullWidth
@@ -409,13 +424,13 @@ const Departments = () => {
             <Grid item xs={12} sm={6}>
               <TextField
                 name="managerId"
-                label="Responsable"
+                label={t('organization.manager')}
                 value={formData.managerId}
                 onChange={handleChange}
                 select
                 fullWidth
               >
-                <MenuItem value="">Sin asignar</MenuItem>
+                <MenuItem value="">{t('organization.notAssigned') || 'Sin asignar'}</MenuItem>
                 {employees.map((emp) => (
                   <MenuItem key={emp.id} value={emp.id}>
                     {emp.firstName} {emp.lastName}
@@ -426,7 +441,7 @@ const Departments = () => {
             <Grid item xs={12} sm={6}>
               <TextField
                 name="location"
-                label="Ubicación"
+                label={t('projects.location')}
                 value={formData.location}
                 onChange={handleChange}
                 fullWidth
@@ -435,7 +450,7 @@ const Departments = () => {
             <Grid item xs={12} sm={6}>
               <TextField
                 name="costCenter"
-                label="Centro de Costo"
+                label={t('organization.costCenter') || 'Centro de Costo'}
                 value={formData.costCenter}
                 onChange={handleChange}
                 fullWidth
@@ -444,7 +459,7 @@ const Departments = () => {
             <Grid item xs={12} sm={6}>
               <TextField
                 name="color"
-                label="Color"
+                label={t('organization.color') || 'Color'}
                 type="color"
                 value={formData.color}
                 onChange={handleChange}
@@ -455,32 +470,32 @@ const Departments = () => {
             <Grid item xs={12} sm={6}>
               <TextField
                 name="status"
-                label="Estado"
+                label={t('common.status')}
                 value={formData.status}
                 onChange={handleChange}
                 select
                 fullWidth
               >
-                <MenuItem value="ACTIVE">Activo</MenuItem>
-                <MenuItem value="INACTIVE">Inactivo</MenuItem>
+                <MenuItem value="ACTIVE">{t('common.active')}</MenuItem>
+                <MenuItem value="INACTIVE">{t('common.inactive')}</MenuItem>
               </TextField>
             </Grid>
           </Grid>
         </DialogContent>
         <DialogActions>
           <Button onClick={handleCloseForm} disabled={saving}>
-            Cancelar
+            {t('common.cancel')}
           </Button>
           <Button onClick={handleSubmit} variant="contained" disabled={saving}>
-            {saving ? <CircularProgress size={24} /> : 'Guardar'}
+            {saving ? <CircularProgress size={24} /> : t('common.save')}
           </Button>
         </DialogActions>
       </Dialog>
 
       <ConfirmDialog
         open={deleteDialogOpen}
-        title="Eliminar Departamento"
-        message={`¿Está seguro de eliminar el departamento "${departmentToDelete?.name}"?`}
+        title={t('organization.deleteDepartment') || 'Eliminar Departamento'}
+        message={t('organization.deleteDepartmentConfirm', { name: departmentToDelete?.name }) || `¿Está seguro de eliminar el departamento "${departmentToDelete?.name}"?`}
         onConfirm={handleDelete}
         onCancel={() => setDeleteDialogOpen(false)}
       />

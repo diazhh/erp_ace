@@ -13,7 +13,11 @@ import EmployeeDetail from './pages/employees/EmployeeDetail';
 import EmployeeForm from './pages/employees/EmployeeForm';
 import EmployeeBankAccountForm from './pages/employees/EmployeeBankAccountForm';
 import Departments from './pages/organization/Departments';
+import DepartmentDetail from './pages/organization/DepartmentDetail';
+import DepartmentForm from './pages/organization/DepartmentForm';
 import Positions from './pages/organization/Positions';
+import PositionDetail from './pages/organization/PositionDetail';
+import PositionForm from './pages/organization/PositionForm';
 import OrgChart from './pages/organization/OrgChart';
 import Directory from './pages/organization/Directory';
 import PayrollPeriods from './pages/payroll/PayrollPeriods';
@@ -164,6 +168,26 @@ import CertificationDetail from './pages/compliance/CertificationDetail';
 import CertificationForm from './pages/compliance/CertificationForm';
 // JIB
 import { JIBDashboard, JIBList, JIBForm, JIBDetail, CashCallList, CashCallForm, CashCallDetail } from './pages/jib';
+// PTW
+import { PTWDashboard, PermitList as PTWPermitList, PermitForm as PTWPermitForm, PermitDetail as PTWPermitDetail, StopWorkList, StopWorkForm, StopWorkDetail } from './pages/ptw';
+// Reserves
+import { ReservesDashboard, EstimateList, EstimateDetail, EstimateForm, ValuationList, ValuationForm } from './components/reserves';
+// Logistics
+import {
+  LogisticsDashboard,
+  TankList,
+  TankForm,
+  TankDetail,
+  TicketList,
+  TicketForm,
+  TicketDetail,
+  QualityList,
+  QualityForm,
+  QualityDetail,
+  PipelineList,
+  PipelineForm,
+  PipelineDetail,
+} from './pages/logistics';
 
 function App() {
   const dispatch = useDispatch();
@@ -211,7 +235,13 @@ function App() {
         <Route path="employees/:employeeId/accounts/:accountId/edit" element={<EmployeeBankAccountForm />} />
         {/* Organization */}
         <Route path="organization/departments" element={<Departments />} />
+        <Route path="organization/departments/new" element={<DepartmentForm />} />
+        <Route path="organization/departments/:id" element={<DepartmentDetail />} />
+        <Route path="organization/departments/:id/edit" element={<DepartmentForm />} />
         <Route path="organization/positions" element={<Positions />} />
+        <Route path="organization/positions/new" element={<PositionForm />} />
+        <Route path="organization/positions/:id" element={<PositionDetail />} />
+        <Route path="organization/positions/:id/edit" element={<PositionForm />} />
         <Route path="organization/chart" element={<OrgChart />} />
         <Route path="organization/directory" element={<Directory />} />
         <Route path="payroll" element={<PayrollPeriods />} />
@@ -423,6 +453,42 @@ function App() {
         <Route path="jib/cash-calls/new" element={<CashCallForm />} />
         <Route path="jib/cash-calls/:id" element={<CashCallDetail />} />
         <Route path="jib/cash-calls/:id/edit" element={<CashCallForm />} />
+        {/* PTW */}
+        <Route path="ptw" element={<PTWDashboard />} />
+        <Route path="ptw/permits" element={<PTWPermitList />} />
+        <Route path="ptw/permits/new" element={<PTWPermitForm />} />
+        <Route path="ptw/permits/:id" element={<PTWPermitDetail />} />
+        <Route path="ptw/permits/:id/edit" element={<PTWPermitForm />} />
+        <Route path="ptw/stop-work" element={<StopWorkList />} />
+        <Route path="ptw/stop-work/new" element={<StopWorkForm />} />
+        <Route path="ptw/stop-work/:id" element={<StopWorkDetail />} />
+        {/* Reserves */}
+        <Route path="reserves" element={<ReservesDashboard />} />
+        <Route path="reserves/estimates" element={<EstimateList />} />
+        <Route path="reserves/estimates/new" element={<EstimateForm />} />
+        <Route path="reserves/estimates/:id" element={<EstimateDetail />} />
+        <Route path="reserves/estimates/:id/edit" element={<EstimateForm />} />
+        <Route path="reserves/valuations" element={<ValuationList />} />
+        <Route path="reserves/valuations/new" element={<ValuationForm />} />
+        <Route path="reserves/valuations/:id/edit" element={<ValuationForm />} />
+        {/* Logistics */}
+        <Route path="logistics" element={<LogisticsDashboard />} />
+        <Route path="logistics/tanks" element={<TankList />} />
+        <Route path="logistics/tanks/new" element={<TankForm />} />
+        <Route path="logistics/tanks/:id" element={<TankDetail />} />
+        <Route path="logistics/tanks/:id/edit" element={<TankForm />} />
+        <Route path="logistics/tickets" element={<TicketList />} />
+        <Route path="logistics/tickets/new" element={<TicketForm />} />
+        <Route path="logistics/tickets/:id" element={<TicketDetail />} />
+        <Route path="logistics/tickets/:id/edit" element={<TicketForm />} />
+        <Route path="logistics/quality" element={<QualityList />} />
+        <Route path="logistics/quality/new" element={<QualityForm />} />
+        <Route path="logistics/quality/:id" element={<QualityDetail />} />
+        <Route path="logistics/quality/:id/edit" element={<QualityForm />} />
+        <Route path="logistics/pipelines" element={<PipelineList />} />
+        <Route path="logistics/pipelines/new" element={<PipelineForm />} />
+        <Route path="logistics/pipelines/:id" element={<PipelineDetail />} />
+        <Route path="logistics/pipelines/:id/edit" element={<PipelineForm />} />
       </Route>
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>

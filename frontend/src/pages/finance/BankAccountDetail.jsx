@@ -48,14 +48,14 @@ import { fetchAccountFull, clearCurrentAccount } from '../../store/slices/financ
 import EntityLink from '../../components/common/EntityLink';
 import DownloadPDFButton from '../../components/common/DownloadPDFButton';
 
-const accountTypeLabels = {
-  CHECKING: 'Corriente',
-  SAVINGS: 'Ahorro',
-  CRYPTO_WALLET: 'Wallet Crypto',
-  CASH: 'Efectivo',
-  PAGO_MOVIL: 'Pago Móvil',
-  ZELLE: 'Zelle',
-};
+const getAccountTypeLabels = (t) => ({
+  CHECKING: t('finance.accountTypeChecking'),
+  SAVINGS: t('finance.accountTypeSavings'),
+  CRYPTO_WALLET: t('finance.accountTypeCrypto'),
+  CASH: t('finance.accountTypeCash'),
+  PAGO_MOVIL: t('finance.accountTypePagoMovil'),
+  ZELLE: t('finance.accountTypeZelle'),
+});
 
 const accountTypeColors = {
   CHECKING: 'primary',
@@ -80,6 +80,7 @@ const BankAccountDetail = () => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
   const { currentAccount: account, loading, error } = useSelector((state) => state.finance);
+  const accountTypeLabels = getAccountTypeLabels(t);
 
   const [activeTab, setActiveTab] = useState(0);
   const [transactionPage, setTransactionPage] = useState(0);
@@ -124,10 +125,10 @@ const BankAccountDetail = () => {
 
   const getTransactionTypeLabel = (type) => {
     const labels = {
-      INCOME: 'Ingreso',
-      EXPENSE: 'Gasto',
-      TRANSFER: 'Transferencia',
-      ADJUSTMENT: 'Ajuste',
+      INCOME: t('finance.income'),
+      EXPENSE: t('finance.expense'),
+      TRANSFER: t('finance.transfer'),
+      ADJUSTMENT: t('finance.adjustment'),
     };
     return labels[type] || type;
   };
@@ -292,7 +293,7 @@ const BankAccountDetail = () => {
                     {account.stats.pendingReconciliation}
                   </Typography>
                   <Typography variant="body2" color="text.secondary">
-                    Pendientes de Conciliar
+                    {t('finance.pendingReconciliation')}
                   </Typography>
                 </CardContent>
               </Card>
@@ -548,7 +549,8 @@ const BankAccountDetail = () => {
 
           {/* Tab: Transferencias */}
           <TabPanel value={activeTab} index={2}>
-            <Typography variant="h6" gutterBottom>{t('finance.transfer')}</Typography>
+            {/* Transferencias Entrantes */}
+            <Typography variant="h6" gutterBottom>{t('finance.incomingTransfers')}</Typography>
             {account.incomingTransfers?.length > 0 ? (
               isMobile ? (
                 // Mobile: Cards view
@@ -615,7 +617,78 @@ const BankAccountDetail = () => {
                 </TableContainer>
               )
             ) : (
-              <Alert severity="info" sx={{ mb: 3 }}>{t('finance.noTransactions')}</Alert>
+              <Alert severity="info" sx={{ mb: 3 }}>{t('finance.noIncomingTransfers')}</Alert>
+            )}
+
+            {/* Transferencias Salientes */}
+            <Typography variant="h6" gutterBottom sx={{ mt: 3 }}>{t('finance.outgoingTransfers')}</Typography>
+            {account.outgoingTransfers?.length > 0 ? (
+              isMobile ? (
+                // Mobile: Cards view
+                <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, mb: 3 }}>
+                  {account.outgoingTransfers.map((tx) => (
+                    <Card key={tx.id} variant="outlined">
+                      <CardContent sx={{ pb: '16px !important' }}>
+                        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                          <Box>
+                            <Typography variant="subtitle2" fontWeight="bold">{tx.code}</Typography>
+                            <Typography variant="caption" color="text.secondary">
+                              {formatDate(tx.transactionDate)}
+                            </Typography>
+                          </Box>
+                          <Typography variant="subtitle1" fontWeight="bold" color="error.main">
+                            -{formatCurrency(tx.amount, tx.currency)}
+                          </Typography>
+                        </Box>
+                        {tx.destinationAccount && (
+                          <Typography variant="body2" sx={{ mt: 1 }}>
+                            {t('finance.toAccount')}: <EntityLink type="account" id={tx.destinationAccount.id} label={tx.destinationAccount.name} />
+                          </Typography>
+                        )}
+                        {tx.description && (
+                          <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>
+                            {tx.description}
+                          </Typography>
+                        )}
+                      </CardContent>
+                    </Card>
+                  ))}
+                </Box>
+              ) : (
+                // Desktop: Table view
+                <TableContainer component={Paper} variant="outlined" sx={{ mb: 3 }}>
+                  <Table size="small">
+                    <TableHead>
+                      <TableRow>
+                        <TableCell>{t('finance.date')}</TableCell>
+                        <TableCell>{t('finance.code')}</TableCell>
+                        <TableCell>{t('finance.toAccount')}</TableCell>
+                        <TableCell>{t('finance.description')}</TableCell>
+                        <TableCell align="right">{t('finance.amount')}</TableCell>
+                      </TableRow>
+                    </TableHead>
+                    <TableBody>
+                      {account.outgoingTransfers.map((tx) => (
+                        <TableRow key={tx.id} hover>
+                          <TableCell>{formatDate(tx.transactionDate)}</TableCell>
+                          <TableCell>{tx.code}</TableCell>
+                          <TableCell>
+                            {tx.destinationAccount && (
+                              <EntityLink type="account" id={tx.destinationAccount.id} label={tx.destinationAccount.name} />
+                            )}
+                          </TableCell>
+                          <TableCell>{tx.description || '-'}</TableCell>
+                          <TableCell align="right" sx={{ fontWeight: 'bold', color: 'error.main' }}>
+                            -{formatCurrency(tx.amount, tx.currency)}
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </TableContainer>
+              )
+            ) : (
+              <Alert severity="info" sx={{ mb: 3 }}>{t('finance.noOutgoingTransfers')}</Alert>
             )}
           </TabPanel>
 

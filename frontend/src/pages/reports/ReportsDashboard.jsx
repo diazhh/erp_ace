@@ -40,8 +40,7 @@ import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { es } from 'date-fns/locale';
 import api from '../../services/api';
-
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+import { getServerBaseUrl } from '../../utils/fileUrl';
 
 const ReportsDashboard = () => {
   const { t } = useTranslation();
@@ -140,7 +139,7 @@ const ReportsDashboard = () => {
       });
 
       const queryString = queryParams.toString();
-      const url = `${API_URL}/api/reports${endpoint}${queryString ? `?${queryString}` : ''}`;
+      const url = `${getServerBaseUrl()}/api/reports${endpoint}${queryString ? `?${queryString}` : ''}`;
 
       const response = await fetch(url, {
         method: 'GET',

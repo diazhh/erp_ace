@@ -39,7 +39,7 @@ import { toast } from 'react-toastify';
 import organizationService from '../../services/organizationService';
 
 // Componente para nodo de departamento
-const DepartmentNode = ({ department, level = 0, onViewEmployee, onViewDepartment, theme }) => {
+const DepartmentNode = ({ department, level = 0, onViewEmployee, onViewDepartment, theme, t }) => {
   const [expanded, setExpanded] = useState(level < 2);
   const hasChildren = (department.children && department.children.length > 0) || 
                       (department.employees && department.employees.length > 0);
@@ -84,11 +84,11 @@ const DepartmentNode = ({ department, level = 0, onViewEmployee, onViewDepartmen
               </Typography>
               <Chip
                 label={{
-                  DIRECTION: 'Dirección',
-                  MANAGEMENT: 'Gerencia',
-                  DEPARTMENT: 'Departamento',
-                  AREA: 'Área',
-                  UNIT: 'Unidad',
+                  DIRECTION: t('organization.typeDirection'),
+                  MANAGEMENT: t('organization.typeManagement'),
+                  DEPARTMENT: t('organization.typeDepartment'),
+                  AREA: t('organization.typeArea'),
+                  UNIT: t('organization.typeUnit'),
                 }[department.type] || department.type}
                 size="small"
                 sx={{
@@ -131,7 +131,7 @@ const DepartmentNode = ({ department, level = 0, onViewEmployee, onViewDepartmen
                   {department.manager.firstName} {department.manager.lastName}
                 </Typography>
                 <Typography variant="caption" color="text.secondary" display="block">
-                  {department.manager.position || 'Gerente'}
+                  {department.manager.position || t('organization.manager')}
                 </Typography>
               </Box>
             </Box>
@@ -142,7 +142,7 @@ const DepartmentNode = ({ department, level = 0, onViewEmployee, onViewDepartmen
             <Box sx={{ mt: 1, display: 'flex', alignItems: 'center', gap: 0.5 }}>
               <GroupsIcon fontSize="small" color="action" />
               <Typography variant="caption" color="text.secondary">
-                {department.employeeCount} empleados
+                {department.employeeCount} {t('organization.employees')}
               </Typography>
             </Box>
           )}
@@ -217,6 +217,7 @@ const DepartmentNode = ({ department, level = 0, onViewEmployee, onViewDepartmen
                     onViewEmployee={onViewEmployee}
                     onViewDepartment={onViewDepartment}
                     theme={theme}
+                    t={t}
                   />
                 </Box>
               ))}
@@ -466,13 +467,7 @@ const DepartmentList = ({ departments, level = 0, onViewEmployee }) => {
                     {dept.name}
                   </Typography>
                   <Typography variant="caption" color="text.secondary">
-                    {dept.code} • {{
-                      DIRECTION: 'Dirección',
-                      MANAGEMENT: 'Gerencia',
-                      DEPARTMENT: 'Departamento',
-                      AREA: 'Área',
-                      UNIT: 'Unidad',
-                    }[dept.type] || dept.type}
+                    {dept.code}
                   </Typography>
                 </Box>
                 {dept.employeeCount > 0 && (
@@ -514,7 +509,7 @@ const DepartmentList = ({ departments, level = 0, onViewEmployee }) => {
 };
 
 // Componente para vista de lista (móvil)
-const OrgList = ({ employees, level = 0, onViewEmployee }) => {
+const OrgList = ({ employees, level = 0, onViewEmployee, t }) => {
   return (
     <Box sx={{ pl: level * 2 }}>
       {employees.map((emp) => (
@@ -550,7 +545,7 @@ const OrgList = ({ employees, level = 0, onViewEmployee }) => {
                 </Box>
                 {emp.subordinates?.length > 0 && (
                   <Chip
-                    label={`${emp.subordinates.length} reportes`}
+                    label={`${emp.subordinates.length} ${t('organization.reports')}`}
                     size="small"
                     color="primary"
                     variant="outlined"
@@ -564,6 +559,7 @@ const OrgList = ({ employees, level = 0, onViewEmployee }) => {
               employees={emp.subordinates}
               level={level + 1}
               onViewEmployee={onViewEmployee}
+              t={t}
             />
           )}
         </Box>
@@ -600,7 +596,7 @@ const OrgChart = () => {
       setDepartments(deptResponse.data || []);
       setStats(statsResponse.data);
     } catch (error) {
-      toast.error('Error al cargar organigrama');
+      toast.error(t('common.error'));
     } finally {
       setLoading(false);
     }
@@ -631,10 +627,10 @@ const OrgChart = () => {
             startIcon={<BackIcon />}
             onClick={() => navigate('/organization/departments')}
           >
-            Departamentos
+            {t('organization.departments')}
           </Button>
           <Typography variant="h4" fontWeight="bold">
-            Organigrama
+            {t('organization.orgChart')}
           </Typography>
         </Box>
         <Box sx={{ display: 'flex', gap: 2, alignItems: 'center' }}>
@@ -645,12 +641,12 @@ const OrgChart = () => {
             size="small"
           >
             <ToggleButton value="departments">
-              <Tooltip title="Por Departamentos">
+              <Tooltip title={t('organization.viewByDepartments')}>
                 <BusinessIcon />
               </Tooltip>
             </ToggleButton>
             <ToggleButton value="hierarchy">
-              <Tooltip title="Por Jerarquía">
+              <Tooltip title={t('organization.viewByHierarchy')}>
                 <TreeIcon />
               </Tooltip>
             </ToggleButton>
@@ -660,7 +656,7 @@ const OrgChart = () => {
             startIcon={<PersonIcon />}
             onClick={() => navigate('/organization/directory')}
           >
-            Ver Directorio
+            {t('organization.viewDirectory')}
           </Button>
         </Box>
       </Box>
@@ -671,25 +667,25 @@ const OrgChart = () => {
           <Grid item xs={6} sm={4} md={2}>
             <Paper sx={{ p: 2, textAlign: 'center' }}>
               <Typography variant="h4" color="primary">{stats.totalEmployees}</Typography>
-              <Typography variant="body2" color="text.secondary">Empleados</Typography>
+              <Typography variant="body2" color="text.secondary">{t('organization.stats.employees')}</Typography>
             </Paper>
           </Grid>
           <Grid item xs={6} sm={4} md={2}>
             <Paper sx={{ p: 2, textAlign: 'center' }}>
               <Typography variant="h4" color="secondary">{stats.totalDepartments}</Typography>
-              <Typography variant="body2" color="text.secondary">Departamentos</Typography>
+              <Typography variant="body2" color="text.secondary">{t('organization.stats.departments')}</Typography>
             </Paper>
           </Grid>
           <Grid item xs={6} sm={4} md={2}>
             <Paper sx={{ p: 2, textAlign: 'center' }}>
               <Typography variant="h4" color="info.main">{stats.totalPositions}</Typography>
-              <Typography variant="body2" color="text.secondary">Posiciones</Typography>
+              <Typography variant="body2" color="text.secondary">{t('organization.stats.positions')}</Typography>
             </Paper>
           </Grid>
           <Grid item xs={6} sm={4} md={2}>
             <Paper sx={{ p: 2, textAlign: 'center' }}>
               <Typography variant="h4" color="success.main">{stats.activeEmployees || stats.totalEmployees}</Typography>
-              <Typography variant="body2" color="text.secondary">Activos</Typography>
+              <Typography variant="body2" color="text.secondary">{t('organization.stats.active')}</Typography>
             </Paper>
           </Grid>
         </Grid>
@@ -701,13 +697,13 @@ const OrgChart = () => {
           <Paper sx={{ p: 4, textAlign: 'center' }}>
             <BusinessIcon sx={{ fontSize: 64, color: 'text.secondary', mb: 2 }} />
             <Typography variant="h6" color="text.secondary">
-              No hay departamentos definidos
+              {t('organization.noDepartments')}
             </Typography>
             <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
-              Crea departamentos para ver la estructura organizacional
+              {t('organization.createDepartments')}
             </Typography>
             <Button variant="contained" onClick={() => navigate('/organization/departments')}>
-              Ir a Departamentos
+              {t('organization.goToDepartments')}
             </Button>
           </Paper>
         ) : (
@@ -730,6 +726,7 @@ const OrgChart = () => {
                       onViewEmployee={handleViewEmployee}
                       onViewDepartment={handleViewDepartment}
                       theme={theme}
+                      t={t}
                     />
                   </Box>
                 ))}
@@ -745,19 +742,19 @@ const OrgChart = () => {
           <Paper sx={{ p: 4, textAlign: 'center' }}>
             <TreeIcon sx={{ fontSize: 64, color: 'text.secondary', mb: 2 }} />
             <Typography variant="h6" color="text.secondary">
-              No hay estructura jerárquica definida
+              {t('organization.noHierarchy')}
             </Typography>
             <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
-              Asigna supervisores a los empleados para ver el organigrama
+              {t('organization.assignSupervisors')}
             </Typography>
             <Button variant="contained" onClick={() => navigate('/employees')}>
-              Ir a Empleados
+              {t('organization.goToEmployees')}
             </Button>
           </Paper>
         ) : (
           <Paper sx={{ p: 3, overflow: 'auto' }}>
             {isMobile ? (
-              <OrgList employees={orgChart} onViewEmployee={handleViewEmployee} />
+              <OrgList employees={orgChart} onViewEmployee={handleViewEmployee} t={t} />
             ) : (
               <Box
                 sx={{

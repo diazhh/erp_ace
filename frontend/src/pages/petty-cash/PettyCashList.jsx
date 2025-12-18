@@ -39,12 +39,7 @@ const statusColors = {
   CLOSED: 'error',
 };
 
-const statusLabels = {
-  ACTIVE: 'Activa',
-  INACTIVE: 'Inactiva',
-  SUSPENDED: 'Suspendida',
-  CLOSED: 'Cerrada',
-};
+// Status labels will be translated using t() function
 
 const PettyCashList = () => {
   const { t } = useTranslation();
@@ -97,14 +92,14 @@ const PettyCashList = () => {
       {/* Header */}
       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
         <Typography variant="h4" fontWeight="bold">
-          Caja Chica
+          {t('pettyCash.title')}
         </Typography>
         <Button
           variant="contained"
           startIcon={<AddIcon />}
           onClick={handleNewPettyCash}
         >
-          Nueva Caja Chica
+          {t('pettyCash.newPettyCash')}
         </Button>
       </Box>
 
@@ -114,7 +109,7 @@ const PettyCashList = () => {
           <Card>
             <CardContent sx={{ textAlign: 'center' }}>
               <Typography color="text.secondary" gutterBottom>
-                Cajas Activas
+                {t('pettyCash.activeCashes')}
               </Typography>
               <Typography variant="h4" fontWeight="bold" color="primary">
                 {stats.activeCashes}
@@ -126,7 +121,7 @@ const PettyCashList = () => {
           <Card>
             <CardContent sx={{ textAlign: 'center' }}>
               <Typography color="text.secondary" gutterBottom>
-                Saldo Total
+                {t('pettyCash.totalBalance')}
               </Typography>
               <Typography variant="h5" fontWeight="bold" color="success.main">
                 {formatCurrency(stats.totalBalance)}
@@ -138,7 +133,7 @@ const PettyCashList = () => {
           <Card>
             <CardContent sx={{ textAlign: 'center' }}>
               <Typography color="text.secondary" gutterBottom>
-                Necesitan Reposición
+                {t('pettyCash.needsReplenishment')}
               </Typography>
               <Typography variant="h4" fontWeight="bold" color={stats.cashesNeedingReplenishment > 0 ? 'error.main' : 'text.primary'}>
                 {stats.cashesNeedingReplenishment}
@@ -150,7 +145,7 @@ const PettyCashList = () => {
           <Card>
             <CardContent sx={{ textAlign: 'center' }}>
               <Typography color="text.secondary" gutterBottom>
-                Pendientes Aprobación
+                {t('pettyCash.pendingApproval')}
               </Typography>
               <Typography variant="h4" fontWeight="bold" color={stats.pendingApproval > 0 ? 'warning.main' : 'text.primary'}>
                 {stats.pendingApproval}
@@ -162,7 +157,7 @@ const PettyCashList = () => {
           <Card>
             <CardContent sx={{ textAlign: 'center' }}>
               <Typography color="text.secondary" gutterBottom>
-                Gastos del Mes
+                {t('pettyCash.monthlyExpenses')}
               </Typography>
               <Typography variant="h5" fontWeight="bold" color="error.main">
                 {formatCurrency(stats.monthlyExpenses)}
@@ -204,7 +199,7 @@ const PettyCashList = () => {
                       </Box>
                     </Box>
                     <Chip
-                      label={statusLabels[pettyCash.status]}
+                      label={t(`pettyCash.status${pettyCash.status.charAt(0) + pettyCash.status.slice(1).toLowerCase()}`)}
                       color={statusColors[pettyCash.status]}
                       size="small"
                     />
@@ -212,7 +207,7 @@ const PettyCashList = () => {
 
                   {pettyCash.needsReplenishment && (
                     <Alert severity="warning" sx={{ mb: 2, py: 0 }} icon={<WarningIcon fontSize="small" />}>
-                      Necesita reposición
+                      {t('pettyCash.needsReplenishmentAlert')}
                     </Alert>
                   )}
 
@@ -228,7 +223,7 @@ const PettyCashList = () => {
                   <Box sx={{ mb: 2 }}>
                     <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 0.5 }}>
                       <Typography variant="body2" color="text.secondary">
-                        Saldo
+                        {t('pettyCash.currentBalance')}
                       </Typography>
                       <Typography variant="body2" color="text.secondary">
                         {balancePercent.toFixed(0)}%
@@ -244,7 +239,7 @@ const PettyCashList = () => {
 
                   <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline' }}>
                     <Typography variant="body2" color="text.secondary">
-                      Actual
+                      {t('pettyCash.currentBalance')}
                     </Typography>
                     <Typography variant="h5" fontWeight="bold" color={`${balanceColor}.main`}>
                       {formatCurrency(pettyCash.currentBalance, pettyCash.currency)}
@@ -253,16 +248,16 @@ const PettyCashList = () => {
                   
                   <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 1 }}>
                     <Typography variant="caption" color="text.secondary">
-                      Inicial: {formatCurrency(pettyCash.initialAmount, pettyCash.currency)}
+                      {t('pettyCash.initialAmount')}: {formatCurrency(pettyCash.initialAmount, pettyCash.currency)}
                     </Typography>
                     <Typography variant="caption" color="text.secondary">
-                      Mínimo: {formatCurrency(pettyCash.minimumBalance, pettyCash.currency)}
+                      {t('pettyCash.minimumBalance')}: {formatCurrency(pettyCash.minimumBalance, pettyCash.currency)}
                     </Typography>
                   </Box>
                 </CardContent>
 
                 <CardActions sx={{ justifyContent: 'flex-end', pt: 0 }}>
-                  <Tooltip title="Ver detalle">
+                  <Tooltip title={t('common.view')}>
                     <IconButton 
                       size="small" 
                       color="primary"
@@ -271,7 +266,7 @@ const PettyCashList = () => {
                       <ViewIcon />
                     </IconButton>
                   </Tooltip>
-                  <Tooltip title="Editar">
+                  <Tooltip title={t('common.edit')}>
                     <IconButton 
                       size="small"
                       onClick={() => handleEditPettyCash(pettyCash)}
@@ -290,7 +285,7 @@ const PettyCashList = () => {
         <Paper sx={{ p: 4, textAlign: 'center' }}>
           <WalletIcon sx={{ fontSize: 64, color: 'text.disabled', mb: 2 }} />
           <Typography color="text.secondary">
-            No hay cajas chicas registradas
+            {t('pettyCash.noPettyCash')}
           </Typography>
           <Button
             variant="contained"
@@ -298,7 +293,7 @@ const PettyCashList = () => {
             onClick={handleNewPettyCash}
             sx={{ mt: 2 }}
           >
-            Crear Primera Caja Chica
+            {t('pettyCash.createFirst')}
           </Button>
         </Paper>
       )}

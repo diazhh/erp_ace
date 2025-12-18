@@ -38,6 +38,9 @@ const afeRoutes = require('./modules/afe/routes/afeRoutes');
 const contractRoutes = require('./modules/contracts/routes/contractRoutes');
 const complianceRoutes = require('./modules/compliance/routes/complianceRoutes');
 const jibRoutes = require('./modules/jib/routes/jibRoutes');
+const ptwRoutes = require('./modules/hse/routes/ptwRoutes');
+const reserveRoutes = require('./modules/reserves/routes/reserveRoutes');
+const logisticsRoutes = require('./modules/logistics/routes/logisticsRoutes');
 
 const app = express();
 
@@ -120,9 +123,13 @@ app.use('/api/afe', afeRoutes);
 app.use('/api/contracts', contractRoutes);
 app.use('/api/compliance', complianceRoutes);
 app.use('/api/jib', jibRoutes);
+app.use('/api/ptw', ptwRoutes);
+app.use('/api/reserves', reserveRoutes);
+app.use('/api/logistics', logisticsRoutes);
 
 // Servir archivos estáticos de uploads
-app.use('/uploads', express.static('uploads'));
+const path = require('path');
+app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
 
 // 404 handler
 app.use(notFoundHandler);

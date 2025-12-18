@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const procurementController = require('../controllers/procurementController');
+const contractorExtendedController = require('../../projects/controllers/contractorExtendedController');
 const authenticate = require('../../auth/middleware/authenticate');
 const { authorize } = require('../../auth/middleware/authorize');
 
@@ -26,5 +27,13 @@ router.post('/quote-requests', authorize('procurement:create'), procurementContr
 router.get('/quote-requests/:id', authorize('procurement:read'), procurementController.getQuoteRequestById);
 router.post('/quote-requests/:id/approve', authorize('procurement:approve'), procurementController.approveQuoteRequest);
 router.post('/quote-requests/:id/select-quote', authorize('procurement:approve'), procurementController.selectQuote);
+
+// ==================== ÓRDENES DE COMPRA ====================
+router.get('/purchase-orders', authorize('procurement:read'), contractorExtendedController.listPurchaseOrders);
+router.post('/purchase-orders', authorize('procurement:create'), contractorExtendedController.createPurchaseOrder);
+router.get('/purchase-orders/:orderId', authorize('procurement:read'), contractorExtendedController.getPurchaseOrderById);
+router.put('/purchase-orders/:orderId', authorize('procurement:update'), contractorExtendedController.updatePurchaseOrder);
+router.post('/purchase-orders/:orderId/approve', authorize('procurement:approve'), contractorExtendedController.approvePurchaseOrder);
+router.post('/purchase-orders/:orderId/send', authorize('procurement:update'), contractorExtendedController.sendPurchaseOrder);
 
 module.exports = router;

@@ -25,6 +25,9 @@ import afeReducer from './slices/afeSlice';
 import contractReducer from './slices/contractSlice';
 import complianceReducer from './slices/complianceSlice';
 import jibReducer from './slices/jibSlice';
+import ptwReducer from './slices/ptwSlice';
+import logisticsReducer from './slices/logisticsSlice';
+import uiReducer from './slices/uiSlice';
 
 export const store = configureStore({
   reducer: {
@@ -54,6 +57,9 @@ export const store = configureStore({
     contracts: contractReducer,
     compliance: complianceReducer,
     jib: jibReducer,
+    ptw: ptwReducer,
+    logistics: logisticsReducer,
+    ui: uiReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({

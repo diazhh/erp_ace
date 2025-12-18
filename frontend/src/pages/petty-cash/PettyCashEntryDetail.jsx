@@ -55,19 +55,19 @@ const entryStatusColors = {
   CANCELLED: 'default',
 };
 
-const entryStatusLabels = {
-  PENDING: 'Pendiente',
-  APPROVED: 'Aprobado',
-  REJECTED: 'Rechazado',
-  CANCELLED: 'Cancelado',
-};
+const getEntryStatusLabels = (t) => ({
+  PENDING: t('pettyCash.entryStatusPending'),
+  APPROVED: t('pettyCash.entryStatusApproved'),
+  REJECTED: t('pettyCash.entryStatusRejected'),
+  CANCELLED: t('pettyCash.entryStatusCancelled'),
+});
 
-const entryTypeLabels = {
-  EXPENSE: 'Gasto',
-  REPLENISHMENT: 'Reposición',
-  ADJUSTMENT: 'Ajuste',
-  INITIAL: 'Apertura',
-};
+const getEntryTypeLabels = (t) => ({
+  EXPENSE: t('pettyCash.entryTypeExpense'),
+  REPLENISHMENT: t('pettyCash.entryTypeReplenishment'),
+  ADJUSTMENT: t('pettyCash.entryTypeAdjustment'),
+  INITIAL: t('pettyCash.entryTypeInitial'),
+});
 
 const entryTypeColors = {
   EXPENSE: 'error',
@@ -87,6 +87,9 @@ const PettyCashEntryDetail = () => {
   const { currentEntry: entry, entryLoading: loading, error } = useSelector((state) => state.pettyCash);
   const [confirmDialog, setConfirmDialog] = useState({ open: false, action: null });
 
+  const entryStatusLabels = getEntryStatusLabels(t);
+  const entryTypeLabels = getEntryTypeLabels(t);
+
   useEffect(() => {
     dispatch(fetchEntryById({ pettyCashId: id, entryId }));
     return () => {
@@ -97,7 +100,7 @@ const PettyCashEntryDetail = () => {
   const handleApprove = async () => {
     try {
       await dispatch(approveEntry({ pettyCashId: id, entryId })).unwrap();
-      toast.success('Movimiento aprobado exitosamente');
+      toast.success(t('pettyCash.entryApproved'));
       dispatch(fetchEntryById({ pettyCashId: id, entryId }));
     } catch (err) {
       toast.error(err);
@@ -108,7 +111,7 @@ const PettyCashEntryDetail = () => {
   const handleReject = async () => {
     try {
       await dispatch(rejectEntry({ pettyCashId: id, entryId, reason: 'Rechazado por el usuario' })).unwrap();
-      toast.success('Movimiento rechazado');
+      toast.success(t('pettyCash.entryRejected'));
       dispatch(fetchEntryById({ pettyCashId: id, entryId }));
     } catch (err) {
       toast.error(err);
@@ -167,7 +170,7 @@ const PettyCashEntryDetail = () => {
           sx={{ mb: 2 }}
           size="small"
         >
-          Volver a Caja Chica
+          {t('pettyCash.backToPettyCash')}
         </Button>
 
         <Box sx={{ 
@@ -225,7 +228,7 @@ const PettyCashEntryDetail = () => {
           {/* Amount */}
           <Box sx={{ textAlign: { xs: 'left', md: 'right' } }}>
             <Typography variant="overline" color="text.secondary">
-              Monto
+              {t('pettyCash.amount')}
             </Typography>
             <Typography 
               variant={isMobile ? 'h5' : 'h4'} 
@@ -237,7 +240,7 @@ const PettyCashEntryDetail = () => {
             </Typography>
             {entry.balanceAfter !== null && (
               <Typography variant="body2" color="text.secondary">
-                Saldo después: {formatCurrency(entry.balanceAfter, entry.currency)}
+                {t('pettyCash.balanceAfter')}: {formatCurrency(entry.balanceAfter, entry.currency)}
               </Typography>
             )}
           </Box>
@@ -259,7 +262,7 @@ const PettyCashEntryDetail = () => {
                 onClick={() => setConfirmDialog({ open: true, action: 'approve' })}
                 fullWidth={isMobile}
               >
-                Aprobar Movimiento
+                {t('pettyCash.approveEntry')}
               </Button>
               <Button
                 variant="contained"
@@ -268,7 +271,7 @@ const PettyCashEntryDetail = () => {
                 onClick={() => setConfirmDialog({ open: true, action: 'reject' })}
                 fullWidth={isMobile}
               >
-                Rechazar Movimiento
+                {t('pettyCash.rejectEntry')}
               </Button>
             </>
           )}
@@ -276,7 +279,7 @@ const PettyCashEntryDetail = () => {
 
         {entry.status === 'REJECTED' && entry.rejectionReason && (
           <Alert severity="error" sx={{ mt: 2 }}>
-            <strong>Motivo de rechazo:</strong> {entry.rejectionReason}
+            <strong>{t('pettyCash.rejectionReason')}:</strong> {entry.rejectionReason}
           </Alert>
         )}
       </Paper>
@@ -288,57 +291,57 @@ const PettyCashEntryDetail = () => {
           <Paper sx={{ p: { xs: 2, md: 3 } }}>
             <Typography variant="h6" gutterBottom sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
               <ReceiptIcon color="primary" />
-              Información del Movimiento
+              {t('pettyCash.entryInfo')}
             </Typography>
             <Divider sx={{ mb: 2 }} />
             <TableContainer>
               <Table size="small">
                 <TableBody>
                   <TableRow>
-                    <TableCell sx={{ fontWeight: 'bold', width: '40%' }}>Código</TableCell>
+                    <TableCell sx={{ fontWeight: 'bold', width: '40%' }}>{t('pettyCash.code')}</TableCell>
                     <TableCell>{entry.code}</TableCell>
                   </TableRow>
                   <TableRow>
-                    <TableCell sx={{ fontWeight: 'bold' }}>Tipo</TableCell>
+                    <TableCell sx={{ fontWeight: 'bold' }}>{t('pettyCash.entryType')}</TableCell>
                     <TableCell>
                       <Chip label={entryTypeLabels[entry.entryType]} color={entryTypeColors[entry.entryType]} size="small" />
                     </TableCell>
                   </TableRow>
                   <TableRow>
-                    <TableCell sx={{ fontWeight: 'bold' }}>Estado</TableCell>
+                    <TableCell sx={{ fontWeight: 'bold' }}>{t('pettyCash.status')}</TableCell>
                     <TableCell>
                       <Chip label={entryStatusLabels[entry.status]} color={entryStatusColors[entry.status]} size="small" />
                     </TableCell>
                   </TableRow>
                   <TableRow>
-                    <TableCell sx={{ fontWeight: 'bold' }}>Fecha</TableCell>
+                    <TableCell sx={{ fontWeight: 'bold' }}>{t('pettyCash.date')}</TableCell>
                     <TableCell>{formatDate(entry.entryDate)}</TableCell>
                   </TableRow>
                   <TableRow>
-                    <TableCell sx={{ fontWeight: 'bold' }}>Monto</TableCell>
+                    <TableCell sx={{ fontWeight: 'bold' }}>{t('pettyCash.amount')}</TableCell>
                     <TableCell sx={{ fontWeight: 'bold', color: entry.entryType === 'EXPENSE' ? 'error.main' : 'success.main' }}>
                       {formatCurrency(entry.amount, entry.currency)}
                     </TableCell>
                   </TableRow>
                   {entry.category && (
                     <TableRow>
-                      <TableCell sx={{ fontWeight: 'bold' }}>Categoría</TableCell>
+                      <TableCell sx={{ fontWeight: 'bold' }}>{t('pettyCash.category')}</TableCell>
                       <TableCell>{entry.category}</TableCell>
                     </TableRow>
                   )}
                   {entry.subcategory && (
                     <TableRow>
-                      <TableCell sx={{ fontWeight: 'bold' }}>Subcategoría</TableCell>
+                      <TableCell sx={{ fontWeight: 'bold' }}>{t('pettyCash.subcategory')}</TableCell>
                       <TableCell>{entry.subcategory}</TableCell>
                     </TableRow>
                   )}
                   <TableRow>
-                    <TableCell sx={{ fontWeight: 'bold' }}>Descripción</TableCell>
+                    <TableCell sx={{ fontWeight: 'bold' }}>{t('pettyCash.description')}</TableCell>
                     <TableCell>{entry.description}</TableCell>
                   </TableRow>
                   {entry.notes && (
                     <TableRow>
-                      <TableCell sx={{ fontWeight: 'bold' }}>Notas</TableCell>
+                      <TableCell sx={{ fontWeight: 'bold' }}>{t('common.notes')}</TableCell>
                       <TableCell>{entry.notes}</TableCell>
                     </TableRow>
                   )}
@@ -353,7 +356,7 @@ const PettyCashEntryDetail = () => {
           <Paper sx={{ p: { xs: 2, md: 3 }, mb: 3 }}>
             <Typography variant="h6" gutterBottom sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
               <VendorIcon color="primary" />
-              Proveedor y Comprobante
+              {t('pettyCash.vendorInfo')}
             </Typography>
             <Divider sx={{ mb: 2 }} />
             <TableContainer>
@@ -361,25 +364,25 @@ const PettyCashEntryDetail = () => {
                 <TableBody>
                   {entry.vendor && (
                     <TableRow>
-                      <TableCell sx={{ fontWeight: 'bold', width: '40%' }}>Proveedor</TableCell>
+                      <TableCell sx={{ fontWeight: 'bold', width: '40%' }}>{t('pettyCash.vendor')}</TableCell>
                       <TableCell>{entry.vendor}</TableCell>
                     </TableRow>
                   )}
                   {entry.vendorRif && (
                     <TableRow>
-                      <TableCell sx={{ fontWeight: 'bold' }}>RIF</TableCell>
+                      <TableCell sx={{ fontWeight: 'bold' }}>{t('pettyCash.vendorRif')}</TableCell>
                       <TableCell>{entry.vendorRif}</TableCell>
                     </TableRow>
                   )}
                   {entry.receiptNumber && (
                     <TableRow>
-                      <TableCell sx={{ fontWeight: 'bold' }}>N° Comprobante</TableCell>
+                      <TableCell sx={{ fontWeight: 'bold' }}>{t('pettyCash.receiptNumber')}</TableCell>
                       <TableCell>{entry.receiptNumber}</TableCell>
                     </TableRow>
                   )}
                   {entry.receiptDate && (
                     <TableRow>
-                      <TableCell sx={{ fontWeight: 'bold' }}>Fecha Comprobante</TableCell>
+                      <TableCell sx={{ fontWeight: 'bold' }}>{t('pettyCash.receiptDate')}</TableCell>
                       <TableCell>{formatDate(entry.receiptDate)}</TableCell>
                     </TableRow>
                   )}
@@ -388,7 +391,7 @@ const PettyCashEntryDetail = () => {
             </TableContainer>
             {!entry.vendor && !entry.receiptNumber && (
               <Typography variant="body2" color="text.secondary" sx={{ mt: 2 }}>
-                No hay información de proveedor o comprobante
+                {t('pettyCash.noVendorInfo')}
               </Typography>
             )}
           </Paper>
@@ -397,7 +400,7 @@ const PettyCashEntryDetail = () => {
           <Paper sx={{ p: { xs: 2, md: 3 } }}>
             <Typography variant="h6" gutterBottom sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
               <PersonIcon color="primary" />
-              Beneficiario
+              {t('pettyCash.beneficiary')}
             </Typography>
             <Divider sx={{ mb: 2 }} />
             {entry.beneficiary ? (
@@ -410,7 +413,7 @@ const PettyCashEntryDetail = () => {
                     label={`${entry.beneficiary.firstName} ${entry.beneficiary.lastName}`}
                   />
                   <Typography variant="body2" color="text.secondary">
-                    Empleado
+                    {t('employees.title')}
                   </Typography>
                 </Box>
               </Box>
@@ -420,13 +423,13 @@ const PettyCashEntryDetail = () => {
                 <Box>
                   <Typography variant="body1">{entry.beneficiaryName}</Typography>
                   <Typography variant="body2" color="text.secondary">
-                    Beneficiario externo
+                    {t('pettyCash.externalBeneficiary')}
                   </Typography>
                 </Box>
               </Box>
             ) : (
               <Typography variant="body2" color="text.secondary">
-                No especificado
+                {t('pettyCash.notSpecified')}
               </Typography>
             )}
           </Paper>
@@ -438,7 +441,7 @@ const PettyCashEntryDetail = () => {
             <Paper sx={{ p: { xs: 2, md: 3 } }}>
               <Typography variant="h6" gutterBottom sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                 <ProjectIcon color="primary" />
-                Proyecto Asociado
+                {t('pettyCash.associatedProject')}
               </Typography>
               <Divider sx={{ mb: 2 }} />
               <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
@@ -460,31 +463,31 @@ const PettyCashEntryDetail = () => {
           <Paper sx={{ p: { xs: 2, md: 3 } }}>
             <Typography variant="h6" gutterBottom sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
               <CalendarIcon color="primary" />
-              Auditoría
+              {t('pettyCash.audit')}
             </Typography>
             <Divider sx={{ mb: 2 }} />
             <TableContainer>
               <Table size="small">
                 <TableBody>
                   <TableRow>
-                    <TableCell sx={{ fontWeight: 'bold', width: '40%' }}>Creado por</TableCell>
+                    <TableCell sx={{ fontWeight: 'bold', width: '40%' }}>{t('pettyCash.createdBy')}</TableCell>
                     <TableCell>{entry.creator?.username || '-'}</TableCell>
                   </TableRow>
                   <TableRow>
-                    <TableCell sx={{ fontWeight: 'bold' }}>Fecha creación</TableCell>
+                    <TableCell sx={{ fontWeight: 'bold' }}>{t('pettyCash.creationDate')}</TableCell>
                     <TableCell>{formatDateTime(entry.createdAt)}</TableCell>
                   </TableRow>
                   {entry.approver && (
                     <>
                       <TableRow>
                         <TableCell sx={{ fontWeight: 'bold' }}>
-                          {entry.status === 'APPROVED' ? 'Aprobado por' : 'Procesado por'}
+                          {entry.status === 'APPROVED' ? t('pettyCash.approvedBy') : t('pettyCash.processedBy')}
                         </TableCell>
                         <TableCell>{entry.approver.username}</TableCell>
                       </TableRow>
                       <TableRow>
                         <TableCell sx={{ fontWeight: 'bold' }}>
-                          {entry.status === 'APPROVED' ? 'Fecha aprobación' : 'Fecha proceso'}
+                          {entry.status === 'APPROVED' ? t('pettyCash.approvalDate') : t('pettyCash.processDate')}
                         </TableCell>
                         <TableCell>{formatDateTime(entry.approvedAt)}</TableCell>
                       </TableRow>
@@ -502,7 +505,7 @@ const PettyCashEntryDetail = () => {
             <AttachmentSection
               entityType="petty_cash_entry"
               entityId={entryId}
-              title="Recibos y Comprobantes"
+              title={t('pettyCash.receiptsAndVouchers')}
               defaultCategory="RECEIPT"
               variant="inline"
             />
@@ -513,11 +516,11 @@ const PettyCashEntryDetail = () => {
       {/* Confirm Dialog */}
       <ConfirmDialog
         open={confirmDialog.open}
-        title={confirmDialog.action === 'approve' ? 'Aprobar Movimiento' : 'Rechazar Movimiento'}
+        title={confirmDialog.action === 'approve' ? t('pettyCash.approveEntry') : t('pettyCash.rejectEntry')}
         message={
           confirmDialog.action === 'approve'
-            ? `¿Está seguro de aprobar el movimiento ${entry.code}? Esta acción actualizará el saldo de la caja chica.`
-            : `¿Está seguro de rechazar el movimiento ${entry.code}?`
+            ? t('pettyCash.approveConfirm', { code: entry.code })
+            : t('pettyCash.rejectConfirm', { code: entry.code })
         }
         onConfirm={confirmDialog.action === 'approve' ? handleApprove : handleReject}
         onCancel={() => setConfirmDialog({ open: false, action: null })}

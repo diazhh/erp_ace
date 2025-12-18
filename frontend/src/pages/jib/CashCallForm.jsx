@@ -12,6 +12,8 @@ import {
   Grid,
   CircularProgress,
   Alert,
+  useTheme,
+  useMediaQuery,
 } from '@mui/material';
 import { Save as SaveIcon, ArrowBack as BackIcon } from '@mui/icons-material';
 import { createCashCall, updateCashCall, fetchCashCallById, clearCurrentCashCall } from '../../store/slices/jibSlice';
@@ -32,6 +34,8 @@ const CashCallForm = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { id } = useParams();
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const isEdit = Boolean(id);
 
   const { currentCashCall, loading, error } = useSelector((state) => state.jib);
@@ -119,11 +123,17 @@ const CashCallForm = () => {
 
   return (
     <Box sx={{ p: { xs: 2, md: 3 } }}>
-      <Box sx={{ display: 'flex', alignItems: 'center', mb: 3, gap: 2 }}>
-        <Button startIcon={<BackIcon />} onClick={() => navigate('/jib/cash-calls')}>
+      <Box sx={{ 
+        display: 'flex', 
+        flexDirection: isMobile ? 'column' : 'row',
+        alignItems: isMobile ? 'stretch' : 'center', 
+        mb: 3, 
+        gap: 2 
+      }}>
+        <Button startIcon={<BackIcon />} onClick={() => navigate('/jib/cash-calls')} fullWidth={isMobile}>
           {t('common.back', 'Volver')}
         </Button>
-        <Typography variant="h4" fontWeight="bold">
+        <Typography variant={isMobile ? 'h5' : 'h4'} fontWeight="bold">
           {isEdit ? t('jib.cashCall.edit', 'Editar Cash Call') : t('jib.cashCall.new', 'Nuevo Cash Call')}
         </Typography>
       </Box>
@@ -134,7 +144,7 @@ const CashCallForm = () => {
         </Alert>
       )}
 
-      <Paper sx={{ p: 3 }}>
+      <Paper sx={{ p: { xs: 2, md: 3 } }}>
         <form onSubmit={handleSubmit}>
           <Grid container spacing={3}>
             <Grid item xs={12} md={6}>
@@ -283,8 +293,13 @@ const CashCallForm = () => {
             </Grid>
 
             <Grid item xs={12}>
-              <Box sx={{ display: 'flex', gap: 2, justifyContent: 'flex-end' }}>
-                <Button variant="outlined" onClick={() => navigate('/jib/cash-calls')}>
+              <Box sx={{ 
+                display: 'flex', 
+                flexDirection: isMobile ? 'column' : 'row',
+                gap: 2, 
+                justifyContent: 'flex-end' 
+              }}>
+                <Button variant="outlined" onClick={() => navigate('/jib/cash-calls')} fullWidth={isMobile}>
                   {t('common.cancel', 'Cancelar')}
                 </Button>
                 <Button
@@ -292,6 +307,7 @@ const CashCallForm = () => {
                   variant="contained"
                   startIcon={submitting ? <CircularProgress size={20} /> : <SaveIcon />}
                   disabled={submitting}
+                  fullWidth={isMobile}
                 >
                   {t('common.save', 'Guardar')}
                 </Button>

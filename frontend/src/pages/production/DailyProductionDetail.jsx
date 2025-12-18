@@ -13,6 +13,8 @@ import {
   CircularProgress,
   Card,
   CardContent,
+  useTheme,
+  useMediaQuery,
 } from '@mui/material';
 import {
   ArrowBack as BackIcon,
@@ -30,6 +32,8 @@ const DailyProductionDetail = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { id } = useParams();
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
   const { currentProduction: production, loading } = useSelector((state) => state.production);
 
@@ -87,12 +91,12 @@ const DailyProductionDetail = () => {
 
   return (
     <Box sx={{ p: { xs: 1, sm: 2, md: 3 } }}>
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3, flexWrap: 'wrap', gap: 2 }}>
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-          <Button startIcon={<BackIcon />} onClick={() => navigate('/production/daily')}>
+      <Box sx={{ display: 'flex', flexDirection: isMobile ? 'column' : 'row', justifyContent: 'space-between', alignItems: isMobile ? 'stretch' : 'center', mb: 3, gap: 2 }}>
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, flexWrap: 'wrap' }}>
+          <Button startIcon={<BackIcon />} onClick={() => navigate('/production/daily')} fullWidth={isMobile}>
             {t('common.back')}
           </Button>
-          <Typography variant="h4" component="h1">
+          <Typography variant={isMobile ? 'h5' : 'h4'} component="h1">
             {t('production.daily.detail')}
           </Typography>
           <Chip 
@@ -100,13 +104,14 @@ const DailyProductionDetail = () => {
             color={getStatusColor(production.status)} 
           />
         </Box>
-        <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
+        <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap', flexDirection: isMobile ? 'column' : 'row', width: isMobile ? '100%' : 'auto' }}>
           {production.status === 'DRAFT' && (
             <>
               <Button
                 variant="outlined"
                 startIcon={<EditIcon />}
                 onClick={() => navigate(`/production/daily/${id}/edit`)}
+                fullWidth={isMobile}
               >
                 {t('common.edit')}
               </Button>
@@ -115,6 +120,7 @@ const DailyProductionDetail = () => {
                 color="info"
                 startIcon={<VerifyIcon />}
                 onClick={handleVerify}
+                fullWidth={isMobile}
               >
                 {t('production.daily.verify')}
               </Button>
@@ -126,6 +132,7 @@ const DailyProductionDetail = () => {
               color="success"
               startIcon={<ApproveIcon />}
               onClick={handleApprove}
+              fullWidth={isMobile}
             >
               {t('production.daily.approve')}
             </Button>

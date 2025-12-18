@@ -462,24 +462,24 @@ class ReportController {
       }
 
       const entries = await PettyCashEntry.findAll({
-        where: { petty_cash_id: id },
+        where: { pettyCashId: id },
         include: [
-          { model: Employee, as: 'employee', attributes: ['id', 'firstName', 'lastName'], required: false },
+          { model: Employee, as: 'beneficiary', attributes: ['id', 'firstName', 'lastName'], required: false },
           { model: Project, as: 'project', attributes: ['id', 'name', 'code'], required: false },
         ],
-        order: [['created_at', 'DESC']],
+        order: [['createdAt', 'DESC']],
         limit: 100,
       });
 
       // Mapear entries para el servicio de reportes
       const transactions = entries.map(e => ({
         code: e.code,
-        date: e.date || e.created_at,
-        type: e.type,
+        date: e.entryDate || e.createdAt,
+        type: e.entryType,
         category: e.category,
         description: e.description,
         amount: e.amount,
-        employee: e.employee ? `${e.employee.firstName} ${e.employee.lastName}` : null,
+        employee: e.beneficiary ? `${e.beneficiary.firstName} ${e.beneficiary.lastName}` : e.beneficiaryName,
         project: e.project?.name || null,
       }));
 
@@ -1015,11 +1015,8 @@ class ReportController {
       }
 
       const transactions = await Transaction.findAll({
-        where: { bank_account_id: id },
-        include: [
-          { model: TransactionCategory, as: 'category', required: false },
-        ],
-        order: [['date', 'DESC']],
+        where: { accountId: id },
+        order: [['transactionDate', 'DESC']],
         limit: 100,
       });
 
@@ -1049,7 +1046,7 @@ class ReportController {
       const entry = await PettyCashEntry.findByPk(id, {
         include: [
           { model: PettyCash, as: 'pettyCash', required: false },
-          { model: Employee, as: 'employee', required: false },
+          { model: Employee, as: 'beneficiary', required: false },
           { model: Project, as: 'project', required: false },
         ],
       });
@@ -1901,6 +1898,71 @@ class ReportController {
       res.setHeader('Content-Length', excelBuffer.length);
       
       return res.send(excelBuffer);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  /**
+   * Generar y descargar reporte de muestra de calidad
+   */
+  async downloadQualityReport(req, res, next) {
+    try {
+      const { id } = req.params;
+      const { CrudeQuality, StorageTank, OilField, User } = require('../../../database/models');
+
+      const quality = await CrudeQuality.findByPk(id, {
+        include: [
+          { model: OilField, as: 'field', attributes: ['id', 'code', 'name'] },
+          { model: StorageTank, as: 'tank', attributes: ['id', 'code', 'name'] },
+          { model: User, as: 'sampler', attributes: ['id', 'username', 'firstName', 'lastName'] },
+          { model: User, as: 'creator', attributes: ['id', 'username', 'firstName', 'lastName'] },
+        ],
+      });
+
+      if (!quality) {
+        throw new NotFoundError('Muestra de calidad no encontrada');
+      }
+
+      const pdfBuffer = await reportService.generateQualityReport(quality.toJSON());
+
+      res.setHeader('Content-Type', 'application/pdf');
+      res.setHeader('Content-Disposition', `attachment; filename="quality-${quality.code}.pdf"`);
+      res.setHeader('Content-Length', pdfBuffer.length);
+      
+      return res.send(pdfBuffer);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  /**
+   * Generar y descargar reporte de ducto
+   */
+  async downloadPipelineReport(req, res, next) {
+    try {
+      const { id } = req.params;
+      const { Pipeline, OilField, User } = require('../../../database/models');
+
+      const pipeline = await Pipeline.findByPk(id, {
+        include: [
+          { model: OilField, as: 'originField', attributes: ['id', 'code', 'name'] },
+          { model: OilField, as: 'destinationField', attributes: ['id', 'code', 'name'] },
+          { model: User, as: 'creator', attributes: ['id', 'username', 'firstName', 'lastName'] },
+        ],
+      });
+
+      if (!pipeline) {
+        throw new NotFoundError('Ducto no encontrado');
+      }
+
+      const pdfBuffer = await reportService.generatePipelineReport(pipeline.toJSON());
+
+      res.setHeader('Content-Type', 'application/pdf');
+      res.setHeader('Content-Disposition', `attachment; filename="pipeline-${pipeline.code}.pdf"`);
+      res.setHeader('Content-Length', pdfBuffer.length);
+      
+      return res.send(pdfBuffer);
     } catch (error) {
       next(error);
     }

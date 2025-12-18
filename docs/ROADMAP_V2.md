@@ -51,18 +51,18 @@ Este roadmap documenta el estado actual del ERP y los módulos pendientes necesa
 | 21 | AFE (Autorizaciones) | **Crítica** | ✅ 100% | 2 semanas |
 | 22 | Contratos O&G | **Crítica** | ✅ 100% | 3 semanas |
 | 23 | Compliance Regulatorio | Alta | ✅ 100% | 2 semanas |
-| 24 | Joint Interest Billing | Alta | 🔲 0% | 2 semanas |
-| 25 | Permisos de Trabajo | Media | 🔲 0% | 2 semanas |
+| 24 | Joint Interest Billing | Alta | ✅ 100% | 2 semanas |
+| 25 | Permisos de Trabajo | Media | ✅ 100% | 2 semanas |
 | 26 | Reservas | Media | 🔲 0% | 2 semanas |
 | 27 | Transporte Hidrocarburos | Media | 🔲 0% | 2 semanas |
 | 28 | Mejoras Técnicas | Continua | 🔲 0% | Ongoing |
 
-**Progreso Total: ~84%** (considerando módulos O&G)
+**Progreso Total: ~92%** (considerando módulos O&G)
 
 ```
 Módulos Core:     [██████████████████████████████] 100%
-Módulos O&G:      [████████████████████░░░░░░░░░░] 65%
-Total Proyecto:   [█████████████████████████░░░░░] 84%
+Módulos O&G:      [█████████████████████████░░░░░] 85%
+Total Proyecto:   [████████████████████████████░░] 92%
 ```
 
 ---
@@ -1244,131 +1244,192 @@ StopWorkAuthority (Parada de Trabajo)
 
 ---
 
-### Sprint 26 - Reservas de Hidrocarburos 🔲
+### Sprint 26 - Reservas de Hidrocarburos ✅
 
 **Prioridad:** Media  
 **Esfuerzo estimado:** 2 semanas  
-**Justificación:** Valoración de activos petroleros
+**Justificación:** Valoración de activos petroleros  
+**Completado:** 2025-12-17
 
 #### Descripción
 Gestión de estimaciones de reservas de hidrocarburos según
 estándares internacionales (PRMS, SEC).
 
-#### Backend - Modelos
+#### Backend - Modelos ✅
 
 ```
 ReserveEstimate (Estimación de Reservas)
-├── id, field_id
-├── estimate_date
-├── standard: PRMS | SEC | SPE
+├── id, code, field_id
+├── estimate_date, effective_date
+├── standard: PRMS | SEC | SPE | PDVSA | OTHER
 ├── evaluator: INTERNAL | EXTERNAL
-├── evaluator_company
-├── status: DRAFT | APPROVED | SUPERSEDED
+├── evaluator_company, evaluator_name, report_number
+├── methodology, assumptions (JSONB)
+├── status: DRAFT | UNDER_REVIEW | APPROVED | SUPERSEDED | CANCELLED
+├── approved_by, approved_at
+├── superseded_by, superseded_at
+└── notes, created_by
 
 ReserveCategory (Categorías de Reservas)
 ├── id, estimate_id
-├── category: 1P | 2P | 3P | 1C | 2C | 3C
-│   - 1P: Proved (Probadas)
-│   - 2P: Proved + Probable
-│   - 3P: Proved + Probable + Possible
-│   - 1C/2C/3C: Contingent Resources
-├── oil_volume (MMbbl)
-├── gas_volume (Bcf)
-├── condensate_volume (MMbbl)
+├── category: 1P | 2P | 3P | 1C | 2C | 3C | PROSPECTIVE | UNRECOVERABLE
+├── sub_category: DEVELOPED_PRODUCING | DEVELOPED_NON_PRODUCING | UNDEVELOPED | etc
+├── oil_volume (MMbbl), gas_volume (Bcf)
+├── condensate_volume (MMbbl), ngl_volume (MMbbl)
+├── boe_volume (MMboe) - calculado
+├── recovery_factor, ooip, ogip
 └── notes
 
 ReserveValuation (Valoración)
-├── id, estimate_id
+├── id, code, estimate_id
 ├── valuation_date
-├── oil_price, gas_price (assumptions)
-├── discount_rate
+├── oil_price, gas_price, condensate_price
+├── price_scenario: LOW | BASE | HIGH | STRIP | CUSTOM
+├── discount_rate, royalty_rate, tax_rate
 ├── npv_1p, npv_2p, npv_3p
-├── methodology
-└── approved_by
+├── pv10_1p, pv10_2p, pv10_3p
+├── undiscounted_cashflow, capex_required, opex_per_boe
+├── methodology: DCF | COMPARABLE | COST | OPTION | HYBRID
+├── assumptions, sensitivity_analysis (JSONB)
+├── status: DRAFT | UNDER_REVIEW | APPROVED | SUPERSEDED
+└── approved_by, approved_at, notes, created_by
 ```
 
-#### Frontend - Páginas
+#### Backend - Servicio y Rutas ✅
+
+- **Servicio:** `reserveService.js`
+- **Controlador:** `reserveController.js`
+- **Rutas:** `/api/reserves/*`
+
+#### Frontend - Páginas ✅
 
 ```
-/reserves                    → Dashboard de reservas
+/reserves                    → Dashboard de reservas (KPIs, gráficos)
 /reserves/estimates          → Lista de estimaciones
-/reserves/estimates/:id      → Detalle con categorías
-/reserves/valuations         → Valoraciones
+/reserves/estimates/new      → Nueva estimación
+/reserves/estimates/:id      → Detalle con tabs (General, Categorías, Valoraciones)
+/reserves/estimates/:id/edit → Editar estimación
+/reserves/valuations         → Lista de valoraciones
+/reserves/valuations/new     → Nueva valoración
+/reserves/valuations/:id/edit → Editar valoración
 ```
+
+#### Permisos ✅
+- `reserves:*`, `reserves:read`, `reserves:create`, `reserves:update`, `reserves:delete`, `reserves:approve`
+
+#### i18n ✅
+- Traducciones completas en ES, EN, PT
+
+#### Seeders ✅
+- 3 estimaciones de reservas (2 aprobadas, 1 borrador)
+- 11 categorías de reservas (1P, 2P, 3P con sub-categorías)
+- 3 valoraciones (diferentes escenarios de precios)
 
 ---
 
-### Sprint 27 - Transporte de Hidrocarburos 🔲
+### Sprint 27 - Transporte de Hidrocarburos ✅
 
 **Prioridad:** Media  
 **Esfuerzo estimado:** 2 semanas  
-**Justificación:** Logística de crudo y productos
+**Justificación:** Logística de crudo y productos  
+**Estado:** COMPLETADO
 
 #### Descripción
 Gestión de transporte de hidrocarburos: tickets de carga,
 tanques de almacenamiento, calidad de crudo.
 
-#### Backend - Modelos
+#### Backend - Modelos ✅
 
 ```
 StorageTank (Tanques de Almacenamiento)
 ├── id, code, name
 ├── location, field_id
-├── type: CRUDE | WATER | DIESEL | CHEMICALS
+├── type: CRUDE | WATER | DIESEL | CHEMICALS | GAS | CONDENSATE
 ├── capacity, current_volume
-├── last_gauging_date
-└── status: ACTIVE | MAINTENANCE | OUT_OF_SERVICE
+├── diameter_ft, height_ft
+├── last_gauging_date, last_inspection_date, next_inspection_date
+└── status: ACTIVE | MAINTENANCE | OUT_OF_SERVICE | DECOMMISSIONED
 
 TankGauging (Mediciones de Tanque)
 ├── id, tank_id
 ├── gauging_datetime
 ├── volume, temperature
-├── api_gravity, bsw
-├── gauged_by
+├── api_gravity, bsw, level_inches
+├── gauged_by, gauging_method
 └── notes
 
 LoadingTicket (Tickets de Carga)
 ├── id, code (TKT-YYYY-XXXX)
-├── type: LOADING | UNLOADING
-├── source_tank_id, destination
-├── vehicle_plate, driver_name
+├── type: LOADING | UNLOADING | TRANSFER
+├── source_tank_id, destination_tank_id, destination
+├── vehicle_plate, driver_name, driver_id_number
 ├── carrier_company
-├── product_type, volume
-├── api_gravity, bsw, temperature
+├── product_type, api_gravity, bsw, temperature
 ├── gross_volume, net_volume
 ├── loading_start, loading_end
 ├── seal_numbers (JSON array)
-└── authorized_by, received_by
+├── initial_tank_volume, final_tank_volume
+├── authorized_by, received_by
+└── status: DRAFT | IN_PROGRESS | COMPLETED | CANCELLED | VOID
 
 CrudeQuality (Calidad de Crudo)
-├── id, field_id, sample_date
+├── id, code, field_id, tank_id
+├── sample_date, sample_time, sample_point
 ├── api_gravity, bsw, sulfur_content
-├── viscosity, pour_point
-├── salt_content, h2s_content
-├── lab_report_number
-└── sampled_by
+├── viscosity, pour_point, salt_content
+├── h2s_content, reid_vapor_pressure, flash_point
+├── lab_report_number, lab_name
+├── sampled_by, analyzed_by
+└── status: PENDING | ANALYZED | APPROVED | REJECTED
 
 Pipeline (Ductos)
 ├── id, code, name
-├── type: CRUDE | GAS | WATER | MULTIPHASE
-├── origin, destination
-├── length_km, diameter_inches
-├── capacity_bpd
-├── status: ACTIVE | MAINTENANCE | SHUTDOWN
+├── type: CRUDE | GAS | WATER | MULTIPHASE | CONDENSATE | DIESEL
+├── origin, origin_field_id
+├── destination, destination_field_id
+├── length_km, diameter_inches, wall_thickness_inches
+├── material, capacity_bpd, max_pressure_psi
+├── installation_date, last_inspection_date, next_inspection_date
+├── status: ACTIVE | MAINTENANCE | SHUTDOWN | DECOMMISSIONED
 └── operator
 ```
 
-#### Frontend - Páginas
+- **Servicio:** `logisticsService.js`
+- **Controlador:** `logisticsController.js`
+- **Rutas:** `/api/logistics/*`
+
+#### Frontend - Páginas ✅
 
 ```
-/logistics                    → Dashboard logística
-/logistics/tanks              → Tanques de almacenamiento
-/logistics/tanks/:id          → Detalle tanque con historial
-/logistics/tickets            → Tickets de carga
+/logistics                    → Dashboard logística (KPIs, gráficos)
+/logistics/tanks              → Lista de tanques
+/logistics/tanks/new          → Nuevo tanque
+/logistics/tanks/:id          → Detalle tanque con historial de mediciones
+/logistics/tanks/:id/edit     → Editar tanque
+/logistics/tickets            → Lista de tickets de carga
 /logistics/tickets/new        → Nuevo ticket
-/logistics/quality            → Calidad de crudo
-/logistics/pipelines          → Ductos
+/logistics/tickets/:id        → Detalle ticket
+/logistics/tickets/:id/edit   → Editar ticket
+/logistics/quality            → Lista de muestras de calidad
+/logistics/quality/new        → Nueva muestra
+/logistics/quality/:id/edit   → Editar muestra
+/logistics/pipelines          → Lista de ductos
+/logistics/pipelines/new      → Nuevo ducto
+/logistics/pipelines/:id/edit → Editar ducto
 ```
+
+#### Permisos ✅
+- `logistics:*`, `logistics:read`, `logistics:create`, `logistics:update`, `logistics:delete`, `logistics:approve`
+
+#### i18n ✅
+- Traducciones completas en ES, EN, PT
+
+#### Seeders ✅
+- 5 tanques de almacenamiento (diferentes tipos)
+- 3 mediciones de tanque
+- 3 tickets de carga (diferentes estados)
+- 3 muestras de calidad de crudo
+- 4 ductos (diferentes tipos)
 
 ---
 
@@ -1478,39 +1539,72 @@ Pipeline (Ductos)
 
 ---
 
-### Sprint 31 - Mejoras UX/UI 🔲
+### Sprint 31 - Mejoras UX/UI ✅
 
 **Prioridad:** Media  
-**Esfuerzo estimado:** 2 semanas
+**Esfuerzo estimado:** 2 semanas  
+**Completado:** 18 Dic 2024
 
-#### Por Implementar
+#### Implementado
 
-- [ ] **Modo Oscuro**
-  - Toggle en settings
-  - Persistencia de preferencia
-  - Tema MUI dark
+- [x] **Modo Oscuro**
+  - Toggle en settings (`/settings`)
+  - Persistencia en localStorage
+  - Tema MUI dark dinámico
+  - Archivos: `theme.js`, `uiSlice.js`, `ThemeWrapper.jsx`
 
-- [ ] **PWA (Progressive Web App)**
-  - Service Worker
-  - Manifest.json
+- [x] **PWA (Progressive Web App)**
+  - Service Worker (`public/sw.js`)
+  - Manifest.json (`public/manifest.json`)
   - Instalable en móvil
-  - Offline básico
+  - Offline básico con cache
+  - Iconos SVG para PWA
 
-- [ ] **Notificaciones Push**
+- [x] **Notificaciones Push**
   - Web Push API
-  - Notificaciones de sistema
-  - Configuración por usuario
+  - Hook `usePushNotifications.js`
+  - Configuración en `/settings`
+  - Notificación de prueba
+  - Soporte para VAPID keys
 
-- [ ] **Accesibilidad (WCAG)**
-  - ARIA labels
-  - Navegación por teclado
-  - Contraste adecuado
-  - Screen reader friendly
+- [x] **Accesibilidad (WCAG)**
+  - SkipLink para navegación por teclado
+  - ARIA labels en componentes principales
+  - FocusTrap para modales
+  - VisuallyHidden para screen readers
+  - Componentes en `components/accessibility/`
 
-- [ ] **Mejoras de Formularios**
-  - Autoguardado de borradores
-  - Validación en tiempo real
-  - Atajos de teclado
+- [x] **Mejoras de Formularios**
+  - Autoguardado de borradores (`useFormDraft.js`)
+  - Validación en tiempo real (`ValidatedTextField.jsx`)
+  - Atajos de teclado (`useKeyboardShortcuts.js`)
+  - Componente `FormWithDraft.jsx`
+  - Persistencia en localStorage
+
+#### Archivos Creados
+- `frontend/src/store/slices/uiSlice.js`
+- `frontend/src/components/ThemeWrapper.jsx`
+- `frontend/src/hooks/usePushNotifications.js`
+- `frontend/src/hooks/useFormDraft.js`
+- `frontend/src/hooks/useKeyboardShortcuts.js`
+- `frontend/src/components/accessibility/SkipLink.jsx`
+- `frontend/src/components/accessibility/FocusTrap.jsx`
+- `frontend/src/components/accessibility/VisuallyHidden.jsx`
+- `frontend/src/components/forms/FormWithDraft.jsx`
+- `frontend/src/components/forms/ValidatedTextField.jsx`
+- `frontend/public/manifest.json`
+- `frontend/public/sw.js`
+- `frontend/public/icons/icon-192x192.svg`
+- `frontend/public/icons/icon-512x512.svg`
+
+#### Archivos Modificados
+- `frontend/src/theme.js` - Soporte dark mode dinámico
+- `frontend/src/main.jsx` - ThemeWrapper
+- `frontend/src/store/index.js` - uiReducer
+- `frontend/src/pages/Settings.jsx` - Toggle tema + push notifications
+- `frontend/src/components/Layout.jsx` - SkipLink + ARIA
+- `frontend/index.html` - PWA meta tags + SW registration
+- `frontend/src/i18n/locales/{es,en,pt}.json` - Traducciones
 
 ---
 
@@ -1636,6 +1730,36 @@ Pipeline (Ductos)
 ---
 
 ## 📝 HISTORIAL DE VERSIONES
+
+### v0.19.0 (2025-12-17)
+- ✅ Módulo Permisos de Trabajo (PTW) completo
+  - Backend: Modelos WorkPermit, WorkPermitChecklist, WorkPermitExtension, StopWorkAuthority
+  - Backend: Servicio ptwService.js con CRUD completo, workflow y dashboard
+  - Backend: Controlador y rutas API protegidas
+  - Backend: Seeder con datos de prueba
+  - Backend: Permisos ptw:* agregados
+  - Frontend: Redux slice ptwSlice.js
+  - Frontend: PTWDashboard con KPIs
+  - Frontend: PermitList, PermitDetail, PermitForm
+  - Frontend: StopWorkList, StopWorkDetail, StopWorkForm
+  - Frontend: Traducciones i18n (ES, EN, PT)
+  - Frontend: Menú lateral actualizado
+  - Funcionalidades: Permisos de trabajo, checklists, extensiones, Stop Work Authority
+
+### v0.18.0 (2025-12-17)
+- ✅ Módulo Joint Interest Billing (JIB) completo
+  - Backend: Modelos JointInterestBilling, JIBLineItem, JIBPartnerShare, CashCall, CashCallResponse
+  - Backend: Servicio jibService.js con CRUD completo, workflow y dashboard
+  - Backend: Controlador y rutas API protegidas
+  - Backend: Seeder con datos de prueba
+  - Backend: Permisos jib:* agregados
+  - Frontend: Redux slice jibSlice.js
+  - Frontend: JIBDashboard con KPIs
+  - Frontend: JIBList, JIBDetail, JIBForm
+  - Frontend: CashCallList, CashCallDetail, CashCallForm
+  - Frontend: Traducciones i18n (ES, EN, PT)
+  - Frontend: Menú lateral actualizado
+  - Funcionalidades: Facturación a socios, distribución por WI, pagos, disputas, cash calls
 
 ### v0.17.0 (2025-12-17)
 - 🔄 Módulo Producción y Pozos (70% completado)

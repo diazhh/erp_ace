@@ -18,6 +18,7 @@ import {
   CircularProgress,
   Card,
   CardContent,
+  CardActions,
   LinearProgress,
   IconButton,
   Tooltip,
@@ -26,6 +27,8 @@ import {
   DialogContent,
   DialogActions,
   TextField,
+  useTheme,
+  useMediaQuery,
 } from '@mui/material';
 import {
   ArrowBack as BackIcon,
@@ -41,6 +44,8 @@ const CashCallDetail = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { id } = useParams();
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
   const { currentCashCall, loading } = useSelector((state) => state.jib);
 
@@ -136,13 +141,13 @@ const CashCallDetail = () => {
             color={getStatusColor(currentCashCall.status)}
           />
         </Box>
-        <Box sx={{ display: 'flex', gap: 1 }}>
+        <Box sx={{ display: 'flex', gap: 1, flexDirection: isMobile ? 'column' : 'row', width: isMobile ? '100%' : 'auto' }}>
           {currentCashCall.status === 'DRAFT' && (
             <>
-              <Button variant="outlined" startIcon={<EditIcon />} onClick={() => navigate(`/jib/cash-calls/${id}/edit`)}>
+              <Button variant="outlined" startIcon={<EditIcon />} onClick={() => navigate(`/jib/cash-calls/${id}/edit`)} fullWidth={isMobile}>
                 {t('common.edit', 'Editar')}
               </Button>
-              <Button variant="contained" startIcon={<SendIcon />} onClick={handleSend}>
+              <Button variant="contained" startIcon={<SendIcon />} onClick={handleSend} fullWidth={isMobile}>
                 {t('jib.send', 'Enviar')}
               </Button>
             </>

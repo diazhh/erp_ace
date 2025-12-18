@@ -48,6 +48,7 @@ import {
   selectAttachmentsByEntity,
   selectAttachmentLoading,
 } from '../../store/slices/attachmentSlice';
+import { getFileUrl } from '../../utils/fileUrl';
 
 // Iconos por tipo de archivo
 const getFileIcon = (mimeType, size = 'medium') => {
@@ -175,8 +176,7 @@ const AttachmentGallery = ({
   };
 
   const handleDownload = (attachment) => {
-    const baseUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000';
-    const url = `${baseUrl}${attachment.fileUrl}`;
+    const url = getFileUrl(attachment.fileUrl);
     window.open(url, '_blank');
   };
 
@@ -222,7 +222,7 @@ const AttachmentGallery = ({
                 {attachment.thumbnailUrl ? (
                   <Box
                     component="img"
-                    src={`${import.meta.env.VITE_API_URL || 'http://localhost:5000'}${attachment.thumbnailUrl}`}
+                    src={getFileUrl(attachment.thumbnailUrl)}
                     sx={{
                       width: 40,
                       height: 40,
@@ -332,7 +332,7 @@ const AttachmentGallery = ({
                 {attachment.thumbnailUrl || attachment.mimeType?.startsWith('image/') ? (
                   <CardMedia
                     component="img"
-                    image={`${import.meta.env.VITE_API_URL || 'http://localhost:5000'}${attachment.thumbnailUrl || attachment.fileUrl}`}
+                    image={getFileUrl(attachment.thumbnailUrl || attachment.fileUrl)}
                     alt={attachment.originalName}
                     sx={{
                       height: '100%',
@@ -442,7 +442,7 @@ const AttachmentGallery = ({
           {imageAttachments[currentIndex] && (
             <Box
               component="img"
-              src={`${import.meta.env.VITE_API_URL || 'http://localhost:5000'}${imageAttachments[currentIndex].fileUrl}`}
+              src={getFileUrl(imageAttachments[currentIndex].fileUrl)}
               alt={imageAttachments[currentIndex].originalName}
               sx={{
                 maxWidth: '100%',

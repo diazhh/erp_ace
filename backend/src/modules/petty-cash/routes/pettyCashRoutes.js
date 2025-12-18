@@ -21,6 +21,7 @@ router.get('/', authorize('petty_cash:read'), pettyCashController.list);
 router.get('/:id', authorize('petty_cash:read'), pettyCashController.getById);
 router.get('/:id/full', authorize('petty_cash:read'), pettyCashController.getFullById);
 router.put('/:id', authorize('petty_cash:update'), pettyCashController.update);
+router.delete('/:id', authorize('petty_cash:delete'), pettyCashController.delete);
 
 // Estadísticas de una caja específica
 router.get('/:id/stats', authorize('petty_cash:read'), pettyCashController.getStats);

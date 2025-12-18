@@ -72,6 +72,7 @@ import {
   ReportProblem as NCIcon,
   Assessment as ReportsIcon,
   OilBarrel as ProductionIcon,
+  OilBarrel as OilBarrelIcon,
   Terrain as FieldIcon,
   Description as DescriptionIcon,
   Map as MapIcon,
@@ -80,11 +81,15 @@ import {
   FactCheck as AuditIcon,
   Receipt as ReceiptIcon,
   AccountBalance as AccountBalanceIcon,
+  Assignment as AssignmentIcon,
+  Assessment as AssessmentIcon,
+  TrendingUp as TrendingUpIcon,
 } from '@mui/icons-material';
 
 import { logout } from '../store/slices/authSlice';
 import LanguageSelector from './LanguageSelector';
 import { checkPermission } from '../hooks/usePermission';
+import { SkipLink } from './accessibility';
 
 const drawerWidth = 260;
 
@@ -382,6 +387,41 @@ const Layout = () => {
         { text: t('jib.cashCalls.title', 'Cash Calls'), icon: <AccountBalanceIcon />, path: '/jib/cash-calls' },
       ],
     },
+    { 
+      id: 'ptw', 
+      text: t('ptw.title', 'Permisos de Trabajo'), 
+      icon: <AssignmentIcon />,
+      permissions: ['ptw:read', 'ptw:*'],
+      children: [
+        { text: 'Dashboard', icon: <DashboardIcon />, path: '/ptw' },
+        { text: t('ptw.permits.title', 'Permisos'), icon: <AssignmentIcon />, path: '/ptw/permits' },
+        { text: t('ptw.stopWork.title', 'Stop Work'), icon: <IncidentIcon />, path: '/ptw/stop-work' },
+      ],
+    },
+    { 
+      id: 'reserves', 
+      text: t('reserves.title', 'Reservas'), 
+      icon: <OilBarrelIcon />,
+      permissions: ['reserves:read', 'reserves:*'],
+      children: [
+        { text: 'Dashboard', icon: <DashboardIcon />, path: '/reserves' },
+        { text: t('reserves.estimates.title', 'Estimaciones'), icon: <AssessmentIcon />, path: '/reserves/estimates' },
+        { text: t('reserves.valuations.title', 'Valoraciones'), icon: <TrendingUpIcon />, path: '/reserves/valuations' },
+      ],
+    },
+    { 
+      id: 'logistics', 
+      text: t('logistics.dashboard', 'Logística'), 
+      icon: <FuelIcon />,
+      permissions: ['logistics:read', 'logistics:*'],
+      children: [
+        { text: 'Dashboard', icon: <DashboardIcon />, path: '/logistics' },
+        { text: t('logistics.storageTanks', 'Tanques'), icon: <FuelIcon />, path: '/logistics/tanks' },
+        { text: t('logistics.loadingTickets', 'Tickets'), icon: <ReceiptIcon />, path: '/logistics/tickets' },
+        { text: t('logistics.crudeQuality', 'Calidad'), icon: <QualityIcon />, path: '/logistics/quality' },
+        { text: t('logistics.pipelines', 'Ductos'), icon: <MovementIcon />, path: '/logistics/pipelines' },
+      ],
+    },
     { id: 'reports', text: t('menu.reports'), icon: <ReportsIcon />, path: '/reports', permissions: ['reports:read', 'reports:*'] },
     { 
       id: 'admin', 
@@ -461,6 +501,7 @@ const Layout = () => {
 
   return (
     <Box sx={{ display: 'flex' }}>
+      <SkipLink mainContentId="main-content" />
       <CssBaseline />
       <AppBar
         position="fixed"
@@ -545,6 +586,10 @@ const Layout = () => {
       </Box>
       <Box
         component="main"
+        id="main-content"
+        role="main"
+        aria-label={t('accessibility.mainContent', 'Contenido principal')}
+        tabIndex={-1}
         sx={{
           flexGrow: 1,
           p: 3,
@@ -552,6 +597,9 @@ const Layout = () => {
           mt: 8,
           minHeight: '100vh',
           bgcolor: 'background.default',
+          '&:focus': {
+            outline: 'none',
+          },
         }}
       >
         <Outlet />

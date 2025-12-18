@@ -31,6 +31,11 @@ import {
   Delete as DeleteIcon,
   Notifications as NotificationsIcon,
   Email as EmailIcon,
+  DarkMode as DarkModeIcon,
+  LightMode as LightModeIcon,
+  Palette as PaletteIcon,
+  NotificationsActive as NotificationsActiveIcon,
+  NotificationsOff as NotificationsOffIcon,
 } from '@mui/icons-material';
 import {
   fetchUserWhatsAppConfig,
@@ -51,6 +56,8 @@ import {
   clearSuccess as clearEmailSuccess,
   clearError as clearEmailError,
 } from '../store/slices/emailSlice';
+import { toggleThemeMode, setThemeMode } from '../store/slices/uiSlice';
+import usePushNotifications from '../hooks/usePushNotifications';
 
 const COUNTRY_CODES = [
   { code: '+58', country: 'Venezuela' },
@@ -85,6 +92,20 @@ const Settings = () => {
     error: emailError,
     success: emailSuccess,
   } = useSelector((state) => state.email);
+  
+  const { themeMode } = useSelector((state) => state.ui);
+  
+  // Push notifications
+  const {
+    isSupported: pushSupported,
+    permission: pushPermission,
+    isEnabled: pushEnabled,
+    loading: pushLoading,
+    error: pushError,
+    subscribe: subscribePush,
+    unsubscribe: unsubscribePush,
+    showNotification: testNotification,
+  } = usePushNotifications();
 
   // WhatsApp state
   const [phoneNumber, setPhoneNumber] = useState('');
@@ -263,6 +284,60 @@ const Settings = () => {
       )}
 
       <Grid container spacing={3}>
+        {/* Theme/Appearance Card */}
+        <Grid item xs={12} md={6}>
+          <Card>
+            <CardContent>
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 2 }}>
+                <PaletteIcon sx={{ color: 'primary.main' }} />
+                <Typography variant="h6">
+                  {t('settings.appearance', 'Apariencia')}
+                </Typography>
+              </Box>
+              <Divider sx={{ mb: 2 }} />
+
+              <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+                <Typography variant="body2" color="text.secondary">
+                  {t('settings.themeDescription', 'Personaliza la apariencia de la aplicación')}
+                </Typography>
+
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                  <FormControlLabel
+                    control={
+                      <Switch
+                        checked={themeMode === 'dark'}
+                        onChange={() => dispatch(toggleThemeMode())}
+                        color="primary"
+                        icon={<LightModeIcon sx={{ fontSize: 20 }} />}
+                        checkedIcon={<DarkModeIcon sx={{ fontSize: 20 }} />}
+                      />
+                    }
+                    label={
+                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                        {themeMode === 'dark' ? (
+                          <>
+                            <DarkModeIcon fontSize="small" />
+                            <Typography>{t('settings.darkMode', 'Modo Oscuro')}</Typography>
+                          </>
+                        ) : (
+                          <>
+                            <LightModeIcon fontSize="small" />
+                            <Typography>{t('settings.lightMode', 'Modo Claro')}</Typography>
+                          </>
+                        )}
+                      </Box>
+                    }
+                  />
+                </Box>
+
+                <Typography variant="caption" color="text.secondary">
+                  {t('settings.themeNote', 'El tema se guarda automáticamente y se aplicará en tu próxima visita')}
+                </Typography>
+              </Box>
+            </CardContent>
+          </Card>
+        </Grid>
+
         {/* User Info Card */}
         <Grid item xs={12} md={6}>
           <Card>
@@ -589,6 +664,91 @@ const Settings = () => {
           </Card>
         </Grid>
 
+        {/* Push Notifications Card */}
+        <Grid item xs={12} md={6}>
+          <Card>
+            <CardContent>
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 2 }}>
+                <NotificationsActiveIcon sx={{ color: 'secondary.main' }} />
+                <Typography variant="h6">
+                  {t('settings.pushNotifications', 'Notificaciones Push')}
+                </Typography>
+              </Box>
+              <Divider sx={{ mb: 2 }} />
+
+              {!pushSupported ? (
+                <Alert severity="warning">
+                  {t('settings.pushNotSupported', 'Las notificaciones push no están soportadas en este navegador')}
+                </Alert>
+              ) : (
+                <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+                  <Typography variant="body2" color="text.secondary">
+                    {t('settings.pushDescription', 'Recibe notificaciones en tiempo real directamente en tu navegador o dispositivo')}
+                  </Typography>
+
+                  {pushError && (
+                    <Alert severity="error" sx={{ mb: 1 }}>
+                      {pushError}
+                    </Alert>
+                  )}
+
+                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                    <FormControlLabel
+                      control={
+                        <Switch
+                          checked={pushEnabled}
+                          onChange={() => pushEnabled ? unsubscribePush() : subscribePush()}
+                          disabled={pushLoading}
+                          color="secondary"
+                        />
+                      }
+                      label={
+                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                          {pushEnabled ? (
+                            <>
+                              <NotificationsActiveIcon fontSize="small" color="secondary" />
+                              <Typography>{t('settings.pushEnabled', 'Activadas')}</Typography>
+                            </>
+                          ) : (
+                            <>
+                              <NotificationsOffIcon fontSize="small" />
+                              <Typography>{t('settings.pushDisabled', 'Desactivadas')}</Typography>
+                            </>
+                          )}
+                        </Box>
+                      }
+                    />
+                    {pushLoading && <CircularProgress size={20} />}
+                  </Box>
+
+                  {pushPermission === 'denied' && (
+                    <Alert severity="warning" sx={{ mt: 1 }}>
+                      {t('settings.pushDenied', 'Has bloqueado las notificaciones. Debes habilitarlas en la configuración de tu navegador.')}
+                    </Alert>
+                  )}
+
+                  {pushEnabled && (
+                    <Button
+                      variant="outlined"
+                      size="small"
+                      onClick={() => testNotification('Prueba de Notificación', {
+                        body: 'Esta es una notificación de prueba del ERP',
+                        tag: 'test-notification',
+                      })}
+                    >
+                      {t('settings.testNotification', 'Enviar notificación de prueba')}
+                    </Button>
+                  )}
+
+                  <Typography variant="caption" color="text.secondary">
+                    {t('settings.pushNote', 'Las notificaciones push funcionan incluso cuando la aplicación está cerrada')}
+                  </Typography>
+                </Box>
+              )}
+            </CardContent>
+          </Card>
+        </Grid>
+
         {/* Info Card */}
         <Grid item xs={12}>
           <Paper sx={{ p: 3, bgcolor: 'info.lighter' }}>
@@ -606,12 +766,17 @@ const Settings = () => {
               </li>
               <li>
                 <Typography variant="body2">
-                  Puedes configurar tanto WhatsApp como Email para recibir notificaciones.
+                  Puedes configurar WhatsApp, Email y notificaciones Push para recibir alertas.
                 </Typography>
               </li>
               <li>
                 <Typography variant="body2">
                   Puedes desactivar las notificaciones en cualquier momento sin eliminar tu configuración.
+                </Typography>
+              </li>
+              <li>
+                <Typography variant="body2">
+                  Las notificaciones Push funcionan incluso cuando el navegador está cerrado.
                 </Typography>
               </li>
             </Box>

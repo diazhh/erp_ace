@@ -64,6 +64,18 @@ export const updatePettyCash = createAsyncThunk(
   }
 );
 
+export const deletePettyCash = createAsyncThunk(
+  'pettyCash/delete',
+  async (id, { rejectWithValue }) => {
+    try {
+      await api.delete(`/petty-cash/${id}`);
+      return id;
+    } catch (error) {
+      return rejectWithValue(error.response?.data?.message || 'Error al cerrar caja chica');
+    }
+  }
+);
+
 // Stats
 export const fetchPettyCashStats = createAsyncThunk(
   'pettyCash/fetchStats',
@@ -275,6 +287,13 @@ const pettyCashSlice = createSlice({
         }
         if (state.currentPettyCash?.id === action.payload.id) {
           state.currentPettyCash = { ...state.currentPettyCash, ...action.payload };
+        }
+      })
+      // Delete
+      .addCase(deletePettyCash.fulfilled, (state, action) => {
+        state.pettyCashes = state.pettyCashes.filter(pc => pc.id !== action.payload);
+        if (state.currentPettyCash?.id === action.payload) {
+          state.currentPettyCash = null;
         }
       })
       // Stats

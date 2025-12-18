@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import {
   Box,
@@ -31,21 +32,22 @@ import {
   Add as AddIcon,
   Edit as EditIcon,
   Delete as DeleteIcon,
+  Work as WorkIcon,
 } from '@mui/icons-material';
 import { toast } from 'react-toastify';
 
 import organizationService from '../../services/organizationService';
 import ConfirmDialog from '../../components/ConfirmDialog';
 
-const levelLabels = {
-  0: 'Ejecutivo',
-  1: 'Director',
-  2: 'Gerente',
-  3: 'Coordinador',
-  4: 'Analista',
-  5: 'Asistente',
-  6: 'Operativo',
-};
+const getLevelLabels = (t) => ({
+  0: t('organization.levelExecutive'),
+  1: t('organization.levelDirector'),
+  2: t('organization.levelManager'),
+  3: t('organization.levelCoordinator'),
+  4: t('organization.levelAnalyst'),
+  5: t('organization.levelAssistant'),
+  6: t('organization.levelOperative'),
+});
 
 const initialFormData = {
   code: '',
@@ -65,6 +67,7 @@ const initialFormData = {
 
 const Positions = () => {
   const { t } = useTranslation();
+  const navigate = useNavigate();
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
 
@@ -89,7 +92,7 @@ const Positions = () => {
       const response = await organizationService.listPositions();
       setPositions(response.data || []);
     } catch (error) {
-      toast.error('Error al cargar posiciones');
+      toast.error(t('common.error'));
     } finally {
       setLoading(false);
     }
@@ -137,7 +140,7 @@ const Positions = () => {
 
   const handleSubmit = async () => {
     if (!formData.code.trim() || !formData.name.trim()) {
-      toast.error('Código y nombre son requeridos');
+      toast.error(t('validation.required'));
       return;
     }
 
@@ -150,15 +153,15 @@ const Positions = () => {
 
       if (editingId) {
         await organizationService.updatePosition(editingId, dataToSend);
-        toast.success('Posición actualizada');
+        toast.success(t('organization.positionUpdated'));
       } else {
         await organizationService.createPosition(dataToSend);
-        toast.success('Posición creada');
+        toast.success(t('organization.positionCreated'));
       }
       handleCloseForm();
       loadPositions();
     } catch (error) {
-      toast.error(error.response?.data?.message || 'Error al guardar');
+      toast.error(error.response?.data?.message || t('common.error'));
     } finally {
       setSaving(false);
     }
@@ -167,20 +170,21 @@ const Positions = () => {
   const handleDelete = async () => {
     try {
       await organizationService.deletePosition(positionToDelete.id);
-      toast.success('Posición eliminada');
+      toast.success(t('organization.positionDeleted'));
       setDeleteDialogOpen(false);
       setPositionToDelete(null);
       loadPositions();
     } catch (error) {
-      toast.error(error.response?.data?.message || 'Error al eliminar');
+      toast.error(error.response?.data?.message || t('common.error'));
     }
   };
 
   const getLevelChip = (level) => {
     const colors = ['error', 'warning', 'info', 'primary', 'default', 'default', 'default'];
+    const levelLabels = getLevelLabels(t);
     return (
       <Chip
-        label={levelLabels[level] || `Nivel ${level}`}
+        label={levelLabels[level] || `${t('organization.level')} ${level}`}
         color={colors[level] || 'default'}
         size="small"
       />
@@ -199,14 +203,14 @@ const Positions = () => {
     <Box>
       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3, flexWrap: 'wrap', gap: 2 }}>
         <Typography variant="h4" fontWeight="bold">
-          Cargos / Posiciones
+          {t('organization.positionsTitle')}
         </Typography>
         <Button
           variant="contained"
           startIcon={<AddIcon />}
-          onClick={() => handleOpenForm()}
+          onClick={() => navigate('/organization/positions/new')}
         >
-          Nueva Posición
+          {t('organization.newPosition')}
         </Button>
       </Box>
 
@@ -227,14 +231,17 @@ const Positions = () => {
                   </Box>
                   {pos.department && (
                     <Typography variant="body2" sx={{ mt: 1 }}>
-                      Departamento: {pos.department.name}
+                      {t('organization.departments')}: {pos.department.name}
                     </Typography>
                   )}
                   <Typography variant="body2" color="text.secondary">
-                    Empleados: {pos.employeeCount || 0} / {pos.maxHeadcount}
+                    {t('organization.employeesCount')}: {pos.employeeCount || 0} / {pos.maxHeadcount}
                   </Typography>
                   <Box sx={{ mt: 2, display: 'flex', justifyContent: 'flex-end', gap: 1 }}>
-                    <IconButton size="small" onClick={() => handleOpenForm(pos)}>
+                    <IconButton size="small" onClick={() => navigate(`/organization/positions/${pos.id}`)}>
+                      <WorkIcon />
+                    </IconButton>
+                    <IconButton size="small" onClick={() => navigate(`/organization/positions/${pos.id}/edit`)}>
                       <EditIcon />
                     </IconButton>
                     <IconButton
@@ -258,21 +265,21 @@ const Positions = () => {
           <Table>
             <TableHead>
               <TableRow>
-                <TableCell>Código</TableCell>
-                <TableCell>Nombre</TableCell>
-                <TableCell>Nivel</TableCell>
-                <TableCell>Departamento</TableCell>
-                <TableCell>Empleados</TableCell>
-                <TableCell>Rango Salarial</TableCell>
-                <TableCell>Estado</TableCell>
-                <TableCell align="right">Acciones</TableCell>
+                <TableCell>{t('employees.code')}</TableCell>
+                <TableCell>{t('common.name')}</TableCell>
+                <TableCell>{t('organization.level')}</TableCell>
+                <TableCell>{t('employees.department')}</TableCell>
+                <TableCell>{t('organization.employeesCount')}</TableCell>
+                <TableCell>{t('organization.salaryRange')}</TableCell>
+                <TableCell>{t('common.status')}</TableCell>
+                <TableCell align="right">{t('common.actions')}</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
               {positions.length === 0 ? (
                 <TableRow>
                   <TableCell colSpan={8} align="center">
-                    No hay posiciones registradas
+                    {t('organization.noPositions')}
                   </TableCell>
                 </TableRow>
               ) : (
@@ -283,7 +290,7 @@ const Positions = () => {
                       <Box>
                         <Typography variant="body2">{pos.name}</Typography>
                         {pos.isSupervisory && (
-                          <Chip label="Supervisión" size="small" color="secondary" sx={{ mt: 0.5 }} />
+                          <Chip label={t('organization.supervision')} size="small" color="secondary" sx={{ mt: 0.5 }} />
                         )}
                       </Box>
                     </TableCell>
@@ -299,18 +306,23 @@ const Positions = () => {
                     </TableCell>
                     <TableCell>
                       <Chip
-                        label={pos.status === 'ACTIVE' ? 'Activo' : 'Inactivo'}
+                        label={pos.status === 'ACTIVE' ? t('common.active') : t('common.inactive')}
                         color={pos.status === 'ACTIVE' ? 'success' : 'default'}
                         size="small"
                       />
                     </TableCell>
                     <TableCell align="right">
-                      <Tooltip title="Editar">
-                        <IconButton size="small" onClick={() => handleOpenForm(pos)}>
+                      <Tooltip title={t('common.view')}>
+                        <IconButton size="small" onClick={() => navigate(`/organization/positions/${pos.id}`)}>
+                          <WorkIcon />
+                        </IconButton>
+                      </Tooltip>
+                      <Tooltip title={t('common.edit')}>
+                        <IconButton size="small" onClick={() => navigate(`/organization/positions/${pos.id}/edit`)}>
                           <EditIcon />
                         </IconButton>
                       </Tooltip>
-                      <Tooltip title="Eliminar">
+                      <Tooltip title={t('common.delete')}>
                         <IconButton
                           size="small"
                           color="error"
@@ -334,14 +346,14 @@ const Positions = () => {
       {/* Dialog de formulario */}
       <Dialog open={formOpen} onClose={handleCloseForm} maxWidth="md" fullWidth>
         <DialogTitle>
-          {editingId ? 'Editar Posición' : 'Nueva Posición'}
+          {editingId ? t('organization.editPosition') : t('organization.newPosition')}
         </DialogTitle>
         <DialogContent>
           <Grid container spacing={2} sx={{ mt: 1 }}>
             <Grid item xs={12} sm={4}>
               <TextField
                 name="code"
-                label="Código"
+                label={t('employees.code')}
                 value={formData.code}
                 onChange={handleChange}
                 fullWidth
@@ -351,7 +363,7 @@ const Positions = () => {
             <Grid item xs={12} sm={8}>
               <TextField
                 name="name"
-                label="Nombre"
+                label={t('common.name')}
                 value={formData.name}
                 onChange={handleChange}
                 fullWidth
@@ -361,13 +373,13 @@ const Positions = () => {
             <Grid item xs={12} sm={6}>
               <TextField
                 name="departmentId"
-                label="Departamento"
+                label={t('employees.department')}
                 value={formData.departmentId}
                 onChange={handleChange}
                 select
                 fullWidth
               >
-                <MenuItem value="">Sin asignar</MenuItem>
+                <MenuItem value="">{t('organization.notAssigned')}</MenuItem>
                 {departments.map((dept) => (
                   <MenuItem key={dept.id} value={dept.id}>
                     {dept.name}
@@ -378,13 +390,13 @@ const Positions = () => {
             <Grid item xs={12} sm={6}>
               <TextField
                 name="level"
-                label="Nivel Jerárquico"
+                label={t('organization.level')}
                 value={formData.level}
                 onChange={handleChange}
                 select
                 fullWidth
               >
-                {Object.entries(levelLabels).map(([key, label]) => (
+                {Object.entries(getLevelLabels(t)).map(([key, label]) => (
                   <MenuItem key={key} value={parseInt(key)}>
                     {key} - {label}
                   </MenuItem>
@@ -394,7 +406,7 @@ const Positions = () => {
             <Grid item xs={12}>
               <TextField
                 name="description"
-                label="Descripción"
+                label={t('common.description')}
                 value={formData.description}
                 onChange={handleChange}
                 fullWidth
@@ -405,7 +417,7 @@ const Positions = () => {
             <Grid item xs={12} sm={4}>
               <TextField
                 name="minSalary"
-                label="Salario Mínimo"
+                label={t('organization.minSalary')}
                 type="number"
                 value={formData.minSalary}
                 onChange={handleChange}
@@ -415,7 +427,7 @@ const Positions = () => {
             <Grid item xs={12} sm={4}>
               <TextField
                 name="maxSalary"
-                label="Salario Máximo"
+                label={t('organization.maxSalary')}
                 type="number"
                 value={formData.maxSalary}
                 onChange={handleChange}
@@ -425,7 +437,7 @@ const Positions = () => {
             <Grid item xs={12} sm={4}>
               <TextField
                 name="salaryCurrency"
-                label="Moneda"
+                label={t('finance.currency')}
                 value={formData.salaryCurrency}
                 onChange={handleChange}
                 select
@@ -439,7 +451,7 @@ const Positions = () => {
             <Grid item xs={12} sm={6}>
               <TextField
                 name="maxHeadcount"
-                label="Cantidad Máxima"
+                label={t('organization.maxHeadcount')}
                 type="number"
                 value={formData.maxHeadcount}
                 onChange={handleChange}
@@ -450,56 +462,56 @@ const Positions = () => {
             <Grid item xs={12} sm={6}>
               <TextField
                 name="status"
-                label="Estado"
+                label={t('common.status')}
                 value={formData.status}
                 onChange={handleChange}
                 select
                 fullWidth
               >
-                <MenuItem value="ACTIVE">Activo</MenuItem>
-                <MenuItem value="INACTIVE">Inactivo</MenuItem>
+                <MenuItem value="ACTIVE">{t('common.active')}</MenuItem>
+                <MenuItem value="INACTIVE">{t('common.inactive')}</MenuItem>
               </TextField>
             </Grid>
             <Grid item xs={12}>
               <TextField
                 name="requirements"
-                label="Requisitos"
+                label={t('organization.requirements')}
                 value={formData.requirements}
                 onChange={handleChange}
                 fullWidth
                 multiline
                 rows={2}
-                placeholder="Educación, experiencia, certificaciones..."
+                placeholder={t('organization.requirementsPlaceholder')}
               />
             </Grid>
             <Grid item xs={12}>
               <TextField
                 name="responsibilities"
-                label="Responsabilidades"
+                label={t('organization.responsibilities')}
                 value={formData.responsibilities}
                 onChange={handleChange}
                 fullWidth
                 multiline
                 rows={2}
-                placeholder="Principales funciones del cargo..."
+                placeholder={t('organization.responsibilitiesPlaceholder')}
               />
             </Grid>
           </Grid>
         </DialogContent>
         <DialogActions>
           <Button onClick={handleCloseForm} disabled={saving}>
-            Cancelar
+            {t('common.cancel')}
           </Button>
           <Button onClick={handleSubmit} variant="contained" disabled={saving}>
-            {saving ? <CircularProgress size={24} /> : 'Guardar'}
+            {saving ? <CircularProgress size={24} /> : t('common.save')}
           </Button>
         </DialogActions>
       </Dialog>
 
       <ConfirmDialog
         open={deleteDialogOpen}
-        title="Eliminar Posición"
-        message={`¿Está seguro de eliminar la posición "${positionToDelete?.name}"?`}
+        title={t('organization.deletePosition')}
+        message={t('organization.deletePositionConfirm', { name: positionToDelete?.name })}
         onConfirm={handleDelete}
         onCancel={() => setDeleteDialogOpen(false)}
       />

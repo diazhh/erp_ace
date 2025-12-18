@@ -16,7 +16,8 @@ const seedAll = async () => {
       Vehicle, VehicleAssignment, VehicleMaintenance, FuelLog,
       Quote, QuoteItem, QuoteRequest,
       Incident, Inspection, Training, TrainingAttendance, SafetyEquipment,
-      DocumentCategory, Document, DocumentVersion
+      DocumentCategory, Document, DocumentVersion,
+      AuditLog
     } = models;
 
     console.log('🌱 ========================================');
@@ -889,6 +890,24 @@ const seedAll = async () => {
     const seedJIB = require('./seeders/jib-seeder');
     await seedJIB(models);
 
+    // ========================================
+    // PTW MODULE (Work Permits)
+    // ========================================
+    const seedPTW = require('./seeders/ptw-seeder');
+    await seedPTW();
+
+    // ========================================
+    // RESERVES MODULE (Hydrocarbon Reserves)
+    // ========================================
+    const seedReserves = require('./seeders/reserves-seeder');
+    await seedReserves();
+
+    // ========================================
+    // SEEDER DE AUDITORÍA
+    // ========================================
+    const seedAuditLogs = require('./seeders/audit-seeder');
+    await seedAuditLogs(models);
+
     console.log('📊 RESUMEN DE DATOS CREADOS');
     console.log('========================================');
     
@@ -908,6 +927,7 @@ const seedAll = async () => {
       'Equipos Seguridad': await SafetyEquipment.count(),
       'Categorías Documentos': await DocumentCategory.count(),
       'Cajas Chicas': await PettyCash.count(),
+      'Registros Auditoría': await AuditLog.count(),
     };
 
     for (const [key, value] of Object.entries(counts)) {

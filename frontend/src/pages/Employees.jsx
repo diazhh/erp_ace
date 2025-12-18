@@ -106,10 +106,10 @@ const Employees = () => {
 
   const getStatusLabel = (status) => {
     const labels = {
-      ACTIVE: t('common.active'),
-      INACTIVE: t('common.inactive'),
-      ON_LEAVE: 'En licencia',
-      TERMINATED: 'Terminado',
+      ACTIVE: t('employees.status.active'),
+      INACTIVE: t('employees.status.inactive'),
+      ON_LEAVE: t('employees.status.onLeave'),
+      TERMINATED: t('employees.status.terminated'),
     };
     return labels[status] || status;
   };
@@ -149,13 +149,13 @@ const Employees = () => {
       </CardContent>
       <CardActions>
         <Button size="small" startIcon={<ViewIcon />} onClick={() => navigate(`/employees/${employee.id}`)}>
-          Ver
+          {t('common.view')}
         </Button>
         <Button size="small" startIcon={<EditIcon />} onClick={() => navigate(`/employees/${employee.id}/edit`)}>
-          Editar
+          {t('common.edit')}
         </Button>
         <Button size="small" color="error" startIcon={<DeleteIcon />} onClick={() => handleDeleteClick(employee)}>
-          Eliminar
+          {t('common.delete')}
         </Button>
       </CardActions>
     </Card>
@@ -193,7 +193,7 @@ const Employees = () => {
         <Table>
           <TableHead>
             <TableRow>
-              <TableCell>Código</TableCell>
+              <TableCell>{t('employees.code')}</TableCell>
               <TableCell>{t('employees.firstName')}</TableCell>
               <TableCell>{t('employees.lastName')}</TableCell>
               <TableCell>{t('employees.idNumber')}</TableCell>
@@ -227,7 +227,7 @@ const Employees = () => {
                     />
                   </TableCell>
                   <TableCell align="right">
-                    <Tooltip title="Ver detalle">
+                    <Tooltip title={t('common.view')}>
                       <IconButton
                         size="small"
                         color="primary"
@@ -306,14 +306,14 @@ const Employees = () => {
         rowsPerPage={rowsPerPage}
         onRowsPerPageChange={handleChangeRowsPerPage}
         rowsPerPageOptions={[5, 10, 25, 50]}
-        labelRowsPerPage={isMobile ? '' : 'Filas por página'}
+        labelRowsPerPage={isMobile ? '' : t('common.rowsPerPage')}
         sx={{ mt: 2 }}
       />
 
       <ConfirmDialog
         open={deleteDialogOpen}
         title={t('common.confirm')}
-        message={`¿Está seguro de eliminar al empleado ${employeeToDelete?.firstName} ${employeeToDelete?.lastName}?`}
+        message={t('employees.deleteConfirm', { name: `${employeeToDelete?.firstName} ${employeeToDelete?.lastName}` })}
         onConfirm={handleConfirmDelete}
         onCancel={() => setDeleteDialogOpen(false)}
       />

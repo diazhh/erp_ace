@@ -25,19 +25,19 @@ import { toast } from 'react-toastify';
 
 import { createAccount, updateAccount, fetchAccountById } from '../../store/slices/financeSlice';
 
-const accountTypes = [
-  { value: 'CHECKING', label: 'Cuenta Corriente' },
-  { value: 'SAVINGS', label: 'Cuenta de Ahorro' },
-  { value: 'CRYPTO_WALLET', label: 'Wallet Crypto' },
-  { value: 'CASH', label: 'Efectivo' },
-  { value: 'PAGO_MOVIL', label: 'Pago Móvil' },
-  { value: 'ZELLE', label: 'Zelle' },
+const getAccountTypes = (t) => [
+  { value: 'CHECKING', label: t('finance.accountTypeChecking') },
+  { value: 'SAVINGS', label: t('finance.accountTypeSavings') },
+  { value: 'CRYPTO_WALLET', label: t('finance.accountTypeCrypto') },
+  { value: 'CASH', label: t('finance.accountTypeCash') },
+  { value: 'PAGO_MOVIL', label: t('finance.accountTypePagoMovil') },
+  { value: 'ZELLE', label: t('finance.accountTypeZelle') },
 ];
 
 const currencies = [
-  { value: 'USD', label: 'Dólar (USD)' },
-  { value: 'VES', label: 'Bolívar (VES)' },
-  { value: 'EUR', label: 'Euro (EUR)' },
+  { value: 'USD', label: 'USD' },
+  { value: 'VES', label: 'VES' },
+  { value: 'EUR', label: 'EUR' },
   { value: 'USDT', label: 'USDT' },
 ];
 
@@ -67,6 +67,7 @@ const BankAccountForm = () => {
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   
   const { currentAccount, loading } = useSelector((state) => state.finance);
+  const accountTypes = getAccountTypes(t);
   
   const [formData, setFormData] = useState(initialFormData);
   const [saving, setSaving] = useState(false);
@@ -103,14 +104,14 @@ const BankAccountForm = () => {
 
   const validate = () => {
     const newErrors = {};
-    if (!formData.name.trim()) newErrors.name = 'Nombre es requerido';
+    if (!formData.name.trim()) newErrors.name = t('validation.required');
     
     if (['CHECKING', 'SAVINGS'].includes(formData.accountType)) {
-      if (!formData.bankName?.trim()) newErrors.bankName = 'Banco es requerido';
+      if (!formData.bankName?.trim()) newErrors.bankName = t('validation.required');
     }
     
     if (formData.accountType === 'CRYPTO_WALLET') {
-      if (!formData.walletAddress?.trim()) newErrors.walletAddress = 'Dirección de wallet es requerida';
+      if (!formData.walletAddress?.trim()) newErrors.walletAddress = t('validation.required');
     }
 
     setErrors(newErrors);
@@ -125,10 +126,10 @@ const BankAccountForm = () => {
     try {
       if (isEdit) {
         await dispatch(updateAccount({ id, data: formData })).unwrap();
-        toast.success('Cuenta actualizada exitosamente');
+        toast.success(t('finance.accountUpdated'));
       } else {
         const result = await dispatch(createAccount(formData)).unwrap();
-        toast.success('Cuenta creada exitosamente');
+        toast.success(t('finance.accountCreated'));
       }
       navigate('/finance/accounts');
     } catch (error) {
@@ -158,7 +159,7 @@ const BankAccountForm = () => {
           <BackIcon />
         </IconButton>
         <Typography variant="h5" fontWeight="bold">
-          {isEdit ? 'Editar Cuenta Bancaria' : 'Nueva Cuenta Bancaria'}
+          {isEdit ? t('finance.editAccount') : t('finance.newAccount')}
         </Typography>
       </Box>
 
@@ -169,14 +170,14 @@ const BankAccountForm = () => {
             <Grid item xs={12} md={6}>
               <TextField
                 fullWidth
-                label="Nombre de la Cuenta"
+                label={t('finance.accountName')}
                 name="name"
                 value={formData.name}
                 onChange={handleChange}
                 required
                 error={!!errors.name}
                 helperText={errors.name}
-                placeholder="Ej: Cuenta Principal, Nómina, etc."
+                placeholder={t('finance.accountName')}
               />
             </Grid>
 
@@ -185,7 +186,7 @@ const BankAccountForm = () => {
               <TextField
                 select
                 fullWidth
-                label="Tipo de Cuenta"
+                label={t('finance.accountType')}
                 name="accountType"
                 value={formData.accountType}
                 onChange={handleChange}
@@ -204,7 +205,7 @@ const BankAccountForm = () => {
               <TextField
                 select
                 fullWidth
-                label="Moneda"
+                label={t('finance.currency')}
                 name="currency"
                 value={formData.currency}
                 onChange={handleChange}
@@ -223,7 +224,7 @@ const BankAccountForm = () => {
               <Grid item xs={12} md={6}>
                 <TextField
                   fullWidth
-                  label="Saldo Inicial"
+                  label={t('finance.initialBalance')}
                   name="currentBalance"
                   type="number"
                   value={formData.currentBalance}
@@ -239,7 +240,7 @@ const BankAccountForm = () => {
                 <Grid item xs={12} md={6}>
                   <TextField
                     fullWidth
-                    label="Banco"
+                    label={t('finance.bankName')}
                     name="bankName"
                     value={formData.bankName}
                     onChange={handleChange}
@@ -251,7 +252,7 @@ const BankAccountForm = () => {
                 <Grid item xs={12} md={6}>
                   <TextField
                     fullWidth
-                    label="Número de Cuenta"
+                    label={t('finance.accountNumber')}
                     name="accountNumber"
                     value={formData.accountNumber}
                     onChange={handleChange}
@@ -260,7 +261,7 @@ const BankAccountForm = () => {
                 <Grid item xs={12} md={6}>
                   <TextField
                     fullWidth
-                    label="Titular"
+                    label={t('finance.accountHolder')}
                     name="accountHolder"
                     value={formData.accountHolder}
                     onChange={handleChange}
@@ -269,7 +270,7 @@ const BankAccountForm = () => {
                 <Grid item xs={12} md={6}>
                   <TextField
                     fullWidth
-                    label="RIF"
+                    label={t('finance.rif')}
                     name="rif"
                     value={formData.rif}
                     onChange={handleChange}
@@ -283,7 +284,7 @@ const BankAccountForm = () => {
               <Grid item xs={12} md={6}>
                 <TextField
                   fullWidth
-                  label="Teléfono"
+                  label={t('finance.phone')}
                   name="phone"
                   value={formData.phone}
                   onChange={handleChange}
@@ -298,7 +299,7 @@ const BankAccountForm = () => {
                 <Grid item xs={12} md={6}>
                   <TextField
                     fullWidth
-                    label="Red/Network"
+                    label={t('finance.network')}
                     name="network"
                     value={formData.network}
                     onChange={handleChange}
@@ -308,7 +309,7 @@ const BankAccountForm = () => {
                 <Grid item xs={12}>
                   <TextField
                     fullWidth
-                    label="Dirección de Wallet"
+                    label={t('finance.walletAddress')}
                     name="walletAddress"
                     value={formData.walletAddress}
                     onChange={handleChange}
@@ -330,7 +331,7 @@ const BankAccountForm = () => {
                     name="isActive"
                   />
                 }
-                label="Cuenta Activa"
+                label={t('finance.activeAccount')}
               />
             </Grid>
             <Grid item xs={12} md={6}>
@@ -342,7 +343,7 @@ const BankAccountForm = () => {
                     name="isDefault"
                   />
                 }
-                label="Cuenta por Defecto"
+                label={t('finance.defaultAccount')}
               />
             </Grid>
 
@@ -350,7 +351,7 @@ const BankAccountForm = () => {
             <Grid item xs={12}>
               <TextField
                 fullWidth
-                label="Notas"
+                label={t('common.notes')}
                 name="notes"
                 value={formData.notes}
                 onChange={handleChange}
@@ -374,7 +375,7 @@ const BankAccountForm = () => {
               fullWidth={isMobile}
               disabled={saving}
             >
-              Cancelar
+              {t('common.cancel')}
             </Button>
             <Button 
               variant="contained" 
@@ -383,7 +384,7 @@ const BankAccountForm = () => {
               disabled={saving}
               startIcon={saving ? <CircularProgress size={20} /> : <SaveIcon />}
             >
-              {isEdit ? 'Guardar Cambios' : 'Crear Cuenta'}
+              {t('common.save')}
             </Button>
           </Box>
         </form>

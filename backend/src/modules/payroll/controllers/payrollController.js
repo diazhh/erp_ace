@@ -484,12 +484,18 @@ class PayrollController {
     try {
       const { EmployeeLoan, Employee, User } = require('../../../database/models');
       
-      const { page = 1, limit = 10, status, employeeId } = req.query;
+      const { page = 1, limit = 10, status, employeeId, loanType, startDate, endDate } = req.query;
       const offset = (page - 1) * limit;
       
       const where = {};
       if (status) where.status = status;
       if (employeeId) where.employeeId = employeeId;
+      if (loanType) where.loanType = loanType;
+      if (startDate || endDate) {
+        where.startDate = {};
+        if (startDate) where.startDate[Op.gte] = startDate;
+        if (endDate) where.startDate[Op.lte] = endDate;
+      }
       
       const { count, rows } = await EmployeeLoan.findAndCountAll({
         where,

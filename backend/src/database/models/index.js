@@ -60,6 +60,10 @@ const Inspection = require('../../modules/hse/models/Inspection');
 const Training = require('../../modules/hse/models/Training');
 const TrainingAttendance = require('../../modules/hse/models/TrainingAttendance');
 const SafetyEquipment = require('../../modules/hse/models/SafetyEquipment');
+const WorkPermit = require('../../modules/hse/models/WorkPermit');
+const WorkPermitChecklist = require('../../modules/hse/models/WorkPermitChecklist');
+const WorkPermitExtension = require('../../modules/hse/models/WorkPermitExtension');
+const StopWorkAuthority = require('../../modules/hse/models/StopWorkAuthority');
 // Document models
 const DocumentCategory = require('../../modules/documents/models/DocumentCategory');
 const Document = require('../../modules/documents/models/Document');
@@ -130,6 +134,16 @@ const JIBLineItem = require('../../modules/jib/models/JIBLineItem');
 const JIBPartnerShare = require('../../modules/jib/models/JIBPartnerShare');
 const CashCall = require('../../modules/jib/models/CashCall');
 const CashCallResponse = require('../../modules/jib/models/CashCallResponse');
+// Reserves models
+const ReserveEstimate = require('../../modules/reserves/models/ReserveEstimate');
+const ReserveCategory = require('../../modules/reserves/models/ReserveCategory');
+const ReserveValuation = require('../../modules/reserves/models/ReserveValuation');
+// Logistics models
+const StorageTank = require('../../modules/logistics/models/StorageTank');
+const TankGauging = require('../../modules/logistics/models/TankGauging');
+const LoadingTicket = require('../../modules/logistics/models/LoadingTicket');
+const CrudeQuality = require('../../modules/logistics/models/CrudeQuality');
+const Pipeline = require('../../modules/logistics/models/Pipeline');
 
 // Inicializar modelos
 const models = {
@@ -194,6 +208,10 @@ const models = {
   Training: Training(sequelize),
   TrainingAttendance: TrainingAttendance(sequelize),
   SafetyEquipment: SafetyEquipment(sequelize),
+  WorkPermit: WorkPermit(sequelize),
+  WorkPermitChecklist: WorkPermitChecklist(sequelize),
+  WorkPermitExtension: WorkPermitExtension(sequelize),
+  StopWorkAuthority: StopWorkAuthority(sequelize),
   // Documents
   DocumentCategory: DocumentCategory(sequelize),
   Document: Document(sequelize),
@@ -264,6 +282,16 @@ const models = {
   JIBPartnerShare: JIBPartnerShare(sequelize),
   CashCall: CashCall(sequelize),
   CashCallResponse: CashCallResponse(sequelize),
+  // Reserves
+  ReserveEstimate: ReserveEstimate(sequelize),
+  ReserveCategory: ReserveCategory(sequelize),
+  ReserveValuation: ReserveValuation(sequelize),
+  // Logistics
+  StorageTank: StorageTank(sequelize),
+  TankGauging: TankGauging(sequelize),
+  LoadingTicket: LoadingTicket(sequelize),
+  CrudeQuality: CrudeQuality(sequelize),
+  Pipeline: Pipeline(sequelize),
 };
 
 // Definir asociaciones
@@ -1517,6 +1545,36 @@ models.SafetyEquipment.belongsTo(models.User, {
   foreignKey: 'created_by',
   as: 'creator',
 });
+
+// ========== WORK PERMIT (PTW) ASSOCIATIONS ==========
+
+// WorkPermit associations
+models.WorkPermit.belongsTo(models.User, { foreignKey: 'requested_by', as: 'requester' });
+models.WorkPermit.belongsTo(models.User, { foreignKey: 'approved_by', as: 'approver' });
+models.WorkPermit.belongsTo(models.User, { foreignKey: 'closed_by', as: 'closer' });
+models.WorkPermit.belongsTo(models.Field, { foreignKey: 'field_id', as: 'field' });
+models.WorkPermit.belongsTo(models.Well, { foreignKey: 'well_id', as: 'well' });
+models.WorkPermit.belongsTo(models.Contractor, { foreignKey: 'contractor_id', as: 'contractor' });
+models.WorkPermit.hasMany(models.WorkPermitChecklist, { foreignKey: 'permit_id', as: 'checklists' });
+models.WorkPermit.hasMany(models.WorkPermitExtension, { foreignKey: 'permit_id', as: 'extensions' });
+models.WorkPermit.hasMany(models.StopWorkAuthority, { foreignKey: 'permit_id', as: 'stopWorkEvents' });
+
+// WorkPermitChecklist associations
+models.WorkPermitChecklist.belongsTo(models.WorkPermit, { foreignKey: 'permit_id', as: 'permit' });
+models.WorkPermitChecklist.belongsTo(models.User, { foreignKey: 'completed_by', as: 'completedBy' });
+
+// WorkPermitExtension associations
+models.WorkPermitExtension.belongsTo(models.WorkPermit, { foreignKey: 'permit_id', as: 'permit' });
+models.WorkPermitExtension.belongsTo(models.User, { foreignKey: 'requested_by', as: 'requester' });
+models.WorkPermitExtension.belongsTo(models.User, { foreignKey: 'approved_by', as: 'approver' });
+
+// StopWorkAuthority associations
+models.StopWorkAuthority.belongsTo(models.WorkPermit, { foreignKey: 'permit_id', as: 'permit' });
+models.StopWorkAuthority.belongsTo(models.Field, { foreignKey: 'field_id', as: 'field' });
+models.StopWorkAuthority.belongsTo(models.Well, { foreignKey: 'well_id', as: 'well' });
+models.StopWorkAuthority.belongsTo(models.User, { foreignKey: 'reported_by', as: 'reporter' });
+models.StopWorkAuthority.belongsTo(models.User, { foreignKey: 'resolved_by', as: 'resolver' });
+models.StopWorkAuthority.belongsTo(models.User, { foreignKey: 'work_resumed_by', as: 'workResumer' });
 
 // ========== DOCUMENT ASSOCIATIONS ==========
 
@@ -3234,6 +3292,188 @@ models.CashCallResponse.belongsTo(models.ContractParty, {
 models.ContractParty.hasMany(models.CashCallResponse, {
   foreignKey: 'party_id',
   as: 'cashCallResponses',
+});
+
+// ========== RESERVE ASSOCIATIONS ==========
+
+// ReserveEstimate -> Field
+models.ReserveEstimate.belongsTo(models.Field, {
+  foreignKey: 'field_id',
+  as: 'field',
+});
+models.Field.hasMany(models.ReserveEstimate, {
+  foreignKey: 'field_id',
+  as: 'reserveEstimates',
+});
+
+// ReserveEstimate -> User (creator, approver)
+models.ReserveEstimate.belongsTo(models.User, {
+  foreignKey: 'created_by',
+  as: 'creator',
+});
+models.ReserveEstimate.belongsTo(models.User, {
+  foreignKey: 'approved_by',
+  as: 'approver',
+});
+
+// ReserveEstimate self-reference (superseded)
+models.ReserveEstimate.belongsTo(models.ReserveEstimate, {
+  foreignKey: 'superseded_by',
+  as: 'supersededByEstimate',
+});
+models.ReserveEstimate.hasOne(models.ReserveEstimate, {
+  foreignKey: 'superseded_by',
+  as: 'supersedes',
+});
+
+// ReserveEstimate <-> ReserveCategory
+models.ReserveEstimate.hasMany(models.ReserveCategory, {
+  foreignKey: 'estimate_id',
+  as: 'categories',
+});
+models.ReserveCategory.belongsTo(models.ReserveEstimate, {
+  foreignKey: 'estimate_id',
+  as: 'estimate',
+});
+
+// ReserveEstimate <-> ReserveValuation
+models.ReserveEstimate.hasMany(models.ReserveValuation, {
+  foreignKey: 'estimate_id',
+  as: 'valuations',
+});
+models.ReserveValuation.belongsTo(models.ReserveEstimate, {
+  foreignKey: 'estimate_id',
+  as: 'estimate',
+});
+
+// ReserveValuation -> User (creator, approver)
+models.ReserveValuation.belongsTo(models.User, {
+  foreignKey: 'created_by',
+  as: 'creator',
+});
+models.ReserveValuation.belongsTo(models.User, {
+  foreignKey: 'approved_by',
+  as: 'approver',
+});
+
+// ========== LOGISTICS ASSOCIATIONS ==========
+
+// StorageTank -> Field
+models.StorageTank.belongsTo(models.Field, {
+  foreignKey: 'field_id',
+  as: 'field',
+});
+models.Field.hasMany(models.StorageTank, {
+  foreignKey: 'field_id',
+  as: 'storageTanks',
+});
+
+// StorageTank -> User (creator)
+models.StorageTank.belongsTo(models.User, {
+  foreignKey: 'created_by',
+  as: 'creator',
+});
+
+// StorageTank <-> TankGauging
+models.StorageTank.hasMany(models.TankGauging, {
+  foreignKey: 'tank_id',
+  as: 'gaugings',
+});
+models.TankGauging.belongsTo(models.StorageTank, {
+  foreignKey: 'tank_id',
+  as: 'tank',
+});
+
+// TankGauging -> User (gauger, creator)
+models.TankGauging.belongsTo(models.User, {
+  foreignKey: 'gauged_by',
+  as: 'gauger',
+});
+models.TankGauging.belongsTo(models.User, {
+  foreignKey: 'created_by',
+  as: 'creator',
+});
+
+// LoadingTicket -> StorageTank (source, destination)
+models.LoadingTicket.belongsTo(models.StorageTank, {
+  foreignKey: 'source_tank_id',
+  as: 'sourceTank',
+});
+models.LoadingTicket.belongsTo(models.StorageTank, {
+  foreignKey: 'destination_tank_id',
+  as: 'destinationTank',
+});
+models.StorageTank.hasMany(models.LoadingTicket, {
+  foreignKey: 'source_tank_id',
+  as: 'outgoingTickets',
+});
+models.StorageTank.hasMany(models.LoadingTicket, {
+  foreignKey: 'destination_tank_id',
+  as: 'incomingTickets',
+});
+
+// LoadingTicket -> User (authorizer, creator)
+models.LoadingTicket.belongsTo(models.User, {
+  foreignKey: 'authorized_by',
+  as: 'authorizer',
+});
+models.LoadingTicket.belongsTo(models.User, {
+  foreignKey: 'created_by',
+  as: 'creator',
+});
+
+// CrudeQuality -> Field
+models.CrudeQuality.belongsTo(models.Field, {
+  foreignKey: 'field_id',
+  as: 'field',
+});
+models.Field.hasMany(models.CrudeQuality, {
+  foreignKey: 'field_id',
+  as: 'crudeQualities',
+});
+
+// CrudeQuality -> StorageTank
+models.CrudeQuality.belongsTo(models.StorageTank, {
+  foreignKey: 'tank_id',
+  as: 'tank',
+});
+models.StorageTank.hasMany(models.CrudeQuality, {
+  foreignKey: 'tank_id',
+  as: 'qualitySamples',
+});
+
+// CrudeQuality -> User (sampler, creator)
+models.CrudeQuality.belongsTo(models.User, {
+  foreignKey: 'sampled_by',
+  as: 'sampler',
+});
+models.CrudeQuality.belongsTo(models.User, {
+  foreignKey: 'created_by',
+  as: 'creator',
+});
+
+// Pipeline -> Field (origin, destination)
+models.Pipeline.belongsTo(models.Field, {
+  foreignKey: 'origin_field_id',
+  as: 'originField',
+});
+models.Pipeline.belongsTo(models.Field, {
+  foreignKey: 'destination_field_id',
+  as: 'destinationField',
+});
+models.Field.hasMany(models.Pipeline, {
+  foreignKey: 'origin_field_id',
+  as: 'outgoingPipelines',
+});
+models.Field.hasMany(models.Pipeline, {
+  foreignKey: 'destination_field_id',
+  as: 'incomingPipelines',
+});
+
+// Pipeline -> User (creator)
+models.Pipeline.belongsTo(models.User, {
+  foreignKey: 'created_by',
+  as: 'creator',
 });
 
 // Export sequelize instance for service access

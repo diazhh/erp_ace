@@ -2,21 +2,19 @@ import React from 'react'
 import ReactDOM from 'react-dom/client'
 import { Provider } from 'react-redux'
 import { BrowserRouter } from 'react-router-dom'
-import { ThemeProvider, CssBaseline } from '@mui/material'
 import { ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 
 import App from './App'
 import { store } from './store'
-import theme from './theme'
+import ThemeWrapper from './components/ThemeWrapper'
 import './i18n'
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
     <Provider store={store}>
       <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
-        <ThemeProvider theme={theme}>
-          <CssBaseline />
+        <ThemeWrapper>
           <App />
           <ToastContainer
             position="top-right"
@@ -29,7 +27,7 @@ ReactDOM.createRoot(document.getElementById('root')).render(
             draggable
             pauseOnHover
           />
-        </ThemeProvider>
+        </ThemeWrapper>
       </BrowserRouter>
     </Provider>
   </React.StrictMode>,

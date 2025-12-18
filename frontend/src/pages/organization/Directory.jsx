@@ -266,7 +266,7 @@ const Directory = () => {
     <Box>
       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3, flexWrap: 'wrap', gap: 2 }}>
         <Typography variant="h4" fontWeight="bold">
-          Directorio de Empleados
+          {t('organization.directory')}
         </Typography>
         <Box sx={{ display: 'flex', gap: 1 }}>
           <DownloadPDFButton
@@ -279,7 +279,7 @@ const Directory = () => {
             startIcon={<BusinessIcon />}
             onClick={() => navigate('/organization/chart')}
           >
-            Ver Organigrama
+            {t('organization.orgChart')}
           </Button>
         </Box>
       </Box>
@@ -289,7 +289,7 @@ const Directory = () => {
         <Grid container spacing={2} alignItems="center">
           <Grid item xs={12} md={4}>
             <TextField
-              placeholder="Buscar por nombre, email, cargo..."
+              placeholder={t('common.search')}
               value={search}
               onChange={handleSearchChange}
               size="small"
@@ -306,13 +306,13 @@ const Directory = () => {
           <Grid item xs={12} sm={6} md={3}>
             <TextField
               select
-              label="Departamento"
+              label={t('employees.department')}
               value={selectedDepartment}
               onChange={handleDepartmentChange}
               size="small"
               fullWidth
             >
-              <MenuItem value="">Todos</MenuItem>
+              <MenuItem value="">{t('common.all')}</MenuItem>
               {departments.map((dept) => (
                 <MenuItem key={dept.id} value={dept.id}>
                   {dept.name}
@@ -354,7 +354,7 @@ const Directory = () => {
           ))}
           {selectedLetter && (
             <Chip
-              label="Limpiar"
+              label={t('common.clear') || 'Limpiar'}
               size="small"
               color="secondary"
               onDelete={() => setSelectedLetter('')}
@@ -373,10 +373,10 @@ const Directory = () => {
         <Paper sx={{ p: 4, textAlign: 'center' }}>
           <PersonIcon sx={{ fontSize: 64, color: 'text.secondary', mb: 2 }} />
           <Typography variant="h6" color="text.secondary">
-            No se encontraron empleados
+            {t('common.noData')}
           </Typography>
           <Typography variant="body2" color="text.secondary">
-            Intenta con otros criterios de búsqueda
+            {t('organization.tryOtherCriteria') || 'Intenta con otros criterios de búsqueda'}
           </Typography>
         </Paper>
       ) : (

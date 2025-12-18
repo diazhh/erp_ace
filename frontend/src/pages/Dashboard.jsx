@@ -273,7 +273,7 @@ const Dashboard = () => {
       title: t('dashboard.vehicles'),
       value: stats?.fleet?.activeVehicles?.toString() || '0',
       subtitle: stats?.fleet?.inMaintenance > 0 
-        ? `${stats.fleet.inMaintenance} en mantenimiento`
+        ? `${stats.fleet.inMaintenance} ${t('fleet.inMaintenance').toLowerCase()}`
         : `${stats?.fleet?.totalVehicles || 0} ${t('common.total')}`,
       icon: <FleetIcon sx={{ color: 'secondary.main', fontSize: { xs: 24, sm: 32 } }} />,
       color: 'secondary',

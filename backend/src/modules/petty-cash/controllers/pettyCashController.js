@@ -14,8 +14,8 @@ class PettyCashController {
     try {
       const { PettyCash, PettyCashEntry } = require('../../../database/models');
       
-      const code = await pettyCashService.generatePettyCashCode();
       const {
+        code: userCode,
         name,
         description,
         currency,
@@ -28,6 +28,19 @@ class PettyCashController {
         approvalThreshold,
         notes,
       } = req.body;
+      
+      // Usar código proporcionado por el usuario o generar uno automático
+      let code = userCode?.trim();
+      if (!code) {
+        code = await pettyCashService.generatePettyCashCode();
+      } else {
+        // Verificar que el código no exista
+        const { PettyCash: PC } = require('../../../database/models');
+        const existing = await PC.findOne({ where: { code } });
+        if (existing) {
+          throw new BadRequestError(`El código ${code} ya está en uso`);
+        }
+      }
       
       const pettyCash = await PettyCash.create({
         code,
@@ -246,6 +259,55 @@ class PettyCashController {
         data: pettyCash,
       });
     } catch (error) {
+      next(error);
+    }
+  }
+
+  /**
+   * Eliminar caja chica (soft delete)
+   */
+  async delete(req, res, next) {
+    const t = await sequelize.transaction();
+    try {
+      const { PettyCash, PettyCashEntry } = require('../../../database/models');
+      
+      const pettyCash = await PettyCash.findByPk(req.params.id);
+      if (!pettyCash) {
+        throw new NotFoundError('Caja chica no encontrada');
+      }
+      
+      // Verificar que no tenga movimientos pendientes
+      const pendingEntries = await PettyCashEntry.count({
+        where: {
+          pettyCashId: pettyCash.id,
+          status: 'PENDING',
+        },
+      });
+      
+      if (pendingEntries > 0) {
+        throw new BadRequestError('No se puede eliminar una caja chica con movimientos pendientes');
+      }
+      
+      // Verificar que el saldo sea cero o muy bajo
+      if (parseFloat(pettyCash.currentBalance) > 1) {
+        throw new BadRequestError('No se puede eliminar una caja chica con saldo. Primero debe realizar un ajuste.');
+      }
+      
+      // Soft delete - cambiar estado a CLOSED
+      await pettyCash.update({
+        status: 'CLOSED',
+        closedAt: new Date(),
+        closedBy: req.user.id,
+      }, { transaction: t });
+      
+      await t.commit();
+      
+      return res.json({
+        success: true,
+        message: 'Caja chica cerrada exitosamente',
+      });
+    } catch (error) {
+      await t.rollback();
       next(error);
     }
   }

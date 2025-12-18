@@ -25,9 +25,9 @@ import { toast } from 'react-toastify';
 import { createPettyCash, updatePettyCash, fetchPettyCashById } from '../../store/slices/pettyCashSlice';
 import { fetchEmployees } from '../../store/slices/employeeSlice';
 
-const currencies = [
-  { value: 'USD', label: 'Dólar (USD)' },
-  { value: 'VES', label: 'Bolívar (VES)' },
+const getCurrencies = (t) => [
+  { value: 'USD', label: 'USD' },
+  { value: 'VES', label: 'VES' },
 ];
 
 const initialFormData = {
@@ -96,14 +96,14 @@ const PettyCashForm = () => {
 
   const validate = () => {
     const newErrors = {};
-    if (!formData.name.trim()) newErrors.name = 'Nombre es requerido';
-    if (!formData.code.trim()) newErrors.code = 'Código es requerido';
-    if (!formData.custodianId) newErrors.custodianId = 'Custodio es requerido';
+    if (!formData.name.trim()) newErrors.name = t('validation.required');
+    if (!formData.code.trim()) newErrors.code = t('validation.required');
+    if (!formData.custodianId) newErrors.custodianId = t('validation.required');
     if (!formData.initialAmount || formData.initialAmount <= 0) {
-      newErrors.initialAmount = 'Monto inicial es requerido';
+      newErrors.initialAmount = t('validation.required');
     }
     if (!formData.minimumBalance || formData.minimumBalance < 0) {
-      newErrors.minimumBalance = 'Saldo mínimo es requerido';
+      newErrors.minimumBalance = t('validation.required');
     }
 
     setErrors(newErrors);
@@ -118,10 +118,10 @@ const PettyCashForm = () => {
     try {
       if (isEdit) {
         await dispatch(updatePettyCash({ id, data: formData })).unwrap();
-        toast.success('Caja chica actualizada exitosamente');
+        toast.success(t('pettyCash.pettyCashUpdated'));
       } else {
         const result = await dispatch(createPettyCash(formData)).unwrap();
-        toast.success('Caja chica creada exitosamente');
+        toast.success(t('pettyCash.pettyCashCreated'));
       }
       navigate('/petty-cash');
     } catch (error) {
@@ -151,7 +151,7 @@ const PettyCashForm = () => {
           <BackIcon />
         </IconButton>
         <Typography variant="h5" fontWeight="bold">
-          {isEdit ? 'Editar Caja Chica' : 'Nueva Caja Chica'}
+          {isEdit ? t('pettyCash.editPettyCash') : t('pettyCash.newPettyCash')}
         </Typography>
       </Box>
 
@@ -162,27 +162,25 @@ const PettyCashForm = () => {
             <Grid item xs={12} md={6}>
               <TextField
                 fullWidth
-                label="Nombre"
+                label={t('pettyCash.name')}
                 name="name"
                 value={formData.name}
                 onChange={handleChange}
                 required
                 error={!!errors.name}
                 helperText={errors.name}
-                placeholder="Ej: Caja Chica Oficina Principal"
               />
             </Grid>
             <Grid item xs={12} md={6}>
               <TextField
                 fullWidth
-                label="Código"
+                label={t('pettyCash.code')}
                 name="code"
                 value={formData.code}
                 onChange={handleChange}
                 required
                 error={!!errors.code}
                 helperText={errors.code}
-                placeholder="Ej: PC-001"
                 disabled={isEdit}
               />
             </Grid>
@@ -197,10 +195,10 @@ const PettyCashForm = () => {
                 renderInput={(params) => (
                   <TextField
                     {...params}
-                    label="Custodio"
+                    label={t('pettyCash.custodian')}
                     required
                     error={!!errors.custodianId}
-                    helperText={errors.custodianId || 'Empleado responsable de la caja'}
+                    helperText={errors.custodianId}
                   />
                 )}
               />
@@ -211,14 +209,14 @@ const PettyCashForm = () => {
               <TextField
                 select
                 fullWidth
-                label="Moneda"
+                label={t('pettyCash.currency')}
                 name="currency"
                 value={formData.currency}
                 onChange={handleChange}
                 required
                 disabled={isEdit}
               >
-                {currencies.map((curr) => (
+                {getCurrencies(t).map((curr) => (
                   <MenuItem key={curr.value} value={curr.value}>
                     {curr.label}
                   </MenuItem>
@@ -230,7 +228,7 @@ const PettyCashForm = () => {
             <Grid item xs={12} md={6}>
               <TextField
                 fullWidth
-                label="Monto Inicial"
+                label={t('pettyCash.initialAmount')}
                 name="initialAmount"
                 type="number"
                 value={formData.initialAmount}
@@ -245,14 +243,14 @@ const PettyCashForm = () => {
             <Grid item xs={12} md={6}>
               <TextField
                 fullWidth
-                label="Saldo Mínimo"
+                label={t('pettyCash.minimumBalance')}
                 name="minimumBalance"
                 type="number"
                 value={formData.minimumBalance}
                 onChange={handleChange}
                 required
                 error={!!errors.minimumBalance}
-                helperText={errors.minimumBalance || 'Saldo mínimo antes de reposición'}
+                helperText={errors.minimumBalance}
                 inputProps={{ min: 0, step: 0.01 }}
               />
             </Grid>
@@ -263,14 +261,14 @@ const PettyCashForm = () => {
                 <TextField
                   select
                   fullWidth
-                  label="Estado"
+                  label={t('pettyCash.status')}
                   name="status"
                   value={formData.status}
                   onChange={handleChange}
                 >
-                  <MenuItem value="ACTIVE">Activa</MenuItem>
-                  <MenuItem value="INACTIVE">Inactiva</MenuItem>
-                  <MenuItem value="SUSPENDED">Suspendida</MenuItem>
+                  <MenuItem value="ACTIVE">{t('pettyCash.statusActive')}</MenuItem>
+                  <MenuItem value="INACTIVE">{t('pettyCash.statusInactive')}</MenuItem>
+                  <MenuItem value="SUSPENDED">{t('pettyCash.statusSuspended')}</MenuItem>
                 </TextField>
               </Grid>
             )}
@@ -279,7 +277,7 @@ const PettyCashForm = () => {
             <Grid item xs={12}>
               <TextField
                 fullWidth
-                label="Descripción"
+                label={t('pettyCash.description')}
                 name="description"
                 value={formData.description}
                 onChange={handleChange}
@@ -303,7 +301,7 @@ const PettyCashForm = () => {
               fullWidth={isMobile}
               disabled={saving}
             >
-              Cancelar
+              {t('common.cancel')}
             </Button>
             <Button 
               variant="contained" 
@@ -312,7 +310,7 @@ const PettyCashForm = () => {
               disabled={saving}
               startIcon={saving ? <CircularProgress size={20} /> : <SaveIcon />}
             >
-              {isEdit ? 'Guardar Cambios' : 'Crear Caja Chica'}
+              {t('common.save')}
             </Button>
           </Box>
         </form>

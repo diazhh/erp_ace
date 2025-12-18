@@ -137,6 +137,19 @@ class FinanceController {
         limit: 10,
       });
       
+      // Obtener transferencias salientes
+      const outgoingTransfers = await Transaction.findAll({
+        where: { 
+          accountId: account.id,
+          transactionType: 'TRANSFER',
+        },
+        include: [
+          { model: BankAccount, as: 'destinationAccount', attributes: ['id', 'name'] },
+        ],
+        order: [['transactionDate', 'DESC']],
+        limit: 10,
+      });
+      
       // Estadísticas de la cuenta
       const stats = await Transaction.findAll({
         where: { 
@@ -208,6 +221,7 @@ class FinanceController {
             totalPages: Math.ceil(transactionCount / limit),
           },
           incomingTransfers,
+          outgoingTransfers,
           stats: {
             byType: stats,
             pendingReconciliation,

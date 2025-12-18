@@ -43,6 +43,7 @@ import {
   Person as PersonIcon,
   Warning as WarningIcon,
   Visibility as ViewIcon,
+  Delete as DeleteIcon,
 } from '@mui/icons-material';
 import { toast } from 'react-toastify';
 
@@ -51,6 +52,7 @@ import {
   fetchEntries,
   approveEntry,
   rejectEntry,
+  deletePettyCash,
   clearCurrentPettyCash,
   clearEntries,
 } from '../../store/slices/pettyCashSlice';
@@ -58,6 +60,7 @@ import EntityLink from '../../components/common/EntityLink';
 import PettyCashFormDialog from '../../components/petty-cash/PettyCashFormDialog';
 import PettyCashEntryDialog from '../../components/petty-cash/PettyCashEntryDialog';
 import PettyCashReplenishDialog from '../../components/petty-cash/PettyCashReplenishDialog';
+import PettyCashBankAccountDialog from '../../components/petty-cash/PettyCashBankAccountDialog';
 import ConfirmDialog from '../../components/ConfirmDialog';
 import AttachmentSection from '../../components/common/AttachmentSection';
 import ResponsiveTabs from '../../components/common/ResponsiveTabs';
@@ -77,12 +80,12 @@ const entryStatusColors = {
   CANCELLED: 'default',
 };
 
-const entryTypeLabels = {
-  EXPENSE: 'Gasto',
-  REPLENISHMENT: 'Reposición',
-  ADJUSTMENT: 'Ajuste',
-  INITIAL: 'Apertura',
-};
+const getEntryTypeLabels = (t) => ({
+  EXPENSE: t('pettyCash.entryTypeExpense'),
+  REPLENISHMENT: t('pettyCash.entryTypeReplenishment'),
+  ADJUSTMENT: t('pettyCash.entryTypeAdjustment'),
+  INITIAL: t('pettyCash.entryTypeInitial'),
+});
 
 const entryTypeColors = {
   EXPENSE: 'error',
@@ -102,6 +105,7 @@ const PettyCashDetail = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { t } = useTranslation();
+  const entryTypeLabels = getEntryTypeLabels(t);
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const isTablet = useMediaQuery(theme.breakpoints.down('md'));
@@ -114,6 +118,8 @@ const PettyCashDetail = () => {
   const [page, setPage] = useState(0);
   const [limit, setLimit] = useState(20);
   const [confirmDialog, setConfirmDialog] = useState({ open: false, entry: null, action: null });
+  const [bankAccountDialogOpen, setBankAccountDialogOpen] = useState(false);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
 
   useEffect(() => {
     dispatch(fetchPettyCashFull(id));
@@ -151,6 +157,22 @@ const PettyCashDetail = () => {
   const handleReplenishClose = (refresh) => {
     setReplenishDialogOpen(false);
     if (refresh) handleRefresh();
+  };
+
+  const handleBankAccountClose = (refresh) => {
+    setBankAccountDialogOpen(false);
+    if (refresh) handleRefresh();
+  };
+
+  const handleDelete = async () => {
+    try {
+      await dispatch(deletePettyCash(id)).unwrap();
+      toast.success(t('pettyCash.pettyCashClosed'));
+      navigate('/petty-cash');
+    } catch (error) {
+      toast.error(error);
+    }
+    setDeleteDialogOpen(false);
   };
 
   const handleApprove = async (entry) => {
@@ -206,7 +228,7 @@ const PettyCashDetail = () => {
       <Box sx={{ p: 3 }}>
         <Alert severity="error">{error}</Alert>
         <Button startIcon={<BackIcon />} onClick={() => navigate('/petty-cash')} sx={{ mt: 2 }}>
-          Volver
+          {t('common.back')}
         </Button>
       </Box>
     );
@@ -231,7 +253,7 @@ const PettyCashDetail = () => {
             sx={{ mb: 2 }}
             size="small"
           >
-            Volver
+            {t('common.back')}
           </Button>
         )}
 
@@ -248,7 +270,7 @@ const PettyCashDetail = () => {
               onClick={() => navigate('/petty-cash')}
               sx={{ minWidth: 'auto' }}
             >
-              Volver
+              {t('common.back')}
             </Button>
           )}
 
@@ -282,7 +304,7 @@ const PettyCashDetail = () => {
               {needsReplenishment && (
                 <Chip
                   icon={<WarningIcon />}
-                  label={isMobile ? 'Reponer' : 'Necesita Reposición'}
+                  label={isMobile ? t('pettyCash.replenish') : t('pettyCash.needsReplenishmentAlert')}
                   color="error"
                   size="small"
                 />
@@ -295,7 +317,7 @@ const PettyCashDetail = () => {
               <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mt: 1 }}>
                 <PersonIcon fontSize="small" color="action" />
                 <Typography variant="body2" color="text.secondary">
-                  Responsable: 
+                  {t('pettyCash.responsible')}: 
                   <EntityLink
                     type="employee"
                     id={pettyCash.custodian.id}
@@ -309,7 +331,7 @@ const PettyCashDetail = () => {
           {/* Balance section */}
           <Box sx={{ textAlign: { xs: 'left', md: 'right' } }}>
             <Typography variant="overline" color="text.secondary">
-              Saldo Actual
+              {t('pettyCash.currentBalance')}
             </Typography>
             <Typography variant={isMobile ? 'h5' : 'h4'} fontWeight="bold" color={needsReplenishment ? 'error.main' : 'success.main'}>
               {formatCurrency(pettyCash.currentBalance, pettyCash.currency)}
@@ -322,7 +344,7 @@ const PettyCashDetail = () => {
                 sx={{ height: 8, borderRadius: 4 }}
               />
               <Typography variant="caption" color="text.secondary">
-                {balancePercent.toFixed(0)}% del monto inicial
+                {balancePercent.toFixed(0)}% {t('pettyCash.ofInitialAmount')}
               </Typography>
             </Box>
           </Box>
@@ -343,7 +365,7 @@ const PettyCashDetail = () => {
             fullWidth={isMobile}
             size={isMobile ? 'medium' : 'medium'}
           >
-            Registrar Gasto
+            {t('pettyCash.registerExpense')}
           </Button>
           <Button
             variant="contained"
@@ -353,15 +375,15 @@ const PettyCashDetail = () => {
             disabled={pettyCash.status !== 'ACTIVE'}
             fullWidth={isMobile}
           >
-            Reponer
+            {t('pettyCash.replenish')}
           </Button>
           <Button
             variant="outlined"
             startIcon={<EditIcon />}
-            onClick={() => setEditDialogOpen(true)}
+            onClick={() => navigate(`/petty-cash/${id}/edit`)}
             fullWidth={isMobile}
           >
-            Editar
+            {t('common.edit')}
           </Button>
           <DownloadPDFButton
             endpoint={`/reports/petty-cash/${id}`}
@@ -374,8 +396,19 @@ const PettyCashDetail = () => {
             onClick={handleRefresh}
             fullWidth={isMobile}
           >
-            Actualizar
+            {t('common.refresh')}
           </Button>
+          {pettyCash.status === 'ACTIVE' && (
+            <Button
+              variant="outlined"
+              color="error"
+              startIcon={<DeleteIcon />}
+              onClick={() => setDeleteDialogOpen(true)}
+              fullWidth={isMobile}
+            >
+              {t('pettyCash.closePettyCash')}
+            </Button>
+          )}
         </Stack>
 
         {/* Stats Cards */}
@@ -388,7 +421,7 @@ const PettyCashDetail = () => {
                     {formatCurrency(pettyCash.stats.totalExpenses, pettyCash.currency)}
                   </Typography>
                   <Typography variant="body2" color="text.secondary">
-                    Total Gastos
+                    {t('pettyCash.totalExpenses')}
                   </Typography>
                 </CardContent>
               </Card>
@@ -400,7 +433,7 @@ const PettyCashDetail = () => {
                     {formatCurrency(pettyCash.stats.totalReplenishments, pettyCash.currency)}
                   </Typography>
                   <Typography variant="body2" color="text.secondary">
-                    Total Reposiciones
+                    {t('pettyCash.totalReplenishments')}
                   </Typography>
                 </CardContent>
               </Card>
@@ -412,7 +445,7 @@ const PettyCashDetail = () => {
                     {pettyCash.stats.pendingApproval}
                   </Typography>
                   <Typography variant="body2" color="text.secondary">
-                    Pendientes Aprobación
+                    {t('pettyCash.pendingApproval')}
                   </Typography>
                 </CardContent>
               </Card>
@@ -424,7 +457,7 @@ const PettyCashDetail = () => {
                     {formatCurrency(pettyCash.stats.suggestedReplenishment, pettyCash.currency)}
                   </Typography>
                   <Typography variant="body2" color="text.secondary">
-                    Reposición Sugerida
+                    {t('pettyCash.suggestedReplenishment')}
                   </Typography>
                 </CardContent>
               </Card>
@@ -437,10 +470,10 @@ const PettyCashDetail = () => {
       <Paper sx={{ p: isMobile ? 2 : 0 }}>
         <ResponsiveTabs
           tabs={[
-            { label: 'Movimientos', icon: <ExpenseIcon /> },
-            { label: 'Información', icon: <WalletIcon /> },
-            { label: 'Auditoría', icon: <AuditIcon /> },
-            { label: 'Archivos' },
+            { label: t('pettyCash.movements'), icon: <ExpenseIcon /> },
+            { label: t('pettyCash.information'), icon: <WalletIcon /> },
+            { label: t('pettyCash.audit'), icon: <AuditIcon /> },
+            { label: t('pettyCash.files') },
           ]}
           value={activeTab}
           onChange={handleTabChange}
@@ -453,7 +486,7 @@ const PettyCashDetail = () => {
           <TabPanel value={activeTab} index={0}>
             {entries.length === 0 ? (
               <Paper sx={{ p: 3, textAlign: 'center' }}>
-                <Typography color="text.secondary">No hay movimientos registrados</Typography>
+                <Typography color="text.secondary">{t('pettyCash.noMovements')}</Typography>
               </Paper>
             ) : isMobile ? (
               <Box>
@@ -464,7 +497,7 @@ const PettyCashDetail = () => {
                         <Box>
                           <Typography variant="subtitle1" fontWeight="bold">{entry.code}</Typography>
                           <Typography variant="body2" color="text.secondary">
-                            {formatDate(entry.entryDate)} • {entry.category || 'Sin categoría'}
+                            {formatDate(entry.entryDate)} • {entry.category || t('pettyCash.noCategory')}
                           </Typography>
                         </Box>
                         <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 0.5 }}>
@@ -509,7 +542,7 @@ const PettyCashDetail = () => {
                           startIcon={<ApproveIcon />}
                           onClick={(e) => { e.stopPropagation(); setConfirmDialog({ open: true, entry, action: 'approve' }); }}
                         >
-                          Aprobar
+                          {t('pettyCash.approve')}
                         </Button>
                         <Button
                           size="small"
@@ -517,7 +550,7 @@ const PettyCashDetail = () => {
                           startIcon={<RejectIcon />}
                           onClick={(e) => { e.stopPropagation(); setConfirmDialog({ open: true, entry, action: 'reject' }); }}
                         >
-                          Rechazar
+                          {t('pettyCash.reject')}
                         </Button>
                       </CardActions>
                     )}
@@ -529,15 +562,15 @@ const PettyCashDetail = () => {
                 <Table size="small">
                   <TableHead>
                     <TableRow>
-                      <TableCell>Fecha</TableCell>
-                      <TableCell>Código</TableCell>
-                      <TableCell>Tipo</TableCell>
-                      <TableCell>Categoría</TableCell>
-                      <TableCell>Descripción</TableCell>
-                      <TableCell>Beneficiario</TableCell>
-                      <TableCell align="right">Monto</TableCell>
-                      <TableCell>Estado</TableCell>
-                      <TableCell align="right">Acciones</TableCell>
+                      <TableCell>{t('pettyCash.date')}</TableCell>
+                      <TableCell>{t('pettyCash.code')}</TableCell>
+                      <TableCell>{t('pettyCash.entryType')}</TableCell>
+                      <TableCell>{t('pettyCash.category')}</TableCell>
+                      <TableCell>{t('pettyCash.description')}</TableCell>
+                      <TableCell>{t('pettyCash.beneficiary')}</TableCell>
+                      <TableCell align="right">{t('pettyCash.amount')}</TableCell>
+                      <TableCell>{t('pettyCash.status')}</TableCell>
+                      <TableCell align="right">{t('common.actions')}</TableCell>
                     </TableRow>
                   </TableHead>
                   <TableBody>
@@ -582,7 +615,7 @@ const PettyCashDetail = () => {
                           />
                         </TableCell>
                         <TableCell align="right">
-                          <Tooltip title="Ver detalle">
+                          <Tooltip title={t('pettyCash.viewDetail')}>
                             <IconButton
                               size="small"
                               color="primary"
@@ -593,7 +626,7 @@ const PettyCashDetail = () => {
                           </Tooltip>
                           {entry.status === 'PENDING' && (
                             <>
-                              <Tooltip title="Aprobar">
+                              <Tooltip title={t('pettyCash.approve')}>
                                 <IconButton
                                   size="small"
                                   color="success"
@@ -602,7 +635,7 @@ const PettyCashDetail = () => {
                                   <ApproveIcon fontSize="small" />
                                 </IconButton>
                               </Tooltip>
-                              <Tooltip title="Rechazar">
+                              <Tooltip title={t('pettyCash.reject')}>
                                 <IconButton
                                   size="small"
                                   color="error"
@@ -631,7 +664,7 @@ const PettyCashDetail = () => {
                 setPage(0);
               }}
               rowsPerPageOptions={[10, 20, 50]}
-              labelRowsPerPage={isMobile ? '' : 'Filas por página'}
+              labelRowsPerPage={isMobile ? '' : t('common.rowsPerPage')}
               sx={{ mt: 2 }}
             />
           </TabPanel>
@@ -640,37 +673,37 @@ const PettyCashDetail = () => {
           <TabPanel value={activeTab} index={1}>
             <Grid container spacing={3}>
               <Grid item xs={12} md={6}>
-                <Typography variant="h6" gutterBottom>Configuración</Typography>
+                <Typography variant="h6" gutterBottom>{t('pettyCash.configuration')}</Typography>
                 <TableContainer>
                   <Table size="small">
                     <TableBody>
                       <TableRow>
-                        <TableCell sx={{ fontWeight: 'bold', width: '40%' }}>Código</TableCell>
+                        <TableCell sx={{ fontWeight: 'bold', width: '40%' }}>{t('pettyCash.code')}</TableCell>
                         <TableCell>{pettyCash.code}</TableCell>
                       </TableRow>
                       <TableRow>
-                        <TableCell sx={{ fontWeight: 'bold' }}>Moneda</TableCell>
+                        <TableCell sx={{ fontWeight: 'bold' }}>{t('pettyCash.currency')}</TableCell>
                         <TableCell>{pettyCash.currency}</TableCell>
                       </TableRow>
                       <TableRow>
-                        <TableCell sx={{ fontWeight: 'bold' }}>Monto Inicial</TableCell>
+                        <TableCell sx={{ fontWeight: 'bold' }}>{t('pettyCash.initialAmount')}</TableCell>
                         <TableCell>{formatCurrency(pettyCash.initialAmount, pettyCash.currency)}</TableCell>
                       </TableRow>
                       <TableRow>
-                        <TableCell sx={{ fontWeight: 'bold' }}>Saldo Mínimo</TableCell>
+                        <TableCell sx={{ fontWeight: 'bold' }}>{t('pettyCash.minimumBalance')}</TableCell>
                         <TableCell>{formatCurrency(pettyCash.minimumBalance, pettyCash.currency)}</TableCell>
                       </TableRow>
                       <TableRow>
-                        <TableCell sx={{ fontWeight: 'bold' }}>Gasto Máximo</TableCell>
-                        <TableCell>{pettyCash.maximumExpense ? formatCurrency(pettyCash.maximumExpense, pettyCash.currency) : 'Sin límite'}</TableCell>
+                        <TableCell sx={{ fontWeight: 'bold' }}>{t('pettyCash.maximumExpense')}</TableCell>
+                        <TableCell>{pettyCash.maximumExpense ? formatCurrency(pettyCash.maximumExpense, pettyCash.currency) : t('pettyCash.noLimit')}</TableCell>
                       </TableRow>
                       <TableRow>
-                        <TableCell sx={{ fontWeight: 'bold' }}>Requiere Aprobación</TableCell>
-                        <TableCell>{pettyCash.requiresApproval ? 'Sí' : 'No'}</TableCell>
+                        <TableCell sx={{ fontWeight: 'bold' }}>{t('pettyCash.requiresApproval')}</TableCell>
+                        <TableCell>{pettyCash.requiresApproval ? t('common.yes') : t('common.no')}</TableCell>
                       </TableRow>
                       {pettyCash.approvalThreshold && (
                         <TableRow>
-                          <TableCell sx={{ fontWeight: 'bold' }}>Umbral de Aprobación</TableCell>
+                          <TableCell sx={{ fontWeight: 'bold' }}>{t('pettyCash.approvalThreshold')}</TableCell>
                           <TableCell>{formatCurrency(pettyCash.approvalThreshold, pettyCash.currency)}</TableCell>
                         </TableRow>
                       )}
@@ -680,13 +713,22 @@ const PettyCashDetail = () => {
               </Grid>
 
               <Grid item xs={12} md={6}>
-                <Typography variant="h6" gutterBottom>Cuenta Asociada</Typography>
+                <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 1 }}>
+                  <Typography variant="h6">{t('pettyCash.associatedAccount')}</Typography>
+                  <Button
+                    size="small"
+                    variant="outlined"
+                    onClick={() => setBankAccountDialogOpen(true)}
+                  >
+                    {pettyCash.bankAccount ? t('pettyCash.changeBankAccount') : t('pettyCash.associateBankAccount')}
+                  </Button>
+                </Box>
                 {pettyCash.bankAccount ? (
                   <TableContainer>
                     <Table size="small">
                       <TableBody>
                         <TableRow>
-                          <TableCell sx={{ fontWeight: 'bold', width: '40%' }}>Cuenta</TableCell>
+                          <TableCell sx={{ fontWeight: 'bold', width: '40%' }}>{t('finance.account')}</TableCell>
                           <TableCell>
                             <EntityLink
                               type="account"
@@ -696,23 +738,23 @@ const PettyCashDetail = () => {
                           </TableCell>
                         </TableRow>
                         <TableRow>
-                          <TableCell sx={{ fontWeight: 'bold' }}>Banco</TableCell>
+                          <TableCell sx={{ fontWeight: 'bold' }}>{t('finance.bankName')}</TableCell>
                           <TableCell>{pettyCash.bankAccount.bankName || '-'}</TableCell>
                         </TableRow>
                         <TableRow>
-                          <TableCell sx={{ fontWeight: 'bold' }}>Saldo Cuenta</TableCell>
+                          <TableCell sx={{ fontWeight: 'bold' }}>{t('pettyCash.accountBalance')}</TableCell>
                           <TableCell>{formatCurrency(pettyCash.bankAccount.currentBalance, pettyCash.bankAccount.currency)}</TableCell>
                         </TableRow>
                       </TableBody>
                     </Table>
                   </TableContainer>
                 ) : (
-                  <Alert severity="info">No hay cuenta bancaria asociada para reposiciones</Alert>
+                  <Alert severity="info">{t('pettyCash.noAssociatedAccount')}</Alert>
                 )}
 
                 {pettyCash.description && (
                   <>
-                    <Typography variant="h6" gutterBottom sx={{ mt: 3 }}>Descripción</Typography>
+                    <Typography variant="h6" gutterBottom sx={{ mt: 3 }}>{t('pettyCash.description')}</Typography>
                     <Typography variant="body2" color="text.secondary">
                       {pettyCash.description}
                     </Typography>
@@ -724,15 +766,15 @@ const PettyCashDetail = () => {
 
           {/* Tab: Auditoría */}
           <TabPanel value={activeTab} index={2}>
-            <Typography variant="h6" gutterBottom>Historial de Cambios</Typography>
+            <Typography variant="h6" gutterBottom>{t('pettyCash.changeHistory')}</Typography>
             {pettyCash.auditLogs?.length > 0 ? (
               <TableContainer component={Paper} variant="outlined">
                 <Table size="small">
                   <TableHead>
                     <TableRow>
-                      <TableCell>Fecha</TableCell>
-                      <TableCell>Usuario</TableCell>
-                      <TableCell>Acción</TableCell>
+                      <TableCell>{t('pettyCash.date')}</TableCell>
+                      <TableCell>{t('employees.audit.user')}</TableCell>
+                      <TableCell>{t('employees.audit.action')}</TableCell>
                     </TableRow>
                   </TableHead>
                   <TableBody>
@@ -759,7 +801,7 @@ const PettyCashDetail = () => {
                 </Table>
               </TableContainer>
             ) : (
-              <Alert severity="info">No hay registros de auditoría</Alert>
+              <Alert severity="info">{t('pettyCash.noAuditRecords')}</Alert>
             )}
           </TabPanel>
 
@@ -768,7 +810,7 @@ const PettyCashDetail = () => {
             <AttachmentSection
               entityType="petty_cash_entry"
               entityId={id}
-              title="Recibos y Comprobantes"
+              title={t('pettyCash.receiptsAndVouchers')}
               defaultCategory="RECEIPT"
               variant="inline"
             />
@@ -795,18 +837,33 @@ const PettyCashDetail = () => {
         pettyCash={pettyCash}
       />
 
+      <PettyCashBankAccountDialog
+        open={bankAccountDialogOpen}
+        onClose={handleBankAccountClose}
+        pettyCash={pettyCash}
+      />
+
       <ConfirmDialog
         open={confirmDialog.open}
-        title={confirmDialog.action === 'approve' ? 'Aprobar Movimiento' : 'Rechazar Movimiento'}
+        title={confirmDialog.action === 'approve' ? t('pettyCash.approveEntry') : t('pettyCash.rejectEntry')}
         message={confirmDialog.action === 'approve' 
-          ? `¿Está seguro de aprobar el movimiento ${confirmDialog.entry?.code}?`
-          : `¿Está seguro de rechazar el movimiento ${confirmDialog.entry?.code}?`
+          ? t('pettyCash.approveConfirm', { code: confirmDialog.entry?.code })
+          : t('pettyCash.rejectConfirm', { code: confirmDialog.entry?.code })
         }
         onConfirm={() => confirmDialog.action === 'approve' 
           ? handleApprove(confirmDialog.entry) 
           : handleReject(confirmDialog.entry)
         }
         onCancel={() => setConfirmDialog({ open: false, entry: null, action: null })}
+      />
+
+      <ConfirmDialog
+        open={deleteDialogOpen}
+        title={t('pettyCash.closePettyCash')}
+        message={t('pettyCash.closePettyCashConfirm', { name: pettyCash?.name })}
+        onConfirm={handleDelete}
+        onCancel={() => setDeleteDialogOpen(false)}
+        confirmColor="error"
       />
     </Box>
   );

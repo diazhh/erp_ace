@@ -191,5 +191,28 @@ module.exports = (sequelize) => {
     ],
   });
 
+  PettyCashEntry.associate = (models) => {
+    PettyCashEntry.belongsTo(models.PettyCash, {
+      foreignKey: 'pettyCashId',
+      as: 'pettyCash',
+    });
+    PettyCashEntry.belongsTo(models.Employee, {
+      foreignKey: 'beneficiaryId',
+      as: 'beneficiary',
+    });
+    PettyCashEntry.belongsTo(models.Project, {
+      foreignKey: 'projectId',
+      as: 'project',
+    });
+    PettyCashEntry.belongsTo(models.User, {
+      foreignKey: 'createdBy',
+      as: 'creator',
+    });
+    PettyCashEntry.belongsTo(models.User, {
+      foreignKey: 'approvedBy',
+      as: 'approver',
+    });
+  };
+
   return PettyCashEntry;
 };

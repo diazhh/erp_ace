@@ -17,6 +17,8 @@ import {
   CircularProgress,
   Alert,
   InputAdornment,
+  useTheme,
+  useMediaQuery,
 } from '@mui/material';
 import { Save as SaveIcon, ArrowBack as BackIcon } from '@mui/icons-material';
 import { createContract, updateContract, fetchContractById, clearCurrentContract } from '../../store/slices/contractSlice';
@@ -54,6 +56,8 @@ const ContractForm = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { id } = useParams();
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const isEdit = Boolean(id);
 
   const { currentContract, loading, error } = useSelector((state) => state.contracts);
@@ -152,11 +156,17 @@ const ContractForm = () => {
   return (
     <Box sx={{ p: { xs: 1, sm: 2, md: 3 } }}>
       {/* Header */}
-      <Box sx={{ display: 'flex', alignItems: 'center', mb: 3, gap: 2 }}>
-        <Button startIcon={<BackIcon />} onClick={() => navigate(-1)}>
+      <Box sx={{ 
+        display: 'flex', 
+        flexDirection: isMobile ? 'column' : 'row',
+        alignItems: isMobile ? 'stretch' : 'center', 
+        mb: 3, 
+        gap: 2 
+      }}>
+        <Button startIcon={<BackIcon />} onClick={() => navigate(-1)} fullWidth={isMobile}>
           {t('common.back')}
         </Button>
-        <Typography variant="h4" component="h1">
+        <Typography variant={isMobile ? 'h5' : 'h4'} component="h1">
           {isEdit ? t('contracts.form.editTitle') : t('contracts.form.createTitle')}
         </Typography>
       </Box>
@@ -461,8 +471,13 @@ const ContractForm = () => {
         </Paper>
 
         {/* Actions */}
-        <Box sx={{ display: 'flex', gap: 2, justifyContent: 'flex-end' }}>
-          <Button variant="outlined" onClick={() => navigate(-1)}>
+        <Box sx={{ 
+          display: 'flex', 
+          flexDirection: isMobile ? 'column' : 'row',
+          gap: 2, 
+          justifyContent: 'flex-end' 
+        }}>
+          <Button variant="outlined" onClick={() => navigate(-1)} fullWidth={isMobile}>
             {t('common.cancel')}
           </Button>
           <Button
@@ -470,6 +485,7 @@ const ContractForm = () => {
             variant="contained"
             startIcon={<SaveIcon />}
             disabled={loading}
+            fullWidth={isMobile}
           >
             {loading ? <CircularProgress size={24} /> : t('common.save')}
           </Button>

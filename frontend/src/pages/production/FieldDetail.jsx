@@ -26,6 +26,10 @@ import {
   TextField,
   IconButton,
   Tooltip,
+  FormControl,
+  Select,
+  MenuItem,
+  InputLabel,
 } from '@mui/material';
 import {
   ArrowBack as BackIcon,
@@ -171,7 +175,7 @@ const FieldDetail = () => {
           <Box>
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
               <FieldIcon color="primary" />
-              <Typography variant="h4" sx={{ fontWeight: 'bold' }}>
+              <Typography variant={isMobile ? 'h5' : 'h4'} sx={{ fontWeight: 'bold' }}>
                 {field.code}
               </Typography>
               <Chip label={t(`production.status.${field.status}`)} color={getStatusColor(field.status)} size="small" />
@@ -181,11 +185,11 @@ const FieldDetail = () => {
             </Typography>
           </Box>
         </Box>
-        <Box sx={{ display: 'flex', gap: 1 }}>
-          <Button variant="outlined" startIcon={<RefreshIcon />} onClick={loadFieldDetail}>
+        <Box sx={{ display: 'flex', gap: 1, flexDirection: isMobile ? 'column' : 'row', width: isMobile ? '100%' : 'auto' }}>
+          <Button variant="outlined" startIcon={<RefreshIcon />} onClick={loadFieldDetail} fullWidth={isMobile}>
             {t('common.refresh')}
           </Button>
-          <Button variant="contained" startIcon={<EditIcon />} onClick={() => navigate(`/production/fields/${id}/edit`)}>
+          <Button variant="contained" startIcon={<EditIcon />} onClick={() => navigate(`/production/fields/${id}/edit`)} fullWidth={isMobile}>
             {t('common.edit')}
           </Button>
         </Box>
@@ -243,19 +247,45 @@ const FieldDetail = () => {
         </Grid>
       </Grid>
 
-      {/* Tabs */}
-      <Paper sx={{ mb: 2 }}>
-        <Tabs
-          value={tabValue}
-          onChange={handleTabChange}
-          variant={isMobile ? 'scrollable' : 'standard'}
-          scrollButtons={isMobile ? 'auto' : false}
-        >
-          <Tab icon={<TrendIcon />} label={t('production.productionTab')} iconPosition="start" />
-          <Tab icon={<WellIcon />} label={t('production.wellsTab')} iconPosition="start" />
-          <Tab icon={<FieldIcon />} label={t('production.infoTab')} iconPosition="start" />
-        </Tabs>
-      </Paper>
+      {/* Tabs - Select en mobile, Tabs en desktop */}
+      {isMobile ? (
+        <FormControl fullWidth sx={{ mb: 2 }}>
+          <InputLabel>{t('common.section')}</InputLabel>
+          <Select
+            value={tabValue}
+            label={t('common.section')}
+            onChange={(e) => setTabValue(e.target.value)}
+          >
+            <MenuItem value={0}>
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                <TrendIcon fontSize="small" /> {t('production.productionTab')}
+              </Box>
+            </MenuItem>
+            <MenuItem value={1}>
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                <WellIcon fontSize="small" /> {t('production.wellsTab')}
+              </Box>
+            </MenuItem>
+            <MenuItem value={2}>
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                <FieldIcon fontSize="small" /> {t('production.infoTab')}
+              </Box>
+            </MenuItem>
+          </Select>
+        </FormControl>
+      ) : (
+        <Paper sx={{ mb: 2 }}>
+          <Tabs
+            value={tabValue}
+            onChange={handleTabChange}
+            variant="standard"
+          >
+            <Tab icon={<TrendIcon />} label={t('production.productionTab')} iconPosition="start" />
+            <Tab icon={<WellIcon />} label={t('production.wellsTab')} iconPosition="start" />
+            <Tab icon={<FieldIcon />} label={t('production.infoTab')} iconPosition="start" />
+          </Tabs>
+        </Paper>
+      )}
 
       {/* Tab: Producción */}
       <TabPanel value={tabValue} index={0}>

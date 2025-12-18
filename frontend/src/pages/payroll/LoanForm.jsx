@@ -87,12 +87,12 @@ const LoanForm = () => {
 
   const validate = () => {
     const newErrors = {};
-    if (!formData.employeeId) newErrors.employeeId = 'Empleado es requerido';
-    if (!formData.amount || formData.amount <= 0) newErrors.amount = 'Monto es requerido';
+    if (!formData.employeeId) newErrors.employeeId = t('validation.required');
+    if (!formData.amount || formData.amount <= 0) newErrors.amount = t('validation.required');
     if (!formData.totalInstallments || formData.totalInstallments < 1) {
-      newErrors.totalInstallments = 'Número de cuotas es requerido';
+      newErrors.totalInstallments = t('validation.required');
     }
-    if (!formData.startDate) newErrors.startDate = 'Fecha de inicio es requerida';
+    if (!formData.startDate) newErrors.startDate = t('validation.required');
     
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -204,7 +204,7 @@ const LoanForm = () => {
                     name="description"
                     value={formData.description}
                     onChange={handleChange}
-                    placeholder="Motivo del préstamo"
+                    placeholder={t('payroll.loanReasonPlaceholder')}
                   />
                 </Grid>
 
@@ -249,7 +249,7 @@ const LoanForm = () => {
                     onChange={handleChange}
                     required
                     error={!!errors.startDate}
-                    helperText={errors.startDate || 'Fecha del primer descuento'}
+                    helperText={errors.startDate || t('payroll.firstDeductionDate')}
                     InputLabelProps={{ shrink: true }}
                   />
                 </Grid>
@@ -258,7 +258,7 @@ const LoanForm = () => {
                 <Grid item xs={12}>
                   <TextField
                     fullWidth
-                    label="Notas"
+                    label={t('common.notes')}
                     name="notes"
                     value={formData.notes}
                     onChange={handleChange}
@@ -282,7 +282,7 @@ const LoanForm = () => {
                   fullWidth={isMobile}
                   disabled={loading}
                 >
-                  Cancelar
+                  {t('common.cancel')}
                 </Button>
                 <Button 
                   variant="contained" 
@@ -291,7 +291,7 @@ const LoanForm = () => {
                   disabled={loading}
                   startIcon={loading ? <CircularProgress size={20} /> : <SaveIcon />}
                 >
-                  {isEdit ? 'Guardar Cambios' : 'Crear Préstamo'}
+                  {isEdit ? t('common.save') : t('payroll.createLoan')}
                 </Button>
               </Box>
             </form>
@@ -304,12 +304,12 @@ const LoanForm = () => {
             <CardContent>
               <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 2 }}>
                 <CalculateIcon color="primary" />
-                <Typography variant="h6">Resumen</Typography>
+                <Typography variant="h6">{t('payroll.summary')}</Typography>
               </Box>
               
               <Box sx={{ mb: 2 }}>
                 <Typography variant="body2" color="text.secondary">
-                  Monto Total
+                  {t('payroll.totalAmount')}
                 </Typography>
                 <Typography variant="h5" fontWeight="bold" color="primary.main">
                   {formatCurrency(formData.amount || 0, formData.currency)}
@@ -318,16 +318,16 @@ const LoanForm = () => {
 
               <Box sx={{ mb: 2 }}>
                 <Typography variant="body2" color="text.secondary">
-                  Número de Cuotas
+                  {t('payroll.numberOfInstallments')}
                 </Typography>
                 <Typography variant="h6">
-                  {formData.totalInstallments || 0} cuotas
+                  {formData.totalInstallments || 0} {t('payroll.installments')}
                 </Typography>
               </Box>
 
               <Box sx={{ mb: 2, pt: 2, borderTop: '1px solid', borderColor: 'divider' }}>
                 <Typography variant="body2" color="text.secondary">
-                  Cuota Mensual
+                  {t('payroll.monthlyInstallment')}
                 </Typography>
                 <Typography variant="h4" fontWeight="bold" color="success.main">
                   {formatCurrency(installmentAmount, formData.currency)}
@@ -337,7 +337,7 @@ const LoanForm = () => {
               {selectedEmployee && (
                 <Box sx={{ pt: 2, borderTop: '1px solid', borderColor: 'divider' }}>
                   <Typography variant="body2" color="text.secondary" gutterBottom>
-                    Empleado Seleccionado
+                    {t('payroll.selectedEmployee')}
                   </Typography>
                   <Typography variant="subtitle1" fontWeight="bold">
                     {selectedEmployee.firstName} {selectedEmployee.lastName}

@@ -2396,6 +2396,179 @@ class ReportService {
     
     return parts.length > 0 ? parts.join(' | ') : 'Todos los registros';
   }
+
+  /**
+   * Generar reporte de muestra de calidad de crudo
+   */
+  async generateQualityReport(quality) {
+    const doc = pdfService.createDocument({
+      info: {
+        Title: `Reporte de Calidad - ${quality.code}`,
+        Subject: `Análisis de calidad de crudo`,
+      },
+    });
+
+    const statusLabels = {
+      PENDING: 'Pendiente',
+      ANALYZED: 'Analizado',
+      APPROVED: 'Aprobado',
+      REJECTED: 'Rechazado',
+    };
+
+    let y = pdfService.addHeader(doc, {
+      title: 'REPORTE DE CALIDAD DE CRUDO',
+      subtitle: quality.code,
+      entityInfo: `Estado: ${statusLabels[quality.status] || quality.status} | Campo: ${quality.field?.name || '-'}`,
+    });
+
+    // Información de la muestra
+    y = pdfService.addSectionTitle(doc, 'Información de la Muestra', y);
+    
+    y = pdfService.addKeyValuePairs(doc, [
+      { label: 'Código', value: quality.code },
+      { label: 'Fecha de Muestra', value: pdfService.formatDate(quality.sample_date) },
+      { label: 'Hora de Muestra', value: quality.sample_time || '-' },
+      { label: 'Campo', value: quality.field?.name || '-' },
+      { label: 'Tanque', value: quality.tank ? `${quality.tank.code} - ${quality.tank.name}` : '-' },
+      { label: 'Punto de Muestreo', value: quality.sample_point || '-' },
+      { label: 'Estado', value: statusLabels[quality.status] || quality.status },
+    ], y, { columns: 2 });
+
+    // Parámetros de calidad principales
+    y = pdfService.addSectionTitle(doc, 'Parámetros de Calidad', y);
+    
+    y = pdfService.addKeyValuePairs(doc, [
+      { label: 'Gravedad API', value: quality.api_gravity ? `${quality.api_gravity}°` : '-' },
+      { label: 'BS&W', value: quality.bsw ? `${quality.bsw}%` : '-' },
+      { label: 'Contenido de Azufre', value: quality.sulfur_content ? `${quality.sulfur_content}%` : '-' },
+      { label: 'Viscosidad', value: quality.viscosity ? `${quality.viscosity} cSt` : '-' },
+    ], y, { columns: 2 });
+
+    // Parámetros adicionales
+    y = pdfService.addSectionTitle(doc, 'Parámetros Adicionales', y);
+    
+    y = pdfService.addKeyValuePairs(doc, [
+      { label: 'Punto de Fluidez', value: quality.pour_point ? `${quality.pour_point}°F` : '-' },
+      { label: 'Contenido de Sal', value: quality.salt_content ? `${quality.salt_content} PTB` : '-' },
+      { label: 'Contenido H2S', value: quality.h2s_content ? `${quality.h2s_content} ppm` : '-' },
+      { label: 'RVP', value: quality.reid_vapor_pressure ? `${quality.reid_vapor_pressure} psi` : '-' },
+      { label: 'Punto de Inflamación', value: quality.flash_point ? `${quality.flash_point}°F` : '-' },
+    ], y, { columns: 2 });
+
+    // Información del laboratorio
+    y = pdfService.addSectionTitle(doc, 'Información del Laboratorio', y);
+    
+    y = pdfService.addKeyValuePairs(doc, [
+      { label: 'Número de Reporte', value: quality.lab_report_number || '-' },
+      { label: 'Laboratorio', value: quality.lab_name || '-' },
+      { label: 'Analizado por', value: quality.analyzed_by || '-' },
+      { label: 'Muestreado por', value: quality.sampler ? `${quality.sampler.firstName || ''} ${quality.sampler.lastName || ''}`.trim() || quality.sampler.username : '-' },
+    ], y, { columns: 2 });
+
+    // Notas
+    if (quality.notes) {
+      y = pdfService.addSectionTitle(doc, 'Notas', y);
+      doc.font(pdfService.fonts.regular)
+         .fontSize(10)
+         .fillColor(pdfService.colors.text)
+         .text(quality.notes, doc.page.margins.left, y, {
+           width: doc.page.width - doc.page.margins.left - doc.page.margins.right,
+         });
+    }
+
+    pdfService.addFooter(doc, { pageNumber: 1 });
+    return pdfService.generateBuffer(doc);
+  }
+
+  /**
+   * Generar reporte de ducto
+   */
+  async generatePipelineReport(pipeline) {
+    const doc = pdfService.createDocument({
+      info: {
+        Title: `Reporte de Ducto - ${pipeline.code}`,
+        Subject: `Información del ducto ${pipeline.name}`,
+      },
+    });
+
+    const statusLabels = {
+      ACTIVE: 'Activo',
+      MAINTENANCE: 'En Mantenimiento',
+      SHUTDOWN: 'Fuera de Servicio',
+      DECOMMISSIONED: 'Desmantelado',
+    };
+
+    const typeLabels = {
+      CRUDE: 'Crudo',
+      GAS: 'Gas',
+      WATER: 'Agua',
+      MULTIPHASE: 'Multifásico',
+      CONDENSATE: 'Condensado',
+      DIESEL: 'Diésel',
+    };
+
+    let y = pdfService.addHeader(doc, {
+      title: 'REPORTE DE DUCTO',
+      subtitle: `${pipeline.code} - ${pipeline.name}`,
+      entityInfo: `Tipo: ${typeLabels[pipeline.type] || pipeline.type} | Estado: ${statusLabels[pipeline.status] || pipeline.status}`,
+    });
+
+    // Información general
+    y = pdfService.addSectionTitle(doc, 'Información General', y);
+    
+    y = pdfService.addKeyValuePairs(doc, [
+      { label: 'Código', value: pipeline.code },
+      { label: 'Nombre', value: pipeline.name },
+      { label: 'Tipo', value: typeLabels[pipeline.type] || pipeline.type },
+      { label: 'Estado', value: statusLabels[pipeline.status] || pipeline.status },
+      { label: 'Operador', value: pipeline.operator || '-' },
+    ], y, { columns: 2 });
+
+    // Información de ruta
+    y = pdfService.addSectionTitle(doc, 'Información de Ruta', y);
+    
+    y = pdfService.addKeyValuePairs(doc, [
+      { label: 'Origen', value: pipeline.origin || pipeline.originField?.name || '-' },
+      { label: 'Campo de Origen', value: pipeline.originField?.code || '-' },
+      { label: 'Destino', value: pipeline.destination || pipeline.destinationField?.name || '-' },
+      { label: 'Campo de Destino', value: pipeline.destinationField?.code || '-' },
+    ], y, { columns: 2 });
+
+    // Especificaciones técnicas
+    y = pdfService.addSectionTitle(doc, 'Especificaciones Técnicas', y);
+    
+    y = pdfService.addKeyValuePairs(doc, [
+      { label: 'Longitud', value: pipeline.length_km ? `${pipeline.length_km} km` : '-' },
+      { label: 'Diámetro', value: pipeline.diameter_inches ? `${pipeline.diameter_inches}"` : '-' },
+      { label: 'Espesor de Pared', value: pipeline.wall_thickness_inches ? `${pipeline.wall_thickness_inches}"` : '-' },
+      { label: 'Material', value: pipeline.material || '-' },
+      { label: 'Capacidad', value: pipeline.capacity_bpd ? `${parseFloat(pipeline.capacity_bpd).toLocaleString()} bpd` : '-' },
+      { label: 'Presión Máxima', value: pipeline.max_pressure_psi ? `${pipeline.max_pressure_psi} psi` : '-' },
+    ], y, { columns: 2 });
+
+    // Información de inspección
+    y = pdfService.addSectionTitle(doc, 'Información de Inspección', y);
+    
+    y = pdfService.addKeyValuePairs(doc, [
+      { label: 'Fecha de Instalación', value: pdfService.formatDate(pipeline.installation_date) },
+      { label: 'Última Inspección', value: pdfService.formatDate(pipeline.last_inspection_date) },
+      { label: 'Próxima Inspección', value: pdfService.formatDate(pipeline.next_inspection_date) },
+    ], y, { columns: 2 });
+
+    // Notas
+    if (pipeline.notes) {
+      y = pdfService.addSectionTitle(doc, 'Notas', y);
+      doc.font(pdfService.fonts.regular)
+         .fontSize(10)
+         .fillColor(pdfService.colors.text)
+         .text(pipeline.notes, doc.page.margins.left, y, {
+           width: doc.page.width - doc.page.margins.left - doc.page.margins.right,
+         });
+    }
+
+    pdfService.addFooter(doc, { pageNumber: 1 });
+    return pdfService.generateBuffer(doc);
+  }
 }
 
 module.exports = new ReportService();

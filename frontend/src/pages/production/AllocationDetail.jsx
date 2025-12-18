@@ -19,6 +19,8 @@ import {
   TableContainer,
   TableHead,
   TableRow,
+  useTheme,
+  useMediaQuery,
 } from '@mui/material';
 import {
   ArrowBack as BackIcon,
@@ -49,6 +51,8 @@ const AllocationDetail = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { id } = useParams();
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
   const { currentAllocation: allocation, loading } = useSelector((state) => state.production);
 
@@ -101,12 +105,12 @@ const AllocationDetail = () => {
 
   return (
     <Box sx={{ p: { xs: 1, sm: 2, md: 3 } }}>
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3, flexWrap: 'wrap', gap: 2 }}>
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-          <Button startIcon={<BackIcon />} onClick={() => navigate('/production/allocations')}>
+      <Box sx={{ display: 'flex', flexDirection: isMobile ? 'column' : 'row', justifyContent: 'space-between', alignItems: isMobile ? 'stretch' : 'center', mb: 3, gap: 2 }}>
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, flexWrap: 'wrap' }}>
+          <Button startIcon={<BackIcon />} onClick={() => navigate('/production/allocations')} fullWidth={isMobile}>
             {t('common.back')}
           </Button>
-          <Typography variant="h4" component="h1">
+          <Typography variant={isMobile ? 'h5' : 'h4'} component="h1">
             {t('production.allocation.detail')}
           </Typography>
           <Chip 
@@ -120,6 +124,7 @@ const AllocationDetail = () => {
             color="success"
             startIcon={<ApproveIcon />}
             onClick={handleApprove}
+            fullWidth={isMobile}
           >
             {t('production.allocation.approve')}
           </Button>

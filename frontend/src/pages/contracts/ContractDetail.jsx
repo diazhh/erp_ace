@@ -29,6 +29,10 @@ import {
   useTheme,
   useMediaQuery,
   Tooltip,
+  FormControl,
+  Select,
+  MenuItem,
+  InputLabel,
 } from '@mui/material';
 import {
   ArrowBack as BackIcon,
@@ -247,21 +251,57 @@ const ContractDetail = () => {
         </Grid>
       </Grid>
 
-      {/* Tabs */}
-      <Paper sx={{ mb: 3 }}>
-        <Tabs
-          value={tabValue}
-          onChange={(e, v) => setTabValue(v)}
-          variant={isMobile ? 'scrollable' : 'standard'}
-          scrollButtons={isMobile ? 'auto' : false}
-        >
-          <Tab icon={<PartyIcon />} label={t('contracts.tabs.info')} iconPosition="start" />
-          <Tab icon={<PartyIcon />} label={t('contracts.tabs.parties')} iconPosition="start" />
-          <Tab icon={<WIIcon />} label={t('contracts.tabs.workingInterests')} iconPosition="start" />
-          <Tab icon={<RoyaltyIcon />} label={t('contracts.tabs.royalties')} iconPosition="start" />
-          <Tab icon={<ConcessionIcon />} label={t('contracts.tabs.concessions')} iconPosition="start" />
-        </Tabs>
-      </Paper>
+      {/* Tabs - Select en mobile, Tabs en desktop */}
+      {isMobile ? (
+        <FormControl fullWidth sx={{ mb: 3 }}>
+          <InputLabel>{t('common.section')}</InputLabel>
+          <Select
+            value={tabValue}
+            label={t('common.section')}
+            onChange={(e) => setTabValue(e.target.value)}
+          >
+            <MenuItem value={0}>
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                <PartyIcon fontSize="small" /> {t('contracts.tabs.info')}
+              </Box>
+            </MenuItem>
+            <MenuItem value={1}>
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                <PartyIcon fontSize="small" /> {t('contracts.tabs.parties')}
+              </Box>
+            </MenuItem>
+            <MenuItem value={2}>
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                <WIIcon fontSize="small" /> {t('contracts.tabs.workingInterests')}
+              </Box>
+            </MenuItem>
+            <MenuItem value={3}>
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                <RoyaltyIcon fontSize="small" /> {t('contracts.tabs.royalties')}
+              </Box>
+            </MenuItem>
+            <MenuItem value={4}>
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                <ConcessionIcon fontSize="small" /> {t('contracts.tabs.concessions')}
+              </Box>
+            </MenuItem>
+          </Select>
+        </FormControl>
+      ) : (
+        <Paper sx={{ mb: 3 }}>
+          <Tabs
+            value={tabValue}
+            onChange={(e, v) => setTabValue(v)}
+            variant="standard"
+          >
+            <Tab icon={<PartyIcon />} label={t('contracts.tabs.info')} iconPosition="start" />
+            <Tab icon={<PartyIcon />} label={t('contracts.tabs.parties')} iconPosition="start" />
+            <Tab icon={<WIIcon />} label={t('contracts.tabs.workingInterests')} iconPosition="start" />
+            <Tab icon={<RoyaltyIcon />} label={t('contracts.tabs.royalties')} iconPosition="start" />
+            <Tab icon={<ConcessionIcon />} label={t('contracts.tabs.concessions')} iconPosition="start" />
+          </Tabs>
+        </Paper>
+      )}
 
       {/* Tab: Info */}
       <TabPanel value={tabValue} index={0}>

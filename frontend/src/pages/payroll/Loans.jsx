@@ -193,10 +193,10 @@ const Loans = () => {
               size="small"
             >
               <MenuItem value="">{t('common.all')}</MenuItem>
-              <MenuItem value="PERSONAL">Personal</MenuItem>
-              <MenuItem value="ADVANCE">Adelanto</MenuItem>
-              <MenuItem value="EMERGENCY">Emergencia</MenuItem>
-              <MenuItem value="OTHER">Otro</MenuItem>
+              <MenuItem value="PERSONAL">{t('payroll.loanTypePersonal')}</MenuItem>
+              <MenuItem value="ADVANCE">{t('payroll.loanTypeAdvance')}</MenuItem>
+              <MenuItem value="EMERGENCY">{t('payroll.loanTypeEmergency')}</MenuItem>
+              <MenuItem value="OTHER">{t('payroll.loanTypeOther')}</MenuItem>
             </TextField>
           </Grid>
           <Grid item xs={12} sm={6} md={3}>

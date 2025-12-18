@@ -259,6 +259,16 @@ class EmployeeController {
         req.body.employeeCode = `EMP-${String(count + 1).padStart(5, '0')}`;
       }
 
+      // Normalizar fechas DATEONLY para evitar problemas de timezone
+      const dateFields = ['birthDate', 'hireDate', 'terminationDate'];
+      dateFields.forEach(field => {
+        if (req.body[field]) {
+          // Asegurar formato YYYY-MM-DD sin conversión de timezone
+          const dateStr = req.body[field].toString().split('T')[0];
+          req.body[field] = dateStr;
+        }
+      });
+
       const employee = await Employee.create(req.body);
 
       // Auditoría
@@ -309,6 +319,16 @@ class EmployeeController {
           throw new BadRequestError('Ya existe otro empleado con este número de identificación');
         }
       }
+
+      // Normalizar fechas DATEONLY para evitar problemas de timezone
+      const dateFields = ['birthDate', 'hireDate', 'terminationDate'];
+      dateFields.forEach(field => {
+        if (req.body[field]) {
+          // Asegurar formato YYYY-MM-DD sin conversión de timezone
+          const dateStr = req.body[field].toString().split('T')[0];
+          req.body[field] = dateStr;
+        }
+      });
 
       await employee.update(req.body);
 

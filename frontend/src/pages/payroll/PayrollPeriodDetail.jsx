@@ -32,6 +32,8 @@ import {
   Payment as PayIcon,
   Edit as EditIcon,
   Print as PrintIcon,
+  Visibility as ViewIcon,
+  Receipt as ReceiptIcon,
 } from '@mui/icons-material';
 import { toast } from 'react-toastify';
 
@@ -97,6 +99,15 @@ const PayrollPeriodDetail = () => {
       APPROVED: t('payroll.statusApproved'),
       PAID: t('payroll.statusPaid'),
       CANCELLED: t('payroll.statusCancelled'),
+    };
+    return labels[status] || status;
+  };
+
+  const getPaymentStatusLabel = (status) => {
+    const labels = {
+      PENDING: t('payroll.paymentStatusPending'),
+      PAID: t('payroll.paymentStatusPaid'),
+      CANCELLED: t('payroll.paymentStatusCancelled'),
     };
     return labels[status] || status;
   };
@@ -274,7 +285,13 @@ const PayrollPeriodDetail = () => {
         <Grid container spacing={2}>
           <Grid item xs={6} sm={4}>
             <Typography variant="caption" color="text.secondary">{t('payroll.periodType')}</Typography>
-            <Typography fontWeight="medium">{period.periodType}</Typography>
+            <Typography fontWeight="medium">
+              {{
+                WEEKLY: t('payroll.weekly'),
+                BIWEEKLY: t('payroll.biweekly'),
+                MONTHLY: t('payroll.monthly'),
+              }[period.periodType] || period.periodType}
+            </Typography>
           </Grid>
           <Grid item xs={6} sm={4}>
             <Typography variant="caption" color="text.secondary">{t('payroll.startDate')}</Typography>
@@ -383,7 +400,7 @@ const PayrollPeriodDetail = () => {
                       </Typography>
                     </Box>
                     <Chip
-                      label={entry.paymentStatus}
+                      label={getPaymentStatusLabel(entry.paymentStatus)}
                       color={entry.paymentStatus === 'PAID' ? 'success' : 'default'}
                       size="small"
                     />
@@ -407,13 +424,25 @@ const PayrollPeriodDetail = () => {
                     </Grid>
                   </Grid>
                 </CardContent>
-                {period.status !== 'PAID' && (
-                  <CardActions sx={{ justifyContent: 'flex-end', pt: 0 }}>
+                <CardActions sx={{ justifyContent: 'flex-end', pt: 0 }}>
+                  <Button 
+                    size="small" 
+                    onClick={() => navigate(`/employees/${entry.employee?.id}`)}
+                  >
+                    {t('common.view')}
+                  </Button>
+                  {period.status !== 'PAID' && (
                     <Button size="small" onClick={() => handleEditEntry(entry)}>
                       {t('common.edit')}
                     </Button>
-                  </CardActions>
-                )}
+                  )}
+                  <Button 
+                    size="small" 
+                    onClick={() => window.open(`/api/reports/payroll-entry/${entry.id}`, '_blank')}
+                  >
+                    {t('payroll.receipt')}
+                  </Button>
+                </CardActions>
               </Card>
             ))}
           </Box>
@@ -466,16 +495,34 @@ const PayrollPeriodDetail = () => {
                       />
                     </TableCell>
                     <TableCell align="right">
-                      {period.status !== 'PAID' && (
-                        <Tooltip title={t('common.edit')}>
+                      <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: 0.5 }}>
+                        <Tooltip title={t('common.view')}>
                           <IconButton
                             size="small"
-                            onClick={() => handleEditEntry(entry)}
+                            onClick={() => navigate(`/employees/${entry.employee?.id}`)}
                           >
-                            <EditIcon fontSize="small" />
+                            <ViewIcon fontSize="small" />
                           </IconButton>
                         </Tooltip>
-                      )}
+                        {period.status !== 'PAID' && (
+                          <Tooltip title={t('common.edit')}>
+                            <IconButton
+                              size="small"
+                              onClick={() => handleEditEntry(entry)}
+                            >
+                              <EditIcon fontSize="small" />
+                            </IconButton>
+                          </Tooltip>
+                        )}
+                        <Tooltip title={t('payroll.downloadReceipt')}>
+                          <IconButton
+                            size="small"
+                            onClick={() => window.open(`/api/reports/payroll-entry/${entry.id}`, '_blank')}
+                          >
+                            <ReceiptIcon fontSize="small" />
+                          </IconButton>
+                        </Tooltip>
+                      </Box>
                     </TableCell>
                   </TableRow>
                 ))}

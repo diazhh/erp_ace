@@ -314,6 +314,26 @@ const PERMISSIONS = {
     { code: 'jib:delete', name: 'Eliminar JIB', description: 'Eliminar JIBs y Cash Calls en borrador', action: 'delete', permissionType: 'action' },
     { code: 'jib:approve', name: 'Aprobar JIB', description: 'Aprobar y enviar JIBs y Cash Calls', action: 'approve', permissionType: 'action' },
   ],
+
+  // ========== PTW (PERMISOS DE TRABAJO) ==========
+  ptw: [
+    { code: 'ptw:*', name: 'PTW - Acceso Completo', description: 'Acceso completo al módulo de permisos de trabajo', action: '*', permissionType: 'module' },
+    { code: 'ptw:read', name: 'Ver PTW', description: 'Ver permisos de trabajo, checklists y Stop Work', action: 'read', permissionType: 'action' },
+    { code: 'ptw:create', name: 'Crear PTW', description: 'Crear nuevos permisos de trabajo y reportar Stop Work', action: 'create', permissionType: 'action' },
+    { code: 'ptw:update', name: 'Editar PTW', description: 'Editar permisos, completar checklists, solicitar extensiones', action: 'update', permissionType: 'action' },
+    { code: 'ptw:delete', name: 'Eliminar PTW', description: 'Eliminar permisos de trabajo en borrador', action: 'delete', permissionType: 'action' },
+    { code: 'ptw:approve', name: 'Aprobar PTW', description: 'Aprobar permisos, extensiones y autorizar reanudación de trabajo', action: 'approve', permissionType: 'action' },
+  ],
+
+  // ========== RESERVES (RESERVAS DE HIDROCARBUROS) ==========
+  reserves: [
+    { code: 'reserves:*', name: 'Reservas - Acceso Completo', description: 'Acceso completo al módulo de reservas de hidrocarburos', action: '*', permissionType: 'module' },
+    { code: 'reserves:read', name: 'Ver Reservas', description: 'Ver estimaciones de reservas, categorías y valoraciones', action: 'read', permissionType: 'action' },
+    { code: 'reserves:create', name: 'Crear Reservas', description: 'Crear nuevas estimaciones y valoraciones de reservas', action: 'create', permissionType: 'action' },
+    { code: 'reserves:update', name: 'Editar Reservas', description: 'Editar estimaciones y valoraciones de reservas', action: 'update', permissionType: 'action' },
+    { code: 'reserves:delete', name: 'Eliminar Reservas', description: 'Eliminar estimaciones y valoraciones en borrador', action: 'delete', permissionType: 'action' },
+    { code: 'reserves:approve', name: 'Aprobar Reservas', description: 'Aprobar estimaciones y valoraciones de reservas', action: 'approve', permissionType: 'action' },
+  ],
 };
 
 // Roles predefinidos con sus permisos
@@ -350,6 +370,8 @@ const ROLES = {
       'contracts:read', 'contracts:approve',
       'compliance:read', 'compliance:approve',
       'jib:read', 'jib:approve',
+      'ptw:read', 'ptw:approve',
+      'reserves:read', 'reserves:approve',
     ],
   },
   'Gerente Administrativo': {
@@ -387,6 +409,7 @@ const ROLES = {
       'afe:*',
       'contracts:*',
       'compliance:*',
+      'reserves:*',
     ],
   },
   'Contador': {

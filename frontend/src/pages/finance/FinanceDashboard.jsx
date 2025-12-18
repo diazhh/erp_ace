@@ -23,6 +23,9 @@ import {
   InputLabel,
   Button,
   Divider,
+  Menu,
+  ListItemIcon,
+  ListItemText,
 } from '@mui/material';
 import {
   AccountBalance as AccountBalanceIcon,
@@ -33,6 +36,7 @@ import {
   Refresh as RefreshIcon,
   ArrowForward as ArrowForwardIcon,
   Add as AddIcon,
+  ArrowDropDown as ArrowDropDownIcon,
 } from '@mui/icons-material';
 import {
   BarChart,
@@ -155,6 +159,7 @@ const FinanceDashboard = () => {
   const { cashFlow } = useSelector((state) => state.dashboard);
   
   const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
+  const [transactionMenuAnchor, setTransactionMenuAnchor] = useState(null);
   const currentYear = new Date().getFullYear();
   const years = Array.from({ length: 5 }, (_, i) => currentYear - i);
 
@@ -168,6 +173,19 @@ const FinanceDashboard = () => {
     dispatch(fetchAccounts());
     dispatch(fetchFinanceStats());
     dispatch(fetchCashFlow(selectedYear));
+  };
+
+  const handleTransactionMenuOpen = (event) => {
+    setTransactionMenuAnchor(event.currentTarget);
+  };
+
+  const handleTransactionMenuClose = () => {
+    setTransactionMenuAnchor(null);
+  };
+
+  const handleNewTransaction = (type) => {
+    handleTransactionMenuClose();
+    navigate(`/finance/transactions/new?type=${type}`);
   };
 
   // Calcular totales por moneda
@@ -282,11 +300,36 @@ const FinanceDashboard = () => {
           <Button
             variant="contained"
             startIcon={<AddIcon />}
-            onClick={() => navigate('/finance/transactions/new')}
+            endIcon={<ArrowDropDownIcon />}
+            onClick={handleTransactionMenuOpen}
             size={isMobile ? 'small' : 'medium'}
           >
             {isMobile ? t('common.create') : t('finance.newTransaction')}
           </Button>
+          <Menu
+            anchorEl={transactionMenuAnchor}
+            open={Boolean(transactionMenuAnchor)}
+            onClose={handleTransactionMenuClose}
+          >
+            <MenuItem onClick={() => handleNewTransaction('INCOME')}>
+              <ListItemIcon>
+                <TrendingUpIcon color="success" />
+              </ListItemIcon>
+              <ListItemText>{t('finance.newIncome')}</ListItemText>
+            </MenuItem>
+            <MenuItem onClick={() => handleNewTransaction('EXPENSE')}>
+              <ListItemIcon>
+                <TrendingDownIcon color="error" />
+              </ListItemIcon>
+              <ListItemText>{t('finance.newExpense')}</ListItemText>
+            </MenuItem>
+            <MenuItem onClick={() => handleNewTransaction('TRANSFER')}>
+              <ListItemIcon>
+                <TransferIcon color="info" />
+              </ListItemIcon>
+              <ListItemText>{t('finance.newTransfer')}</ListItemText>
+            </MenuItem>
+          </Menu>
         </Box>
       </Box>
 

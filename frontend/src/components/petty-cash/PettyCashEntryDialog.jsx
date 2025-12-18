@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { useTranslation } from 'react-i18next';
 import {
   Dialog,
   DialogTitle,
@@ -33,6 +34,7 @@ import { fetchEmployees } from '../../store/slices/employeeSlice';
 
 const PettyCashEntryDialog = ({ open, onClose, pettyCash }) => {
   const dispatch = useDispatch();
+  const { t } = useTranslation();
   const theme = useTheme();
   const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
   const fileInputRef = useRef(null);
@@ -125,7 +127,7 @@ const PettyCashEntryDialog = ({ open, onClose, pettyCash }) => {
       };
 
       await dispatch(createEntry({ pettyCashId: pettyCash.id, data })).unwrap();
-      toast.success('Gasto registrado');
+      toast.success(t('pettyCash.expenseRegistered'));
       onClose(true);
     } catch (error) {
       toast.error(error);
@@ -155,16 +157,16 @@ const PettyCashEntryDialog = ({ open, onClose, pettyCash }) => {
       }}
     >
       <form onSubmit={handleSubmit}>
-        <DialogTitle>Registrar Gasto</DialogTitle>
+        <DialogTitle>{t('pettyCash.registerExpense')}</DialogTitle>
         <DialogContent>
           {exceedsBalance && (
             <Alert severity="error" sx={{ mb: 2 }}>
-              El monto excede el saldo disponible ({pettyCash?.currency} {currentBalance.toFixed(2)})
+              {t('pettyCash.amountExceedsBalance', { currency: pettyCash?.currency, balance: currentBalance.toFixed(2) })}
             </Alert>
           )}
           {exceedsMax && !exceedsBalance && (
             <Alert severity="warning" sx={{ mb: 2 }}>
-              El monto excede el máximo permitido por gasto ({pettyCash?.currency} {maxExpense.toFixed(2)})
+              {t('pettyCash.amountExceedsMax', { currency: pettyCash?.currency, max: maxExpense.toFixed(2) })}
             </Alert>
           )}
 
@@ -172,7 +174,7 @@ const PettyCashEntryDialog = ({ open, onClose, pettyCash }) => {
             <Grid item xs={12} sm={6}>
               <TextField
                 name="amount"
-                label="Monto"
+                label={t('pettyCash.amount')}
                 type="number"
                 value={formData.amount}
                 onChange={handleChange}
@@ -188,7 +190,7 @@ const PettyCashEntryDialog = ({ open, onClose, pettyCash }) => {
             <Grid item xs={12} sm={6}>
               <TextField
                 name="entryDate"
-                label="Fecha del Gasto"
+                label={t('pettyCash.expenseDate')}
                 type="date"
                 value={formData.entryDate}
                 onChange={handleChange}
@@ -200,14 +202,14 @@ const PettyCashEntryDialog = ({ open, onClose, pettyCash }) => {
 
             <Grid item xs={12} sm={6}>
               <FormControl fullWidth>
-                <InputLabel>Categoría</InputLabel>
+                <InputLabel>{t('pettyCash.category')}</InputLabel>
                 <Select
                   name="category"
                   value={formData.category}
                   onChange={handleChange}
-                  label="Categoría"
+                  label={t('pettyCash.category')}
                 >
-                  <MenuItem value="">Sin categoría</MenuItem>
+                  <MenuItem value="">{t('pettyCash.noCategory')}</MenuItem>
                   {categories.map((cat) => (
                     <MenuItem key={cat.code} value={cat.code}>{cat.name}</MenuItem>
                   ))}
@@ -216,14 +218,14 @@ const PettyCashEntryDialog = ({ open, onClose, pettyCash }) => {
             </Grid>
             <Grid item xs={12} sm={6}>
               <FormControl fullWidth>
-                <InputLabel>Beneficiario (Empleado)</InputLabel>
+                <InputLabel>{t('pettyCash.beneficiaryEmployee')}</InputLabel>
                 <Select
                   name="beneficiaryId"
                   value={formData.beneficiaryId}
                   onChange={handleChange}
-                  label="Beneficiario (Empleado)"
+                  label={t('pettyCash.beneficiaryEmployee')}
                 >
-                  <MenuItem value="">Externo</MenuItem>
+                  <MenuItem value="">{t('pettyCash.external')}</MenuItem>
                   {employees.filter(e => e.status === 'ACTIVE').map((emp) => (
                     <MenuItem key={emp.id} value={emp.id}>
                       {emp.firstName} {emp.lastName}
@@ -237,11 +239,11 @@ const PettyCashEntryDialog = ({ open, onClose, pettyCash }) => {
               <Grid item xs={12}>
                 <TextField
                   name="beneficiaryName"
-                  label="Nombre del Beneficiario"
+                  label={t('pettyCash.beneficiaryName')}
                   value={formData.beneficiaryName}
                   onChange={handleChange}
                   fullWidth
-                  placeholder="Nombre de persona o empresa externa"
+                  placeholder={t('pettyCash.externalBeneficiaryPlaceholder')}
                 />
               </Grid>
             )}
@@ -249,21 +251,21 @@ const PettyCashEntryDialog = ({ open, onClose, pettyCash }) => {
             <Grid item xs={12}>
               <TextField
                 name="description"
-                label="Descripción"
+                label={t('pettyCash.description')}
                 value={formData.description}
                 onChange={handleChange}
                 fullWidth
                 required
                 multiline
                 rows={2}
-                placeholder="Detalle del gasto realizado"
+                placeholder={t('pettyCash.expenseDetailPlaceholder')}
               />
             </Grid>
 
             <Grid item xs={12} sm={6} md={4}>
               <TextField
                 name="vendor"
-                label="Proveedor/Comercio"
+                label={t('pettyCash.vendorCommerce')}
                 value={formData.vendor}
                 onChange={handleChange}
                 fullWidth
@@ -273,7 +275,7 @@ const PettyCashEntryDialog = ({ open, onClose, pettyCash }) => {
             <Grid item xs={12} sm={6} md={4}>
               <TextField
                 name="vendorRif"
-                label="RIF Proveedor"
+                label={t('pettyCash.vendorRif')}
                 value={formData.vendorRif}
                 onChange={handleChange}
                 fullWidth
@@ -284,7 +286,7 @@ const PettyCashEntryDialog = ({ open, onClose, pettyCash }) => {
             <Grid item xs={12} md={4}>
               <TextField
                 name="receiptNumber"
-                label="N° Factura/Recibo"
+                label={t('pettyCash.invoiceReceiptNumber')}
                 value={formData.receiptNumber}
                 onChange={handleChange}
                 fullWidth
@@ -295,7 +297,7 @@ const PettyCashEntryDialog = ({ open, onClose, pettyCash }) => {
             {/* Comprobante (opcional) */}
             <Grid item xs={12}>
               <Typography variant="subtitle2" color="text.secondary" gutterBottom>
-                Comprobante (opcional)
+                {t('pettyCash.receiptOptional')}
               </Typography>
               <input
                 type="file"
@@ -314,7 +316,7 @@ const PettyCashEntryDialog = ({ open, onClose, pettyCash }) => {
                   fullWidth
                   sx={{ py: 2, borderStyle: 'dashed' }}
                 >
-                  Subir imagen o PDF del recibo
+                  {t('pettyCash.uploadReceiptImage')}
                 </Button>
               ) : (
                 <Box sx={{ 
@@ -370,7 +372,7 @@ const PettyCashEntryDialog = ({ open, onClose, pettyCash }) => {
             <Grid item xs={12}>
               <TextField
                 name="notes"
-                label="Notas adicionales"
+                label={t('pettyCash.additionalNotes')}
                 value={formData.notes}
                 onChange={handleChange}
                 fullWidth
@@ -382,7 +384,7 @@ const PettyCashEntryDialog = ({ open, onClose, pettyCash }) => {
         </DialogContent>
         <DialogActions>
           <Button onClick={() => onClose(false)} disabled={loading}>
-            Cancelar
+            {t('common.cancel')}
           </Button>
           <Button
             type="submit"
@@ -391,7 +393,7 @@ const PettyCashEntryDialog = ({ open, onClose, pettyCash }) => {
             disabled={loading || exceedsBalance}
             startIcon={loading && <CircularProgress size={20} />}
           >
-            Registrar Gasto
+            {t('pettyCash.registerExpense')}
           </Button>
         </DialogActions>
       </form>
