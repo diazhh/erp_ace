@@ -40,6 +40,8 @@ module.exports = {
       const rolePermissions = permissions.map(perm => ({
         role_id: adminRoleId,
         permission_id: perm.id,
+        created_at: now,
+        updated_at: now,
       }));
 
       if (rolePermissions.length > 0) {
